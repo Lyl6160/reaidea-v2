@@ -2,23 +2,31 @@
 
 import { useState } from "react";
 
-export default function InterviewSession() {
-  const questions = [
-    "What problem frustrates you enough that you decided to invent this product?",
-    "Who experiences this problem the most?",
-    "How are people solving this problem today?",
-    "What makes your solution different?",
-    "If your invention succeeds, what changes for the customer?",
-  ];
+const questions = [
+  "What problem frustrates you enough that you decided to invent this product?",
+  "Who experiences this problem the most?",
+  "How are people solving this problem today?",
+  "What makes your solution different?",
+  "If your invention succeeds, what changes for the customer?",
+];
 
+const wait = (milliseconds: number) =>
+  new Promise<void>((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+  });
+
+export default function InterviewSession() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answer, setAnswer] = useState("");
-const [isAnalyzing, setIsAnalyzing] = useState(false);
-const [analysisMessage, setAnalysisMessage] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisMessage, setAnalysisMessage] = useState("");
+
   const progress =
     questions.length === 1
       ? 100
-      : Math.round(1 + (currentQuestion / (questions.length - 1)) * 99);
+      : Math.round(
+          1 + (currentQuestion / (questions.length - 1)) * 99
+        );
 
   const confidence = Math.max(8, Math.round(progress * 0.72));
 
@@ -26,36 +34,35 @@ const [analysisMessage, setAnalysisMessage] = useState("");
   const bulbGlow = Math.round(progress / 4);
   const bulbSaturation = Math.round(progress);
 
-  function nextQuestion() {
-    async function nextQuestion() {
-  if (!answer.trim() || isAnalyzing) return;
+  async function nextQuestion() {
+    if (!answer.trim() || isAnalyzing) return;
 
-  console.log("Answer:", answer);
+    console.log("Answer:", answer);
 
-  setIsAnalyzing(true);
-  setAnalysisMessage("Understanding your answer...");
+    setIsAnalyzing(true);
+    setAnalysisMessage("Understanding your answer...");
 
-  await new Promise((resolve) => setTimeout(resolve, 800));
+    await wait(800);
 
-  setAnalysisMessage("Updating the Innovation Brain...");
+    setAnalysisMessage("Updating the Innovation Brain...");
 
-  await new Promise((resolve) => setTimeout(resolve, 800));
+    await wait(800);
 
-  setAnalysisMessage("Generating the next question...");
+    setAnalysisMessage("Generating the next question...");
 
-  await new Promise((resolve) => setTimeout(resolve, 800));
+    await wait(800);
 
-  setAnswer("");
+    setAnswer("");
 
-  if (currentQuestion < questions.length - 1) {
-    setCurrentQuestion((previousQuestion) => previousQuestion + 1);
-  } else {
-    alert("Interview Complete!");
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion((previousQuestion) => previousQuestion + 1);
+    } else {
+      window.alert("Interview Complete!");
+    }
+
+    setAnalysisMessage("");
+    setIsAnalyzing(false);
   }
-
-  setAnalysisMessage("");
-  setIsAnalyzing(false);
-}
 
   return (
     <main
@@ -63,10 +70,9 @@ const [analysisMessage, setAnalysisMessage] = useState("");
         minHeight: "100vh",
         background: "#08101d",
         color: "white",
-        fontFamily: "Arial",
+        fontFamily: "Arial, sans-serif",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
         padding: "50px 20px",
       }}
     >
@@ -76,7 +82,7 @@ const [analysisMessage, setAnalysisMessage] = useState("");
           maxWidth: "850px",
         }}
       >
-        <div
+        <header
           style={{
             display: "flex",
             alignItems: "center",
@@ -85,6 +91,7 @@ const [analysisMessage, setAnalysisMessage] = useState("");
           }}
         >
           <span
+            className={isAnalyzing ? "bulb analyzing" : "bulb"}
             style={{
               fontSize: "54px",
               display: "inline-block",
@@ -100,7 +107,6 @@ const [analysisMessage, setAnalysisMessage] = useState("");
                 progress === 100
                   ? "scale(1.12)"
                   : `rotate(${-5 + progress / 10}deg)`,
-              transition: "filter 0.8s ease, transform 0.8s ease",
             }}
           >
             💡
@@ -125,9 +131,9 @@ const [analysisMessage, setAnalysisMessage] = useState("");
               Innovation Consultant
             </p>
           </div>
-        </div>
+        </header>
 
-        <div
+        <section
           style={{
             background: "#0d1728",
             border: "1px solid #1d3150",
@@ -158,7 +164,7 @@ const [analysisMessage, setAnalysisMessage] = useState("");
                 fontSize: "14px",
               }}
             >
-              Active
+              {isAnalyzing ? "Analysing" : "Active"}
             </span>
           </div>
 
@@ -206,14 +212,14 @@ const [analysisMessage, setAnalysisMessage] = useState("");
                   progress < 20
                     ? "#4a4638"
                     : progress < 40
-                    ? "#7a642c"
-                    : progress < 60
-                    ? "#a97818"
-                    : progress < 80
-                    ? "#d6a600"
-                    : progress < 100
-                    ? "#f2cf00"
-                    : "#fff200",
+                      ? "#7a642c"
+                      : progress < 60
+                        ? "#a97818"
+                        : progress < 80
+                          ? "#d6a600"
+                          : progress < 100
+                            ? "#f2cf00"
+                            : "#fff200",
                 boxShadow:
                   progress < 20
                     ? "none"
@@ -257,7 +263,7 @@ const [analysisMessage, setAnalysisMessage] = useState("");
               }}
             />
           </div>
-        </div>
+        </section>
 
         <p
           style={{
@@ -266,30 +272,6 @@ const [analysisMessage, setAnalysisMessage] = useState("");
           }}
         >
           Mission 1
-          {isAnalyzing && (
-  <div
-    style={{
-      background: "#0d1728",
-      border: "1px solid #00d4ff",
-      borderRadius: "14px",
-      padding: "18px 22px",
-      marginBottom: "25px",
-      color: "#00d4ff",
-      boxShadow: "0 0 20px rgba(0, 212, 255, 0.12)",
-    }}
-  >
-    <strong>💡 Idea Synthesis</strong>
-
-    <p
-      style={{
-        margin: "8px 0 0",
-        color: "#b6c9e2",
-      }}
-    >
-      {analysisMessage}
-    </p>
-  </div>
-)}
         </p>
 
         <p
@@ -302,7 +284,34 @@ const [analysisMessage, setAnalysisMessage] = useState("");
           Understand the Problem
         </p>
 
-        <div
+        {isAnalyzing && (
+          <section
+            className="analysis-panel"
+            style={{
+              background: "#0d1728",
+              border: "1px solid #00d4ff",
+              borderRadius: "14px",
+              padding: "18px 22px",
+              marginBottom: "25px",
+              color: "#00d4ff",
+              boxShadow: "0 0 20px rgba(0, 212, 255, 0.12)",
+            }}
+          >
+            <strong>💡 Idea Synthesis</strong>
+
+            <p
+              style={{
+                margin: "10px 0 0",
+                color: "#b6c9e2",
+              }}
+            >
+              {analysisMessage}
+            </p>
+          </section>
+        )}
+
+        <section
+          className="question-card"
           style={{
             background: "#11182b",
             padding: "35px",
@@ -322,7 +331,8 @@ const [analysisMessage, setAnalysisMessage] = useState("");
 
           <textarea
             value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
+            onChange={(event) => setAnswer(event.target.value)}
+            disabled={isAnalyzing}
             placeholder="Describe your answer in as much detail as possible..."
             style={{
               boxSizing: "border-box",
@@ -336,63 +346,127 @@ const [analysisMessage, setAnalysisMessage] = useState("");
               padding: "18px",
               fontSize: "18px",
               resize: "vertical",
+              opacity: isAnalyzing ? 0.65 : 1,
+              outline: "none",
             }}
           />
 
           <button
+            type="button"
             onClick={nextQuestion}
             disabled={!answer.trim() || isAnalyzing}
             style={{
               marginTop: "30px",
               cursor:
-              answer.trim() && !isAnalyzing ? "pointer" : "not-allowed",
-              color: answer.trim() ? "#04101c" : "#70839d",
+                answer.trim() && !isAnalyzing
+                  ? "pointer"
+                  : "not-allowed",
+              background:
+                answer.trim() && !isAnalyzing
+                  ? "#00d4ff"
+                  : "#17233a",
+              color:
+                answer.trim() && !isAnalyzing
+                  ? "#04101c"
+                  : "#70839d",
               border: "none",
               padding: "16px 36px",
               borderRadius: "10px",
               fontSize: "20px",
               fontWeight: "bold",
-            
-              transition: "0.25s ease",
+              transition:
+                "background 0.25s ease, color 0.25s ease, transform 0.25s ease",
             }}
           >
             {isAnalyzing ? "Analysing..." : "Continue"}
           </button>
-        </div>
+        </section>
       </div>
-    <style jsx>{`
-  .synthesis-scanner {
-    width: 38%;
-    height: 100%;
-    border-radius: 20px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 212, 255, 0.35),
-      #00d4ff,
-      rgba(0, 212, 255, 0.35),
-      transparent
-    );
-    box-shadow: 0 0 18px rgba(0, 212, 255, 0.8);
-    animation: synthesisSweep 1.8s ease-in-out infinite;
-  }
 
-  @keyframes synthesisSweep {
-    0% {
-      transform: translateX(-110%);
-      opacity: 0.35;
-    }
+      <style jsx>{`
+        .bulb {
+          transition: filter 0.8s ease, transform 0.8s ease;
+        }
 
-    50% {
-      opacity: 1;
-    }
+        .bulb.analyzing {
+          animation: bulbPulse 0.9s ease-in-out infinite;
+        }
 
-    100% {
-      transform: translateX(270%);
-      opacity: 0.35;
-    }
-  }
-`}</style>
-</main>
+        .synthesis-scanner {
+          width: 38%;
+          height: 100%;
+          border-radius: 20px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(0, 212, 255, 0.35),
+            #00d4ff,
+            rgba(0, 212, 255, 0.35),
+            transparent
+          );
+          box-shadow: 0 0 18px rgba(0, 212, 255, 0.8);
+          animation: synthesisSweep 1.8s ease-in-out infinite;
+        }
+
+        .analysis-panel {
+          animation: panelFadeIn 0.3s ease-out;
+        }
+
+        .question-card {
+          animation: questionFadeIn 0.45s ease-out;
+        }
+
+        @keyframes synthesisSweep {
+          0% {
+            transform: translateX(-110%);
+            opacity: 0.35;
+          }
+
+          50% {
+            opacity: 1;
+          }
+
+          100% {
+            transform: translateX(270%);
+            opacity: 0.35;
+          }
+        }
+
+        @keyframes bulbPulse {
+          0%,
+          100% {
+            scale: 1;
+          }
+
+          50% {
+            scale: 1.12;
+          }
+        }
+
+        @keyframes panelFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes questionFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+    </main>
   );
-}
+} 
