@@ -120,11 +120,11 @@ export function recalculateBrain(
     completedNodes === brain.totalNodes
       ? 100
       : Math.max(
-          1,
-          Math.round(
-            (completedNodes / brain.totalNodes) * 100
-          )
-        );
+        1,
+        Math.round(
+          (completedNodes / brain.totalNodes) * 100
+        )
+      );
 
   const completedConfidence = nodes
     .filter((node) => node.completed)
@@ -134,11 +134,11 @@ export function recalculateBrain(
     completedConfidence.length === 0
       ? 8
       : Math.round(
-          completedConfidence.reduce(
-            (total, value) => total + value,
-            0
-          ) / completedConfidence.length
-        );
+        completedConfidence.reduce(
+          (total, value) => total + value,
+          0
+        ) / completedConfidence.length
+      );
 
   const aiConfidence = Math.min(
     96,
@@ -146,7 +146,7 @@ export function recalculateBrain(
       8,
       Math.round(
         averageConfidence *
-          (0.45 + progress / 180)
+        (0.45 + progress / 180)
       )
     )
   );
