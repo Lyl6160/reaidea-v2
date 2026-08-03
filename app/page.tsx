@@ -3,20 +3,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 export default function Home() {
   const [idea, setIdea] = useState("");
-const router = useRouter();
-function startInnovation() {
-  const cleanedIdea = idea.trim();
+  const router = useRouter();
+  function startInnovation() {
+    const cleanedIdea = idea.trim();
 
-  if (!cleanedIdea) {
-    alert("Please describe your idea first.");
-    return;
+    if (!cleanedIdea) {
+      alert("Please describe your idea first.");
+      return;
+    }
+
+    localStorage.setItem("reaidea-current-idea", cleanedIdea);
+
+    router.push("/dashboard");
   }
 
-  localStorage.setItem("reaidea-current-idea", cleanedIdea);
-
-  router.push("/dashboard");
-}
-  
 
   return (
     <main

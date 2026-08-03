@@ -91,29 +91,29 @@ export default function InterviewPage() {
             }}
           >
             <Link
-  href="/interview/session"
-  style={{
-    background: "#00d4ff",
-    color: "#061018",
-    padding: "18px 40px",
-    borderRadius: "12px",
-    textDecoration: "none",
-    fontWeight: "bold",
-    marginRight: "20px",
-  }}
->
-  Begin Interview
-</Link>
+              href="/interview/session"
+              style={{
+                background: "#00d4ff",
+                color: "#061018",
+                padding: "18px 40px",
+                borderRadius: "12px",
+                textDecoration: "none",
+                fontWeight: "bold",
+                marginRight: "20px",
+              }}
+            >
+              Begin Interview
+            </Link>
 
-             <Link
-  href="/dashboard"
-  style={{
-    color: "#00d4ff",
-    textDecoration: "none",
-  }}
->
-  Return to Dashboard
-</Link>
+            <Link
+              href="/dashboard"
+              style={{
+                color: "#00d4ff",
+                textDecoration: "none",
+              }}
+            >
+              Return to Dashboard
+            </Link>
           </div>
         </div>
       </div>
