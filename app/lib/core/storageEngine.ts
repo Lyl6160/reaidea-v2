@@ -1,4 +1,10 @@
-import type { EngineeringState, Project } from "./project";
+import type {
+  EngineeringState,
+  Project,
+  ValidationPlan,
+  ValidationPlanItem,
+  ValidationPlanItemSource,
+} from "./project";
 
 type StoredEngineeringState = Omit<
   EngineeringState,
@@ -6,8 +12,9 @@ type StoredEngineeringState = Omit<
 > &
   Partial<Pick<EngineeringState, "currentAssumptions" | "currentConstraints">>;
 
-type StoredProject = Omit<Project, "engineeringState"> & {
+type StoredProject = Omit<Project, "engineeringState" | "validationPlan"> & {
   engineeringState: StoredEngineeringState;
+  validationPlan?: ValidationPlan | null;
 };
 
 const STORAGE_KEY = "reaidea-project";
@@ -148,7 +155,85 @@ function normalizeProject(project: StoredProject): Project {
       currentAssumptions: stringList(project.engineeringState.currentAssumptions),
       currentConstraints: stringList(project.engineeringState.currentConstraints),
     },
+    validationPlan: normalizeValidationPlan(project.validationPlan),
   };
+}
+
+function normalizeValidationPlan(value: unknown): ValidationPlan | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const plan = value as Partial<ValidationPlan>;
+
+  if (
+    plan.status !== "planned" ||
+    typeof plan.purpose !== "string" ||
+    typeof plan.createdAt !== "string" ||
+    typeof plan.updatedAt !== "string" ||
+    !Array.isArray(plan.items)
+  ) {
+    return null;
+  }
+
+  const items = plan.items
+    .map(normalizeValidationPlanItem)
+    .filter((item): item is ValidationPlanItem => item !== null);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return {
+    status: "planned",
+    purpose: plan.purpose,
+    items,
+    createdAt: plan.createdAt,
+    updatedAt: plan.updatedAt,
+  };
+}
+
+function normalizeValidationPlanItem(value: unknown): ValidationPlanItem | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const item = value as Partial<ValidationPlanItem>;
+
+  if (
+    typeof item.id !== "string" ||
+    !isValidationPlanItemSource(item.source) ||
+    typeof item.title !== "string" ||
+    typeof item.target !== "string" ||
+    typeof item.method !== "string" ||
+    typeof item.evidenceNeeded !== "string" ||
+    typeof item.completionRule !== "string" ||
+    item.status !== "planned"
+  ) {
+    return null;
+  }
+
+  return {
+    id: item.id,
+    source: item.source,
+    title: item.title,
+    target: item.target,
+    method: item.method,
+    evidenceNeeded: item.evidenceNeeded,
+    completionRule: item.completionRule,
+    status: "planned",
+  };
+}
+
+function isValidationPlanItemSource(
+  value: unknown
+): value is ValidationPlanItemSource {
+  return (
+    value === "assumption" ||
+    value === "evidence-gap" ||
+    value === "reported-evidence" ||
+    value === "engineering-state"
+  );
 }
 
 function stringList(value: unknown): string[] {

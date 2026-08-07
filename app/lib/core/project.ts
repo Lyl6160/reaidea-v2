@@ -23,6 +23,31 @@ export type ProjectDecision = {
   createdAt: string;
 };
 
+export type ValidationPlanItemSource =
+  | "assumption"
+  | "evidence-gap"
+  | "reported-evidence"
+  | "engineering-state";
+
+export type ValidationPlanItem = {
+  id: string;
+  source: ValidationPlanItemSource;
+  title: string;
+  target: string;
+  method: string;
+  evidenceNeeded: string;
+  completionRule: string;
+  status: "planned";
+};
+
+export type ValidationPlan = {
+  status: "planned";
+  purpose: string;
+  items: ValidationPlanItem[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type EngineeringState = {
   currentUnderstanding: string;
   currentEvidence: string[];
@@ -35,7 +60,8 @@ export type EngineeringState = {
 export type ProjectTimelineEventType =
   | "project-created"
   | "discovery-understanding-added"
-  | "discovery-answer-recorded";
+  | "discovery-answer-recorded"
+  | "validation-plan-created";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -56,6 +82,7 @@ export type Project = {
   status: ProjectStatus;
   readiness: ProjectReadiness;
   engineeringState: EngineeringState;
+  validationPlan: ValidationPlan | null;
   evidence: ProjectEvidence[];
   decisions: ProjectDecision[];
   files: string[];
@@ -97,6 +124,7 @@ export function createProject(input: CreateProjectInput): Project {
       nextEngineeringStep:
         "Clarify what is happening now and why the observation matters.",
     },
+    validationPlan: null,
     evidence: [],
     decisions: [],
     files: [],

@@ -12,6 +12,7 @@ import {
   assessDiscovery,
   recordDiscoveryAnswer,
 } from "../../lib/workshop/discoveryReasoning";
+import { createValidationPlan } from "../../lib/workshop/validationPlanning";
 import {
   getProjectStorageSnapshot,
   getServerProjectStorageSnapshot,
@@ -25,6 +26,7 @@ import {
   parseInventorSnapshot,
   subscribeToInventorStorage,
 } from "../../lib/core/inventorStorage";
+import type { Project } from "../../lib/core/project";
 
 export default function DiscoverySession() {
   const projectSnapshot = useSyncExternalStore(
@@ -79,6 +81,22 @@ export default function DiscoverySession() {
     );
     saveProject(updatedProject);
     setAnswer("");
+    setError("");
+  }
+
+  function planValidation() {
+    if (!project) {
+      return;
+    }
+
+    const result = createValidationPlan(project);
+
+    if (result.status === "not-ready") {
+      setError("Discovery must reach its checkpoint before validation planning begins.");
+      return;
+    }
+
+    saveProject(result.project);
     setError("");
   }
 
@@ -148,7 +166,25 @@ export default function DiscoverySession() {
               </p>
             </div>
 
-            <Link href="/dashboard" className="checkpoint-link">
+            {project.validationPlan ? (
+              <ValidationPlanView project={project} />
+            ) : (
+              <section className="validation-planning">
+                <p className="reasoning-label">Next Responsible Step</p>
+                <h3>Turn the remaining uncertainty into a validation plan.</h3>
+                <p>
+                  REV will convert the Project&apos;s assumptions and evidence gaps into a
+                  short set of targeted validation activities. The plan is designed to
+                  confirm, refine or challenge the current understanding — not defend it.
+                </p>
+                {error && <p className="error">{error}</p>}
+                <button type="button" onClick={planValidation}>
+                  Create Validation Plan
+                </button>
+              </section>
+            )}
+
+            <Link href="/dashboard" className="checkpoint-link secondary-link">
               Return to Project Workshop
             </Link>
           </section>
@@ -199,10 +235,10 @@ export default function DiscoverySession() {
           />
 
           <p className="foundation-note">
-            Sprint 006 Build 3: Engineering State now separates understanding,
-            evidence position, potential assumptions and constraints. Discovery
-            stops broad questioning at a defined sufficient-understanding checkpoint;
-            it does not create a numeric confidence score.
+            Sprint 006 Build 4: Discovery now hands a mature Engineering State into
+            targeted validation planning. The Project keeps assumptions and evidence
+            gaps explicit and creates validation work that can confirm, refine or
+            challenge current understanding without inventing a confidence score.
           </p>
         </section>
       </section>
@@ -320,6 +356,24 @@ export default function DiscoverySession() {
           color: #7f8da2;
         }
 
+        .validation-planning {
+          margin-top: 22px;
+          padding: 20px;
+          background: #0b1320;
+          border: 1px solid #27435a;
+          border-radius: 12px;
+        }
+
+        .validation-planning h3 {
+          margin: 4px 0 10px;
+          font-size: 21px;
+        }
+
+        .validation-planning p {
+          color: #a8b3c7;
+          line-height: 1.65;
+        }
+
         label {
           display: block;
           margin: 28px 0 9px;
@@ -371,6 +425,13 @@ export default function DiscoverySession() {
           text-decoration: none;
         }
 
+        .secondary-link {
+          margin-left: 12px;
+          background: transparent;
+          color: #a8b3c7;
+          border: 1px solid #33445d;
+        }
+
         .error {
           color: #ffb4b4;
           margin-bottom: 0;
@@ -385,6 +446,98 @@ export default function DiscoverySession() {
         }
       `}</style>
     </main>
+  );
+}
+
+function ValidationPlanView({
+  project,
+}: {
+  project: Project;
+}) {
+  const plan = project.validationPlan;
+
+  if (!plan) {
+    return null;
+  }
+
+  return (
+    <section className="validation-plan">
+      <p className="validation-label">Validation Plan · Planned</p>
+      <h3>{plan.purpose}</h3>
+      <p className="validation-plan-intro">
+        Each activity must produce reviewable evidence and is allowed to confirm,
+        refine or contradict the current Engineering State.
+      </p>
+      <div className="validation-items">
+        {plan.items.map((item, index) => (
+          <article className="validation-item" key={item.id}>
+            <p className="validation-label">Validation {index + 1}</p>
+            <h4>{item.title}</h4>
+            <p><strong>Target:</strong> {item.target}</p>
+            <p><strong>Method:</strong> {item.method}</p>
+            <p><strong>Evidence needed:</strong> {item.evidenceNeeded}</p>
+            <p><strong>Done when:</strong> {item.completionRule}</p>
+          </article>
+        ))}
+      </div>
+
+      <style jsx>{`
+        .validation-plan {
+          margin-top: 22px;
+          padding: 20px;
+          background: #0b1320;
+          border: 1px solid #27435a;
+          border-radius: 12px;
+        }
+
+        .validation-label {
+          margin: 0 0 8px;
+          color: #00d4ff;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        h3 {
+          margin: 4px 0 10px;
+          font-size: 21px;
+        }
+
+        .validation-plan-intro {
+          color: #a8b3c7;
+          line-height: 1.65;
+        }
+
+        .validation-items {
+          display: grid;
+          gap: 12px;
+          margin-top: 18px;
+        }
+
+        .validation-item {
+          background: #08101d;
+          border: 1px solid #22334a;
+          border-radius: 10px;
+          padding: 16px;
+        }
+
+        .validation-item h4 {
+          margin: 0 0 8px;
+          font-size: 17px;
+        }
+
+        .validation-item p {
+          margin: 7px 0 0;
+          color: #a8b3c7;
+          line-height: 1.55;
+        }
+
+        .validation-item strong {
+          color: #dfe8f4;
+        }
+      `}</style>
+    </section>
   );
 }
 
