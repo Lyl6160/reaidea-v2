@@ -1,0 +1,186 @@
+export type ProjectReadiness =
+  | "observation"
+  | "understanding"
+  | "development"
+  | "validation"
+  | "ready";
+
+export type ProjectStatus = "active";
+
+export type ProjectEvidence = {
+  id: string;
+  summary: string;
+  source: string;
+  createdAt: string;
+};
+
+export type ProjectDecision = {
+  id: string;
+  decision: string;
+  reason: string;
+  supportingEvidenceIds: string[];
+  ownerId: string;
+  createdAt: string;
+};
+
+export type EngineeringState = {
+  currentUnderstanding: string;
+  currentEvidence: string[];
+  greatestRemainingUncertainty: string;
+  nextEngineeringStep: string;
+};
+
+export type ProjectTimelineEventType =
+  | "project-created"
+  | "discovery-understanding-added";
+
+export type ProjectTimelineEvent = {
+  id: string;
+  type: ProjectTimelineEventType;
+  title: string;
+  description: string;
+  createdAt: string;
+};
+
+export type Project = {
+  id: string;
+  projectName: string;
+  ownerId: string;
+  originalObservation: string;
+  purpose: string;
+  status: ProjectStatus;
+  readiness: ProjectReadiness;
+  engineeringState: EngineeringState;
+  evidence: ProjectEvidence[];
+  decisions: ProjectDecision[];
+  files: string[];
+  timeline: ProjectTimelineEvent[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateProjectInput = {
+  ownerId: string;
+  originalObservation: string;
+};
+
+export function createProject(input: CreateProjectInput): Project {
+  const originalObservation = input.originalObservation.trim();
+
+  if (!originalObservation) {
+    throw new Error("A Project requires an original observation.");
+  }
+
+  const now = new Date().toISOString();
+  const projectName = createProjectName(originalObservation);
+
+  return {
+    id: createId(),
+    projectName,
+    ownerId: input.ownerId,
+    originalObservation,
+    purpose: "",
+    status: "active",
+    readiness: "observation",
+    engineeringState: {
+      currentUnderstanding: originalObservation,
+      currentEvidence: [],
+      greatestRemainingUncertainty:
+        "The observation has not yet been explored in enough detail to identify the underlying engineering problem.",
+      nextEngineeringStep:
+        "Clarify what is happening now and why the observation matters.",
+    },
+    evidence: [],
+    decisions: [],
+    files: [],
+    timeline: [
+      createTimelineEvent(
+        "project-created",
+        "Project created",
+        "The original observation was preserved and the Project entered Discovery.",
+        now
+      ),
+    ],
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+export function recordDiscoveryUnderstanding(
+  project: Project,
+  clarification: string
+): Project {
+  const cleanedClarification = clarification.trim();
+
+  if (!cleanedClarification) {
+    return project;
+  }
+
+  const now = new Date().toISOString();
+
+  return {
+    ...project,
+    readiness: "understanding",
+    engineeringState: {
+      ...project.engineeringState,
+      currentUnderstanding: cleanedClarification,
+      greatestRemainingUncertainty:
+        "Who is most affected, under what conditions, and what consequence matters most still needs to be established.",
+      nextEngineeringStep:
+        "Identify who experiences the problem most clearly and when it occurs.",
+    },
+    timeline: [
+      ...project.timeline,
+      createTimelineEvent(
+        "discovery-understanding-added",
+        "Discovery understanding added",
+        "The Project Owner clarified the original observation during Discovery.",
+        now
+      ),
+    ],
+    updatedAt: now,
+  };
+}
+
+export function hasInitialDiscoveryUnderstanding(project: Project): boolean {
+  return project.timeline.some(
+    (event) => event.type === "discovery-understanding-added"
+  );
+}
+
+function createProjectName(observation: string): string {
+  const firstSentence = observation.split(/[.!?]/)[0]?.trim() || "";
+  const source = firstSentence || observation.trim();
+
+  if (source.length <= 60) {
+    return source;
+  }
+
+  return `${source.slice(0, 57).trim()}...`;
+}
+
+function createTimelineEvent(
+  type: ProjectTimelineEventType,
+  title: string,
+  description: string,
+  createdAt: string
+): ProjectTimelineEvent {
+  return {
+    id: createId(),
+    type,
+    title,
+    description,
+    createdAt,
+  };
+}
+
+function createId(): string {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    typeof globalThis.crypto.randomUUID === "function"
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}

@@ -1,122 +1,70 @@
-"use client";
-
 import Link from "next/link";
 
-export default function InterviewPage() {
+export default function DiscoveryPage() {
   return (
     <main
       style={{
         minHeight: "100vh",
         background: "#080d1a",
         color: "white",
-        fontFamily: "Arial",
+        fontFamily: "Arial, sans-serif",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "28px",
       }}
     >
-      <div
+      <section
         style={{
-          width: "850px",
-          textAlign: "center",
+          width: "min(760px, 100%)",
+          background: "#101827",
+          border: "1px solid #243147",
+          borderRadius: "18px",
+          padding: "40px",
         }}
       >
-        <h1
-          style={{
-            fontSize: "56px",
-            marginBottom: "20px",
-          }}
-        >
-          👋 Welcome to reAIdea
-        </h1>
-
-        <h2
+        <p
           style={{
             color: "#00d4ff",
-            fontWeight: 400,
-            marginBottom: "40px",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontSize: "12px",
           }}
         >
-          Your AI Innovation Consultant
-        </h2>
+          Discovery Bench
+        </p>
 
-        <div
-          style={{
-            background: "#11182b",
-            padding: "40px",
-            borderRadius: "20px",
-            border: "1px solid #24304d",
-            textAlign: "left",
-          }}
-        >
-          <h3>Hello Lyn.</h3>
+        <h1 style={{ fontSize: "42px", marginBottom: "14px" }}>
+          Understand before evaluating.
+        </h1>
 
-          <p>
-            I've created your innovation workspace and I'm ready to help you
-            develop this idea into a commercial product.
-          </p>
+        <p style={{ color: "#a8b3c7", lineHeight: 1.7, fontSize: "17px" }}>
+          Discovery works from the Project&apos;s original observation, clarifies what is
+          happening, identifies what remains uncertain, and chooses the next useful
+          engineering step.
+        </p>
 
-          <p>
-            Before we begin I'll work with you to understand:
-          </p>
-
-          <ul
+        <div style={{ marginTop: "30px", display: "flex", gap: "18px", flexWrap: "wrap" }}>
+          <Link
+            href="/discovery/session"
             style={{
-              lineHeight: "2",
+              background: "#00d4ff",
+              color: "#061018",
+              padding: "14px 24px",
+              borderRadius: "10px",
+              textDecoration: "none",
+              fontWeight: 800,
             }}
           >
-            <li>✔ The real problem you're solving</li>
-            <li>✔ Why existing solutions fall short</li>
-            <li>✔ Your competitive advantage</li>
-            <li>✔ Potential customers</li>
-            <li>✔ Manufacturing considerations</li>
-            <li>✔ Business opportunities</li>
-            <li>✔ Intellectual property</li>
-          </ul>
+            Open Discovery
+          </Link>
 
-          <p
-            style={{
-              marginTop: "35px",
-              color: "#00d4ff",
-            }}
-          >
-            Estimated interview time:
-            <strong> 15–20 minutes</strong>
-          </p>
-
-          <div
-            style={{
-              marginTop: "40px",
-              textAlign: "center",
-            }}
-          >
-            <Link
-              href="/interview/session"
-              style={{
-                background: "#00d4ff",
-                color: "#061018",
-                padding: "18px 40px",
-                borderRadius: "12px",
-                textDecoration: "none",
-                fontWeight: "bold",
-                marginRight: "20px",
-              }}
-            >
-              Begin Interview
-            </Link>
-
-            <Link
-              href="/dashboard"
-              style={{
-                color: "#00d4ff",
-                textDecoration: "none",
-              }}
-            >
-              Return to Dashboard
-            </Link>
-          </div>
+          <Link href="/" style={{ color: "#00d4ff", alignSelf: "center" }}>
+            Workshop Door
+          </Link>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
