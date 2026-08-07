@@ -32,13 +32,15 @@ export type EngineeringState = {
 
 export type ProjectTimelineEventType =
   | "project-created"
-  | "discovery-understanding-added";
+  | "discovery-understanding-added"
+  | "discovery-answer-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
   type: ProjectTimelineEventType;
   title: string;
   description: string;
+  subject?: string;
   createdAt: string;
 };
 
@@ -104,48 +106,6 @@ export function createProject(input: CreateProjectInput): Project {
     createdAt: now,
     updatedAt: now,
   };
-}
-
-export function recordDiscoveryUnderstanding(
-  project: Project,
-  clarification: string
-): Project {
-  const cleanedClarification = clarification.trim();
-
-  if (!cleanedClarification) {
-    return project;
-  }
-
-  const now = new Date().toISOString();
-
-  return {
-    ...project,
-    readiness: "understanding",
-    engineeringState: {
-      ...project.engineeringState,
-      currentUnderstanding: cleanedClarification,
-      greatestRemainingUncertainty:
-        "Who is most affected, under what conditions, and what consequence matters most still needs to be established.",
-      nextEngineeringStep:
-        "Identify who experiences the problem most clearly and when it occurs.",
-    },
-    timeline: [
-      ...project.timeline,
-      createTimelineEvent(
-        "discovery-understanding-added",
-        "Discovery understanding added",
-        "The Project Owner clarified the original observation during Discovery.",
-        now
-      ),
-    ],
-    updatedAt: now,
-  };
-}
-
-export function hasInitialDiscoveryUnderstanding(project: Project): boolean {
-  return project.timeline.some(
-    (event) => event.type === "discovery-understanding-added"
-  );
 }
 
 function createProjectName(observation: string): string {

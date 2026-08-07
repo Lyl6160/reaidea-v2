@@ -9,9 +9,9 @@ import {
 } from "react";
 
 import {
-  hasInitialDiscoveryUnderstanding,
-  recordDiscoveryUnderstanding,
-} from "../../lib/core/project";
+  recordDiscoveryAnswer,
+  selectNextDiscoveryQuestion,
+} from "../../lib/workshop/discoveryReasoning";
 import {
   getProjectStorageSnapshot,
   getServerProjectStorageSnapshot,
@@ -54,12 +54,12 @@ export default function DiscoverySession() {
     return <MissingProject />;
   }
 
-  const hasClarification = hasInitialDiscoveryUnderstanding(project);
+  const nextQuestion = selectNextDiscoveryQuestion(project);
   const greeting = inventor?.preferredName
     ? `Good to have you at the bench, ${inventor.preferredName}.`
     : "Good to have you at the bench.";
 
-  function saveUnderstanding() {
+  function saveAnswer() {
     if (!project) {
       return;
     }
@@ -67,11 +67,15 @@ export default function DiscoverySession() {
     const cleanedAnswer = answer.trim();
 
     if (!cleanedAnswer) {
-      setError("Add your observation before we update the Project.");
+      setError("Add your response before we update the Project.");
       return;
     }
 
-    const updatedProject = recordDiscoveryUnderstanding(project, cleanedAnswer);
+    const updatedProject = recordDiscoveryAnswer(
+      project,
+      nextQuestion,
+      cleanedAnswer
+    );
     saveProject(updatedProject);
     setAnswer("");
     setError("");
@@ -95,62 +99,64 @@ export default function DiscoverySession() {
           <blockquote>{project.originalObservation}</blockquote>
         </section>
 
-        {!hasClarification ? (
-          <section className="mission-card">
-            <p className="greeting">{greeting}</p>
-            <p className="mission-label">Discovery Mission</p>
-            <h2>Help me understand what you observed.</h2>
-            <p className="why">
-              What is happening now, and what made it stand out to you? We are not
-              judging the idea or choosing a solution yet. This step is only about
-              making the observation clearer.
-            </p>
+        <section className="mission-card">
+          <p className="greeting">{greeting}</p>
+          <p className="mission-label">
+            Next Best Question · {nextQuestion.focusLabel}
+          </p>
+          <h2>{nextQuestion.prompt}</h2>
+          <p className="why">{nextQuestion.purpose}</p>
 
-            <label htmlFor="discovery-answer">Your clarification</label>
-            <textarea
-              id="discovery-answer"
-              value={answer}
-              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
-                setAnswer(event.target.value);
-                if (error) setError("");
-              }}
-              placeholder="Describe the situation in your own words..."
-            />
+          <div className="reasoning-note">
+            <p className="reasoning-label">Why this question</p>
+            <p>{nextQuestion.reason}</p>
+          </div>
 
-            {error && <p className="error">{error}</p>}
+          <label htmlFor="discovery-answer">Your response</label>
+          <textarea
+            id="discovery-answer"
+            value={answer}
+            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+              setAnswer(event.target.value);
+              if (error) setError("");
+            }}
+            placeholder="Answer in your own words..."
+          />
 
-            <button type="button" onClick={saveUnderstanding}>
-              Update Project
-            </button>
-          </section>
-        ) : (
-          <section className="reflection-card">
-            <p className="mission-label">Project Updated</p>
-            <h2>Discovery has strengthened the Engineering State.</h2>
-            <p className="reflection-intro">
-              The first clarification is now part of the Project. The original
-              observation remains unchanged.
-            </p>
+          {error && <p className="error">{error}</p>}
 
-            <StateItem
-              label="Current Understanding"
-              value={project.engineeringState.currentUnderstanding}
-            />
-            <StateItem
-              label="Greatest Remaining Uncertainty"
-              value={project.engineeringState.greatestRemainingUncertainty}
-            />
-            <StateItem
-              label="Next Engineering Step"
-              value={project.engineeringState.nextEngineeringStep}
-            />
+          <button type="button" onClick={saveAnswer}>
+            Update Project &amp; Continue
+          </button>
+        </section>
 
-            <p className="foundation-note">
-              Sprint 006 foundation: the next Discovery question will be selected by
-              the reasoning layer in the next construction step.
-            </p>
-          </section>
-        )}
+        <section className="state-card">
+          <p className="mission-label">Current Engineering State</p>
+          <p className="reflection-intro">
+            Discovery asks one question at a time. Each response strengthens the
+            Project, then the reasoning layer selects the next useful question from
+            the updated Engineering State.
+          </p>
+
+          <StateItem
+            label="Current Understanding"
+            value={project.engineeringState.currentUnderstanding}
+          />
+          <StateItem
+            label="Greatest Remaining Uncertainty"
+            value={project.engineeringState.greatestRemainingUncertainty}
+          />
+          <StateItem
+            label="Next Engineering Step"
+            value={project.engineeringState.nextEngineeringStep}
+          />
+
+          <p className="foundation-note">
+            Sprint 006 Build 2: deterministic Discovery reasoning ranks approved
+            engineering question types against the live Project state. There is no
+            fixed question number or questionnaire order.
+          </p>
+        </section>
       </section>
 
       <style jsx>{`
@@ -177,7 +183,8 @@ export default function DiscoverySession() {
 
         .eyebrow,
         .section-label,
-        .mission-label {
+        .mission-label,
+        .reasoning-label {
           margin: 0 0 8px;
           color: #00d4ff;
           font-size: 12px;
@@ -202,7 +209,7 @@ export default function DiscoverySession() {
 
         .project-origin,
         .mission-card,
-        .reflection-card {
+        .state-card {
           background: #101827;
           border: 1px solid #243147;
           border-radius: 16px;
@@ -221,8 +228,12 @@ export default function DiscoverySession() {
         }
 
         .mission-card,
-        .reflection-card {
+        .state-card {
           padding: clamp(24px, 5vw, 38px);
+        }
+
+        .state-card {
+          margin-top: 18px;
         }
 
         .greeting {
@@ -238,9 +249,27 @@ export default function DiscoverySession() {
 
         .why,
         .reflection-intro,
-        .foundation-note {
+        .foundation-note,
+        .reasoning-note p {
           color: #a8b3c7;
           line-height: 1.65;
+        }
+
+        .reasoning-note {
+          margin-top: 20px;
+          padding: 16px 18px;
+          background: #0b1320;
+          border: 1px solid #1d2b3f;
+          border-radius: 12px;
+        }
+
+        .reasoning-note p {
+          margin: 0;
+        }
+
+        .reasoning-note .reasoning-label {
+          margin-bottom: 6px;
+          color: #7f8da2;
         }
 
         label {
@@ -323,7 +352,16 @@ function StateItem({ label, value }: { label: string; value: string }) {
       >
         {label}
       </p>
-      <p style={{ margin: 0, color: "#e3e9f2", lineHeight: 1.6 }}>{value}</p>
+      <p
+        style={{
+          margin: 0,
+          color: "#e3e9f2",
+          lineHeight: 1.6,
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {value}
+      </p>
     </section>
   );
 }
