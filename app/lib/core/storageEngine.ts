@@ -1,4 +1,14 @@
-import type { Project } from "./project";
+import type { EngineeringState, Project } from "./project";
+
+type StoredEngineeringState = Omit<
+  EngineeringState,
+  "currentAssumptions" | "currentConstraints"
+> &
+  Partial<Pick<EngineeringState, "currentAssumptions" | "currentConstraints">>;
+
+type StoredProject = Omit<Project, "engineeringState"> & {
+  engineeringState: StoredEngineeringState;
+};
 
 const STORAGE_KEY = "reaidea-project";
 const STORAGE_EVENT = "reaidea-project-changed";
@@ -85,21 +95,25 @@ export function parseProjectSnapshot(snapshot: string | null): Project | null {
   try {
     const parsedProject = JSON.parse(snapshot) as unknown;
 
-    return isValidProject(parsedProject) ? parsedProject : null;
+    if (!isValidStoredProject(parsedProject)) {
+      return null;
+    }
+
+    return normalizeProject(parsedProject);
   } catch (error) {
     console.error("Could not read the reAIdea Project.", error);
     return null;
   }
 }
 
-function isValidProject(value: unknown): value is Project {
+function isValidStoredProject(value: unknown): value is StoredProject {
   if (typeof value !== "object" || value === null) {
     return false;
   }
 
-  const project = value as Partial<Project>;
+  const project = value as Partial<StoredProject>;
   const engineeringState = project.engineeringState as
-    | Partial<Project["engineeringState"]>
+    | Partial<StoredEngineeringState>
     | undefined;
 
   return (
@@ -123,4 +137,24 @@ function isValidProject(value: unknown): value is Project {
     Array.isArray(project.files) &&
     Array.isArray(project.timeline)
   );
+}
+
+function normalizeProject(project: StoredProject): Project {
+  return {
+    ...project,
+    engineeringState: {
+      ...project.engineeringState,
+      currentEvidence: stringList(project.engineeringState.currentEvidence),
+      currentAssumptions: stringList(project.engineeringState.currentAssumptions),
+      currentConstraints: stringList(project.engineeringState.currentConstraints),
+    },
+  };
+}
+
+function stringList(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is string => typeof item === "string");
 }

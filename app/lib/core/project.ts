@@ -26,6 +26,8 @@ export type ProjectDecision = {
 export type EngineeringState = {
   currentUnderstanding: string;
   currentEvidence: string[];
+  currentAssumptions: string[];
+  currentConstraints: string[];
   greatestRemainingUncertainty: string;
   nextEngineeringStep: string;
 };
@@ -41,6 +43,7 @@ export type ProjectTimelineEvent = {
   title: string;
   description: string;
   subject?: string;
+  response?: string;
   createdAt: string;
 };
 
@@ -87,6 +90,8 @@ export function createProject(input: CreateProjectInput): Project {
     engineeringState: {
       currentUnderstanding: originalObservation,
       currentEvidence: [],
+      currentAssumptions: [],
+      currentConstraints: [],
       greatestRemainingUncertainty:
         "The observation has not yet been explored in enough detail to identify the underlying engineering problem.",
       nextEngineeringStep:

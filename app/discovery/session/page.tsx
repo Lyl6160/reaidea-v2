@@ -9,8 +9,8 @@ import {
 } from "react";
 
 import {
+  assessDiscovery,
   recordDiscoveryAnswer,
-  selectNextDiscoveryQuestion,
 } from "../../lib/workshop/discoveryReasoning";
 import {
   getProjectStorageSnapshot,
@@ -54,13 +54,14 @@ export default function DiscoverySession() {
     return <MissingProject />;
   }
 
-  const nextQuestion = selectNextDiscoveryQuestion(project);
+  const assessment = assessDiscovery(project);
+  const nextQuestion = assessment.nextQuestion;
   const greeting = inventor?.preferredName
     ? `Good to have you at the bench, ${inventor.preferredName}.`
     : "Good to have you at the bench.";
 
   function saveAnswer() {
-    if (!project) {
+    if (!project || !nextQuestion) {
       return;
     }
 
@@ -99,36 +100,59 @@ export default function DiscoverySession() {
           <blockquote>{project.originalObservation}</blockquote>
         </section>
 
-        <section className="mission-card">
-          <p className="greeting">{greeting}</p>
-          <p className="mission-label">
-            Next Best Question · {nextQuestion.focusLabel}
-          </p>
-          <h2>{nextQuestion.prompt}</h2>
-          <p className="why">{nextQuestion.purpose}</p>
+        {nextQuestion ? (
+          <section className="mission-card">
+            <p className="greeting">{greeting}</p>
+            <p className="mission-label">
+              Next Best Question · {nextQuestion.focusLabel}
+            </p>
+            <h2>{nextQuestion.prompt}</h2>
+            <p className="why">{nextQuestion.purpose}</p>
 
-          <div className="reasoning-note">
-            <p className="reasoning-label">Why this question</p>
-            <p>{nextQuestion.reason}</p>
-          </div>
+            <div className="reasoning-note">
+              <p className="reasoning-label">Why this question</p>
+              <p>{nextQuestion.reason}</p>
+            </div>
 
-          <label htmlFor="discovery-answer">Your response</label>
-          <textarea
-            id="discovery-answer"
-            value={answer}
-            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
-              setAnswer(event.target.value);
-              if (error) setError("");
-            }}
-            placeholder="Answer in your own words..."
-          />
+            <label htmlFor="discovery-answer">Your response</label>
+            <textarea
+              id="discovery-answer"
+              value={answer}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setAnswer(event.target.value);
+                if (error) setError("");
+              }}
+              placeholder="Answer in your own words..."
+            />
 
-          {error && <p className="error">{error}</p>}
+            {error && <p className="error">{error}</p>}
 
-          <button type="button" onClick={saveAnswer}>
-            Update Project &amp; Continue
-          </button>
-        </section>
+            <button type="button" onClick={saveAnswer}>
+              Update Project &amp; Continue
+            </button>
+          </section>
+        ) : (
+          <section className="mission-card checkpoint-card">
+            <p className="greeting">{greeting}</p>
+            <p className="mission-label">Discovery Checkpoint Reached</p>
+            <h2>Sufficient understanding to continue responsibly.</h2>
+            <p className="why">{assessment.summary}</p>
+
+            <div className="reasoning-note">
+              <p className="reasoning-label">Why questioning stopped</p>
+              <p>
+                Every core Discovery area has now been addressed. reAIdea stops
+                broad questioning here rather than manufacturing confidence from
+                conversation length. Remaining gaps stay explicit in the Engineering
+                State and must be reduced by evidence and validation.
+              </p>
+            </div>
+
+            <Link href="/dashboard" className="checkpoint-link">
+              Return to Project Workshop
+            </Link>
+          </section>
+        )}
 
         <section className="state-card">
           <p className="mission-label">Current Engineering State</p>
@@ -139,8 +163,31 @@ export default function DiscoverySession() {
           </p>
 
           <StateItem
+            label="Discovery Assessment"
+            value={assessment.summary}
+          />
+          <StateItem
             label="Current Understanding"
             value={project.engineeringState.currentUnderstanding}
+          />
+          <ListStateItem
+            label="Current Evidence Position"
+            values={project.engineeringState.currentEvidence}
+            emptyValue={
+              assessment.evidenceStatus === "not-addressed"
+                ? "Evidence has not yet been addressed in Discovery."
+                : "No supporting Project evidence is recorded yet."
+            }
+          />
+          <ListStateItem
+            label="Potential Assumptions"
+            values={project.engineeringState.currentAssumptions}
+            emptyValue="No potential assumptions have been flagged from the current Discovery responses."
+          />
+          <ListStateItem
+            label="Constraints"
+            values={project.engineeringState.currentConstraints}
+            emptyValue="Constraints have not yet been recorded."
           />
           <StateItem
             label="Greatest Remaining Uncertainty"
@@ -152,9 +199,10 @@ export default function DiscoverySession() {
           />
 
           <p className="foundation-note">
-            Sprint 006 Build 2: deterministic Discovery reasoning ranks approved
-            engineering question types against the live Project state. There is no
-            fixed question number or questionnaire order.
+            Sprint 006 Build 3: Engineering State now separates understanding,
+            evidence position, potential assumptions and constraints. Discovery
+            stops broad questioning at a defined sufficient-understanding checkpoint;
+            it does not create a numeric confidence score.
           </p>
         </section>
       </section>
@@ -312,6 +360,17 @@ export default function DiscoverySession() {
           cursor: pointer;
         }
 
+        .checkpoint-link {
+          display: inline-block;
+          margin-top: 22px;
+          border-radius: 10px;
+          background: #00d4ff;
+          color: #041019;
+          padding: 14px 24px;
+          font-weight: 800;
+          text-decoration: none;
+        }
+
         .error {
           color: #ffb4b4;
           margin-bottom: 0;
@@ -362,6 +421,65 @@ function StateItem({ label, value }: { label: string; value: string }) {
       >
         {value}
       </p>
+    </section>
+  );
+}
+
+function ListStateItem({
+  label,
+  values,
+  emptyValue,
+}: {
+  label: string;
+  values: string[];
+  emptyValue: string;
+}) {
+  return (
+    <section
+      style={{
+        marginTop: "16px",
+        background: "#0b1320",
+        border: "1px solid #1d2b3f",
+        borderRadius: "12px",
+        padding: "18px 20px",
+      }}
+    >
+      <p
+        style={{
+          margin: "0 0 8px",
+          color: "#7e8da4",
+          fontSize: "12px",
+          fontWeight: 800,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </p>
+      {values.length > 0 ? (
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: "20px",
+            color: "#e3e9f2",
+            lineHeight: 1.65,
+          }}
+        >
+          {values.map((value) => (
+            <li key={value}>{value}</li>
+          ))}
+        </ul>
+      ) : (
+        <p
+          style={{
+            margin: 0,
+            color: "#91a0b5",
+            lineHeight: 1.6,
+          }}
+        >
+          {emptyValue}
+        </p>
+      )}
     </section>
   );
 }
