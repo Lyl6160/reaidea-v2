@@ -7,10 +7,18 @@ export type ProjectReadiness =
 
 export type ProjectStatus = "active";
 
+export type ValidationOutcome =
+  | "confirmed"
+  | "refined"
+  | "challenged"
+  | "inconclusive";
+
 export type ProjectEvidence = {
   id: string;
   summary: string;
   source: string;
+  validationItemId?: string;
+  validationOutcome?: ValidationOutcome;
   createdAt: string;
 };
 
@@ -29,6 +37,10 @@ export type ValidationPlanItemSource =
   | "reported-evidence"
   | "engineering-state";
 
+export type ValidationPlanItemStatus = "planned" | "in-progress" | "completed";
+
+export type ValidationPlanStatus = "planned" | "in-progress" | "completed";
+
 export type ValidationPlanItem = {
   id: string;
   source: ValidationPlanItemSource;
@@ -37,11 +49,19 @@ export type ValidationPlanItem = {
   method: string;
   evidenceNeeded: string;
   completionRule: string;
-  status: "planned";
+  status: ValidationPlanItemStatus;
+  startedAt?: string;
+  completedAt?: string;
+  evidenceId?: string;
+  evidenceSummary?: string;
+  evidenceSource?: string;
+  resultSummary?: string;
+  outcome?: ValidationOutcome;
+  assessmentRationale?: string;
 };
 
 export type ValidationPlan = {
-  status: "planned";
+  status: ValidationPlanStatus;
   purpose: string;
   items: ValidationPlanItem[];
   createdAt: string;
@@ -61,7 +81,10 @@ export type ProjectTimelineEventType =
   | "project-created"
   | "discovery-understanding-added"
   | "discovery-answer-recorded"
-  | "validation-plan-created";
+  | "validation-plan-created"
+  | "validation-item-started"
+  | "validation-result-recorded"
+  | "validation-plan-completed";
 
 export type ProjectTimelineEvent = {
   id: string;

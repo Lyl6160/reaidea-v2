@@ -1,9 +1,12 @@
 import type {
   EngineeringState,
   Project,
+  ValidationOutcome,
   ValidationPlan,
   ValidationPlanItem,
   ValidationPlanItemSource,
+  ValidationPlanItemStatus,
+  ValidationPlanStatus,
 } from "./project";
 
 type StoredEngineeringState = Omit<
@@ -167,7 +170,7 @@ function normalizeValidationPlan(value: unknown): ValidationPlan | null {
   const plan = value as Partial<ValidationPlan>;
 
   if (
-    plan.status !== "planned" ||
+    !isValidationPlanStatus(plan.status) ||
     typeof plan.purpose !== "string" ||
     typeof plan.createdAt !== "string" ||
     typeof plan.updatedAt !== "string" ||
@@ -185,7 +188,7 @@ function normalizeValidationPlan(value: unknown): ValidationPlan | null {
   }
 
   return {
-    status: "planned",
+    status: deriveValidationPlanStatus(items),
     purpose: plan.purpose,
     items,
     createdAt: plan.createdAt,
@@ -208,7 +211,28 @@ function normalizeValidationPlanItem(value: unknown): ValidationPlanItem | null 
     typeof item.method !== "string" ||
     typeof item.evidenceNeeded !== "string" ||
     typeof item.completionRule !== "string" ||
-    item.status !== "planned"
+    !isValidationPlanItemStatus(item.status)
+  ) {
+    return null;
+  }
+
+  if (
+    item.status === "in-progress" &&
+    typeof item.startedAt !== "string"
+  ) {
+    return null;
+  }
+
+  if (
+    item.status === "completed" &&
+    (typeof item.startedAt !== "string" ||
+      typeof item.completedAt !== "string" ||
+      typeof item.evidenceId !== "string" ||
+      typeof item.evidenceSummary !== "string" ||
+      typeof item.evidenceSource !== "string" ||
+      typeof item.resultSummary !== "string" ||
+      !isValidationOutcome(item.outcome) ||
+      (item.assessmentRationale !== undefined && typeof item.assessmentRationale !== "string"))
   ) {
     return null;
   }
@@ -221,8 +245,38 @@ function normalizeValidationPlanItem(value: unknown): ValidationPlanItem | null 
     method: item.method,
     evidenceNeeded: item.evidenceNeeded,
     completionRule: item.completionRule,
-    status: "planned",
+    status: item.status,
+    ...(typeof item.startedAt === "string" ? { startedAt: item.startedAt } : {}),
+    ...(typeof item.completedAt === "string" ? { completedAt: item.completedAt } : {}),
+    ...(typeof item.evidenceId === "string" ? { evidenceId: item.evidenceId } : {}),
+    ...(typeof item.evidenceSummary === "string"
+      ? { evidenceSummary: item.evidenceSummary }
+      : {}),
+    ...(typeof item.evidenceSource === "string"
+      ? { evidenceSource: item.evidenceSource }
+      : {}),
+    ...(typeof item.resultSummary === "string"
+      ? { resultSummary: item.resultSummary }
+      : {}),
+    ...(isValidationOutcome(item.outcome) ? { outcome: item.outcome } : {}),
+    ...(typeof item.assessmentRationale === "string"
+      ? { assessmentRationale: item.assessmentRationale }
+      : {}),
   };
+}
+
+function deriveValidationPlanStatus(
+  items: ValidationPlanItem[]
+): ValidationPlanStatus {
+  if (items.every((item) => item.status === "completed")) {
+    return "completed";
+  }
+
+  if (items.some((item) => item.status !== "planned")) {
+    return "in-progress";
+  }
+
+  return "planned";
 }
 
 function isValidationPlanItemSource(
@@ -233,6 +287,29 @@ function isValidationPlanItemSource(
     value === "evidence-gap" ||
     value === "reported-evidence" ||
     value === "engineering-state"
+  );
+}
+
+function isValidationPlanItemStatus(
+  value: unknown
+): value is ValidationPlanItemStatus {
+  return (
+    value === "planned" || value === "in-progress" || value === "completed"
+  );
+}
+
+function isValidationPlanStatus(value: unknown): value is ValidationPlanStatus {
+  return (
+    value === "planned" || value === "in-progress" || value === "completed"
+  );
+}
+
+function isValidationOutcome(value: unknown): value is ValidationOutcome {
+  return (
+    value === "confirmed" ||
+    value === "refined" ||
+    value === "challenged" ||
+    value === "inconclusive"
   );
 }
 

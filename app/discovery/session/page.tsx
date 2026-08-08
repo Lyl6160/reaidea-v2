@@ -14,7 +14,12 @@ import {
 } from "../../lib/workshop/discoveryReasoning";
 import { createValidationPlan } from "../../lib/workshop/validationPlanning";
 import {
+  completeValidationItem,
+  startValidationItem,
+} from "../../lib/workshop/validationExecution";
+import {
   getProjectStorageSnapshot,
+  loadProject,
   getServerProjectStorageSnapshot,
   parseProjectSnapshot,
   saveProject,
@@ -26,7 +31,7 @@ import {
   parseInventorSnapshot,
   subscribeToInventorStorage,
 } from "../../lib/core/inventorStorage";
-import type { Project } from "../../lib/core/project";
+import type { Project, ValidationOutcome } from "../../lib/core/project";
 
 export default function DiscoverySession() {
   const projectSnapshot = useSyncExternalStore(
@@ -235,10 +240,10 @@ export default function DiscoverySession() {
           />
 
           <p className="foundation-note">
-            Sprint 006 Build 4: Discovery now hands a mature Engineering State into
-            targeted validation planning. The Project keeps assumptions and evidence
-            gaps explicit and creates validation work that can confirm, refine or
-            challenge current understanding without inventing a confidence score.
+            Sprint 006 Build 5: Validation activities can now move from planned to in
+            progress to completed. Each completed activity records traceable evidence,
+            the observed result and whether the evidence supported, refined, challenged
+            or could not yet resolve the current understanding.
           </p>
         </section>
       </section>
@@ -455,28 +460,254 @@ function ValidationPlanView({
   project: Project;
 }) {
   const plan = project.validationPlan;
+  const [evidenceSummary, setEvidenceSummary] = useState("");
+  const [evidenceSource, setEvidenceSource] = useState("");
+  const [resultSummary, setResultSummary] = useState("");
+  const [validationError, setValidationError] = useState("");
+  const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
+  const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
+  const activeItemId = inProgressItemId ?? optimisticActiveItemId;
 
   if (!plan) {
     return null;
   }
 
+  const completedCount = plan.items.filter(
+    (item) => item.status === "completed"
+  ).length;
+
+  function startItem(itemId: string) {
+    const result = startValidationItem(project, itemId);
+
+    if (result.status === "blocked") {
+      setValidationError(result.reason);
+      return;
+    }
+
+    if (result.status === "missing") {
+      setValidationError("This validation activity could not be found.");
+      return;
+    }
+
+    saveProject(result.project);
+    setOptimisticActiveItemId(itemId);
+    setEvidenceSummary("");
+    setEvidenceSource("");
+    setResultSummary("");
+    setValidationError("");
+  }
+
+  function completeItem(itemId: string) {
+    const missingFields = [
+      !evidenceSummary.trim() ? "evidence gathered" : "",
+      !evidenceSource.trim() ? "evidence source / reference" : "",
+      !resultSummary.trim() ? "what the evidence showed" : "",
+    ].filter(Boolean);
+
+    if (missingFields.length > 0) {
+      setValidationError(
+        `Complete ${missingFields.join(", ")} before recording the validation result.`
+      );
+      return;
+    }
+
+    // Complete against the latest persisted Project rather than the render-time
+    // snapshot. This prevents a just-started validation activity from being
+    // treated as still planned if the UI render is one storage event behind.
+    const latestProject = loadProject() ?? project;
+    const result = completeValidationItem(latestProject, {
+      itemId,
+      evidenceSummary,
+      evidenceSource,
+      resultSummary,
+    });
+
+    if (result.status === "invalid") {
+      setValidationError(result.reason);
+      return;
+    }
+
+    if (result.status === "missing") {
+      setValidationError("This validation activity could not be found.");
+      return;
+    }
+
+    const nextItem = result.project.validationPlan?.items.find(
+      (item) => item.status === "planned"
+    );
+
+    saveProject(result.project);
+    setEvidenceSummary("");
+    setEvidenceSource("");
+    setResultSummary("");
+    setOptimisticActiveItemId(null);
+    setValidationError("");
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const nextTarget = nextItem
+          ? document.getElementById(`validation-${nextItem.id}`)
+          : document.getElementById("validation-plan");
+
+        nextTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
   return (
-    <section className="validation-plan">
-      <p className="validation-label">Validation Plan · Planned</p>
-      <h3>{plan.purpose}</h3>
+    <section className="validation-plan" id="validation-plan">
+      <div className="validation-heading">
+        <div>
+          <p className="validation-label">
+            Validation Plan · {formatValidationStatus(plan.status)}
+          </p>
+          <h3>{plan.purpose}</h3>
+        </div>
+        <p className="validation-progress">
+          {completedCount} / {plan.items.length} complete
+        </p>
+      </div>
       <p className="validation-plan-intro">
         Each activity must produce reviewable evidence and is allowed to confirm,
-        refine or contradict the current Engineering State.
+        refine or contradict the current Engineering State. REV records the result;
+        it does not manufacture certainty.
       </p>
+
+      {plan.status === "completed" && (
+        <div className="validation-complete-note">
+          <p className="validation-label">Initial Validation Cycle Complete</p>
+          <p>
+            Every planned activity has a recorded result. Review the Engineering State
+            below before choosing the next development or validation action.
+          </p>
+        </div>
+      )}
+
+      {validationError && <p className="error">{validationError}</p>}
+
       <div className="validation-items">
         {plan.items.map((item, index) => (
-          <article className="validation-item" key={item.id}>
-            <p className="validation-label">Validation {index + 1}</p>
-            <h4>{item.title}</h4>
+          <article
+            className="validation-item"
+            id={`validation-${item.id}`}
+            key={item.id}
+          >
+            <div className="validation-item-heading">
+              <div>
+                <p className="validation-label">Validation {index + 1}</p>
+                <h4>{item.title}</h4>
+              </div>
+              <span className={`status-pill status-${item.status}`}>
+                {formatValidationStatus(item.status)}
+              </span>
+            </div>
             <p><strong>Target:</strong> {item.target}</p>
             <p><strong>Method:</strong> {item.method}</p>
             <p><strong>Evidence needed:</strong> {item.evidenceNeeded}</p>
             <p><strong>Done when:</strong> {item.completionRule}</p>
+
+            {item.status === "planned" && activeItemId !== item.id && (
+              <button
+                type="button"
+                className="validation-action"
+                onClick={() => startItem(item.id)}
+              >
+                Start Validation
+              </button>
+            )}
+
+            {(item.status === "in-progress" || activeItemId === item.id) && (
+              <section className="validation-execution">
+                <p className="validation-label">Record Validation Evidence</p>
+
+                <div className="validation-field validation-evidence-field">
+                  <label htmlFor={`evidence-${item.id}`}>Evidence gathered</label>
+                  <p className="validation-field-hint">
+                    Record what you actually observed, measured, tested or independently reviewed.
+                  </p>
+                  <textarea
+                    id={`evidence-${item.id}`}
+                    className="validation-textarea evidence-textarea"
+                    value={evidenceSummary}
+                    onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                      setEvidenceSummary(event.target.value);
+                      if (validationError) setValidationError("");
+                    }}
+                    placeholder="Type the evidence you actually gathered here — example text is not saved."
+                  />
+                </div>
+
+                <div className="validation-field validation-source-field">
+                  <label htmlFor={`source-${item.id}`}>Evidence source / reference</label>
+                  <p className="validation-field-hint">
+                    Identify where the evidence came from so it can be reviewed later.
+                  </p>
+                  <input
+                    id={`source-${item.id}`}
+                    className="validation-input"
+                    value={evidenceSource}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      setEvidenceSource(event.target.value);
+                      if (validationError) setValidationError("");
+                    }}
+                    placeholder="Type the real source or reference here — example text is not saved."
+                  />
+                </div>
+
+                <div className="validation-field validation-finding-field">
+                  <label htmlFor={`result-${item.id}`}>What did the evidence show?</label>
+                  <p className="validation-field-hint">
+                    Type the finding here in your own words. REV will assess its effect on the Engineering State after you record it.
+                  </p>
+                  <textarea
+                    id={`result-${item.id}`}
+                    className="validation-textarea result-textarea"
+                    value={resultSummary}
+                    onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                      setResultSummary(event.target.value);
+                      if (validationError) setValidationError("");
+                    }}
+                    placeholder="Type what the evidence actually showed here — example text is not saved."
+                  />
+                </div>
+
+                <div className="validation-rev-assessment-note">
+                  <p className="validation-label">REV Assessment</p>
+                  <p>
+                    You provide the evidence and describe what happened. REV will assess how
+                    that evidence affects the current Engineering State when the result is
+                    recorded. You can then review or challenge REV&apos;s interpretation.
+                  </p>
+                </div>
+
+                {validationError && (
+                  <p className="validation-form-error" role="alert">
+                    {validationError}
+                  </p>
+                )}
+
+                <button
+                  type="button"
+                  className="validation-action"
+                  onClick={() => completeItem(item.id)}
+                >
+                  Record Validation Result
+                </button>
+              </section>
+            )}
+
+            {item.status === "completed" && (
+              <section className="validation-result">
+                <p className="validation-label">Recorded Result</p>
+                <p><strong>Outcome:</strong> {formatValidationOutcome(item.outcome)}</p>
+                <p><strong>Evidence:</strong> {item.evidenceSummary}</p>
+                <p><strong>Source:</strong> {item.evidenceSource}</p>
+                <p><strong>What it showed:</strong> {item.resultSummary}</p>
+                {item.assessmentRationale && (
+                  <p><strong>REV assessment:</strong> {item.assessmentRationale.replace(/^REV assessment:\s*/i, "")}</p>
+                )}
+              </section>
+            )}
           </article>
         ))}
       </div>
@@ -490,6 +721,14 @@ function ValidationPlanView({
           border-radius: 12px;
         }
 
+        .validation-heading,
+        .validation-item-heading {
+          display: flex;
+          justify-content: space-between;
+          gap: 16px;
+          align-items: flex-start;
+        }
+
         .validation-label {
           margin: 0 0 8px;
           color: #00d4ff;
@@ -499,14 +738,35 @@ function ValidationPlanView({
           text-transform: uppercase;
         }
 
+        .validation-progress {
+          margin: 0;
+          color: #8fa0b6;
+          font-size: 13px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
         h3 {
           margin: 4px 0 10px;
           font-size: 21px;
         }
 
-        .validation-plan-intro {
+        .validation-plan-intro,
+        .validation-complete-note p {
           color: #a8b3c7;
           line-height: 1.65;
+        }
+
+        .validation-complete-note {
+          margin-top: 18px;
+          padding: 16px;
+          background: #0c1b1a;
+          border: 1px solid #27514d;
+          border-radius: 10px;
+        }
+
+        .validation-complete-note p:last-child {
+          margin-bottom: 0;
         }
 
         .validation-items {
@@ -527,18 +787,265 @@ function ValidationPlanView({
           font-size: 17px;
         }
 
-        .validation-item p {
+        .validation-item p,
+        .validation-result p {
           margin: 7px 0 0;
           color: #a8b3c7;
           line-height: 1.55;
         }
 
-        .validation-item strong {
+        .validation-item strong,
+        .validation-result strong {
           color: #dfe8f4;
+        }
+
+        .status-pill {
+          display: inline-block;
+          border-radius: 999px;
+          padding: 5px 9px;
+          font-size: 11px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          white-space: nowrap;
+        }
+
+        .status-planned {
+          color: #a8b3c7;
+          background: #172131;
+          border: 1px solid #2a3b53;
+        }
+
+        .status-in-progress {
+          color: #ffe08a;
+          background: #2a2413;
+          border: 1px solid #55481d;
+        }
+
+        .status-completed {
+          color: #8ee8d6;
+          background: #102521;
+          border: 1px solid #28574e;
+        }
+
+        .validation-rev-assessment-note {
+          margin-top: 16px;
+          padding: 14px;
+          border: 1px solid #28574e;
+          border-radius: 9px;
+          background: #0c1b1a;
+        }
+
+        .validation-rev-assessment-note p:last-child {
+          margin-bottom: 0;
+          color: #a8b3c7;
+          line-height: 1.55;
+        }
+
+        .validation-form-error {
+          margin: 14px 0 0 !important;
+          padding: 10px 12px;
+          border: 1px solid #7a3d48;
+          border-radius: 8px;
+          background: #28131a;
+          color: #ffb4b4 !important;
+          font-size: 13px;
+          line-height: 1.5 !important;
+        }
+
+        .validation-action {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 42px;
+          margin-top: 16px;
+          padding: 0 16px;
+          border: 1px solid #00d4ff;
+          border-radius: 8px;
+          background: #00d4ff;
+          color: #00131a;
+          font: inherit;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.08);
+          transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+        }
+
+        .validation-action:hover {
+          background: #4de1ff;
+          box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12);
+          transform: translateY(-1px);
+        }
+
+        .validation-action:focus-visible {
+          outline: 3px solid rgba(0, 212, 255, 0.35);
+          outline-offset: 2px;
+        }
+
+        .validation-execution,
+        .validation-result {
+          margin-top: 18px;
+          padding-top: 16px;
+          border-top: 1px solid #22334a;
+        }
+
+        .validation-execution label {
+          margin-top: 16px;
+        }
+
+        .validation-textarea {
+          min-height: 120px;
+          font-size: 15px;
+        }
+
+        .result-textarea {
+          display: block;
+          min-height: 140px;
+          border-color: #3a5877;
+        }
+
+        .validation-field {
+          display: block;
+          width: 100%;
+        }
+
+        .validation-evidence-field,
+        .validation-source-field,
+        .validation-finding-field {
+          margin-top: 18px;
+          padding: 14px;
+          border: 1px solid #27435a;
+          border-radius: 10px;
+          background: #091522;
+        }
+
+        .validation-evidence-field label,
+        .validation-source-field label,
+        .validation-finding-field label {
+          display: block;
+          margin-top: 0;
+        }
+
+        .evidence-textarea {
+          display: block;
+          width: 100%;
+          min-height: 120px;
+        }
+
+        .validation-field-hint {
+          margin: 6px 0 10px !important;
+          color: #7f8da2 !important;
+          font-size: 13px;
+          line-height: 1.5 !important;
+        }
+
+        .validation-outcome-fieldset {
+          margin: 18px 0 0;
+          padding: 14px;
+          border: 1px solid #27435a;
+          border-radius: 10px;
+          background: #091522;
+        }
+
+        .validation-outcome-fieldset legend {
+          padding: 0 6px;
+          color: #dbe3ee;
+          font-weight: 800;
+        }
+
+        .validation-outcome-options {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .validation-outcome-option {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          margin: 0;
+          padding: 11px 12px;
+          border: 1px solid #2b3c55;
+          border-radius: 8px;
+          background: #08101d;
+          color: #dbe3ee;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .validation-outcome-option:hover {
+          border-color: #00d4ff;
+        }
+
+        .validation-outcome-option.selected {
+          border-color: #00d4ff;
+          background: #0b2530;
+          box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.08);
+        }
+
+        .validation-outcome-option input {
+          accent-color: #00d4ff;
+        }
+
+        @media (max-width: 640px) {
+          .validation-outcome-options {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .validation-input {
+          box-sizing: border-box;
+          width: 100%;
+          background: #08101d;
+          color: white;
+          border: 1px solid #2b3c55;
+          border-radius: 10px;
+          padding: 13px 14px;
+          font: inherit;
+          outline: none;
+        }
+
+        .validation-input:focus {
+          border-color: #00d4ff;
+          box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08);
+        }
+
+        .validation-result {
+          background: #0b151f;
+          border: 1px solid #24405a;
+          border-radius: 10px;
+          padding: 14px;
         }
       `}</style>
     </section>
   );
+}
+
+function formatValidationStatus(
+  status: "planned" | "in-progress" | "completed"
+): string {
+  if (status === "in-progress") {
+    return "In Progress";
+  }
+
+  return status === "completed" ? "Completed" : "Planned";
+}
+
+function formatValidationOutcome(outcome?: ValidationOutcome): string {
+  switch (outcome) {
+    case "confirmed":
+      return "Supported by evidence";
+    case "refined":
+      return "Understanding refined";
+    case "challenged":
+      return "Understanding challenged";
+    case "inconclusive":
+      return "Inconclusive";
+    default:
+      return "Not recorded";
+  }
 }
 
 function StateItem({ label, value }: { label: string; value: string }) {
