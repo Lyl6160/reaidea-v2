@@ -132,10 +132,10 @@ export default function DiscoverySession() {
             <h2>{nextQuestion.prompt}</h2>
             <p className="why">{nextQuestion.purpose}</p>
 
-            <div className="reasoning-note">
-              <p className="reasoning-label">Why this question</p>
+            <details className="reasoning-disclosure">
+              <summary>Why this question</summary>
               <p>{nextQuestion.reason}</p>
-            </div>
+            </details>
 
             <label htmlFor="discovery-answer">Your response</label>
             <textarea
@@ -161,15 +161,15 @@ export default function DiscoverySession() {
             <h2>Sufficient understanding to continue responsibly.</h2>
             <p className="why">{assessment.summary}</p>
 
-            <div className="reasoning-note">
-              <p className="reasoning-label">Why questioning stopped</p>
+            <details className="reasoning-disclosure">
+              <summary>Why questioning stopped</summary>
               <p>
                 Every core Discovery area has now been addressed. reAIdea stops
                 broad questioning here rather than manufacturing confidence from
                 conversation length. Remaining gaps stay explicit in the Engineering
                 State and must be reduced by evidence and validation.
               </p>
-            </div>
+            </details>
 
             {project.validationPlan ? (
               <ValidationPlanView project={project} />
@@ -195,57 +195,63 @@ export default function DiscoverySession() {
           </section>
         )}
 
-        <section className="state-card">
-          <p className="mission-label">Current Engineering State</p>
-          <p className="reflection-intro">
-            Discovery asks one question at a time. Each response strengthens the
-            Project, then the reasoning layer selects the next useful question from
-            the updated Engineering State.
-          </p>
+        <details className="state-card project-workshop">
+          <summary className="project-workshop-summary">
+            <span>
+              <span className="mission-label workshop-label">Project Workshop</span>
+              <strong>View the current Engineering State</strong>
+            </span>
+            <span className="workshop-summary-hint">Open</span>
+          </summary>
 
-          <StateItem
-            label="Discovery Assessment"
-            value={assessment.summary}
-          />
-          <StateItem
-            label="Current Understanding"
-            value={project.engineeringState.currentUnderstanding}
-          />
-          <ListStateItem
-            label="Current Evidence Position"
-            values={project.engineeringState.currentEvidence}
-            emptyValue={
-              assessment.evidenceStatus === "not-addressed"
-                ? "Evidence has not yet been addressed in Discovery."
-                : "No supporting Project evidence is recorded yet."
-            }
-          />
-          <ListStateItem
-            label="Potential Assumptions"
-            values={project.engineeringState.currentAssumptions}
-            emptyValue="No potential assumptions have been flagged from the current Discovery responses."
-          />
-          <ListStateItem
-            label="Constraints"
-            values={project.engineeringState.currentConstraints}
-            emptyValue="Constraints have not yet been recorded."
-          />
-          <StateItem
-            label="Greatest Remaining Uncertainty"
-            value={project.engineeringState.greatestRemainingUncertainty}
-          />
-          <StateItem
-            label="Next Engineering Step"
-            value={project.engineeringState.nextEngineeringStep}
-          />
+          <div className="project-workshop-body">
+            <p className="reflection-intro">
+              The Project Workshop keeps the engineering detail available without
+              competing with the task at the bench.
+            </p>
 
-          <p className="foundation-note">
-            Sprint 006 Build 5: Validation activities can now move from planned to in
-            progress to completed. Each completed activity records traceable evidence,
-            the observed result and whether the evidence supported, refined, challenged
-            or could not yet resolve the current understanding.
-          </p>
-        </section>
+            <StateItem
+              label="Discovery Assessment"
+              value={assessment.summary}
+            />
+            <StateItem
+              label="Current Understanding"
+              value={project.engineeringState.currentUnderstanding}
+            />
+            <ListStateItem
+              label="Current Evidence Position"
+              values={project.engineeringState.currentEvidence}
+              emptyValue={
+                assessment.evidenceStatus === "not-addressed"
+                  ? "Evidence has not yet been addressed in Discovery."
+                  : "No supporting Project evidence is recorded yet."
+              }
+            />
+            <ListStateItem
+              label="Potential Assumptions"
+              values={project.engineeringState.currentAssumptions}
+              emptyValue="No potential assumptions have been flagged from the current Discovery responses."
+            />
+            <ListStateItem
+              label="Constraints"
+              values={project.engineeringState.currentConstraints}
+              emptyValue="Constraints have not yet been recorded."
+            />
+            <StateItem
+              label="Greatest Remaining Uncertainty"
+              value={project.engineeringState.greatestRemainingUncertainty}
+            />
+            <StateItem
+              label="Next Engineering Step"
+              value={project.engineeringState.nextEngineeringStep}
+            />
+
+            <p className="foundation-note">
+              Engineering detail remains available for review and traceability while
+              REV keeps the inventor focused on the next responsible task.
+            </p>
+          </div>
+        </details>
       </section>
 
       <style jsx>{`
@@ -359,6 +365,96 @@ export default function DiscoverySession() {
         .reasoning-note .reasoning-label {
           margin-bottom: 6px;
           color: #7f8da2;
+        }
+
+        .reasoning-disclosure {
+          margin-top: 18px;
+          background: #0b1320;
+          border: 1px solid #1d2b3f;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .reasoning-disclosure summary {
+          cursor: pointer;
+          list-style: none;
+          padding: 13px 16px;
+          color: #91a0b5;
+          font-size: 13px;
+          font-weight: 800;
+          letter-spacing: 0.04em;
+        }
+
+        .reasoning-disclosure summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .reasoning-disclosure summary::after {
+          content: "▸";
+          float: right;
+          color: #00d4ff;
+          transition: transform 140ms ease;
+        }
+
+        .reasoning-disclosure[open] summary::after {
+          transform: rotate(90deg);
+        }
+
+        .reasoning-disclosure p {
+          margin: 0;
+          padding: 0 16px 16px;
+          color: #a8b3c7;
+          line-height: 1.6;
+        }
+
+        .project-workshop {
+          padding: 0;
+          overflow: hidden;
+        }
+
+        .project-workshop-summary {
+          cursor: pointer;
+          list-style: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          padding: 22px 24px;
+        }
+
+        .project-workshop-summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .project-workshop-summary strong {
+          display: block;
+          color: #e3e9f2;
+          font-size: 16px;
+        }
+
+        .workshop-label {
+          display: block;
+          margin-bottom: 5px;
+        }
+
+        .workshop-summary-hint {
+          color: #00d4ff;
+          font-size: 13px;
+          font-weight: 800;
+        }
+
+        .project-workshop[open] .workshop-summary-hint {
+          font-size: 0;
+        }
+
+        .project-workshop[open] .workshop-summary-hint::after {
+          content: "Close";
+          font-size: 13px;
+        }
+
+        .project-workshop-body {
+          padding: 0 24px 28px;
+          border-top: 1px solid #243147;
         }
 
         .validation-planning {
