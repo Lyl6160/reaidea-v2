@@ -14,6 +14,7 @@ import {
 } from "../../lib/workshop/discoveryReasoning";
 import { createValidationPlan } from "../../lib/workshop/validationPlanning";
 import { assessWorkshop } from "../../lib/workshop/workshopBrain";
+import WorkshopShell from "./WorkshopShell";
 import {
   completeValidationItem,
   startValidationItem,
@@ -197,32 +198,7 @@ export default function DiscoverySession() {
           </section>
         )}
 
-        <section className="workshop-signals" aria-label="Workshop bench signals">
-          <div className="workshop-signals-header">
-            <div>
-              <p className="mission-label">Workshop Brain · Live Proof</p>
-              <h2>The room already knows what is waking up.</h2>
-            </div>
-            <p>{workshop.summary}</p>
-          </div>
-
-          <div className="bench-signal-grid">
-            {workshop.benches.map((bench) => (
-              <article
-                key={bench.id}
-                className={`bench-signal bench-${bench.state}`}
-              >
-                <div className="bench-signal-title">
-                  <span className="bench-light" aria-hidden="true" />
-                  <strong>{bench.label}</strong>
-                </div>
-                <span className="bench-state-label">{bench.state}</span>
-                <p>{bench.reason}</p>
-                <small>{bench.nextMove}</small>
-              </article>
-            ))}
-          </div>
-        </section>
+        <WorkshopShell projectName={project.projectName} workshop={workshop} />
 
         <details className="state-card project-workshop">
           <summary className="project-workshop-summary">
@@ -284,104 +260,6 @@ export default function DiscoverySession() {
       </section>
 
       <style jsx>{`
-        .workshop-signals {
-          margin-top: 24px;
-          padding: 22px;
-          border: 1px solid #24344d;
-          border-radius: 18px;
-          background: #0b1220;
-        }
-
-        .workshop-signals-header {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(240px, 0.8fr);
-          gap: 18px;
-          align-items: end;
-        }
-
-        .workshop-signals-header h2 {
-          margin: 6px 0 0;
-          font-size: 22px;
-        }
-
-        .workshop-signals-header > p {
-          margin: 0;
-          color: #a8b3c7;
-          line-height: 1.6;
-        }
-
-        .bench-signal-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-          gap: 12px;
-          margin-top: 18px;
-        }
-
-        .bench-signal {
-          padding: 16px;
-          border: 1px solid #263750;
-          border-radius: 14px;
-          background: #101827;
-        }
-
-        .bench-signal-title {
-          display: flex;
-          gap: 9px;
-          align-items: center;
-        }
-
-        .bench-light {
-          width: 10px;
-          height: 10px;
-          border-radius: 999px;
-          background: #4b5563;
-          box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.12);
-        }
-
-        .bench-ready .bench-light,
-        .bench-active .bench-light {
-          background: #22c55e;
-          box-shadow: 0 0 12px rgba(34, 197, 94, 0.75);
-        }
-
-        .bench-pulse .bench-light {
-          background: #f59e0b;
-          box-shadow: 0 0 14px rgba(245, 158, 11, 0.85);
-        }
-
-        .bench-available .bench-light {
-          background: #38bdf8;
-          box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
-        }
-
-        .bench-state-label {
-          display: inline-block;
-          margin-top: 10px;
-          color: #7dd3fc;
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .bench-signal p {
-          color: #c4ccda;
-          line-height: 1.5;
-          font-size: 14px;
-        }
-
-        .bench-signal small {
-          display: block;
-          color: #8fa0b8;
-          line-height: 1.45;
-        }
-
-        @media (max-width: 700px) {
-          .workshop-signals-header {
-            grid-template-columns: 1fr;
-          }
-        }
-
         .discovery-page {
           min-height: 100vh;
           background: #080d1a;
@@ -391,7 +269,7 @@ export default function DiscoverySession() {
         }
 
         .discovery-shell {
-          width: min(860px, 100%);
+          width: min(1080px, 100%);
           margin: 0 auto;
         }
 
