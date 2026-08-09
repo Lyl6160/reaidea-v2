@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import type { Project } from "../../lib/core/project";
 import type {
   WorkshopBenchId,
   WorkshopBenchSignal,
@@ -9,7 +10,7 @@ import type {
 } from "../../lib/workshop/workshopBrain";
 
 type WorkshopShellProps = {
-  projectName: string;
+  project: Project;
   workshop: WorkshopState;
 };
 
@@ -52,9 +53,10 @@ function stateLabel(state: WorkshopBenchSignal["state"]) {
 }
 
 export default function WorkshopShell({
-  projectName,
+  project,
   workshop,
 }: WorkshopShellProps) {
+  const projectName = project.projectName;
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(
     workshop.recommendedBench
   );
@@ -62,6 +64,45 @@ export default function WorkshopShell({
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
+
+  const conceptSheet = useMemo(() => {
+    const engineering = project.engineeringState;
+    const constraints = engineering.currentConstraints.filter(Boolean);
+    const assumptions = engineering.currentAssumptions.filter(Boolean);
+    const validationQuestions =
+      project.validationPlan?.items
+        .filter((item) => item.status !== "completed")
+        .slice(0, 3)
+        .map((item) => item.target || item.title) ?? [];
+
+    const unresolvedQuestions = [
+      engineering.greatestRemainingUncertainty,
+      ...validationQuestions,
+    ].filter((item, index, items) => Boolean(item) && items.indexOf(item) === index);
+
+    return {
+      purpose:
+        project.purpose.trim() ||
+        `Develop a workable response to: ${project.originalObservation}`,
+      operatingPrinciple:
+        engineering.currentUnderstanding.trim() || project.originalObservation,
+      constraints:
+        constraints.length > 0
+          ? constraints
+          : ["No hard engineering constraints have been captured yet."],
+      assumptions:
+        assumptions.length > 0
+          ? assumptions
+          : ["No explicit assumptions have been recorded yet."],
+      unresolvedQuestions:
+        unresolvedQuestions.length > 0
+          ? unresolvedQuestions
+          : ["REV has not yet identified the next engineering uncertainty."],
+      nextEngineeringMove:
+        engineering.nextEngineeringStep || engineeringBench?.nextMove || workshop.summary,
+      evidenceCount: project.evidence.length,
+    };
+  }, [project, engineeringBench, workshop.summary]);
 
   const selectedBench = useMemo(
     () =>
@@ -235,9 +276,41 @@ export default function WorkshopShell({
         )}
         {conceptCreated && selectedBench.id === "prototype" && (
           <div className="concept-readout">
-            <span>PROTOTYPE BENCH · CONCEPT 01</span>
-            <strong>{projectName}</strong>
-            <p>{engineeringBench?.reason ?? workshop.summary}</p>
+            <div className="concept-sheet-heading">
+              <div>
+                <span>PROTOTYPE BENCH · CONCEPT 01</span>
+                <strong>{projectName}</strong>
+              </div>
+              <b>CONCEPT SHEET</b>
+            </div>
+
+            <div className="concept-sheet-grid">
+              <section className="concept-sheet-card concept-sheet-wide">
+                <span>PURPOSE</span>
+                <p>{conceptSheet.purpose}</p>
+              </section>
+              <section className="concept-sheet-card concept-sheet-wide">
+                <span>CURRENT OPERATING PRINCIPLE</span>
+                <p>{conceptSheet.operatingPrinciple}</p>
+              </section>
+              <section className="concept-sheet-card">
+                <span>KEY CONSTRAINTS</span>
+                <ul>{conceptSheet.constraints.map((item) => <li key={item}>{item}</li>)}</ul>
+              </section>
+              <section className="concept-sheet-card">
+                <span>ASSUMPTIONS</span>
+                <ul>{conceptSheet.assumptions.map((item) => <li key={item}>{item}</li>)}</ul>
+              </section>
+              <section className="concept-sheet-card concept-sheet-alert">
+                <span>UNRESOLVED QUESTIONS</span>
+                <ul>{conceptSheet.unresolvedQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
+              </section>
+              <section className="concept-sheet-card concept-sheet-next">
+                <span>NEXT ENGINEERING MOVE</span>
+                <p>{conceptSheet.nextEngineeringMove}</p>
+                <small>{conceptSheet.evidenceCount} evidence item{conceptSheet.evidenceCount === 1 ? "" : "s"} currently attached to the Project.</small>
+              </section>
+            </div>
           </div>
         )}
       </div>
@@ -1307,22 +1380,85 @@ export default function WorkshopShell({
         .concept-readout {
           grid-column: 1 / -1;
           margin-top: 3px;
-          padding: 13px 15px;
-          border: 1px solid #52717a;
-          border-radius: 9px;
-          background: #101b23;
+          padding: 18px;
+          border: 1px solid #526c79;
+          border-radius: 14px;
+          background: linear-gradient(145deg, rgba(16, 31, 39, 0.96), rgba(9, 21, 29, 0.96));
+          box-shadow: inset 0 1px rgba(255,255,255,0.035);
         }
 
-        .concept-readout strong {
-          color: #f2f6f7;
+        .concept-sheet-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 18px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid rgba(118, 151, 164, 0.28);
         }
 
-        .concept-readout p {
-          margin: 5px 0 0;
-          color: #aebbc5;
+        .concept-sheet-heading > div > span, .concept-sheet-card > span {
+          display: block;
+          color: #7fc8d8;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+        }
+
+        .concept-sheet-heading strong {
+          display: block;
+          margin-top: 5px;
+          color: #f3f7f8;
+          font-size: 18px;
+        }
+
+        .concept-sheet-heading b {
+          padding: 7px 9px;
+          border: 1px solid #587584;
+          border-radius: 7px;
+          color: #c8e4ea;
+          background: rgba(26, 55, 66, 0.42);
+          font-size: 10px;
+          letter-spacing: 0.12em;
+          white-space: nowrap;
+        }
+
+        .concept-sheet-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 12px;
+        }
+
+        .concept-sheet-card {
+          min-height: 108px;
+          padding: 13px 14px;
+          border: 1px solid rgba(106, 132, 144, 0.28);
+          border-radius: 10px;
+          background: rgba(220, 232, 235, 0.035);
+        }
+
+        .concept-sheet-wide { grid-column: 1 / -1; min-height: auto; }
+
+        .concept-sheet-card p {
+          margin: 8px 0 0;
+          color: #d3dce0;
+          font-size: 13px;
+          line-height: 1.52;
+        }
+
+        .concept-sheet-card ul {
+          margin: 8px 0 0;
+          padding-left: 18px;
+          color: #d0dade;
           font-size: 12px;
-          line-height: 1.45;
+          line-height: 1.5;
         }
+
+        .concept-sheet-card li + li { margin-top: 5px; }
+        .concept-sheet-alert { border-color: rgba(224, 173, 86, 0.36); background: rgba(94, 65, 22, 0.12); }
+        .concept-sheet-alert > span { color: #e5bd7b; }
+        .concept-sheet-next { border-color: rgba(72, 182, 205, 0.34); background: rgba(17, 75, 87, 0.12); }
+        .concept-sheet-next small { display: block; margin-top: 9px; color: #8299a3; font-size: 10px; }
 
         @media (max-width: 980px) {
           .living-workshop { width: calc(100vw - 18px); padding: 16px; }
@@ -1431,6 +1567,9 @@ export default function WorkshopShell({
         }
 
         @media (max-width: 620px) {
+          .concept-sheet-grid { grid-template-columns: 1fr; }
+          .concept-sheet-wide { grid-column: auto; }
+          .concept-sheet-heading { flex-direction: column; }
           .room { min-height: 1040px; }
           .wall-life {
           position: absolute;

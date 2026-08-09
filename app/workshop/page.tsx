@@ -60,7 +60,7 @@ export default function WorkshopPage() {
         <Link href="/discovery/session">← Return to Discovery</Link>
       </header>
 
-      <WorkshopShell projectName={project.projectName} workshop={workshop} />
+      <WorkshopShell project={project} workshop={workshop} />
 
       <style jsx>{`
         .workshop-page {
