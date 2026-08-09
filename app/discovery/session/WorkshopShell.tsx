@@ -14,6 +14,8 @@ type WorkshopShellProps = {
   workshop: WorkshopState;
 };
 
+type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
+
 const benchPositions: Array<{
   id: WorkshopBenchId;
   shortLabel: string;
@@ -210,6 +212,40 @@ export default function WorkshopShell({
       return "";
     }
   });
+  const [conceptReview, setConceptReview] = useState<ConceptReview>(() => {
+    if (typeof window === "undefined") return "unreviewed";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "unreviewed";
+      const parsed = JSON.parse(saved) as { conceptReview?: ConceptReview };
+      return parsed.conceptReview ?? "unreviewed";
+    } catch {
+      return "unreviewed";
+    }
+  });
+  const [conceptReviewNotes, setConceptReviewNotes] = useState<Record<Exclude<ConceptReview, "unreviewed">, string>>(() => {
+    if (typeof window === "undefined") return { accepted: "", refine: "", rethink: "" };
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return { accepted: "", refine: "", rethink: "" };
+      const parsed = JSON.parse(saved) as {
+        conceptReview?: ConceptReview;
+        conceptReviewNotes?: Partial<Record<Exclude<ConceptReview, "unreviewed">, string>>;
+        conceptReviewNote?: string;
+      };
+      const notes = {
+        accepted: parsed.conceptReviewNotes?.accepted ?? "",
+        refine: parsed.conceptReviewNotes?.refine ?? "",
+        rethink: parsed.conceptReviewNotes?.rethink ?? "",
+      };
+      if (parsed.conceptReview && parsed.conceptReview !== "unreviewed" && !notes[parsed.conceptReview]) {
+        notes[parsed.conceptReview] = parsed.conceptReviewNote ?? "";
+      }
+      return notes;
+    } catch {
+      return { accepted: "", refine: "", rethink: "" };
+    }
+  });
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -361,6 +397,57 @@ export default function WorkshopShell({
       );
     } catch {
       // The generated concept still works for this session if local storage is unavailable.
+    }
+  }
+
+  function reviewConcept(review: Exclude<ConceptReview, "unreviewed">) {
+    if (!conceptGenerated) return;
+
+    setConceptReview(review);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 3,
+          conceptGenerated: true,
+          conceptReview: review,
+          conceptReviewNotes,
+          reviewedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The review still works for this session if local storage is unavailable.
+    }
+  }
+
+  function saveConceptReviewNote(value: string) {
+    if (conceptReview === "unreviewed") return;
+
+    const nextNotes = { ...conceptReviewNotes, [conceptReview]: value };
+    setConceptReviewNotes(nextNotes);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          conceptReviewNotes: nextNotes,
+        })
+      );
+    } catch {
+      // The note still works for this session if local storage is unavailable.
     }
   }
 
@@ -637,6 +724,45 @@ export default function WorkshopShell({
                     <div className="generated-concept-meta">
                       <span>GENERATED FROM APPROVED VISUAL BRIEF</span>
                       <b>PROCEDURAL ENGINEERING RENDER</b>
+                    </div>
+                  </div>
+                )}
+
+                {conceptGenerated && (
+                  <div className="concept-review-panel">
+                    <div className="concept-review-heading">
+                      <div>
+                        <span>REV · CONCEPT REVIEW</span>
+                        <strong>Challenge the first-pass concept</strong>
+                      </div>
+                      <b>{conceptReview === "unreviewed" ? "AWAITING REVIEW" : conceptReview.toUpperCase()}</b>
+                    </div>
+
+                    <p className="concept-review-intro">
+                      The render is a hypothesis, not a conclusion. Record the inventor&apos;s judgement before the next refinement.
+                    </p>
+
+                    <div className="concept-review-actions">
+                      <button type="button" className={conceptReview === "accepted" ? "is-selected" : ""} onClick={() => reviewConcept("accepted")}>ACCEPT CONCEPT</button>
+                      <button type="button" className={conceptReview === "refine" ? "is-selected" : ""} onClick={() => reviewConcept("refine")}>NEEDS REFINEMENT</button>
+                      <button type="button" className={conceptReview === "rethink" ? "is-selected" : ""} onClick={() => reviewConcept("rethink")}>RETHINK CONCEPT</button>
+                    </div>
+
+                    <label className="concept-review-note">
+                      <span>REV · REVIEW NOTE</span>
+                      <textarea
+                        value={conceptReview === "unreviewed" ? "" : conceptReviewNotes[conceptReview]}
+                        onChange={(event) => saveConceptReviewNote(event.target.value)}
+                        placeholder="What looks right, wrong, missing, or worth changing?"
+                        rows={3}
+                      />
+                    </label>
+
+                    <div className={`concept-review-status review-${conceptReview}`}>
+                      {conceptReview === "unreviewed" && "No judgement recorded yet."}
+                      {conceptReview === "accepted" && "Concept accepted as the current working direction."}
+                      {conceptReview === "refine" && "Refinement required before this becomes the next working direction."}
+                      {conceptReview === "rethink" && "The concept should be reconsidered before further development."}
                     </div>
                   </div>
                 )}
@@ -1905,6 +2031,116 @@ export default function WorkshopShell({
           color: #8fd7e1;
           font-size: 8px;
         }
+
+        .concept-review-panel {
+          margin-top: 14px;
+          padding: 15px;
+          border: 1px solid rgba(80,191,210,.28);
+          border-radius: 12px;
+          background: rgba(7,18,24,.72);
+        }
+
+        .concept-review-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 16px;
+          padding-bottom: 11px;
+          border-bottom: 1px solid rgba(118,151,164,.2);
+        }
+
+        .concept-review-heading span,
+        .concept-review-note > span {
+          display: block;
+          color: #7fc8d8;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: .12em;
+        }
+
+        .concept-review-heading strong {
+          display: block;
+          margin-top: 5px;
+          color: #f3f7f8;
+          font-size: 15px;
+        }
+
+        .concept-review-heading b {
+          padding: 6px 8px;
+          border: 1px solid #587584;
+          border-radius: 6px;
+          color: #c8e4ea;
+          font-size: 9px;
+          letter-spacing: .1em;
+          white-space: nowrap;
+        }
+
+        .concept-review-intro {
+          margin: 10px 0 12px;
+          color: #9eb0b8;
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .concept-review-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .concept-review-actions button {
+          border: 1px solid #536c77;
+          background: rgba(25,43,51,.76);
+          color: #d7e6ea;
+          padding: 9px 11px;
+          font: 800 9px/1 Arial,sans-serif;
+          letter-spacing: 1px;
+          cursor: pointer;
+        }
+
+        .concept-review-actions button:hover,
+        .concept-review-actions button.is-selected {
+          border-color: #71d1df;
+          background: rgba(28,83,95,.9);
+          color: #f0fdff;
+        }
+
+        .concept-review-note {
+          display: block;
+          margin-top: 12px;
+        }
+
+        .concept-review-note textarea {
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 7px;
+          resize: vertical;
+          border: 1px solid #3e5661;
+          border-radius: 7px;
+          background: #081217;
+          color: #d6e1e5;
+          padding: 9px 10px;
+          font: 11px/1.45 Arial,sans-serif;
+          outline: none;
+        }
+
+        .concept-review-note textarea:focus {
+          border-color: #66c7d6;
+        }
+
+        .concept-review-status {
+          margin-top: 10px;
+          padding: 8px 10px;
+          border-left: 2px solid #587584;
+          color: #9fb3bb;
+          background: rgba(255,255,255,.025);
+          font-size: 10px;
+          line-height: 1.4;
+        }
+
+        .review-accepted { border-left-color: #72c98c; color: #b9e4c6; }
+        .review-refine { border-left-color: #e0b36a; color: #e8c98f; }
+        .review-rethink { border-left-color: #d98282; color: #efb0b0; }
 
         .generated-concept-board {
           position: relative;
