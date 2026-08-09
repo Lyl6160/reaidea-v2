@@ -139,6 +139,18 @@ export default function WorkshopShell({
     };
   }, [project, engineeringBench, workshop.summary]);
 
+  const visualConceptBrief = useMemo(() => {
+    return {
+      title: `CONCEPT 01 · ${projectName}`,
+      purpose: conceptSheet.purpose,
+      principle: conceptSheet.operatingPrinciple,
+      constraints: conceptSheet.constraints,
+      assumptions: conceptSheet.assumptions,
+      unknowns: conceptSheet.unresolvedQuestions,
+      nextMove: conceptSheet.nextEngineeringMove,
+    };
+  }, [conceptSheet, projectName]);
+
   const selectedBench = useMemo(
     () =>
       getBench(workshop, selectedId) ??
@@ -386,33 +398,100 @@ export default function WorkshopShell({
               </div>
             )}
 
-            <div className="concept-sheet-grid">
-              <section className="concept-sheet-card concept-sheet-wide">
-                <span>PURPOSE</span>
-                <p>{conceptSheet.purpose}</p>
-              </section>
-              <section className="concept-sheet-card concept-sheet-wide">
-                <span>CURRENT OPERATING PRINCIPLE</span>
-                <p>{conceptSheet.operatingPrinciple}</p>
-              </section>
-              <section className="concept-sheet-card">
-                <span>KEY CONSTRAINTS</span>
-                <ul>{conceptSheet.constraints.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-              <section className="concept-sheet-card">
-                <span>ASSUMPTIONS</span>
-                <ul>{conceptSheet.assumptions.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-              <section className="concept-sheet-card concept-sheet-alert">
-                <span>UNRESOLVED QUESTIONS</span>
-                <ul>{conceptSheet.unresolvedQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-              <section className="concept-sheet-card concept-sheet-next">
-                <span>NEXT ENGINEERING MOVE</span>
-                <p>{conceptSheet.nextEngineeringMove}</p>
-                <small>{conceptSheet.evidenceCount} evidence item{conceptSheet.evidenceCount === 1 ? "" : "s"} currently attached to the Project.</small>
-              </section>
-            </div>
+            {conceptVisualised && (
+              <div className="visual-concept-brief">
+                <div className="visual-concept-brief-heading">
+                  <div>
+                    <span>REV · VISUAL CONCEPT BRIEF</span>
+                    <strong>{visualConceptBrief.title}</strong>
+                  </div>
+                  <b>ENGINEERING HANDOFF</b>
+                </div>
+
+                <p className="visual-concept-brief-intro">
+                  Translate the current Project engineering state into a first-pass visual.
+                  This brief is the controlled handoff between REV reasoning and future visual generation.
+                </p>
+
+                <div className="visual-concept-brief-grid">
+                  <section>
+                    <span>PURPOSE</span>
+                    <p>{visualConceptBrief.purpose}</p>
+                  </section>
+
+                  <section>
+                    <span>OPERATING PRINCIPLE</span>
+                    <p>{visualConceptBrief.principle}</p>
+                  </section>
+
+                  <section>
+                    <span>KEY CONSTRAINTS</span>
+                    <ul>
+                      {visualConceptBrief.constraints.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  <section>
+                    <span>ASSUMPTIONS</span>
+                    <ul>
+                      {visualConceptBrief.assumptions.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  <section className="visual-concept-brief-warning">
+                    <span>UNRESOLVED QUESTIONS</span>
+                    <ul>
+                      {visualConceptBrief.unknowns.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  <section className="visual-concept-brief-next">
+                    <span>NEXT ENGINEERING MOVE</span>
+                    <p>{visualConceptBrief.nextMove}</p>
+                  </section>
+                </div>
+
+                <div className="visual-concept-brief-footer">
+                  REV · STRUCTURED VISUAL INPUT · NOT A CAD MODEL
+                </div>
+              </div>
+            )}
+
+            {!conceptVisualised && (
+              <div className="concept-sheet-grid">
+                <section className="concept-sheet-card concept-sheet-wide">
+                  <span>PURPOSE</span>
+                  <p>{conceptSheet.purpose}</p>
+                </section>
+                <section className="concept-sheet-card concept-sheet-wide">
+                  <span>CURRENT OPERATING PRINCIPLE</span>
+                  <p>{conceptSheet.operatingPrinciple}</p>
+                </section>
+                <section className="concept-sheet-card">
+                  <span>KEY CONSTRAINTS</span>
+                  <ul>{conceptSheet.constraints.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section className="concept-sheet-card">
+                  <span>ASSUMPTIONS</span>
+                  <ul>{conceptSheet.assumptions.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section className="concept-sheet-card concept-sheet-alert">
+                  <span>UNRESOLVED QUESTIONS</span>
+                  <ul>{conceptSheet.unresolvedQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section className="concept-sheet-card concept-sheet-next">
+                  <span>NEXT ENGINEERING MOVE</span>
+                  <p>{conceptSheet.nextEngineeringMove}</p>
+                  <small>{conceptSheet.evidenceCount} evidence item{conceptSheet.evidenceCount === 1 ? "" : "s"} currently attached to the Project.</small>
+                </section>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -1456,6 +1535,119 @@ export default function WorkshopShell({
         .visual-callout-constraint { right:0; top:60px; }
         .visual-callout-unknown { right:32px; bottom:0; color:#e5bd7b; border-color:rgba(224,173,86,.42); }
         .visual-board-footer { position:absolute; left:16px; bottom:12px; color:#6f8992; font:700 8px/1 Arial,sans-serif; letter-spacing:1px; }
+
+        .visual-concept-brief {
+          margin: 0 0 18px;
+          padding: 16px;
+          border: 1px solid rgba(80, 191, 210, 0.32);
+          border-radius: 12px;
+          background: linear-gradient(145deg, rgba(13, 31, 38, 0.96), rgba(7, 18, 24, 0.96));
+        }
+
+        .visual-concept-brief-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 18px;
+          padding-bottom: 12px;
+          border-bottom: 1px solid rgba(118, 151, 164, 0.24);
+        }
+
+        .visual-concept-brief-heading span,
+        .visual-concept-brief-grid section > span {
+          display: block;
+          color: #7fc8d8;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+        }
+
+        .visual-concept-brief-heading strong {
+          display: block;
+          margin-top: 5px;
+          color: #f3f7f8;
+          font-size: 17px;
+        }
+
+        .visual-concept-brief-heading b {
+          padding: 6px 8px;
+          border: 1px solid #587584;
+          border-radius: 6px;
+          color: #c8e4ea;
+          background: rgba(26, 55, 66, 0.42);
+          font-size: 9px;
+          letter-spacing: 0.1em;
+          white-space: nowrap;
+        }
+
+        .visual-concept-brief-intro {
+          margin: 11px 0 12px;
+          color: #9eb0b8;
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .visual-concept-brief-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 9px;
+        }
+
+        .visual-concept-brief-grid section {
+          padding: 11px 12px;
+          border: 1px solid rgba(106, 132, 144, 0.24);
+          border-radius: 8px;
+          background: rgba(220, 232, 235, 0.025);
+        }
+
+        .visual-concept-brief-grid p,
+        .visual-concept-brief-grid ul {
+          margin: 7px 0 0;
+          color: #d0dade;
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .visual-concept-brief-grid ul {
+          padding-left: 17px;
+        }
+
+        .visual-concept-brief-grid li + li {
+          margin-top: 4px;
+        }
+
+        .visual-concept-brief-warning {
+          border-color: rgba(224, 173, 86, 0.32) !important;
+          background: rgba(94, 65, 22, 0.1) !important;
+        }
+
+        .visual-concept-brief-warning > span {
+          color: #e5bd7b !important;
+        }
+
+        .visual-concept-brief-next {
+          border-color: rgba(72, 182, 205, 0.32) !important;
+          background: rgba(17, 75, 87, 0.1) !important;
+        }
+
+        .visual-concept-brief-footer {
+          margin-top: 11px;
+          color: #637c85;
+          font-size: 8px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 700px) {
+          .visual-concept-brief-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .visual-concept-brief-heading {
+            flex-direction: column;
+          }
+        }
+
         .concept-readout > span {
           display: block;
           margin-bottom: 4px;
