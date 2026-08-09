@@ -15,6 +15,7 @@ type WorkshopShellProps = {
 };
 
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
+type ConceptDecision = "undecided" | "accept" | "refine" | "rethink";
 
 const benchPositions: Array<{
   id: WorkshopBenchId;
@@ -166,9 +167,19 @@ export default function WorkshopShell({
   workshop,
 }: WorkshopShellProps) {
   const projectName = project.projectName;
-  const [selectedId, setSelectedId] = useState<WorkshopBenchId>(
-    workshop.recommendedBench
-  );
+  const [selectedId, setSelectedId] = useState<WorkshopBenchId>(() => {
+    if (typeof window === "undefined") return workshop.recommendedBench;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return workshop.recommendedBench;
+      const parsed = JSON.parse(saved) as { conceptDecision?: ConceptDecision };
+      if (parsed.conceptDecision === "accept") return "validation";
+      if (parsed.conceptDecision === "rethink") return "engineering";
+    } catch {
+      // Fall back to the workshop's recommended bench.
+    }
+    return workshop.recommendedBench;
+  });
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
   const [conceptCreated, setConceptCreated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -272,6 +283,62 @@ export default function WorkshopShell({
       return "";
     }
   });
+  const [conceptDecision, setConceptDecision] = useState<ConceptDecision>(() => {
+    if (typeof window === "undefined") return "undecided";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "undecided";
+      const parsed = JSON.parse(saved) as { conceptDecision?: ConceptDecision };
+      return parsed.conceptDecision ?? "undecided";
+    } catch {
+      return "undecided";
+    }
+  });
+  const [conceptDecisionNotes, setConceptDecisionNotes] = useState<Record<Exclude<ConceptDecision, "undecided">, string>>(() => {
+    if (typeof window === "undefined") return { accept: "", refine: "", rethink: "" };
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return { accept: "", refine: "", rethink: "" };
+      const parsed = JSON.parse(saved) as {
+        conceptDecisionNotes?: Partial<Record<Exclude<ConceptDecision, "undecided">, string>>;
+        conceptDecisionNote?: string;
+        conceptDecision?: ConceptDecision;
+      };
+      const notes = {
+        accept: parsed.conceptDecisionNotes?.accept ?? "",
+        refine: parsed.conceptDecisionNotes?.refine ?? "",
+        rethink: parsed.conceptDecisionNotes?.rethink ?? "",
+      };
+      if (parsed.conceptDecision && parsed.conceptDecision !== "undecided" && !notes[parsed.conceptDecision]) {
+        notes[parsed.conceptDecision] = parsed.conceptDecisionNote ?? "";
+      }
+      return notes;
+    } catch {
+      return { accept: "", refine: "", rethink: "" };
+    }
+  });
+  const [thirdConceptGenerated, setThirdConceptGenerated] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return false;
+      const parsed = JSON.parse(saved) as { thirdConceptGenerated?: boolean };
+      return Boolean(parsed.thirdConceptGenerated);
+    } catch {
+      return false;
+    }
+  });
+  const [thirdConceptSvg, setThirdConceptSvg] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { thirdConceptSvg?: string };
+      return parsed.thirdConceptSvg ?? "";
+    } catch {
+      return "";
+    }
+  });
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -371,6 +438,20 @@ export default function WorkshopShell({
     if (!refinedConceptRender) return "";
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(refinedConceptRender)}`;
   }, [refinedConceptRender]);
+
+  const thirdConceptRender = useMemo(() => {
+    if (!thirdConceptGenerated) return "";
+    return thirdConceptSvg || createConceptRenderSvg({
+      ...visualConceptBrief,
+      conceptLabel: "CONCEPT 03",
+      nextMove: "Re-examine the concept direction using the latest engineering decision before another generation pass.",
+    });
+  }, [thirdConceptGenerated, thirdConceptSvg, visualConceptBrief]);
+
+  const thirdConceptDataUri = useMemo(() => {
+    if (!thirdConceptRender) return "";
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(thirdConceptRender)}`;
+  }, [thirdConceptRender]);
 
   const generatedConceptRender = useMemo(() => {
     if (!conceptGenerated) return "";
@@ -531,6 +612,88 @@ export default function WorkshopShell({
       );
     } catch {
       // The refinement still works for this session if local storage is unavailable.
+    }
+  }
+
+  function decideConcept(decision: Exclude<ConceptDecision, "undecided">) {
+    if (!refinedConceptGenerated) return;
+
+    setConceptDecision(decision);
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 5,
+          conceptDecision: decision,
+          conceptDecisionNotes,
+          decidedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The decision still works for this session if local storage is unavailable.
+    }
+
+    if (decision === "accept") {
+      setSelectedId("validation");
+    }
+    if (decision === "rethink") {
+      setSelectedId("engineering");
+    }
+  }
+
+  function saveConceptDecisionNote(value: string) {
+    if (conceptDecision === "undecided") return;
+
+    const nextNotes = { ...conceptDecisionNotes, [conceptDecision]: value };
+    setConceptDecisionNotes(nextNotes);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          conceptDecisionNotes: nextNotes,
+        })
+      );
+    } catch {
+      // The decision note still works for this session if local storage is unavailable.
+    }
+  }
+
+  function generateThirdConcept() {
+    if (conceptDecision !== "refine") return;
+
+    const renderSvg = createConceptRenderSvg({
+      ...visualConceptBrief,
+      conceptLabel: "CONCEPT 03",
+      nextMove: "Carry the decision note into another deliberate refinement pass.",
+    });
+
+    setThirdConceptSvg(renderSvg);
+    setThirdConceptGenerated(true);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 6,
+          conceptDecision,
+          conceptDecisionNotes,
+          thirdConceptGenerated: true,
+          thirdConceptSvg: renderSvg,
+          thirdConceptAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The third concept still works for this session if local storage is unavailable.
     }
   }
 
@@ -912,6 +1075,75 @@ export default function WorkshopShell({
                               <span>GENERATED FROM REVIEW-DRIVEN REFINEMENT</span>
                               <b>CONCEPT 02 · SECOND-PASS STUDY</b>
                             </div>
+                          </div>
+                        )}
+
+                        {refinedConceptGenerated && (
+                          <div className="concept-decision-panel">
+                            <div className="concept-decision-heading">
+                              <div>
+                                <span>REV · ENGINEERING DECISION</span>
+                                <strong>Is Concept 02 ready to move forward?</strong>
+                              </div>
+                              <b>{conceptDecision === "undecided" ? "DECISION PENDING" : conceptDecision.toUpperCase()}</b>
+                            </div>
+                            <p className="concept-decision-intro">
+                              This is a stage gate. Accept the direction for validation, refine it again, or deliberately rethink the direction.
+                            </p>
+                            <div className="concept-decision-actions">
+                              <button type="button" className={conceptDecision === "accept" ? "is-selected" : ""} onClick={() => decideConcept("accept")}>ACCEPT FOR VALIDATION</button>
+                              <button type="button" className={conceptDecision === "refine" ? "is-selected" : ""} onClick={() => decideConcept("refine")}>REFINE AGAIN</button>
+                              <button type="button" className={conceptDecision === "rethink" ? "is-selected" : ""} onClick={() => decideConcept("rethink")}>RETHINK DIRECTION</button>
+                            </div>
+                            <label className="concept-decision-note">
+                              <span>REV · DECISION NOTE</span>
+                              <textarea
+                                value={conceptDecision === "undecided" ? "" : conceptDecisionNotes[conceptDecision]}
+                                onChange={(event) => saveConceptDecisionNote(event.target.value)}
+                                placeholder="Why is this concept ready, not ready, or headed in the wrong direction?"
+                                rows={3}
+                              />
+                            </label>
+                            <div className={`concept-decision-status decision-${conceptDecision}`}>
+                              {conceptDecision === "undecided" && "No engineering decision recorded yet."}
+                              {conceptDecision === "accept" && "Concept 02 accepted for the Validation bench."}
+                              {conceptDecision === "refine" && "Another refinement pass is required before validation."}
+                              {conceptDecision === "rethink" && "Return to Engineering reasoning and reconsider the direction."}
+                            </div>
+
+                            {conceptDecision === "refine" && (
+                              <button type="button" className="concept-refinement-button" onClick={generateThirdConcept}>
+                                {thirdConceptGenerated ? "CONCEPT 03 GENERATED" : "GENERATE CONCEPT 03"}
+                              </button>
+                            )}
+
+                            {conceptDecision === "rethink" && (
+                              <div className="concept-decision-handoff">
+                                <span>REV · ENGINEERING HANDOFF</span>
+                                <p>The previous concepts remain preserved. Continue the reasoning from the Engineering bench before generating another direction.</p>
+                              </div>
+                            )}
+
+                            {conceptDecision === "accept" && (
+                              <div className="concept-decision-handoff">
+                                <span>REV · VALIDATION HANDOFF</span>
+                                <p>Concept 02 is now the working candidate for validation. The earlier concepts and review history remain preserved.</p>
+                              </div>
+                            )}
+
+                            {thirdConceptGenerated && thirdConceptDataUri && (
+                              <div className="generated-concept-board generated-concept-board-real concept-three-board" aria-label="Generated Concept 03 refinement study">
+                                <img
+                                  className="generated-concept-image"
+                                  src={thirdConceptDataUri}
+                                  alt={`Third-pass engineering concept for ${projectName}`}
+                                />
+                                <div className="generated-concept-meta">
+                                  <span>GENERATED FROM SECOND DECISION GATE</span>
+                                  <b>CONCEPT 03 · THIRD-PASS STUDY</b>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </>
@@ -2196,6 +2428,26 @@ export default function WorkshopShell({
         .concept-refinement-button { margin-top:12px; border:1px solid rgba(93,201,220,.58); background:linear-gradient(180deg,rgba(31,92,105,.92),rgba(15,49,58,.94)); color:#dffbff; padding:9px 13px; font:700 10px/1 Arial,sans-serif; letter-spacing:1.1px; cursor:pointer; }
         .concept-two-board { border-color:rgba(116,201,145,.34); }
 
+        .concept-decision-panel { margin-top: 18px; padding: 20px; border: 1px solid rgba(194,163,94,0.42); border-radius: 12px; background: rgba(10,14,16,0.78); }
+        .concept-decision-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+        .concept-decision-heading span, .concept-decision-note > span { display: block; font-size: 10px; letter-spacing: 0.18em; color: #c2a35e; }
+        .concept-decision-heading strong { display: block; margin-top: 5px; font-size: 16px; color: #eef2f1; }
+        .concept-decision-heading b { font-size: 10px; letter-spacing: 0.14em; color: #c2a35e; white-space: nowrap; }
+        .concept-decision-intro { margin: 14px 0; color: #aeb8b8; font-size: 13px; line-height: 1.55; }
+        .concept-decision-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .concept-decision-actions button { border: 1px solid rgba(194,163,94,0.35); background: rgba(255,255,255,0.025); color: #d7dddd; padding: 11px 10px; border-radius: 7px; font-size: 10px; letter-spacing: 0.08em; cursor: pointer; }
+        .concept-decision-actions button:hover, .concept-decision-actions button.is-selected { border-color: #c2a35e; background: rgba(194,163,94,0.12); color: #fff3ca; }
+        .concept-decision-note { display: block; margin-top: 14px; }
+        .concept-decision-note textarea { width: 100%; margin-top: 7px; resize: vertical; box-sizing: border-box; min-height: 78px; border: 1px solid rgba(194,163,94,0.22); background: rgba(0,0,0,0.24); color: #eef2f1; border-radius: 7px; padding: 10px; font: inherit; }
+        .concept-decision-note textarea:focus { outline: none; border-color: #c2a35e; }
+        .concept-decision-status { margin-top: 12px; padding: 10px 12px; border-left: 3px solid #667276; background: rgba(255,255,255,0.025); color: #bdc6c6; font-size: 12px; }
+        .decision-accept { border-left-color: #72c98c; color: #b9e4c6; }
+        .decision-refine { border-left-color: #e0b36a; color: #e8c98f; }
+        .decision-rethink { border-left-color: #d98282; color: #efb0b0; }
+        .concept-decision-handoff { margin-top: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; }
+        .concept-decision-handoff span { font-size: 10px; letter-spacing: 0.15em; color: #c2a35e; }
+        .concept-decision-handoff p { margin: 6px 0 0; color: #b6c0c0; font-size: 12px; line-height: 1.5; }
+        @media (max-width: 760px) { .concept-decision-actions { grid-template-columns: 1fr; } }
         .concept-review-panel {
           margin-top: 14px;
           padding: 15px;
