@@ -13,8 +13,6 @@ import {
   recordDiscoveryAnswer,
 } from "../../lib/workshop/discoveryReasoning";
 import { createValidationPlan } from "../../lib/workshop/validationPlanning";
-import { assessWorkshop } from "../../lib/workshop/workshopBrain";
-import WorkshopShell from "./WorkshopShell";
 import {
   completeValidationItem,
   startValidationItem,
@@ -64,7 +62,6 @@ export default function DiscoverySession() {
   }
 
   const assessment = assessDiscovery(project);
-  const workshop = assessWorkshop(project);
   const nextQuestion = assessment.nextQuestion;
   const greeting = inventor?.preferredName
     ? `Good to have you at the bench, ${inventor.preferredName}.`
@@ -198,7 +195,19 @@ export default function DiscoverySession() {
           </section>
         )}
 
-        <WorkshopShell projectName={project.projectName} workshop={workshop} />
+        <section className="enter-workshop-card">
+          <div>
+            <p className="mission-label">Living Workshop</p>
+            <h2>Step inside the reAIdea workshop.</h2>
+            <p>
+              Leave the Discovery bench and enter the full workshop. The same Project
+              Brain will light the benches that now have useful work waiting.
+            </p>
+          </div>
+          <Link href="/workshop" className="enter-workshop-link">
+            Enter Workshop →
+          </Link>
+        </section>
 
         <details className="state-card project-workshop">
           <summary className="project-workshop-summary">
@@ -410,6 +419,49 @@ export default function DiscoverySession() {
           padding: 0 16px 16px;
           color: #a8b3c7;
           line-height: 1.6;
+        }
+
+        .enter-workshop-card {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          margin-top: 16px;
+          padding: 22px 24px;
+          border: 1px solid #33455b;
+          border-radius: 14px;
+          background: #0d1723;
+        }
+
+        .enter-workshop-card h2 {
+          margin: 5px 0 7px;
+          color: #f4f7fb;
+          font-size: 19px;
+        }
+
+        .enter-workshop-card p:not(.mission-label) {
+          max-width: 620px;
+          margin: 0;
+          color: #aebac8;
+          line-height: 1.55;
+        }
+
+        .enter-workshop-link {
+          flex: 0 0 auto;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 44px;
+          padding: 0 18px;
+          border-radius: 9px;
+          background: #16d8ff;
+          color: #03111a;
+          font-weight: 850;
+          text-decoration: none;
+        }
+
+        .enter-workshop-link:hover {
+          background: #55e4ff;
         }
 
         .project-workshop {
