@@ -101,6 +101,15 @@ export default function WorkshopShell({
           <small>WHERE IDEAS BECOME REAL</small>
         </div>
 
+        <div className="wall-life" aria-hidden="true">
+          <span className="shelf shelf-left"><i /><i /><i /></span>
+          <span className="shelf shelf-right"><i /><i /></span>
+          <span className="tall-cabinet cabinet-left"><i /><i /><i /></span>
+          <span className="tall-cabinet cabinet-right"><i /><i /></span>
+          <span className="wall-sheet sheet-left"><i /><i /></span>
+          <span className="wall-sheet sheet-right"><i /><i /><i /></span>
+        </div>
+
         <div className="rev-station" aria-label="REV, your AI design engineer">
           <div className="rev-bubble">
             <strong>REV</strong>
@@ -108,12 +117,14 @@ export default function WorkshopShell({
           </div>
           <div className="rev-figure" aria-hidden="true">
             <div className="rev-hair" />
-            <div className="rev-head" />
+            <div className="rev-head"><i className="rev-eye rev-eye-left" /><i className="rev-eye rev-eye-right" /><i className="rev-smile" /></div>
             <div className="rev-neck" />
             <div className="rev-body">
               <span>REV</span>
               <i className="rev-pocket" />
             </div>
+            <div className="rev-arm rev-arm-left" />
+            <div className="rev-arm rev-arm-right" />
             <div className="rev-leg rev-leg-left" />
             <div className="rev-leg rev-leg-right" />
           </div>
@@ -150,21 +161,22 @@ export default function WorkshopShell({
                 <span className="pinboard-note note-b" />
               </span>
               <span className="bench-top" aria-hidden="true">
-                {id === "prototype" ? (
-                  <span className="concept-object">
-                    <i />
-                    <i />
-                    <b />
-                    <em />
+                {id !== "prototype" && <span className="bench-screen" />}
+                {id !== "prototype" && (
+                  <span className="bench-tools">
+                    <i className="tool-a" />
+                    <i className="tool-b" />
+                    <i className="tool-c" />
                   </span>
-                ) : (
-                  <span className="bench-screen" />
                 )}
+                {id === "prototype" && <span className="empty-bench-glint" />}
               </span>
               <span className="bench-cabinet" aria-hidden="true">
                 <i />
                 <i />
               </span>
+              <span className="bench-stool" aria-hidden="true"><i /><b /></span>
+              <span className="bench-shadow" aria-hidden="true" />
               <span className="bench-status">{stateLabel(bench.state)}</span>
             </button>
           );
@@ -242,8 +254,10 @@ export default function WorkshopShell({
           border: 1px solid #546375;
           border-radius: 17px;
           background:
-            radial-gradient(circle at 50% 34%, rgba(255, 219, 157, 0.20), transparent 29%),
-            linear-gradient(#343b40 0%, #3a4248 48%, #252b30 65%, #171d22 100%);
+            radial-gradient(circle at 50% 32%, rgba(255, 223, 167, 0.28), transparent 31%),
+            radial-gradient(circle at 18% 48%, rgba(255, 221, 170, 0.08), transparent 20%),
+            radial-gradient(circle at 82% 48%, rgba(255, 221, 170, 0.08), transparent 20%),
+            linear-gradient(#3b4348 0%, #41494e 48%, #292f34 66%, #1a2025 100%);
           box-shadow:
             inset 0 0 80px rgba(15, 22, 28, 0.25),
             inset 0 -90px 120px rgba(7, 11, 15, 0.34);
@@ -418,6 +432,90 @@ export default function WorkshopShell({
           letter-spacing: 0.12em;
         }
 
+        .wall-life {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: -1;
+        }
+
+        .shelf {
+          position: absolute;
+          top: 184px;
+          width: 150px;
+          height: 8px;
+          border: 1px solid #707778;
+          background: #343b3d;
+          box-shadow: 0 6px 8px rgba(0,0,0,0.22);
+        }
+
+        .shelf-left { left: 4%; }
+        .shelf-right { right: 4%; }
+
+        .shelf i {
+          position: absolute;
+          bottom: 7px;
+          width: 24px;
+          border: 1px solid #6e7575;
+          background: #434b4d;
+        }
+
+        .shelf i:nth-child(1) { left: 8px; height: 31px; }
+        .shelf i:nth-child(2) { left: 42px; height: 23px; background: #68604f; }
+        .shelf i:nth-child(3) { right: 13px; height: 37px; }
+
+        .tall-cabinet {
+          position: absolute;
+          top: 336px;
+          width: 68px;
+          height: 146px;
+          border: 1px solid #646c6e;
+          background: linear-gradient(90deg, #343b3e, #252c2f);
+          box-shadow: 8px 12px 16px rgba(0,0,0,0.22);
+        }
+
+        .cabinet-left { left: 1.2%; }
+        .cabinet-right { right: 1.2%; }
+
+        .tall-cabinet i {
+          display: block;
+          height: 31%;
+          border-bottom: 1px solid #555e61;
+          position: relative;
+        }
+
+        .tall-cabinet i::after {
+          content: "";
+          position: absolute;
+          top: 8px;
+          left: 50%;
+          width: 15px;
+          height: 2px;
+          transform: translateX(-50%);
+          background: #727979;
+        }
+
+        .wall-sheet {
+          position: absolute;
+          top: 158px;
+          width: 78px;
+          height: 66px;
+          border: 1px solid rgba(221,216,199,0.45);
+          background: rgba(214,208,190,0.19);
+          transform: rotate(-2deg);
+        }
+
+        .sheet-left { left: 19%; }
+        .sheet-right { right: 19%; transform: rotate(2deg); }
+
+        .wall-sheet i {
+          display: block;
+          width: 65%;
+          height: 2px;
+          margin: 10px auto 0;
+          background: rgba(216,219,213,0.35);
+        }
+
         .room-bench {
           position: absolute;
           width: 13.5%;
@@ -581,7 +679,7 @@ export default function WorkshopShell({
           height: 38px;
           border: 1px solid #687276;
           border-radius: 4px 4px 2px 2px;
-          background: linear-gradient(#64615a, #3d3d39);
+          background: linear-gradient(#71685b, #46413a);
           box-shadow: inset 0 -8px #2b2d2c, 0 10px 15px rgba(0,0,0,0.24);
         }
 
@@ -632,47 +730,118 @@ export default function WorkshopShell({
           white-space: nowrap;
         }
 
-        .concept-object {
+        .bench-tools {
           position: absolute;
-          inset: 1px 9% 1px;
+          inset: 0;
+          display: block;
         }
 
-        .concept-object b {
+        .bench-tools i {
+          position: absolute;
+          display: block;
+          opacity: 0.84;
+        }
+
+        .tool-a {
+          left: 8%;
+          bottom: 5px;
+          width: 23px;
+          height: 5px;
+          border: 1px solid #9b9a91;
+          border-radius: 2px;
+          background: #6a6b67;
+          transform: rotate(-8deg);
+        }
+
+        .tool-b {
+          right: 9%;
+          bottom: 6px;
+          width: 16px;
+          height: 11px;
+          border: 1px solid #8a8e8c;
+          background: #373e40;
+          transform: rotate(5deg);
+        }
+
+        .tool-c {
+          left: 49%;
+          bottom: 4px;
+          width: 3px;
+          height: 18px;
+          background: #b18b58;
+          transform: rotate(18deg);
+          transform-origin: bottom;
+        }
+
+        .slot-discovery .tool-a { width: 28px; height: 18px; border-radius: 1px; background: #d4ccb5; }
+        .slot-discovery .tool-b { width: 10px; height: 14px; background: #8c7051; }
+        .slot-engineering .tool-a { width: 38px; height: 4px; background: #a4a39b; }
+        .slot-engineering .tool-b { border-radius: 50%; width: 15px; height: 15px; }
+        .slot-validation .tool-a { width: 21px; height: 14px; background: #424b4f; }
+        .slot-validation .tool-b { width: 4px; height: 19px; border-radius: 3px; background: #c2a35e; }
+        .slot-patent .tool-a { width: 30px; height: 20px; background: #ddd5be; border-color: #b9ae93; }
+        .slot-patent .tool-b { width: 24px; height: 15px; background: #c8bea8; }
+        .slot-marketing .tool-a { width: 22px; height: 18px; background: #8a7762; }
+        .slot-marketing .tool-b { width: 20px; height: 16px; background: #5f6870; }
+        .slot-manufacturing .tool-a { width: 25px; height: 8px; background: #7d8585; }
+        .slot-manufacturing .tool-b { width: 18px; height: 13px; background: #916f46; }
+        .slot-reality .tool-a { width: 26px; height: 18px; background: #c7bea7; }
+
+        .empty-bench-glint {
           position: absolute;
           left: 18%;
           right: 18%;
+          top: 8px;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(235,225,205,0.35), transparent);
+        }
+
+        .bench-stool {
+          position: absolute;
+          left: 50%;
+          bottom: -7px;
+          width: 31px;
+          height: 31px;
+          transform: translateX(-50%) translateY(25px);
+          opacity: 0.68;
+          pointer-events: none;
+        }
+
+        .bench-stool::before {
+          content: "";
+          position: absolute;
+          left: 3px;
+          right: 3px;
+          top: 0;
+          height: 7px;
+          border: 1px solid #6c6860;
+          border-radius: 50%;
+          background: #3a3834;
+        }
+
+        .bench-stool i, .bench-stool b {
+          position: absolute;
           top: 7px;
-          height: 20px;
-          border: 1px solid #98a8ad;
-          border-radius: 11px 11px 3px 3px;
-          background: linear-gradient(#596a72, #35434a);
-          transform: skewX(-12deg);
-          box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+          width: 2px;
+          height: 24px;
+          background: #555b5c;
         }
 
-        .concept-object em {
+        .bench-stool i { left: 9px; transform: rotate(8deg); }
+        .bench-stool b { right: 9px; transform: rotate(-8deg); }
+
+        .bench-shadow {
           position: absolute;
-          left: 39%;
-          top: 1px;
-          width: 31%;
-          height: 12px;
-          border: 1px solid #8ca0a9;
-          background: #465860;
-          transform: skewX(-14deg);
+          left: 1%;
+          right: 1%;
+          bottom: -25px;
+          height: 18px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.28);
+          filter: blur(7px);
+          pointer-events: none;
+          z-index: -1;
         }
-
-        .concept-object i {
-          position: absolute;
-          bottom: 0;
-          width: 14px;
-          height: 14px;
-          border: 2px solid #8c989c;
-          border-radius: 999px;
-          background: #20282c;
-        }
-
-        .concept-object i:first-child { left: 22%; }
-        .concept-object i:nth-child(2) { right: 22%; }
 
         .state-ready .room-light,
         .state-active .room-light {
@@ -743,7 +912,12 @@ export default function WorkshopShell({
         .slot-prototype .bench-sign { bottom: 149px; }
         .slot-prototype .lamp-rig { bottom: 178px; transform: translateX(-50%) scale(1.16); }
         .slot-prototype .bench-backsplash { bottom: 96px; height: 60px; }
-        .slot-prototype .bench-top { bottom: 58px; height: 43px; }
+        .slot-prototype .bench-top {
+          bottom: 58px;
+          height: 43px;
+          background: linear-gradient(#796d5d, #4a433a);
+          box-shadow: inset 0 -8px #302d29, 0 12px 18px rgba(0,0,0,0.28);
+        }
         .slot-prototype .bench-cabinet { height: 59px; }
 
         .rev-station {
@@ -785,6 +959,42 @@ export default function WorkshopShell({
           border-radius: 47% 47% 42% 42%;
           background: linear-gradient(#b8aa95, #847866);
         }
+
+        .rev-eye {
+          position: absolute;
+          top: 17px;
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: #363b3b;
+        }
+
+        .rev-eye-left { left: 9px; }
+        .rev-eye-right { right: 9px; }
+
+        .rev-smile {
+          position: absolute;
+          left: 12px;
+          top: 27px;
+          width: 10px;
+          height: 5px;
+          border-bottom: 1px solid #4d4b45;
+          border-radius: 50%;
+        }
+
+        .rev-arm {
+          position: absolute;
+          top: 67px;
+          width: 12px;
+          height: 70px;
+          border: 1px solid #657074;
+          border-radius: 7px;
+          background: linear-gradient(#465250, #2d3737);
+          z-index: -1;
+        }
+
+        .rev-arm-left { left: 3px; transform: rotate(8deg); }
+        .rev-arm-right { right: 1px; transform: rotate(-11deg); }
 
         .rev-neck {
           position: absolute;
@@ -943,7 +1153,91 @@ export default function WorkshopShell({
           .living-workshop { width: calc(100vw - 18px); padding: 16px; }
           .workshop-heading { grid-template-columns: 1fr; gap: 10px; }
           .room { min-height: 760px; }
-          .room-bench { width: 26%; min-width: 0; }
+          .wall-life {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: -1;
+        }
+
+        .shelf {
+          position: absolute;
+          top: 184px;
+          width: 150px;
+          height: 8px;
+          border: 1px solid #707778;
+          background: #343b3d;
+          box-shadow: 0 6px 8px rgba(0,0,0,0.22);
+        }
+
+        .shelf-left { left: 4%; }
+        .shelf-right { right: 4%; }
+
+        .shelf i {
+          position: absolute;
+          bottom: 7px;
+          width: 24px;
+          border: 1px solid #6e7575;
+          background: #434b4d;
+        }
+
+        .shelf i:nth-child(1) { left: 8px; height: 31px; }
+        .shelf i:nth-child(2) { left: 42px; height: 23px; background: #68604f; }
+        .shelf i:nth-child(3) { right: 13px; height: 37px; }
+
+        .tall-cabinet {
+          position: absolute;
+          top: 336px;
+          width: 68px;
+          height: 146px;
+          border: 1px solid #646c6e;
+          background: linear-gradient(90deg, #343b3e, #252c2f);
+          box-shadow: 8px 12px 16px rgba(0,0,0,0.22);
+        }
+
+        .cabinet-left { left: 1.2%; }
+        .cabinet-right { right: 1.2%; }
+
+        .tall-cabinet i {
+          display: block;
+          height: 31%;
+          border-bottom: 1px solid #555e61;
+          position: relative;
+        }
+
+        .tall-cabinet i::after {
+          content: "";
+          position: absolute;
+          top: 8px;
+          left: 50%;
+          width: 15px;
+          height: 2px;
+          transform: translateX(-50%);
+          background: #727979;
+        }
+
+        .wall-sheet {
+          position: absolute;
+          top: 158px;
+          width: 78px;
+          height: 66px;
+          border: 1px solid rgba(221,216,199,0.45);
+          background: rgba(214,208,190,0.19);
+          transform: rotate(-2deg);
+        }
+
+        .sheet-left { left: 19%; }
+        .sheet-right { right: 19%; transform: rotate(2deg); }
+
+        .wall-sheet i {
+          display: block;
+          width: 65%;
+          height: 2px;
+          margin: 10px auto 0;
+          background: rgba(216,219,213,0.35);
+        }
+
+        .room-bench { width: 26%; min-width: 0; }
           .slot-discovery { left: 4%; top: 230px; }
           .slot-engineering { left: 37%; top: 230px; }
           .slot-validation { left: 70%; top: 230px; }
@@ -961,7 +1255,91 @@ export default function WorkshopShell({
 
         @media (max-width: 620px) {
           .room { min-height: 1040px; }
-          .room-bench { width: 42%; }
+          .wall-life {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: -1;
+        }
+
+        .shelf {
+          position: absolute;
+          top: 184px;
+          width: 150px;
+          height: 8px;
+          border: 1px solid #707778;
+          background: #343b3d;
+          box-shadow: 0 6px 8px rgba(0,0,0,0.22);
+        }
+
+        .shelf-left { left: 4%; }
+        .shelf-right { right: 4%; }
+
+        .shelf i {
+          position: absolute;
+          bottom: 7px;
+          width: 24px;
+          border: 1px solid #6e7575;
+          background: #434b4d;
+        }
+
+        .shelf i:nth-child(1) { left: 8px; height: 31px; }
+        .shelf i:nth-child(2) { left: 42px; height: 23px; background: #68604f; }
+        .shelf i:nth-child(3) { right: 13px; height: 37px; }
+
+        .tall-cabinet {
+          position: absolute;
+          top: 336px;
+          width: 68px;
+          height: 146px;
+          border: 1px solid #646c6e;
+          background: linear-gradient(90deg, #343b3e, #252c2f);
+          box-shadow: 8px 12px 16px rgba(0,0,0,0.22);
+        }
+
+        .cabinet-left { left: 1.2%; }
+        .cabinet-right { right: 1.2%; }
+
+        .tall-cabinet i {
+          display: block;
+          height: 31%;
+          border-bottom: 1px solid #555e61;
+          position: relative;
+        }
+
+        .tall-cabinet i::after {
+          content: "";
+          position: absolute;
+          top: 8px;
+          left: 50%;
+          width: 15px;
+          height: 2px;
+          transform: translateX(-50%);
+          background: #727979;
+        }
+
+        .wall-sheet {
+          position: absolute;
+          top: 158px;
+          width: 78px;
+          height: 66px;
+          border: 1px solid rgba(221,216,199,0.45);
+          background: rgba(214,208,190,0.19);
+          transform: rotate(-2deg);
+        }
+
+        .sheet-left { left: 19%; }
+        .sheet-right { right: 19%; transform: rotate(2deg); }
+
+        .wall-sheet i {
+          display: block;
+          width: 65%;
+          height: 2px;
+          margin: 10px auto 0;
+          background: rgba(216,219,213,0.35);
+        }
+
+        .room-bench { width: 42%; }
           .slot-discovery { left: 5%; top: 225px; }
           .slot-engineering { left: 53%; top: 225px; }
           .slot-validation { left: 5%; top: 420px; }
