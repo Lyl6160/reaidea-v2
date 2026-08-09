@@ -50,6 +50,98 @@ function conceptKey(project: Project) {
   return `reaidea.workshop.concept.v1.${(hash >>> 0).toString(16)}`;
 }
 
+
+function escapeSvgText(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function createConceptRenderSvg(brief: {
+  title: string;
+  purpose: string;
+  principle: string;
+  constraints: string[];
+  nextMove: string;
+}) {
+  const source = `${brief.title}|${brief.purpose}|${brief.principle}|${brief.constraints.join("|")}`;
+  let hash = 2166136261;
+
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  const variant = (hash >>> 0) % 3;
+  const bodySkew = variant === 0 ? 0 : variant === 1 ? -14 : 14;
+  const purpose = escapeSvgText(brief.purpose.slice(0, 92));
+  const principle = escapeSvgText(brief.principle.slice(0, 88));
+  const constraint = escapeSvgText((brief.constraints[0] ?? "Constraint not yet captured").slice(0, 72));
+  const nextMove = escapeSvgText(brief.nextMove.slice(0, 82));
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Generated engineering concept render">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#071217"/>
+        <stop offset="0.52" stop-color="#102a32"/>
+        <stop offset="1" stop-color="#050b0e"/>
+      </linearGradient>
+      <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5d9aa7" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#163b45" stop-opacity=".9"/>
+      </linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="1000" height="560" fill="url(#bg)"/>
+    <g opacity=".18" stroke="#78d4e2" stroke-width="1">
+      <path d="M0 80H1000M0 160H1000M0 240H1000M0 320H1000M0 400H1000M0 480H1000"/>
+      <path d="M80 0V560M160 0V560M240 0V560M320 0V560M400 0V560M480 0V560M560 0V560M640 0V560M720 0V560M800 0V560M880 0V560M960 0V560"/>
+    </g>
+    <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · GENERATED CONCEPT STUDY</text>
+    <text x="28" y="54" fill="#718891" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.2">CONCEPT 01 · PROCEDURAL ENGINEERING VISUAL · REVISION ${variant + 1}</text>
+
+    <g transform="translate(165 190) skewX(${bodySkew})" filter="url(#glow)">
+      <path d="M70 155 L120 65 L500 35 L690 105 L650 205 L105 215 Z" fill="url(#body)" stroke="#83dce7" stroke-width="3"/>
+      <path d="M150 75 L470 50 L575 101 L185 111 Z" fill="#0b2027" stroke="#5db7c5" stroke-width="2"/>
+      <path d="M235 124 H525 V181 H235 Z" fill="#15515d" fill-opacity=".7" stroke="#65c5d3" stroke-width="2"/>
+      <rect x="300" y="135" width="140" height="38" rx="5" fill="#071419" stroke="#8be7ef" stroke-width="2"/>
+      <circle cx="210" cy="215" r="42" fill="#081115" stroke="#76cbd6" stroke-width="4"/>
+      <circle cx="560" cy="205" r="42" fill="#081115" stroke="#76cbd6" stroke-width="4"/>
+      <circle cx="210" cy="215" r="16" fill="#2e6975"/>
+      <circle cx="560" cy="205" r="16" fill="#2e6975"/>
+      <path d="M105 215 H650" stroke="#4caab9" stroke-width="2" stroke-dasharray="8 7"/>
+    </g>
+
+    <g font-family="Arial,sans-serif">
+      <path d="M240 285 L95 350" stroke="#7ed9e5" stroke-width="1.5"/>
+      <rect x="28" y="332" width="250" height="62" rx="7" fill="#061116" stroke="#438c99"/>
+      <text x="42" y="350" fill="#7fc8d8" font-size="9" font-weight="700" letter-spacing="1">PURPOSE</text>
+      <text x="42" y="368" fill="#d3e0e4" font-size="10">${purpose}</text>
+      <text x="42" y="384" fill="#8da5ad" font-size="8">Derived directly from the approved brief.</text>
+
+      <path d="M590 250 L805 175" stroke="#7ed9e5" stroke-width="1.5"/>
+      <rect x="720" y="126" width="252" height="68" rx="7" fill="#061116" stroke="#438c99"/>
+      <text x="736" y="145" fill="#7fc8d8" font-size="9" font-weight="700" letter-spacing="1">OPERATING PRINCIPLE</text>
+      <text x="736" y="164" fill="#d3e0e4" font-size="10">${principle}</text>
+      <text x="736" y="181" fill="#8da5ad" font-size="8">Engineering understanding, not invented specification.</text>
+
+      <path d="M620 350 L820 355" stroke="#e5bd7b" stroke-width="1.5"/>
+      <rect x="720" y="320" width="252" height="68" rx="7" fill="#17130b" stroke="#8d6b36"/>
+      <text x="736" y="339" fill="#e5bd7b" font-size="9" font-weight="700" letter-spacing="1">KEY CONSTRAINT</text>
+      <text x="736" y="358" fill="#eadcc4" font-size="10">${constraint}</text>
+      <text x="736" y="375" fill="#a99574" font-size="8">Constraint carried into the visual study.</text>
+    </g>
+
+    <rect x="28" y="474" width="944" height="56" rx="7" fill="#071217" stroke="#2e6571"/>
+    <text x="44" y="494" fill="#7fc8d8" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1">NEXT ENGINEERING MOVE</text>
+    <text x="44" y="514" fill="#d1dfe3" font-family="Arial,sans-serif" font-size="10">${nextMove}</text>
+    <text x="972" y="494" text-anchor="end" fill="#607983" font-family="Arial,sans-serif" font-size="8" font-weight="700">REV · NOT CAD</text>
+  </svg>`;
+}
+
 function stateLabel(state: WorkshopBenchSignal["state"]) {
   switch (state) {
     case "active":
@@ -107,6 +199,17 @@ export default function WorkshopShell({
       return false;
     }
   });
+  const [generatedConceptSvg, setGeneratedConceptSvg] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { generatedConceptSvg?: string };
+      return parsed.generatedConceptSvg ?? "";
+    } catch {
+      return "";
+    }
+  });
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -161,6 +264,16 @@ export default function WorkshopShell({
       nextMove: conceptSheet.nextEngineeringMove,
     };
   }, [conceptSheet, projectName]);
+
+  const generatedConceptRender = useMemo(() => {
+    if (!conceptGenerated) return "";
+    return generatedConceptSvg || createConceptRenderSvg(visualConceptBrief);
+  }, [conceptGenerated, generatedConceptSvg, visualConceptBrief]);
+
+  const generatedConceptDataUri = useMemo(() => {
+    if (!generatedConceptRender) return "";
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(generatedConceptRender)}`;
+  }, [generatedConceptRender]);
 
   const selectedBench = useMemo(
     () =>
@@ -223,6 +336,8 @@ export default function WorkshopShell({
   function generateConcept() {
     if (!conceptVisualised) return;
 
+    const renderSvg = createConceptRenderSvg(visualConceptBrief);
+    setGeneratedConceptSvg(renderSvg);
     setConceptGenerated(true);
 
     try {
@@ -235,16 +350,17 @@ export default function WorkshopShell({
         conceptStorageKey,
         JSON.stringify({
           ...existing,
-          version: 1,
+          version: 2,
           conceptCreated: true,
           conceptVisualised: true,
           conceptGenerated: true,
+          generatedConceptSvg: renderSvg,
           projectName,
           generatedAt: new Date().toISOString(),
         })
       );
     } catch {
-      // The concept render still works for this session if local storage is unavailable.
+      // The generated concept still works for this session if local storage is unavailable.
     }
   }
 
@@ -511,22 +627,17 @@ export default function WorkshopShell({
                   </button>
                 </div>
 
-                {conceptGenerated && (
-                  <div className="generated-concept-board" aria-label="Generated Concept 01 study">
-                    <div className="generated-concept-grid" aria-hidden="true" />
-                    <div className="generated-concept-title">CONCEPT 01 · FIRST CONCEPT RENDER</div>
-                    <div className="generated-concept-object" aria-hidden="true">
-                      <i className="generated-concept-top" />
-                      <i className="generated-concept-body" />
-                      <i className="generated-concept-wheel generated-concept-wheel-left" />
-                      <i className="generated-concept-wheel generated-concept-wheel-right" />
-                      <i className="generated-concept-core" />
-                      <span className="generated-callout generated-callout-purpose">PURPOSE</span>
-                      <span className="generated-callout generated-callout-principle">OPERATING PRINCIPLE</span>
-                      <span className="generated-callout generated-callout-constraint">CONSTRAINT</span>
+                {conceptGenerated && generatedConceptDataUri && (
+                  <div className="generated-concept-board generated-concept-board-real" aria-label="Generated Concept 01 study">
+                    <img
+                      className="generated-concept-image"
+                      src={generatedConceptDataUri}
+                      alt={`Generated engineering concept for ${projectName}`}
+                    />
+                    <div className="generated-concept-meta">
+                      <span>GENERATED FROM APPROVED VISUAL BRIEF</span>
+                      <b>PROCEDURAL ENGINEERING RENDER</b>
                     </div>
-                    <div className="generated-concept-caption">{visualConceptBrief.purpose}</div>
-                    <div className="generated-concept-footer">REV · CONCEPT STUDY · GENERATED FROM APPROVED VISUAL BRIEF · NOT CAD</div>
                   </div>
                 )}
               </div>
@@ -1758,6 +1869,41 @@ export default function WorkshopShell({
 
         .concept-generation-action button:hover {
           border-color: rgba(154, 236, 246, 0.96);
+        }
+
+        .generated-concept-board-real {
+          position: relative;
+          overflow: hidden;
+          margin-top: 14px;
+          border: 1px solid rgba(80, 191, 210, 0.34);
+          background: #071217;
+          box-shadow: inset 0 0 50px rgba(28, 148, 169, 0.08);
+        }
+
+        .generated-concept-image {
+          display: block;
+          width: 100%;
+          height: auto;
+          min-height: 260px;
+          object-fit: cover;
+        }
+
+        .generated-concept-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 9px 12px;
+          border-top: 1px solid rgba(80, 191, 210, 0.24);
+          color: #708891;
+          font-size: 8px;
+          font-weight: 800;
+          letter-spacing: 0.09em;
+        }
+
+        .generated-concept-meta b {
+          color: #8fd7e1;
+          font-size: 8px;
         }
 
         .generated-concept-board {
