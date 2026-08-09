@@ -96,6 +96,17 @@ export default function WorkshopShell({
       return false;
     }
   });
+  const [conceptGenerated, setConceptGenerated] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return false;
+      const parsed = JSON.parse(saved) as { conceptGenerated?: boolean };
+      return Boolean(parsed.conceptGenerated);
+    } catch {
+      return false;
+    }
+  });
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -206,6 +217,34 @@ export default function WorkshopShell({
       );
     } catch {
       // The visual study still works for this session if local storage is unavailable.
+    }
+  }
+
+  function generateConcept() {
+    if (!conceptVisualised) return;
+
+    setConceptGenerated(true);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 1,
+          conceptCreated: true,
+          conceptVisualised: true,
+          conceptGenerated: true,
+          projectName,
+          generatedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The concept render still works for this session if local storage is unavailable.
     }
   }
 
@@ -460,6 +499,36 @@ export default function WorkshopShell({
                 <div className="visual-concept-brief-footer">
                   REV · STRUCTURED VISUAL INPUT · NOT A CAD MODEL
                 </div>
+
+                <div className="concept-generation-action">
+                  <div>
+                    <span>REV · CONCEPT GENERATION</span>
+                    <strong>{conceptGenerated ? "CONCEPT STUDY GENERATED" : "Generate the first concept render from this brief."}</strong>
+                    <small>{conceptGenerated ? "Saved with this Project workshop. The render remains a first-pass engineering study." : "This stage turns the approved visual brief into a visual concept study."}</small>
+                  </div>
+                  <button type="button" onClick={generateConcept}>
+                    {conceptGenerated ? "CONCEPT GENERATED" : "GENERATE CONCEPT"}
+                  </button>
+                </div>
+
+                {conceptGenerated && (
+                  <div className="generated-concept-board" aria-label="Generated Concept 01 study">
+                    <div className="generated-concept-grid" aria-hidden="true" />
+                    <div className="generated-concept-title">CONCEPT 01 · FIRST CONCEPT RENDER</div>
+                    <div className="generated-concept-object" aria-hidden="true">
+                      <i className="generated-concept-top" />
+                      <i className="generated-concept-body" />
+                      <i className="generated-concept-wheel generated-concept-wheel-left" />
+                      <i className="generated-concept-wheel generated-concept-wheel-right" />
+                      <i className="generated-concept-core" />
+                      <span className="generated-callout generated-callout-purpose">PURPOSE</span>
+                      <span className="generated-callout generated-callout-principle">OPERATING PRINCIPLE</span>
+                      <span className="generated-callout generated-callout-constraint">CONSTRAINT</span>
+                    </div>
+                    <div className="generated-concept-caption">{visualConceptBrief.purpose}</div>
+                    <div className="generated-concept-footer">REV · CONCEPT STUDY · GENERATED FROM APPROVED VISUAL BRIEF · NOT CAD</div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1638,6 +1707,176 @@ export default function WorkshopShell({
           letter-spacing: 0.1em;
         }
 
+        .concept-generation-action {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 18px;
+          margin-top: 14px;
+          padding: 12px 13px;
+          border: 1px solid rgba(72, 182, 205, 0.34);
+          background: rgba(17, 75, 87, 0.12);
+        }
+
+        .concept-generation-action > div {
+          min-width: 0;
+        }
+
+        .concept-generation-action span {
+          display: block;
+          color: #7fc8d8;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+        }
+
+        .concept-generation-action strong {
+          display: block;
+          margin-top: 5px;
+          color: #edf7f8;
+          font-size: 12px;
+        }
+
+        .concept-generation-action small {
+          display: block;
+          margin-top: 5px;
+          color: #8299a3;
+          font-size: 10px;
+          line-height: 1.4;
+        }
+
+        .concept-generation-action button {
+          flex: 0 0 auto;
+          border: 1px solid rgba(112, 221, 235, 0.72);
+          background: linear-gradient(180deg, rgba(39, 116, 129, 0.96), rgba(18, 65, 76, 0.98));
+          color: #e8fdff;
+          padding: 10px 14px;
+          font: 800 10px/1 Arial, sans-serif;
+          letter-spacing: 1.1px;
+          cursor: pointer;
+        }
+
+        .concept-generation-action button:hover {
+          border-color: rgba(154, 236, 246, 0.96);
+        }
+
+        .generated-concept-board {
+          position: relative;
+          min-height: 340px;
+          margin-top: 14px;
+          overflow: hidden;
+          border: 1px solid rgba(80, 191, 210, 0.42);
+          background: linear-gradient(135deg, #08161b, #12323a 52%, #071217);
+          box-shadow: inset 0 0 70px rgba(28, 148, 169, 0.09);
+        }
+
+        .generated-concept-grid {
+          position: absolute;
+          inset: 0;
+          opacity: 0.22;
+          background-image: linear-gradient(rgba(111, 204, 218, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 204, 218, 0.15) 1px, transparent 1px);
+          background-size: 28px 28px;
+        }
+
+        .generated-concept-title {
+          position: absolute;
+          left: 16px;
+          top: 14px;
+          color: #8be3ed;
+          font: 800 9px/1 Arial, sans-serif;
+          letter-spacing: 1.6px;
+        }
+
+        .generated-concept-object {
+          position: absolute;
+          left: 50%;
+          top: 53%;
+          width: 430px;
+          height: 190px;
+          transform: translate(-50%, -50%);
+          filter: drop-shadow(0 0 18px rgba(66, 193, 211, 0.16));
+        }
+
+        .generated-concept-top {
+          position: absolute;
+          left: 42px;
+          top: 45px;
+          width: 346px;
+          height: 56px;
+          transform: skewX(-18deg);
+          border: 2px solid #8ee4ed;
+          background: linear-gradient(180deg, rgba(92, 178, 190, 0.38), rgba(18, 55, 63, 0.9));
+          box-shadow: inset 0 -8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        .generated-concept-body {
+          position: absolute;
+          left: 84px;
+          top: 91px;
+          width: 264px;
+          height: 45px;
+          border: 1px solid #62b8c6;
+          background: linear-gradient(180deg, rgba(25, 100, 112, 0.65), rgba(10, 41, 49, 0.9));
+        }
+
+        .generated-concept-core {
+          position: absolute;
+          left: 135px;
+          top: 102px;
+          width: 164px;
+          height: 23px;
+          border: 1px solid rgba(143, 230, 239, 0.72);
+          background: rgba(33, 125, 139, 0.34);
+        }
+
+        .generated-concept-wheel {
+          position: absolute;
+          top: 129px;
+          width: 38px;
+          height: 38px;
+          border: 3px solid #77ced9;
+          border-radius: 50%;
+          background: #0b2026;
+          box-shadow: inset 0 0 0 8px #152f36;
+        }
+
+        .generated-concept-wheel-left { left: 99px; }
+        .generated-concept-wheel-right { right: 101px; }
+
+        .generated-callout {
+          position: absolute;
+          padding: 5px 7px;
+          border: 1px solid rgba(116, 212, 225, 0.42);
+          color: #a4e9f0;
+          background: rgba(5, 20, 25, 0.88);
+          font: 800 7px/1 Arial, sans-serif;
+          letter-spacing: 0.9px;
+        }
+
+        .generated-callout-purpose { left: 0; top: 31px; }
+        .generated-callout-principle { right: 0; top: 76px; }
+        .generated-callout-constraint { right: 30px; bottom: 4px; color: #e5bd7b; border-color: rgba(224, 173, 86, 0.42); }
+
+        .generated-concept-caption {
+          position: absolute;
+          left: 16px;
+          right: 16px;
+          bottom: 38px;
+          color: #b9d4da;
+          font-size: 11px;
+          line-height: 1.45;
+        }
+
+        .generated-concept-footer {
+          position: absolute;
+          left: 16px;
+          bottom: 14px;
+          color: #637c85;
+          font-size: 8px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+        }
+
         @media (max-width: 700px) {
           .visual-concept-brief-grid {
             grid-template-columns: 1fr;
@@ -1645,6 +1884,19 @@ export default function WorkshopShell({
 
           .visual-concept-brief-heading {
             flex-direction: column;
+          }
+
+          .concept-generation-action {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .concept-generation-action button {
+            width: 100%;
+          }
+
+          .generated-concept-object {
+            transform: translate(-50%, -50%) scale(0.78);
           }
         }
 
