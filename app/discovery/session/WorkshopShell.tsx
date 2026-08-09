@@ -68,6 +68,7 @@ function createConceptRenderSvg(brief: {
   principle: string;
   constraints: string[];
   nextMove: string;
+  conceptLabel?: string;
 }) {
   const source = `${brief.title}|${brief.purpose}|${brief.principle}|${brief.constraints.join("|")}`;
   let hash = 2166136261;
@@ -83,6 +84,7 @@ function createConceptRenderSvg(brief: {
   const principle = escapeSvgText(brief.principle.slice(0, 88));
   const constraint = escapeSvgText((brief.constraints[0] ?? "Constraint not yet captured").slice(0, 72));
   const nextMove = escapeSvgText(brief.nextMove.slice(0, 82));
+  const conceptLabel = escapeSvgText(brief.conceptLabel ?? "CONCEPT 01");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Generated engineering concept render">
     <defs>
@@ -103,7 +105,7 @@ function createConceptRenderSvg(brief: {
       <path d="M80 0V560M160 0V560M240 0V560M320 0V560M400 0V560M480 0V560M560 0V560M640 0V560M720 0V560M800 0V560M880 0V560M960 0V560"/>
     </g>
     <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · GENERATED CONCEPT STUDY</text>
-    <text x="28" y="54" fill="#718891" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.2">CONCEPT 01 · PROCEDURAL ENGINEERING VISUAL · REVISION ${variant + 1}</text>
+    <text x="28" y="54" fill="#718891" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.2">${conceptLabel} · PROCEDURAL ENGINEERING VISUAL · REVISION ${variant + 1}</text>
 
     <g transform="translate(165 190) skewX(${bodySkew})" filter="url(#glow)">
       <path d="M70 155 L120 65 L500 35 L690 105 L650 205 L105 215 Z" fill="url(#body)" stroke="#83dce7" stroke-width="3"/>
@@ -247,6 +249,30 @@ export default function WorkshopShell({
     }
   });
 
+  const [refinedConceptGenerated, setRefinedConceptGenerated] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return false;
+      const parsed = JSON.parse(saved) as { refinedConceptGenerated?: boolean };
+      return Boolean(parsed.refinedConceptGenerated);
+    } catch {
+      return false;
+    }
+  });
+
+  const [refinedConceptSvg, setRefinedConceptSvg] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { refinedConceptSvg?: string };
+      return parsed.refinedConceptSvg ?? "";
+    } catch {
+      return "";
+    }
+  });
+
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
 
@@ -300,6 +326,51 @@ export default function WorkshopShell({
       nextMove: conceptSheet.nextEngineeringMove,
     };
   }, [conceptSheet, projectName]);
+
+  const refinementDirective = useMemo(() => {
+    const note = conceptReview === "unreviewed"
+      ? "No review has been recorded yet."
+      : conceptReviewNotes[conceptReview].trim() || "No additional review note was recorded.";
+
+    if (conceptReview === "accepted") {
+      return {
+        focus: "PRESERVE CURRENT DIRECTION",
+        directive: "Carry the accepted concept forward while tightening the engineering detail around the current working direction.",
+        note,
+        nextMove: "Advance the accepted concept into a more defined second-pass study.",
+      };
+    }
+
+    if (conceptReview === "rethink") {
+      return {
+        focus: "RECONSIDER CORE APPROACH",
+        directive: "Re-examine the concept against the inventor's concern before committing to the next physical arrangement.",
+        note,
+        nextMove: "Generate Concept 02 as a deliberate alternative to the first-pass direction.",
+      };
+    }
+
+    return {
+      focus: "REFINE IDENTIFIED ISSUE",
+      directive: "Carry the review concern into the next concept and make the identified weakness the primary refinement target.",
+      note,
+      nextMove: "Generate Concept 02 with the review concern explicitly carried forward.",
+    };
+  }, [conceptReview, conceptReviewNotes]);
+
+  const refinedConceptRender = useMemo(() => {
+    if (!refinedConceptGenerated) return "";
+    return refinedConceptSvg || createConceptRenderSvg({
+      ...visualConceptBrief,
+      conceptLabel: "CONCEPT 02",
+      nextMove: refinementDirective.nextMove,
+    });
+  }, [refinedConceptGenerated, refinedConceptSvg, refinementDirective.nextMove, visualConceptBrief]);
+
+  const refinedConceptDataUri = useMemo(() => {
+    if (!refinedConceptRender) return "";
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(refinedConceptRender)}`;
+  }, [refinedConceptRender]);
 
   const generatedConceptRender = useMemo(() => {
     if (!conceptGenerated) return "";
@@ -424,6 +495,42 @@ export default function WorkshopShell({
       );
     } catch {
       // The review still works for this session if local storage is unavailable.
+    }
+  }
+
+  function generateRefinedConcept() {
+    if (conceptReview === "unreviewed") return;
+
+    const renderSvg = createConceptRenderSvg({
+      ...visualConceptBrief,
+      conceptLabel: "CONCEPT 02",
+      nextMove: refinementDirective.nextMove,
+    });
+
+    setRefinedConceptSvg(renderSvg);
+    setRefinedConceptGenerated(true);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 4,
+          conceptReview,
+          conceptReviewNotes,
+          refinedConceptGenerated: true,
+          refinedConceptSvg: renderSvg,
+          refinementDirective: refinementDirective.directive,
+          refinedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The refinement still works for this session if local storage is unavailable.
     }
   }
 
@@ -764,6 +871,51 @@ export default function WorkshopShell({
                       {conceptReview === "refine" && "Refinement required before this becomes the next working direction."}
                       {conceptReview === "rethink" && "The concept should be reconsidered before further development."}
                     </div>
+
+                    {conceptReview !== "unreviewed" && (
+                      <>
+                        <div className="concept-refinement-panel">
+                          <div className="concept-refinement-heading">
+                            <div>
+                              <span>REV · REFINEMENT DIRECTIVE</span>
+                              <strong>{refinementDirective.focus}</strong>
+                            </div>
+                            <b>CONCEPT 02</b>
+                          </div>
+
+                          <p className="concept-refinement-directive">{refinementDirective.directive}</p>
+
+                          <div className="concept-refinement-grid">
+                            <section>
+                              <span>INVENTOR REVIEW</span>
+                              <p>{refinementDirective.note}</p>
+                            </section>
+                            <section>
+                              <span>NEXT ENGINEERING MOVE</span>
+                              <p>{refinementDirective.nextMove}</p>
+                            </section>
+                          </div>
+
+                          <button type="button" className="concept-refinement-button" onClick={generateRefinedConcept}>
+                            {refinedConceptGenerated ? "CONCEPT 02 GENERATED" : "GENERATE CONCEPT 02"}
+                          </button>
+                        </div>
+
+                        {refinedConceptGenerated && refinedConceptDataUri && (
+                          <div className="generated-concept-board generated-concept-board-real concept-two-board" aria-label="Generated Concept 02 refinement study">
+                            <img
+                              className="generated-concept-image"
+                              src={refinedConceptDataUri}
+                              alt={`Refined engineering concept for ${projectName}`}
+                            />
+                            <div className="generated-concept-meta">
+                              <span>GENERATED FROM REVIEW-DRIVEN REFINEMENT</span>
+                              <b>CONCEPT 02 · SECOND-PASS STUDY</b>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -2032,6 +2184,18 @@ export default function WorkshopShell({
           font-size: 8px;
         }
 
+        .concept-refinement-panel { margin-top:14px; padding:14px; border:1px solid rgba(80,191,210,.32); border-radius:10px; background:linear-gradient(145deg,rgba(15,37,44,.96),rgba(7,18,23,.96)); }
+        .concept-refinement-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding-bottom:10px; border-bottom:1px solid rgba(118,151,164,.22); }
+        .concept-refinement-heading span, .concept-refinement-grid section > span { display:block; color:#7fc8d8; font-size:9px; font-weight:900; letter-spacing:.12em; }
+        .concept-refinement-heading strong { display:block; margin-top:5px; color:#f3f7f8; font-size:15px; }
+        .concept-refinement-heading b { padding:6px 8px; border:1px solid rgba(93,201,220,.45); border-radius:6px; color:#c8e4ea; font-size:9px; letter-spacing:.1em; white-space:nowrap; }
+        .concept-refinement-directive { margin:11px 0; color:#d0dade; font-size:11px; line-height:1.5; }
+        .concept-refinement-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+        .concept-refinement-grid section { padding:10px 11px; border:1px solid rgba(106,132,144,.24); border-radius:8px; background:rgba(220,232,235,.025); }
+        .concept-refinement-grid p { margin:6px 0 0; color:#b9c9cf; font-size:10px; line-height:1.5; }
+        .concept-refinement-button { margin-top:12px; border:1px solid rgba(93,201,220,.58); background:linear-gradient(180deg,rgba(31,92,105,.92),rgba(15,49,58,.94)); color:#dffbff; padding:9px 13px; font:700 10px/1 Arial,sans-serif; letter-spacing:1.1px; cursor:pointer; }
+        .concept-two-board { border-color:rgba(116,201,145,.34); }
+
         .concept-review-panel {
           margin-top: 14px;
           padding: 15px;
@@ -2620,6 +2784,10 @@ export default function WorkshopShell({
           .slot-prototype { left: 53%; top: 810px; width: 42%; }
           .rev-station { display: none; }
           .room-caption { max-width: 85%; }
+        }
+        @media (max-width: 700px) {
+          .concept-refinement-grid { grid-template-columns:1fr; }
+          .concept-refinement-heading { flex-direction:column; }
         }
       `}</style>
     </section>
