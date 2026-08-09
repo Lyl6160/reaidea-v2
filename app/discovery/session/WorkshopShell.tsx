@@ -58,6 +58,10 @@ export default function WorkshopShell({
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(
     workshop.recommendedBench
   );
+  const [conceptCreated, setConceptCreated] = useState(false);
+
+  const engineeringBench = getBench(workshop, "engineering");
+  const canCreateConcept = engineeringBench?.state !== "dormant";
 
   const selectedBench = useMemo(
     () =>
@@ -66,6 +70,12 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
+
+  function createConcept() {
+    if (!canCreateConcept) return;
+    setConceptCreated(true);
+    setSelectedId("prototype");
+  }
 
   return (
     <section className="living-workshop" aria-label="reAIdea living workshop">
@@ -169,7 +179,16 @@ export default function WorkshopShell({
                     <i className="tool-c" />
                   </span>
                 )}
-                {id === "prototype" && <span className="empty-bench-glint" />}
+                {id === "prototype" && !conceptCreated && <span className="empty-bench-glint" />}
+                {id === "prototype" && conceptCreated && (
+                  <span className="concept-model" aria-label={`${projectName} concept 01`}>
+                    <i className="concept-body" />
+                    <i className="concept-deck" />
+                    <i className="concept-wheel concept-wheel-left" />
+                    <i className="concept-wheel concept-wheel-right" />
+                    <b>CONCEPT 01</b>
+                  </span>
+                )}
               </span>
               <span className="bench-cabinet" aria-hidden="true">
                 <i />
@@ -200,6 +219,27 @@ export default function WorkshopShell({
           <span>REV · NEXT MOVE</span>
           <strong>{selectedBench.nextMove}</strong>
         </div>
+        {selectedBench.id === "engineering" && (
+          <div className="engineering-action">
+            <div>
+              <span>ENGINEERING BENCH</span>
+              <strong>Turn what we know into the first visible concept.</strong>
+              {!canCreateConcept && (
+                <small>REV needs more Engineering definition before this control can be used.</small>
+              )}
+            </div>
+            <button type="button" onClick={createConcept} disabled={!canCreateConcept}>
+              CREATE CONCEPT
+            </button>
+          </div>
+        )}
+        {conceptCreated && selectedBench.id === "prototype" && (
+          <div className="concept-readout">
+            <span>PROTOTYPE BENCH · CONCEPT 01</span>
+            <strong>{projectName}</strong>
+            <p>{engineeringBench?.reason ?? workshop.summary}</p>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -787,6 +827,66 @@ export default function WorkshopShell({
         .slot-manufacturing .tool-b { width: 18px; height: 13px; background: #916f46; }
         .slot-reality .tool-a { width: 26px; height: 18px; background: #c7bea7; }
 
+
+        .concept-model {
+          position: absolute;
+          left: 50%;
+          top: 2px;
+          width: 92px;
+          height: 35px;
+          transform: translateX(-50%);
+          filter: drop-shadow(0 7px 7px rgba(0,0,0,0.38));
+        }
+
+        .concept-model .concept-body {
+          position: absolute;
+          left: 12px;
+          top: 8px;
+          width: 67px;
+          height: 17px;
+          border: 1px solid #a8c0c4;
+          border-radius: 4px 10px 3px 3px;
+          background: linear-gradient(135deg, #829398, #46575d 65%, #27353b);
+          transform: skewX(-10deg);
+          box-shadow: inset 0 0 8px rgba(191,239,245,0.13);
+        }
+
+        .concept-model .concept-deck {
+          position: absolute;
+          left: 23px;
+          top: 4px;
+          width: 43px;
+          height: 6px;
+          border: 1px solid #97a9aa;
+          background: #303f44;
+          transform: skewX(-18deg);
+        }
+
+        .concept-wheel {
+          position: absolute;
+          top: 21px;
+          width: 12px;
+          height: 12px;
+          border: 2px solid #20272a;
+          border-radius: 50%;
+          background: #556166;
+          box-shadow: inset 0 0 0 2px #262d30;
+        }
+
+        .concept-wheel-left { left: 20px; }
+        .concept-wheel-right { right: 18px; }
+
+        .concept-model b {
+          position: absolute;
+          left: 50%;
+          top: -11px;
+          transform: translateX(-50%);
+          color: #c9f7ff;
+          font-size: 6px;
+          letter-spacing: 0.12em;
+          white-space: nowrap;
+        }
+
         .empty-bench-glint {
           position: absolute;
           left: 18%;
@@ -1149,6 +1249,81 @@ export default function WorkshopShell({
           line-height: 1.5;
         }
 
+
+        .engineering-action {
+          grid-column: 1 / -1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          margin-top: 3px;
+          padding-top: 14px;
+          border-top: 1px solid #34465a;
+        }
+
+        .engineering-action > div > span,
+        .concept-readout > span {
+          display: block;
+          margin-bottom: 4px;
+          color: #35d9f5;
+          font-size: 10px;
+          font-weight: 850;
+          letter-spacing: 0.09em;
+        }
+
+        .engineering-action strong {
+          color: #eef2f6;
+          font-size: 13px;
+        }
+
+        .engineering-action small {
+          display: block;
+          margin-top: 5px;
+          color: #9caabd;
+        }
+
+        .engineering-action button {
+          flex: 0 0 auto;
+          padding: 12px 18px;
+          border: 1px solid #d7a852;
+          border-radius: 7px;
+          background: linear-gradient(#bb7a23, #7b4d17);
+          color: #fff5df;
+          box-shadow: 0 6px 16px rgba(0,0,0,0.24), inset 0 1px rgba(255,255,255,0.16);
+          font-size: 11px;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+        }
+
+        .engineering-action button:disabled {
+          border-color: #58616a;
+          background: #303941;
+          color: #7f8a94;
+          cursor: not-allowed;
+          box-shadow: none;
+        }
+
+        .concept-readout {
+          grid-column: 1 / -1;
+          margin-top: 3px;
+          padding: 13px 15px;
+          border: 1px solid #52717a;
+          border-radius: 9px;
+          background: #101b23;
+        }
+
+        .concept-readout strong {
+          color: #f2f6f7;
+        }
+
+        .concept-readout p {
+          margin: 5px 0 0;
+          color: #aebbc5;
+          font-size: 12px;
+          line-height: 1.45;
+        }
+
         @media (max-width: 980px) {
           .living-workshop { width: calc(100vw - 18px); padding: 16px; }
           .workshop-heading { grid-template-columns: 1fr; gap: 10px; }
@@ -1250,6 +1425,8 @@ export default function WorkshopShell({
           .rev-bubble { display: none; }
           .workshop-plaque { top: 142px; }
           .bench-readout { grid-template-columns: 1fr; }
+          .engineering-action { align-items: stretch; flex-direction: column; }
+          .engineering-action button { width: 100%; }
           .next-move { min-width: 0; padding: 12px 0 0; border-left: 0; border-top: 1px solid #34465a; }
         }
 
