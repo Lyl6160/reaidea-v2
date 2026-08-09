@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { Project } from "../../lib/core/project";
 import type {
@@ -37,6 +37,19 @@ function getBench(workshop: WorkshopState, id: WorkshopBenchId) {
   return workshop.benches.find((bench) => bench.id === id);
 }
 
+
+function conceptKey(project: Project) {
+  const source = `${project.projectName}::${project.originalObservation}`;
+  let hash = 2166136261;
+
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return `reaidea.workshop.concept.v1.${(hash >>> 0).toString(16)}`;
+}
+
 function stateLabel(state: WorkshopBenchSignal["state"]) {
   switch (state) {
     case "active":
@@ -61,6 +74,31 @@ export default function WorkshopShell({
     workshop.recommendedBench
   );
   const [conceptCreated, setConceptCreated] = useState(false);
+  const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
+
+  useEffect(() => {
+    let restoreTimer: number | undefined;
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      if (!saved) return;
+
+      const parsed = JSON.parse(saved) as { conceptCreated?: boolean };
+      if (parsed.conceptCreated) {
+        restoreTimer = window.setTimeout(() => {
+          setConceptCreated(true);
+        }, 0);
+      }
+    } catch {
+      // Workshop persistence should never block the room from opening.
+    }
+
+    return () => {
+      if (restoreTimer !== undefined) {
+        window.clearTimeout(restoreTimer);
+      }
+    };
+  }, [conceptStorageKey]);
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -114,7 +152,24 @@ export default function WorkshopShell({
 
   function createConcept() {
     if (!canCreateConcept) return;
-    setConceptCreated(true);
+
+    if (!conceptCreated) {
+      setConceptCreated(true);
+      try {
+        window.localStorage.setItem(
+          conceptStorageKey,
+          JSON.stringify({
+            version: 1,
+            conceptCreated: true,
+            projectName,
+            createdAt: new Date().toISOString(),
+          })
+        );
+      } catch {
+        // The concept still works for this session if local storage is unavailable.
+      }
+    }
+
     setSelectedId("prototype");
   }
 
@@ -270,7 +325,7 @@ export default function WorkshopShell({
               )}
             </div>
             <button type="button" onClick={createConcept} disabled={!canCreateConcept}>
-              CREATE CONCEPT
+              {conceptCreated ? "OPEN CONCEPT 01" : "CREATE CONCEPT"}
             </button>
           </div>
         )}
@@ -283,6 +338,7 @@ export default function WorkshopShell({
               </div>
               <b>CONCEPT SHEET</b>
             </div>
+            <p className="concept-persistence-note">Saved with this Project workshop · safe to refresh or return later.</p>
 
             <div className="concept-sheet-grid">
               <section className="concept-sheet-card concept-sheet-wide">
@@ -1420,6 +1476,13 @@ export default function WorkshopShell({
           font-size: 10px;
           letter-spacing: 0.12em;
           white-space: nowrap;
+        }
+
+        .concept-persistence-note {
+          margin: 8px 0 14px;
+          color: #93a4b6;
+          font-size: 12px;
+          line-height: 1.45;
         }
 
         .concept-sheet-grid {
