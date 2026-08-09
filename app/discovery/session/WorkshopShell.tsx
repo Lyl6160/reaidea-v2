@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { Project } from "../../lib/core/project";
 import type {
@@ -73,32 +73,29 @@ export default function WorkshopShell({
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(
     workshop.recommendedBench
   );
-  const [conceptCreated, setConceptCreated] = useState(false);
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
-
-  useEffect(() => {
-    let restoreTimer: number | undefined;
-
+  const [conceptCreated, setConceptCreated] = useState(() => {
+    if (typeof window === "undefined") return false;
     try {
-      const saved = window.localStorage.getItem(conceptStorageKey);
-      if (!saved) return;
-
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return false;
       const parsed = JSON.parse(saved) as { conceptCreated?: boolean };
-      if (parsed.conceptCreated) {
-        restoreTimer = window.setTimeout(() => {
-          setConceptCreated(true);
-        }, 0);
-      }
+      return Boolean(parsed.conceptCreated);
     } catch {
-      // Workshop persistence should never block the room from opening.
+      return false;
     }
-
-    return () => {
-      if (restoreTimer !== undefined) {
-        window.clearTimeout(restoreTimer);
-      }
-    };
-  }, [conceptStorageKey]);
+  });
+  const [conceptVisualised, setConceptVisualised] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return false;
+      const parsed = JSON.parse(saved) as { conceptVisualised?: boolean };
+      return Boolean(parsed.conceptVisualised);
+    } catch {
+      return false;
+    }
+  });
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
@@ -171,6 +168,33 @@ export default function WorkshopShell({
     }
 
     setSelectedId("prototype");
+  }
+
+  function visualiseConcept() {
+    if (!conceptCreated) return;
+
+    setConceptVisualised(true);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          version: 1,
+          conceptCreated: true,
+          conceptVisualised: true,
+          projectName,
+          visualisedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // The visual study still works for this session if local storage is unavailable.
+    }
   }
 
   return (
@@ -339,6 +363,28 @@ export default function WorkshopShell({
               <b>CONCEPT SHEET</b>
             </div>
             <p className="concept-persistence-note">Saved with this Project workshop · safe to refresh or return later.</p>
+            <div className="concept-visual-actions">
+              <button type="button" className="concept-visualise-button" onClick={visualiseConcept}>
+                {conceptVisualised ? "CONCEPT VISUALISED" : "VISUALISE CONCEPT"}
+              </button>
+              <span>{conceptVisualised ? "First visual study generated from the current engineering understanding." : "Turn the Concept Sheet into a first visual study."}</span>
+            </div>
+            {conceptVisualised && (
+              <div className="concept-visual-board" aria-label="Concept 01 visual study">
+                <div className="visual-board-grid" aria-hidden="true" />
+                <div className="visual-board-label">CONCEPT 01 · ENGINEERING STUDY</div>
+                <div className="visual-object">
+                  <i className="visual-object-top" />
+                  <i className="visual-object-core" />
+                  <i className="visual-object-leg visual-object-leg-left" />
+                  <i className="visual-object-leg visual-object-leg-right" />
+                  <span className="visual-callout visual-callout-purpose">PURPOSE</span>
+                  <span className="visual-callout visual-callout-constraint">CONSTRAINT</span>
+                  <span className="visual-callout visual-callout-unknown">UNKNOWN</span>
+                </div>
+                <div className="visual-board-footer">REV · FIRST-PASS VISUAL ONLY · NOT A CAD MODEL</div>
+              </div>
+            )}
 
             <div className="concept-sheet-grid">
               <section className="concept-sheet-card concept-sheet-wide">
@@ -1391,6 +1437,25 @@ export default function WorkshopShell({
         }
 
         .engineering-action > div > span,
+
+        .concept-visual-actions { display:flex; align-items:center; gap:12px; margin:14px 0 16px; padding:10px 12px; border:1px solid rgba(74,185,205,.24); background:rgba(12,35,42,.34); }
+        .concept-visual-actions span { color:#8299a3; font-size:10px; line-height:1.45; }
+        .concept-visualise-button { border:1px solid rgba(93,201,220,.58); background:linear-gradient(180deg,rgba(31,92,105,.92),rgba(15,49,58,.94)); color:#dffbff; padding:9px 13px; font:700 10px/1 Arial,sans-serif; letter-spacing:1.2px; cursor:pointer; box-shadow:0 0 18px rgba(45,178,202,.12); }
+        .concept-visualise-button:hover { border-color:rgba(134,224,238,.9); }
+        .concept-visual-board { position:relative; min-height:250px; margin:0 0 18px; overflow:hidden; border:1px solid rgba(80,191,210,.34); background:linear-gradient(135deg,#09171c,#102a32 52%,#071217); box-shadow:inset 0 0 50px rgba(28,148,169,.08); }
+        .visual-board-grid { position:absolute; inset:0; opacity:.28; background-image:linear-gradient(rgba(111,204,218,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(111,204,218,.14) 1px,transparent 1px); background-size:24px 24px; }
+        .visual-board-label { position:absolute; left:16px; top:14px; color:#86dce9; font:700 9px/1 Arial,sans-serif; letter-spacing:1.8px; }
+        .visual-object { position:absolute; left:50%; top:54%; width:330px; height:120px; transform:translate(-50%,-50%); filter:drop-shadow(0 0 14px rgba(66,193,211,.16)); }
+        .visual-object-top { position:absolute; left:55px; top:28px; width:220px; height:40px; transform:skewX(-22deg); border:2px solid #7fd8e4; background:linear-gradient(180deg,rgba(83,157,170,.32),rgba(18,55,63,.75)); }
+        .visual-object-core { position:absolute; left:96px; top:51px; width:138px; height:28px; border:1px solid #5caebc; background:rgba(20,91,103,.52); }
+        .visual-object-leg { position:absolute; top:76px; width:8px; height:28px; border:1px solid #63b9c7; background:#183d46; }
+        .visual-object-leg-left { left:105px; }
+        .visual-object-leg-right { right:103px; }
+        .visual-callout { position:absolute; padding:4px 6px; border:1px solid rgba(116,212,225,.38); color:#9ee6ee; background:rgba(5,20,25,.86); font:700 7px/1 Arial,sans-serif; letter-spacing:1px; }
+        .visual-callout-purpose { left:0; top:34px; }
+        .visual-callout-constraint { right:0; top:60px; }
+        .visual-callout-unknown { right:32px; bottom:0; color:#e5bd7b; border-color:rgba(224,173,86,.42); }
+        .visual-board-footer { position:absolute; left:16px; bottom:12px; color:#6f8992; font:700 8px/1 Arial,sans-serif; letter-spacing:1px; }
         .concept-readout > span {
           display: block;
           margin-bottom: 4px;
