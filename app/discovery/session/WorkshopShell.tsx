@@ -121,7 +121,12 @@ export default function WorkshopShell({
               aria-pressed={isSelected}
               aria-label={`${bench.label}: ${stateLabel(bench.state)}`}
             >
-              <span className="room-light" aria-hidden="true" />
+              <span className="lamp-rig" aria-hidden="true">
+                <span className="lamp-cord" />
+                <span className="lamp-shade" />
+                <span className="room-light" />
+                <span className="light-pool" />
+              </span>
               <span className="bench-sign">{shortLabel}</span>
               <span className="bench-top" aria-hidden="true">
                 {id === "prototype" ? (
@@ -203,7 +208,10 @@ export default function WorkshopShell({
           overflow: hidden;
           border: 1px solid #33445b;
           border-radius: 16px;
-          background: #111927;
+          background:
+            radial-gradient(circle at 50% 36%, rgba(151, 112, 65, 0.09), transparent 34%),
+            linear-gradient(#10151b 0%, #121820 60%, #090d12 100%);
+          box-shadow: inset 0 0 90px rgba(0,0,0,0.7);
           isolation: isolate;
         }
 
@@ -213,8 +221,9 @@ export default function WorkshopShell({
           background:
             linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
-            #151d28;
+            #17191b;
           background-size: 34px 18px, 70px 18px, auto;
+          box-shadow: inset 0 -45px 80px rgba(0,0,0,0.28);
           z-index: -5;
         }
 
@@ -223,8 +232,10 @@ export default function WorkshopShell({
           top: -105px;
           width: 64%;
           height: 230px;
-          border-bottom: 2px solid #566171;
-          background: #0d141f;
+          border-bottom: 3px solid #3f4549;
+          background:
+            repeating-linear-gradient(90deg, transparent 0 74px, rgba(90,95,96,0.24) 75px 78px),
+            #0b0e11;
           z-index: -2;
         }
 
@@ -246,7 +257,8 @@ export default function WorkshopShell({
           height: 49%;
           background:
             linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.035) 50%, transparent 51%),
-            linear-gradient(#171f2a, #0d131d);
+            repeating-linear-gradient(90deg, transparent 0 92px, rgba(255,255,255,0.018) 93px 94px),
+            linear-gradient(#242322, #0c0e11);
           transform: perspective(520px) rotateX(56deg);
           transform-origin: bottom;
           z-index: -4;
@@ -254,8 +266,10 @@ export default function WorkshopShell({
 
         .conduit {
           position: absolute;
-          background: #596575;
-          opacity: 0.82;
+          background: linear-gradient(#5d5c57, #2d3032);
+          border: 1px solid #696760;
+          opacity: 0.9;
+          box-shadow: 0 2px 3px rgba(0,0,0,0.5);
           z-index: -1;
         }
 
@@ -309,24 +323,84 @@ export default function WorkshopShell({
           padding: 4px 7px;
           border: 1px solid #526177;
           border-radius: 4px;
-          background: #111a26;
-          color: #dce4ef;
+          background: linear-gradient(#292824, #161718);
+          color: #e4dfd4;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.45);
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 0.045em;
           text-transform: uppercase;
         }
 
+        .lamp-rig {
+          position: absolute;
+          left: 50%;
+          bottom: 118px;
+          width: 82px;
+          height: 92px;
+          transform: translateX(-50%);
+          pointer-events: none;
+        }
+
+        .lamp-cord {
+          position: absolute;
+          left: 50%;
+          top: 0;
+          width: 3px;
+          height: 48px;
+          transform: translateX(-50%);
+          background: #373a3b;
+          box-shadow: 1px 0 #77736a;
+        }
+
+        .lamp-shade {
+          position: absolute;
+          left: 50%;
+          top: 42px;
+          width: 50px;
+          height: 22px;
+          transform: translateX(-50%);
+          border: 1px solid #55534e;
+          border-radius: 25px 25px 5px 5px;
+          background: linear-gradient(#343536, #17191a);
+          box-shadow: 0 4px 5px rgba(0,0,0,0.55);
+        }
+
+        .lamp-shade::after {
+          content: "";
+          position: absolute;
+          left: 5px;
+          right: 5px;
+          bottom: -4px;
+          height: 7px;
+          border-radius: 50%;
+          background: #272827;
+        }
+
         .room-light {
           position: absolute;
           left: 50%;
-          bottom: 132px;
-          width: 11px;
-          height: 11px;
+          top: 59px;
+          width: 16px;
+          height: 7px;
           transform: translateX(-50%);
-          border-radius: 999px;
-          background: #525b68;
-          box-shadow: 0 0 0 3px rgba(82, 91, 104, 0.14);
+          border-radius: 50%;
+          background: #393b3b;
+          box-shadow: none;
+          z-index: 2;
+        }
+
+        .light-pool {
+          position: absolute;
+          left: 50%;
+          top: 62px;
+          width: 94px;
+          height: 70px;
+          transform: translateX(-50%);
+          clip-path: polygon(37% 0, 63% 0, 100% 100%, 0 100%);
+          background: linear-gradient(rgba(255,208,128,0.05), transparent 78%);
+          opacity: 0.16;
+          filter: blur(2px);
         }
 
         .bench-top {
@@ -337,8 +411,10 @@ export default function WorkshopShell({
           height: 45px;
           border: 1px solid #526071;
           border-radius: 5px 5px 2px 2px;
-          background: #202a37;
-          box-shadow: inset 0 -7px #18212d;
+          background:
+            linear-gradient(90deg, rgba(255,255,255,0.025), transparent 45%),
+            #272725;
+          box-shadow: inset 0 -7px #171817, 0 8px 12px rgba(0,0,0,0.28);
         }
 
         .bench-cabinet {
@@ -351,7 +427,7 @@ export default function WorkshopShell({
           border-top: 0;
           background:
             linear-gradient(90deg, transparent 49%, #354256 50%, transparent 51%),
-            #182230;
+            #1b1c1c;
         }
 
         .bench-screen {
@@ -396,19 +472,38 @@ export default function WorkshopShell({
 
         .state-ready .room-light,
         .state-active .room-light {
-          background: #22c55e;
-          box-shadow: 0 0 7px 3px rgba(34, 197, 94, 0.68);
+          background: #ffe1a4;
+          box-shadow: 0 0 10px 5px rgba(255, 207, 120, 0.82);
+        }
+
+        .state-ready .light-pool,
+        .state-active .light-pool {
+          opacity: 0.72;
+          background: linear-gradient(rgba(255,205,125,0.28), transparent 82%);
         }
 
         .state-pulse .room-light {
-          background: #f59e0b;
-          box-shadow: 0 0 10px 4px rgba(245, 158, 11, 0.76);
+          background: #ffd08a;
+          box-shadow: 0 0 14px 7px rgba(245, 158, 11, 0.82);
+        }
+
+        .state-pulse .light-pool {
+          opacity: 0.9;
+          background: linear-gradient(rgba(255,184,82,0.34), transparent 82%);
         }
 
         .state-available .room-light {
-          background: #38bdf8;
-          box-shadow: 0 0 7px 3px rgba(56, 189, 248, 0.54);
+          background: #d7d2c5;
+          box-shadow: 0 0 8px 4px rgba(211, 204, 188, 0.48);
         }
+
+        .state-available .light-pool {
+          opacity: 0.4;
+          background: linear-gradient(rgba(225,216,196,0.17), transparent 82%);
+        }
+
+        .state-dormant .lamp-shade { opacity: 0.72; }
+        .state-dormant .light-pool { opacity: 0.05; }
 
         .is-selected .bench-sign {
           border-color: #b7c6d9;
@@ -439,8 +534,9 @@ export default function WorkshopShell({
           bottom: 112px;
         }
 
-        .slot-prototype .room-light {
-          bottom: 148px;
+        .slot-prototype .lamp-rig {
+          bottom: 134px;
+          transform: translateX(-50%) scale(1.18);
         }
 
         .slot-prototype .bench-top {
@@ -477,7 +573,7 @@ export default function WorkshopShell({
           height: 35px;
           border: 1px solid #718096;
           border-radius: 47% 47% 42% 42%;
-          background: #303c4a;
+          background: linear-gradient(#77736b, #46433e);
         }
 
         .rev-body {
@@ -488,7 +584,7 @@ export default function WorkshopShell({
           height: 96px;
           border: 1px solid #617085;
           border-radius: 14px 14px 7px 7px;
-          background: #263342;
+          background: linear-gradient(#4a4a45, #282a29);
         }
 
         .rev-body span {
