@@ -16,6 +16,7 @@ type WorkshopShellProps = {
 
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
 type ConceptDecision = "undecided" | "accept" | "refine" | "rethink";
+type ValidationEvidenceOutcome = "pending" | "supported" | "not-supported" | "inconclusive";
 
 const benchPositions: Array<{
   id: WorkshopBenchId;
@@ -337,6 +338,27 @@ export default function WorkshopShell({
       return parsed.thirdConceptSvg ?? "";
     } catch {
       return "";
+    }
+  });
+  const [validationEvidence, setValidationEvidence] = useState<{
+    question: string;
+    evidence: string;
+    observed: string;
+    outcome: ValidationEvidenceOutcome;
+  }>(() => {
+    if (typeof window === "undefined") return { question: "", evidence: "", observed: "", outcome: "pending" };
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return { question: "", evidence: "", observed: "", outcome: "pending" };
+      const parsed = JSON.parse(saved) as { validationEvidence?: Partial<{ question: string; evidence: string; observed: string; outcome: ValidationEvidenceOutcome }> };
+      return {
+        question: parsed.validationEvidence?.question ?? "",
+        evidence: parsed.validationEvidence?.evidence ?? "",
+        observed: parsed.validationEvidence?.observed ?? "",
+        outcome: parsed.validationEvidence?.outcome ?? "pending",
+      };
+    } catch {
+      return { question: "", evidence: "", observed: "", outcome: "pending" };
     }
   });
 
@@ -721,6 +743,27 @@ export default function WorkshopShell({
     }
   }
 
+  function saveValidationEvidence(patch: Partial<typeof validationEvidence>) {
+    const next = { ...validationEvidence, ...patch };
+    setValidationEvidence(next);
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved
+        ? (JSON.parse(saved) as Record<string, unknown>)
+        : {};
+      window.localStorage.setItem(
+        conceptStorageKey,
+        JSON.stringify({
+          ...existing,
+          validationEvidence: next,
+          validationEvidenceUpdatedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // Validation evidence still works for this session if local storage is unavailable.
+    }
+  }
+
   return (
     <section className="living-workshop" aria-label="reAIdea living workshop">
       <div className="workshop-heading">
@@ -863,6 +906,45 @@ export default function WorkshopShell({
           <span>REV · NEXT MOVE</span>
           <strong>{selectedBench.nextMove}</strong>
         </div>
+        {selectedBench.id === "validation" && (conceptDecision === "accept" || selectedBench.state === "pulse" || selectedBench.state === "active") && (
+          <div className="concept-decision-panel">
+            <div className="concept-decision-heading">
+              <div>
+                <span>REV · VALIDATION EVIDENCE</span>
+                <strong>Turn the accepted concept into testable evidence.</strong>
+              </div>
+              <b>{validationEvidence.outcome === "pending" ? "EVIDENCE PENDING" : validationEvidence.outcome.toUpperCase()}</b>
+            </div>
+            <p className="concept-decision-intro">
+              Validation is not a second opinion. Record what must be proven, what evidence will count, and what the observation actually showed.
+            </p>
+            <div className="concept-refinement-grid">
+              <section>
+                <span>VALIDATION QUESTION</span>
+                <textarea value={validationEvidence.question} onChange={(event) => saveValidationEvidence({ question: event.target.value })} placeholder="What must be true for Concept 02 to remain credible?" rows={3} />
+              </section>
+              <section>
+                <span>EVIDENCE TO COLLECT</span>
+                <textarea value={validationEvidence.evidence} onChange={(event) => saveValidationEvidence({ evidence: event.target.value })} placeholder="What measurement, test, observation, comparison, or prototype evidence will answer it?" rows={3} />
+              </section>
+            </div>
+            <label className="concept-decision-note">
+              <span>OBSERVED RESULT</span>
+              <textarea value={validationEvidence.observed} onChange={(event) => saveValidationEvidence({ observed: event.target.value })} placeholder="Record what actually happened. Separate observation from interpretation." rows={4} />
+            </label>
+            <div className="concept-decision-actions">
+              <button type="button" className={validationEvidence.outcome === "supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "supported" })}>SUPPORTED</button>
+              <button type="button" className={validationEvidence.outcome === "inconclusive" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "inconclusive" })}>INCONCLUSIVE</button>
+              <button type="button" className={validationEvidence.outcome === "not-supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "not-supported" })}>NOT SUPPORTED</button>
+            </div>
+            <div className={`concept-decision-status decision-${validationEvidence.outcome}`}>
+              {validationEvidence.outcome === "pending" && "No validation outcome recorded yet."}
+              {validationEvidence.outcome === "supported" && "Evidence currently supports the tested proposition. Record what should be tested next."}
+              {validationEvidence.outcome === "inconclusive" && "The evidence is insufficient to decide. Define the next test or observation."}
+              {validationEvidence.outcome === "not-supported" && "The evidence does not support the proposition. Feed the finding back into Engineering."}
+            </div>
+          </div>
+        )}
         {selectedBench.id === "engineering" && (
           <div className="engineering-action">
             <div>
