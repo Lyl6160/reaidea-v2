@@ -61,3 +61,39 @@ Only after that:
 ## Recovery Rule
 
 If Build 24.2 fails acceptance, repair the defect without redesigning the architecture unless the evidence demonstrates that the architecture itself is wrong.
+
+
+## Build 24.2 Verification Record
+
+**Inspection date:** 2026-08-11
+**Hold point:** `HP-24.2-VALIDATION-WORKSHOP`
+**Branch:** `sprint006-build24-validation-execution`
+**Status:** VERIFIED WITH ACCEPTANCE LIMITATION
+
+### Verified Journey
+
+Discovery → checkpoint → validation plan → validation start → evidence capture → REV evidence assessment → validation completion → Engineering State update → persistence.
+
+The existing Concept 01 → Concept 02 → Concept 03 refinement workflow was also exercised successfully.
+
+Workshop ↔ Discovery continuity was exercised successfully using the same Project.
+
+### Static Quality Gate
+
+- `npx tsc --noEmit` — PASS
+- `npm run lint` — PASS, 0 errors and 3 existing `@next/next/no-img-element` warnings
+- `npm run build` — PASS
+
+### Acceptance Limitation
+
+AT-006 was not exercised because the legitimate acceptance Project generated a single-item validation plan.
+
+The validation domain model supports multiple validation items, but no second item was generated in this acceptance journey. No synthetic validation state was injected merely to force the test.
+
+AT-006 therefore remains explicitly untested.
+
+### Construction Decision
+
+Build 24.2 is considered verified for the demonstrated validation-workshop journey, with AT-006 retained as an explicit acceptance limitation.
+
+The next unrelated construction stage must not begin until this record is committed and the hold point is reviewed.

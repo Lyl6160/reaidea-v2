@@ -136,3 +136,41 @@ Existing non-blocking lint warnings must be recorded rather than silently treate
 ## Test Evidence Rule
 
 Any synthetic data used to test the software must be clearly treated as TEST / SYNTHETIC DATA and must never become indistinguishable from real Project evidence.
+
+## Build 24.2 Acceptance Record
+
+**Inspection date:** 2026-08-11
+**Branch:** `sprint006-build24-validation-execution`
+**Result:** VERIFIED WITH ACCEPTANCE LIMITATION
+
+### Results
+
+- **AT-001 — Discovery to Checkpoint:** PASS
+- **AT-002 — Validation Plan Creation:** PASS
+- **AT-003 — Start Validation:** PASS
+- **AT-004 — Record Validation Evidence:** PASS
+- **AT-005 — Complete Validation Item:** PASS
+- **AT-006 — Continue to Second Validation Item:** NOT EXERCISED
+- **AT-007 — Validation Plan Completion:** PASS
+- **AT-008 — Concept Workflow Non-Regression:** PASS
+- **AT-009 — Workshop / Discovery Non-Regression:** PASS
+- **AT-010 — Static Quality Gate:** PASS
+
+### AT-006 Limitation
+
+The legitimate acceptance Project generated a validation plan containing one validation item only. Therefore a second-item execution journey could not be exercised without manufacturing additional Project state.
+
+The production validation model supports multiple validation items, including up to four planned items, but AT-006 is not claimed as passed from this journey.
+
+### Static Quality Notes
+
+- `npx tsc --noEmit` — PASS
+- `npm run lint` — PASS, 0 errors and 3 existing `@next/next/no-img-element` warnings
+- `npm run build` — PASS
+- Production routes generated successfully, including `/workshop`.
+
+### Acceptance Conclusion
+
+Build 24.2 completed the demonstrated validation-workshop journey without an observed regression.
+
+AT-006 remains explicitly untested rather than being represented as passed.
