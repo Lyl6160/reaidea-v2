@@ -174,3 +174,59 @@ The production validation model supports multiple validation items, including up
 Build 24.2 completed the demonstrated validation-workshop journey without an observed regression.
 
 AT-006 remains explicitly untested rather than being represented as passed.
+## AT-004A - Negative Evidence Must Not Become Positive Evidence
+
+**Purpose**
+
+Protect against the Build 24.2 defect where a positive keyword inside a negated evidence statement produced a false supported outcome.
+
+**Input**
+
+Evidence stating that no measured evidence exists and that further testing is required.
+
+**Expected**
+
+- Outcome is **inconclusive**.
+- The evidence is not classified as **confirmed** merely because the word measured appears.
+- Further testing remains explicit.
+
+**Regression coverage**
+
+The assessment must also distinguish genuine supporting evidence, genuine contradictory evidence, and neutral/refining evidence without allowing limiting or negating language to manufacture confirmation.
+
+**Acceptance rule**
+
+This test fails if explicitly absent or not-yet-measured evidence is classified as supported/confirmed.
+
+## Build 24.3 Acceptance Record
+
+**Inspection date:** 2026-08-12
+**Branch:** `sprint006-build24-3-validation-reasoning`
+**Base commit:** `c7d70d0`
+
+### Results
+
+- **AT-004A - Negative Evidence Must Not Become Positive Evidence:** PASS
+- **AT-006 - Continue to Second Validation Item:** PASS
+- **AT-010 - Static Quality Gate:** PASS
+
+### AT-004A Live Result
+
+Evidence stating that no measured evidence had been collected and that further testing was required was assessed as **inconclusive**.
+
+The previous Build 24.2 behaviour classified comparable evidence as supported. Build 24.3 now preserves the uncertainty rather than manufacturing confirmation.
+
+### AT-006 Live Result
+
+A second planned validation item was started and completed after the first item. Both validation results remained traceable and the validation plan completed with 2 of 2 items complete.
+
+### Static Quality Result
+
+- `npx tsc --noEmit` - PASS
+- `npm run lint` - PASS, 0 errors and 3 existing `@next/next/no-img-element` warnings
+- `npm run build` - PASS
+- `git diff --check` - PASS
+
+### Construction Position
+
+The Build 24.3 defect correction has passed the demonstrated regression journey and static quality gates. HP-24.3 remains open pending final diff review and sign-off.

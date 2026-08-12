@@ -256,6 +256,10 @@ export function assessValidationEvidence(
     "unable to determine",
     "unknown",
     "not measured",
+    "no measured",
+    "no measurement",
+    "not confirmed",
+    "not demonstrated",
     "not yet measured",
     "no formal",
   ];

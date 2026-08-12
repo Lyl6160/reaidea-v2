@@ -97,3 +97,49 @@ AT-006 therefore remains explicitly untested.
 Build 24.2 is considered verified for the demonstrated validation-workshop journey, with AT-006 retained as an explicit acceptance limitation.
 
 The next unrelated construction stage must not begin until this record is committed and the hold point is reviewed.
+
+## Build 24.3 Verification Record
+
+**Inspection date:** 2026-08-12
+**Hold point:** `HP-24.3 - Validation Evidence Assessment`
+**Branch:** `sprint006-build24-3-validation-reasoning`
+**Base checkpoint:** `c7d70d0`
+**Status:** VERIFIED
+
+### Verified Correction
+
+The Build 24.2 validation evidence-assessment defect was reproduced and corrected within the existing validation domain logic.
+
+Evidence stating that no measured evidence had been collected and that further testing was required was assessed as **INCONCLUSIVE** during the Build 24.3 live regression.
+
+The correction added four explicit negative/limiting signals:
+
+- `no measured`
+- `no measurement`
+- `not confirmed`
+- `not demonstrated`
+
+No second validation engine was introduced.
+
+### Acceptance
+
+- AT-004A - Negative Evidence Must Not Become Positive Evidence: **PASS**
+- AT-006 - Continue to Second Validation Item: **PASS**
+- AT-010 - Static Quality Gate: **PASS**
+
+A second planned validation item was started and completed. Both validation results remained traceable and the validation plan completed with 2 of 2 items complete.
+
+### Static Quality Gate
+
+- `npx tsc --noEmit` - PASS
+- `npm run lint` - PASS, 0 errors and 3 existing `@next/next/no-img-element` warnings
+- `npm run build` - PASS
+- `git diff --check` - PASS
+
+### Construction Decision
+
+HP-24.3 is VERIFIED.
+
+Build 24.2 remains protected at `c7d70d0`.
+
+The next construction stage may begin only after this verified checkpoint is committed and tagged.

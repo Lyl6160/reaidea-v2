@@ -44,3 +44,51 @@ After verification:
 ## Rule
 
 No bot may bypass a hold point by declaring a build "good enough" from compilation alone.
+
+## HP-24.3 - Validation Evidence Assessment
+
+**Scope:** Correct the validation evidence-assessment defect discovered during live Build 24.2 acceptance.
+
+### Entry condition
+
+- Build 24.2 remains protected at `c7d70d0`.
+- Branch: `sprint006-build24-3-validation-reasoning`.
+- The live acceptance defect has been reproduced.
+- Exact current `validationExecution.ts` has been inspected.
+
+### Defect under investigation
+
+Evidence explicitly stating that measured evidence does not exist was classified as **Supported by evidence**.
+
+The current assessment logic can match the positive signal `measured` inside a negated statement.
+
+### Construction constraint
+
+Correct the assessment behaviour without creating a second validation engine or redesigning the validation architecture.
+
+### Acceptance
+
+- Absent or not-yet-measured evidence -> **inconclusive**.
+- Evidence requiring further testing -> **inconclusive**.
+- Genuine supporting evidence -> **confirmed**.
+- Genuine contradictory evidence -> **challenged**.
+- Evidence that changes understanding without confirming or challenging -> **refined**.
+- Conflicting or limiting language must not manufacture confirmation.
+
+### Sign-off
+
+### Sign-off
+
+HP-24.3 - VERIFIED
+
+**Inspection date:** 2026-08-12
+
+The Build 24.3 defect correction passed the demonstrated regression acceptance, static quality gates, and live validation test.
+
+AT-004A passed with the previously false-supported evidence correctly assessed as INCONCLUSIVE.
+
+AT-006 passed through completion of a second planned validation item.
+
+The four-line change to validation evidence assessment remains within the existing validation domain logic. No second validation engine was introduced.
+
+The Build 24.2 checkpoint remains protected at `c7d70d0`.
