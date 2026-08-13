@@ -12,6 +12,12 @@ import {
   assessDiscovery,
   recordDiscoveryAnswer,
 } from "../../lib/workshop/discoveryReasoning";
+import {
+  createMission,
+  stripMarkdownFormatting,
+  getMissionCompleteMessage,
+  getNextMissionMessage,
+} from "../../lib/workshop/missionOrchestration";
 import { createValidationPlan } from "../../lib/workshop/validationPlanning";
 import {
   completeValidationItem,
@@ -63,6 +69,7 @@ export default function DiscoverySession() {
 
   const assessment = assessDiscovery(project);
   const nextQuestion = assessment.nextQuestion;
+  const nextMission = nextQuestion ? createMission(nextQuestion, project) : null;
   const greeting = inventor?.preferredName
     ? `Good to have you at the bench, ${inventor.preferredName}.`
     : "Good to have you at the bench.";
@@ -126,16 +133,24 @@ export default function DiscoverySession() {
         {nextQuestion ? (
           <section className="mission-card">
             <p className="greeting">{greeting}</p>
-            <p className="mission-label">
-              Next Best Question · {nextQuestion.focusLabel}
-            </p>
-            <h2>{nextQuestion.prompt}</h2>
-            <p className="why">{nextQuestion.purpose}</p>
+            <p className="mission-label">{nextMission?.brief}</p>
+            <h2>{nextMission?.yourAssignment}</h2>
+            <p className="why">{nextMission?.whyItMatters}</p>
 
             <details className="reasoning-disclosure">
-              <summary>Why this question</summary>
-              <p>{nextQuestion.reason}</p>
+              <summary>REV&apos;s current understanding</summary>
+              <div className="ai-reflection-content">
+                {nextMission?.aiReflection.split("\n\n").map((section, index) => {
+                  const cleaned = stripMarkdownFormatting(section);
+                  return <p key={index}>{cleaned}</p>;
+                })}
+              </div>
             </details>
+
+            <section className="mission-complete-section">
+              <p className="mission-label">Mission Complete</p>
+              <p>{getMissionCompleteMessage()}</p>
+            </section>
 
             <label htmlFor="discovery-answer">Your response</label>
             <textarea
@@ -153,6 +168,11 @@ export default function DiscoverySession() {
             <button type="button" onClick={saveAnswer}>
               Update Project &amp; Continue
             </button>
+
+            <section className="next-mission-section">
+              <p className="mission-label">Next Mission</p>
+              <p>{getNextMissionMessage(nextMission!)}</p>
+            </section>
           </section>
         ) : (
           <section className="mission-card checkpoint-card">
@@ -419,6 +439,47 @@ export default function DiscoverySession() {
           padding: 0 16px 16px;
           color: #a8b3c7;
           line-height: 1.6;
+        }
+
+        .ai-reflection-content {
+          padding: 0 16px 16px;
+        }
+
+        .ai-reflection-content p {
+          margin: 0 0 12px;
+          color: #a8b3c7;
+          line-height: 1.6;
+          font-size: 14px;
+        }
+
+        .ai-reflection-content p:last-child {
+          margin-bottom: 0;
+        }
+
+        .ai-reflection-content strong {
+          color: #dbe3ee;
+          font-weight: 700;
+        }
+
+        .mission-complete-section,
+        .next-mission-section {
+          margin-top: 22px;
+          padding: 18px 20px;
+          background: #0b1320;
+          border: 1px solid #27435a;
+          border-radius: 12px;
+        }
+
+        .mission-complete-section p,
+        .next-mission-section p {
+          margin: 0;
+          color: #a8b3c7;
+          line-height: 1.65;
+        }
+
+        .mission-complete-section .mission-label,
+        .next-mission-section .mission-label {
+          margin-bottom: 10px;
         }
 
         .enter-workshop-card {

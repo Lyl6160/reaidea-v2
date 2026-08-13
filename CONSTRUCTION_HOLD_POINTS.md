@@ -92,3 +92,90 @@ AT-006 passed through completion of a second planned validation item.
 The four-line change to validation evidence assessment remains within the existing validation domain logic. No second validation engine was introduced.
 
 The Build 24.2 checkpoint remains protected at `c7d70d0`.
+
+## HP-24.4 - Mission-Driven Discovery Experience
+
+**Scope:** Transform the inventor-facing Discovery interaction from question-driven presentation into a mission-driven engineering experience while preserving the existing Discovery reasoning, Project Engineering State, persistence, validation domain, and approved concept workflow.
+
+### Entry condition
+
+- Build 24.3 is protected at `v24.3-verified-validation-reasoning`.
+- Branch begins from verified Build 24.3.
+- Existing Discovery reasoning has been inspected.
+- Existing Workshop bench orchestration has been inspected.
+
+### Construction constraint
+
+- Do not create a second Discovery reasoning engine.
+- Do not redesign validation execution or validation outcome assessment.
+- Do not alter the Project as the single source of engineering truth.
+- Do not silently bypass the Concept 01 -> Concept 02 -> Concept 03 workflow.
+- Preserve existing persistence and Engineering State behaviour.
+
+### Target experience
+
+Each Discovery interaction should be presented as a Mission containing:
+
+- Mission Brief
+- Why This Matters
+- Your Assignment
+- AI Reflection
+- Mission Complete
+- Next Mission
+
+The inventor should understand what REV has learned, why the next Mission exists, and what remains unknown.
+
+### Acceptance
+
+- Discovery presents a Mission rather than a numbered question.
+- The Mission explains why the work matters.
+- The inventor receives a clear assignment.
+- REV reflects existing Project understanding before asking for further information.
+- Completing a Mission preserves the existing Project and Engineering State update path.
+- The next Mission follows the existing Discovery reasoning rather than a second decision engine.
+- Existing validation behaviour remains unchanged.
+- Existing persistence survives refresh.
+- Existing concept workflow does not regress.
+
+### Verification Record
+
+**Live acceptance — PASS**
+
+- Mission-driven Discovery journey completed on the home PC.
+- Discovery progressed through multiple Missions using the existing `assessDiscovery()` reasoning path.
+- Mission completion preserved the existing `recordDiscoveryAnswer()` → Project update path.
+- REV's current understanding reflected the updated Project Engineering State.
+- Browser refresh preserved the Project, Discovery position, and recorded understanding.
+- Discovery reached the existing Discovery Checkpoint without introducing additional questioning.
+- Validation planning was handed off to the existing validation system.
+- Validation execution started successfully.
+- Existing validation required-field protection rejected incomplete evidence.
+- One planned validation item was completed successfully. No second planned validation item existed in the generated plan; no additional validation work was invented.
+- Living Workshop continuity was verified with the same Project and Engineering State.
+- AT-008 / AT-009 Workshop/Discovery continuity checks passed.
+
+**Static quality gate — PASS**
+
+- `npx tsc --noEmit` — PASS.
+- `npm run lint` — PASS with 0 errors and 3 pre-existing warnings in `WorkshopShell.tsx`.
+- `npm run build` — PASS.
+- `git diff --check` — PASS.
+
+**Scope verification**
+
+- Existing Discovery reasoning unchanged.
+- No second reasoning or decision engine introduced.
+- Validation planning/execution logic unchanged.
+- Project persistence and Engineering State behaviour preserved.
+- Existing Concept workflow preserved.
+- Mission orchestration remains a presentation wrapper around existing Discovery reasoning.
+
+**Verification conclusion**
+
+HP-24.4 live acceptance and static quality requirements have been satisfied. The Mission-driven Discovery construction is VERIFIED against the approved hold-point scope.
+
+### Sign-off
+
+**HP-24.4 STATUS: VERIFIED**
+
+The mission-driven Discovery journey, static quality gate, persistence testing, validation handoff, validation execution, and Workshop/Discovery continuity checks have passed. The verified construction remains within the approved HP-24.4 scope.
