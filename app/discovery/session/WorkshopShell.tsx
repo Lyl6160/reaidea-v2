@@ -485,6 +485,10 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
+  const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
+  const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
+    (bench) => bench.id === recommendedBench.id
+  );
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
@@ -772,11 +776,33 @@ export default function WorkshopShell({
           <h2>Living Engineering Workshop</h2>
           <p className="workshop-project-name">{projectName}</p>
         </div>
-        <div className="workshop-header-status">
-          <div className="rev-partner-label">REV · AI Engineering Partner</div>
-          <p>{workshop.summary}</p>
-        </div>
       </header>
+
+      <section className="workshop-brief" aria-label="REV Workshop Brief">
+        <div className="workshop-brief-copy">
+          <p className="workshop-kicker">REV · Workshop Brief</p>
+          <p className="workshop-brief-partner">AI Engineering Partner · {workshop.summary}</p>
+          <h3>Recommended next: {recommendedBench.label}</h3>
+          <p className="workshop-brief-reason"><strong>Why:</strong> {recommendedBench.reason}</p>
+          <div className="workshop-brief-move">
+            <span>Next move</span>
+            <strong>{recommendedBench.nextMove}</strong>
+          </div>
+        </div>
+        <div className="workshop-brief-action">
+          <p>REV recommends next</p>
+          <strong>{recommendedBench.label}</strong>
+          {recommendedDefinition?.informational && (
+            <span className="workshop-brief-informational">Informational · Future capability</span>
+          )}
+          <button type="button" onClick={() => selectBench(recommendedBench.id)}>
+            GO TO {recommendedBench.label.toUpperCase()} BENCH
+          </button>
+          {selectedBench.id !== recommendedBench.id && (
+            <small>Working at: {selectedBench.label}. You remain free to choose another bench.</small>
+          )}
+        </div>
+      </section>
 
       <section className="project-core" aria-label="Active Project">
         <div className="project-core-heading">
@@ -799,14 +825,14 @@ export default function WorkshopShell({
 
       <div className="workshop-flow" aria-label="Engineering cycle">
         {[
-          "Knowledge",
-          "Engineering",
-          "Validation",
-          "Prototype",
-          "Reality",
+          { id: "knowledge" as WorkshopBenchId, label: "Knowledge" },
+          { id: "engineering" as WorkshopBenchId, label: "Engineering" },
+          { id: "validation" as WorkshopBenchId, label: "Validation" },
+          { id: "prototype" as WorkshopBenchId, label: "Prototype" },
+          { id: "reality" as WorkshopBenchId, label: "Reality" },
         ].map((stage, index, stages) => (
-          <span key={stage}>
-            <b>{stage}</b>
+          <span key={stage.id} className={stage.id === recommendedBench.id ? "is-recommended" : ""}>
+            <b>{stage.label}</b>
             {index < stages.length - 1 && <i aria-hidden="true">→</i>}
           </span>
         ))}
@@ -1366,6 +1392,115 @@ export default function WorkshopShell({
           box-shadow: 0 14px 34px rgba(5, 12, 18, 0.18);
         }
 
+        .workshop-brief {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+          gap: 14px;
+          max-width: 1360px;
+          margin: 0 auto 10px;
+          padding: 12px 16px;
+          border: 1px solid #3f7080;
+          border-radius: 12px;
+          background: linear-gradient(110deg, #0d202a, #0a151e);
+        }
+
+        .workshop-brief h3 {
+          margin: 0;
+          color: #f0fbfd;
+          font-size: 17px;
+        }
+
+        .workshop-brief-partner {
+          margin: 0 0 5px;
+          color: #9bbac2;
+          font-size: 10px;
+          font-weight: 750;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+
+        .workshop-brief-reason {
+          max-width: 760px;
+          margin: 5px 0 0;
+          color: #c9dbe0;
+          font-size: 12px;
+          line-height: 1.45;
+        }
+
+        .workshop-brief-reason strong {
+          color: #70dfed;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .workshop-brief-move {
+          display: grid;
+          gap: 4px;
+          margin-top: 7px;
+          color: #a7c2c9;
+          font-size: 12px;
+        }
+
+        .workshop-brief-move span,
+        .workshop-brief-action p {
+          margin: 0;
+          color: #70dfed;
+          font-size: 10px;
+          font-weight: 850;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+        }
+
+        .workshop-brief-move strong {
+          color: #edf8fa;
+          line-height: 1.4;
+        }
+
+        .workshop-brief-action {
+          display: grid;
+          align-content: center;
+          gap: 5px;
+          padding-left: 14px;
+          border-left: 1px solid #315463;
+        }
+
+        .workshop-brief-action > strong {
+          color: #f4fbfc;
+          font-size: 16px;
+        }
+
+        .workshop-brief-informational {
+          color: #e5bd7b;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+
+        .workshop-brief-action button {
+          width: fit-content;
+          margin-top: 2px;
+          padding: 10px 12px;
+          border: 1px solid #48d9ed;
+          border-radius: 7px;
+          background: #123844;
+          color: #e9fcff;
+          font: inherit;
+          font-size: 11px;
+          font-weight: 850;
+          cursor: pointer;
+        }
+
+        .workshop-brief-action button:hover {
+          background: #185161;
+        }
+
+        .workshop-brief-action small {
+          color: #91adb5;
+          line-height: 1.35;
+        }
+
         .project-core-heading {
           display: flex;
           align-items: flex-start;
@@ -1440,6 +1575,19 @@ export default function WorkshopShell({
         .workshop-flow b {
           color: #d9eef2;
           font-weight: 750;
+        }
+
+        .workshop-flow .is-recommended b {
+          color: #79edbc;
+        }
+
+        .workshop-flow .is-recommended::before {
+          content: "REV NEXT";
+          margin-right: 2px;
+          color: #79edbc;
+          font-size: 8px;
+          font-weight: 850;
+          letter-spacing: 0.08em;
         }
 
         .workshop-flow i {
@@ -3226,6 +3374,8 @@ export default function WorkshopShell({
         @media (max-width: 980px) {
           .living-workshop { width: calc(100vw - 18px); padding: 16px; }
           .workshop-heading { grid-template-columns: 1fr; gap: 10px; }
+          .workshop-brief { grid-template-columns: 1fr; }
+          .workshop-brief-action { padding: 14px 0 0; border-top: 1px solid #315463; border-left: 0; }
           .bench-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .room { min-height: 760px; }
           .wall-life {
