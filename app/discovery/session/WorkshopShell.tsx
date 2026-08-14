@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { Project } from "../../lib/core/project";
 import type {
@@ -160,6 +160,7 @@ export default function WorkshopShell({
   workshop,
 }: WorkshopShellProps) {
   const projectName = project.projectName;
+  const workspaceRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(() => {
     if (typeof window === "undefined") return workshop.recommendedBench;
     try {
@@ -484,6 +485,13 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
+
+  function selectBench(id: WorkshopBenchId) {
+    setSelectedId(id);
+    window.setTimeout(() => {
+      workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }
 
   function createConcept() {
     if (!canCreateConcept) return;
@@ -870,7 +878,7 @@ export default function WorkshopShell({
               className={`room-bench ${positionClass} state-${bench.state} ${
                 isSelected ? "is-selected" : ""
               }`}
-              onClick={() => setSelectedId(id)}
+              onClick={() => selectBench(id)}
               aria-pressed={isSelected}
               aria-label={`${bench.label}: ${stateLabel(bench.state)}`}
             >
@@ -923,38 +931,13 @@ export default function WorkshopShell({
         </p>
       </div>
 
-      <section className="bench-overview" aria-label="Workshop bench overview">
-        {CANONICAL_WORKSHOP_BENCHES.map(({ id, shortLabel, informational }) => {
-          const bench = getBench(workshop, id);
-          if (!bench) return null;
-
-          return (
-            <button
-              key={id}
-              type="button"
-              className={`bench-overview-card ${selectedBench.id === id ? "is-selected" : ""}`}
-              onClick={() => setSelectedId(id)}
-            >
-              <span className="bench-overview-heading">
-                <strong>{shortLabel}</strong>
-                <em>{stateLabel(bench.state)}</em>
-              </span>
-              <span>{bench.reason}</span>
-              <small>
-                {informational ? "Informational · Future capability" : `Next: ${bench.nextMove}`}
-              </small>
-            </button>
-          );
-        })}
-      </section>
-
-      <div className={`bench-readout readout-${selectedBench.state}`}>
+      <div ref={workspaceRef} className={`bench-readout active-bench-workspace readout-${selectedBench.state}`}>
         <div className="readout-title">
           <div>
             <span className="readout-light" aria-hidden="true" />
-            <strong>{selectedBench.label}</strong>
+            <strong>ACTIVE BENCH WORKSPACE · {selectedBench.label}</strong>
           </div>
-          <span>{stateLabel(selectedBench.state)}</span>
+          <span>{stateLabel(selectedBench.state)} · ACTIVE</span>
         </div>
         <p>{selectedBench.reason}</p>
         <div className="next-move">
@@ -962,12 +945,40 @@ export default function WorkshopShell({
           <strong>{selectedBench.nextMove}</strong>
         </div>
         {selectedBench.id === "knowledge" && (
-          <div className="bench-entry-action">
-            <p>Review and record the Project&apos;s structured inventor knowledge.</p>
-            <Link href="/interview">Open Interview</Link>
+          <div className="station-summary">
+            <p className="station-summary-label">Knowledge station</p>
+            <p>Structured inventor knowledge is managed through the existing Interview capability and Project timeline.</p>
+            <Link href="/interview">OPEN INTERVIEW</Link>
           </div>
         )}
-        {selectedBench.id === "validation" && (conceptDecision === "accept" || selectedBench.state === "pulse" || selectedBench.state === "active") && (
+        {selectedBench.id === "engineering" && (
+          <div className="station-summary engineering-summary">
+            <p className="station-summary-label">Engineering State</p>
+            <p><strong>Understanding:</strong> {summarizeUnderstanding(project.engineeringState.currentUnderstanding)}</p>
+            <p><strong>Constraints:</strong> {project.engineeringState.currentConstraints.length}</p>
+            <p><strong>Assumptions:</strong> {project.engineeringState.currentAssumptions.length}</p>
+            <p><strong>Remaining uncertainty:</strong> {project.engineeringState.greatestRemainingUncertainty}</p>
+          </div>
+        )}
+        {selectedBench.id === "validation" && (
+          <div className="station-summary validation-summary">
+            <p className="station-summary-label">Project Validation Status · Read only</p>
+            <p>Planned validation execution remains managed through Discovery.</p>
+            <div className="validation-summary-grid">
+              <span>Plan: {project.validationPlan?.status ?? "not created"}</span>
+              <span>Items: {project.validationPlan?.items.length ?? 0}</span>
+              <span>Completed: {project.validationPlan?.items.filter((item) => item.status === "completed").length ?? 0}</span>
+              <span>Evidence: {project.evidence.length}</span>
+            </div>
+          </div>
+        )}
+        {["patent", "marketing", "manufacturing", "reality"].includes(selectedBench.id) && (
+          <div className="station-summary informational-summary">
+            <p className="station-summary-label">Informational · Future capability</p>
+            <p>This station remains an orientation point for a future specialist capability. No specialist actions are available yet.</p>
+          </div>
+        )}
+        {selectedBench.id === "validation" && (
           <div className="concept-decision-panel">
             <div className="concept-decision-heading">
               <div>
@@ -2462,6 +2473,61 @@ export default function WorkshopShell({
           border: 1px solid #415166;
           border-radius: 13px;
           background: #16212d;
+        }
+
+        .active-bench-workspace {
+          scroll-margin-top: 20px;
+        }
+
+        .station-summary {
+          grid-column: 1 / -1;
+          margin-top: 4px;
+          padding: 15px 16px;
+          border-top: 1px solid #34465a;
+          background: rgba(8, 20, 28, 0.42);
+          color: #c6d0db;
+          line-height: 1.5;
+        }
+
+        .station-summary p {
+          margin: 6px 0 0;
+        }
+
+        .station-summary-label {
+          color: #73e1ee;
+          font-size: 10px;
+          font-weight: 850;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+        }
+
+        .station-summary a {
+          display: inline-flex;
+          margin-top: 12px;
+          padding: 9px 12px;
+          border: 1px solid #35d9f5;
+          border-radius: 7px;
+          color: #e5fbff;
+          font-size: 11px;
+          font-weight: 850;
+          text-decoration: none;
+        }
+
+        .engineering-summary p strong {
+          color: #e8f3f5;
+        }
+
+        .validation-summary-grid {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 18px;
+          margin-top: 10px;
+          color: #b4d1d8;
+          font-size: 12px;
+        }
+
+        .informational-summary {
+          border-color: rgba(224, 173, 86, 0.28);
         }
 
         .readout-title,
