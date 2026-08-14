@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import type { Project } from "../../lib/core/project";
@@ -8,6 +9,7 @@ import type {
   WorkshopBenchSignal,
   WorkshopState,
 } from "../../lib/workshop/workshopBrain";
+import { CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
 
 type WorkshopShellProps = {
   project: Project;
@@ -17,25 +19,6 @@ type WorkshopShellProps = {
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
 type ConceptDecision = "undecided" | "accept" | "refine" | "rethink";
 type ValidationEvidenceOutcome = "pending" | "supported" | "not-supported" | "inconclusive";
-
-const benchPositions: Array<{
-  id: WorkshopBenchId;
-  shortLabel: string;
-  positionClass: string;
-}> = [
-  { id: "discovery", shortLabel: "Inventor", positionClass: "slot-discovery" },
-  { id: "engineering", shortLabel: "Engineering", positionClass: "slot-engineering" },
-  { id: "validation", shortLabel: "Validation", positionClass: "slot-validation" },
-  { id: "patent", shortLabel: "Patent / IP", positionClass: "slot-patent" },
-  { id: "marketing", shortLabel: "Marketing", positionClass: "slot-marketing" },
-  {
-    id: "manufacturing",
-    shortLabel: "Manufacturing / Costing",
-    positionClass: "slot-manufacturing",
-  },
-  { id: "reality", shortLabel: "Reality", positionClass: "slot-reality" },
-  { id: "prototype", shortLabel: "Prototype", positionClass: "slot-prototype" },
-];
 
 function getBench(workshop: WorkshopState, id: WorkshopBenchId) {
   return workshop.benches.find((bench) => bench.id === id);
@@ -827,7 +810,7 @@ export default function WorkshopShell({
           </div>
         </div>
 
-        {benchPositions.map(({ id, shortLabel, positionClass }) => {
+        {CANONICAL_WORKSHOP_BENCHES.map(({ id, shortLabel, positionClass }) => {
           const bench = getBench(workshop, id);
           if (!bench) return null;
 
@@ -906,6 +889,12 @@ export default function WorkshopShell({
           <span>REV · NEXT MOVE</span>
           <strong>{selectedBench.nextMove}</strong>
         </div>
+        {selectedBench.id === "knowledge" && (
+          <div className="bench-entry-action">
+            <p>Review and record the Project&apos;s structured inventor knowledge.</p>
+            <Link href="/interview">Open Interview</Link>
+          </div>
+        )}
         {selectedBench.id === "validation" && (conceptDecision === "accept" || selectedBench.state === "pulse" || selectedBench.state === "active") && (
           <div className="concept-decision-panel">
             <div className="concept-decision-heading">

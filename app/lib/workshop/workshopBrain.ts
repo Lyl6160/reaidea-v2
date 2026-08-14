@@ -2,7 +2,7 @@ import type { Project } from "../core/project";
 import { assessDiscovery } from "./discoveryReasoning";
 
 export type WorkshopBenchId =
-  | "discovery"
+  | "knowledge"
   | "engineering"
   | "validation"
   | "patent"
@@ -32,6 +32,25 @@ export type WorkshopState = {
   recommendedBench: WorkshopBenchId;
   summary: string;
 };
+
+export type WorkshopBenchDefinition = {
+  id: WorkshopBenchId;
+  label: string;
+  shortLabel: string;
+  positionClass: string;
+  route?: string;
+};
+
+export const CANONICAL_WORKSHOP_BENCHES: WorkshopBenchDefinition[] = [
+  { id: "knowledge", label: "Inventor / Knowledge", shortLabel: "Inventor", positionClass: "slot-discovery", route: "/interview" },
+  { id: "engineering", label: "Engineering", shortLabel: "Engineering", positionClass: "slot-engineering" },
+  { id: "prototype", label: "Prototype", shortLabel: "Prototype", positionClass: "slot-prototype" },
+  { id: "validation", label: "Validation", shortLabel: "Validation", positionClass: "slot-validation" },
+  { id: "patent", label: "Patent / IP", shortLabel: "Patent / IP", positionClass: "slot-patent" },
+  { id: "marketing", label: "Marketing", shortLabel: "Marketing", positionClass: "slot-marketing" },
+  { id: "manufacturing", label: "Manufacturing / Costing", shortLabel: "Manufacturing / Costing", positionClass: "slot-manufacturing" },
+  { id: "reality", label: "Reality", shortLabel: "Reality", positionClass: "slot-reality" },
+];
 
 function hasMeaningfulEngineeringDefinition(project: Project): boolean {
   const state = project.engineeringState;
@@ -72,8 +91,8 @@ export function assessWorkshop(project: Project): WorkshopState {
 
   const benches: WorkshopBenchSignal[] = [
     {
-      id: "discovery",
-      label: "Inventor / Discovery",
+      id: "knowledge",
+      label: "Inventor / Knowledge",
       state: discoveryReachedCheckpoint ? "available" : "active",
       reason: discoveryReachedCheckpoint
         ? "The core Discovery checkpoint has been reached, but this bench remains available when the Project needs clarification."
@@ -93,7 +112,7 @@ export function assessWorkshop(project: Project): WorkshopState {
       nextMove: engineeringDefined
         ? "Develop the concept and expose the next technical uncertainties."
         : "Strengthen the problem, operating conditions and constraints first.",
-      fedBy: ["discovery"],
+      fedBy: ["knowledge"],
     },
     {
       id: "validation",
@@ -115,7 +134,7 @@ export function assessWorkshop(project: Project): WorkshopState {
       nextMove: validationPlanned
         ? "Work the next validation item and record what the evidence changes."
         : "Reach the Discovery checkpoint and identify testable assumptions or evidence gaps.",
-      fedBy: ["discovery", "engineering"],
+      fedBy: ["knowledge", "engineering"],
     },
     {
       id: "patent",
@@ -139,7 +158,7 @@ export function assessWorkshop(project: Project): WorkshopState {
       nextMove: discoveryReachedCheckpoint && engineeringDefined
         ? "Define who benefits, why they care, and what evidence would support the value proposition."
         : "Return to Discovery and Engineering to strengthen the problem, user and concept definition.",
-      fedBy: ["discovery", "engineering", "validation"],
+      fedBy: ["knowledge", "engineering", "validation"],
     },
     {
       id: "prototype",
