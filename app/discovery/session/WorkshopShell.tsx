@@ -146,6 +146,15 @@ function stateLabel(state: WorkshopBenchSignal["state"]) {
   }
 }
 
+function formatReadiness(readiness: Project["readiness"]): string {
+  return readiness.replace("-", " ");
+}
+
+function summarizeUnderstanding(value: string): string {
+  const summary = value.split("\n")[0]?.trim() || value.trim();
+  return summary.length > 220 ? `${summary.slice(0, 217).trim()}...` : summary;
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -749,12 +758,50 @@ export default function WorkshopShell({
 
   return (
     <section className="living-workshop" aria-label="reAIdea living workshop">
-      <div className="workshop-heading">
+      <header className="workshop-heading">
         <div>
           <p className="workshop-kicker">reAIdea · Living Workshop</p>
-          <h2>{projectName}</h2>
+          <h2>Living Engineering Workshop</h2>
+          <p className="workshop-project-name">{projectName}</p>
         </div>
-        <p className="workshop-summary">{workshop.summary}</p>
+        <div className="workshop-header-status">
+          <div className="rev-partner-label">REV · AI Engineering Partner</div>
+          <p>{workshop.summary}</p>
+        </div>
+      </header>
+
+      <section className="project-core" aria-label="Active Project">
+        <div className="project-core-heading">
+          <div>
+            <p className="workshop-kicker">Active Project</p>
+            <h3>{projectName}</h3>
+          </div>
+          <span className="project-status">{formatReadiness(project.readiness)}</span>
+        </div>
+        <p className="project-understanding">
+          {summarizeUnderstanding(project.engineeringState.currentUnderstanding)}
+        </p>
+        <div className="project-signals">
+          <span>{project.evidence.length} evidence items</span>
+          <span>{project.engineeringState.currentConstraints.length} constraints</span>
+          <span>{project.engineeringState.currentAssumptions.length} assumptions</span>
+          <span>Next: {project.engineeringState.nextEngineeringStep}</span>
+        </div>
+      </section>
+
+      <div className="workshop-flow" aria-label="Engineering cycle">
+        {[
+          "Knowledge",
+          "Engineering",
+          "Validation",
+          "Prototype",
+          "Reality",
+        ].map((stage, index, stages) => (
+          <span key={stage}>
+            <b>{stage}</b>
+            {index < stages.length - 1 && <i aria-hidden="true">→</i>}
+          </span>
+        ))}
       </div>
 
       <div className="room" role="group" aria-label="Workshop benches">
@@ -875,6 +922,31 @@ export default function WorkshopShell({
           One project brain · every bench listens to the same evolving invention.
         </p>
       </div>
+
+      <section className="bench-overview" aria-label="Workshop bench overview">
+        {CANONICAL_WORKSHOP_BENCHES.map(({ id, shortLabel, informational }) => {
+          const bench = getBench(workshop, id);
+          if (!bench) return null;
+
+          return (
+            <button
+              key={id}
+              type="button"
+              className={`bench-overview-card ${selectedBench.id === id ? "is-selected" : ""}`}
+              onClick={() => setSelectedId(id)}
+            >
+              <span className="bench-overview-heading">
+                <strong>{shortLabel}</strong>
+                <em>{stateLabel(bench.state)}</em>
+              </span>
+              <span>{bench.reason}</span>
+              <small>
+                {informational ? "Informational · Future capability" : `Next: ${bench.nextMove}`}
+              </small>
+            </button>
+          );
+        })}
+      </section>
 
       <div className={`bench-readout readout-${selectedBench.state}`}>
         <div className="readout-title">
@@ -1259,16 +1331,110 @@ export default function WorkshopShell({
 
       <style jsx>{`
         .living-workshop {
-          width: min(1540px, calc(100vw - 28px));
+          box-sizing: border-box;
+          width: min(1500px, calc(100% - 28px));
+          max-width: 1500px;
           margin-top: 28px;
           margin-left: 50%;
           transform: translateX(-50%);
-          padding: 20px 22px 22px;
+          padding: 16px 20px 20px;
           border: 1px solid #415064;
           border-radius: 20px;
           background: #111923;
           box-shadow: 0 22px 70px rgba(8, 13, 20, 0.24);
           overflow: hidden;
+        }
+
+        .project-core {
+          max-width: 1360px;
+          margin: 0 auto 12px;
+          padding: 16px 20px;
+          border: 1px solid #4b6878;
+          border-radius: 14px;
+          background: linear-gradient(135deg, #152631, #0d1721);
+          box-shadow: 0 14px 34px rgba(5, 12, 18, 0.18);
+        }
+
+        .project-core-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 18px;
+        }
+
+        .project-core-heading h3 {
+          margin: 0;
+          color: #f5fafc;
+          font-size: clamp(23px, 2.4vw, 34px);
+          line-height: 1.12;
+        }
+
+        .project-status {
+          padding: 7px 11px;
+          border: 1px solid #56c3d5;
+          border-radius: 999px;
+          color: #a8f2fa;
+          font-size: 11px;
+          font-weight: 850;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
+
+        .project-understanding {
+          max-width: 980px;
+          margin: 10px 0 0;
+          color: #d5e2e7;
+          line-height: 1.6;
+          white-space: pre-line;
+        }
+
+        .project-signals {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 18px;
+          margin-top: 12px;
+          color: #9fb4be;
+          font-size: 12px;
+        }
+
+        .project-signals span:last-child {
+          flex-basis: 100%;
+          color: #c4d8de;
+        }
+
+        .workshop-flow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 8px;
+          max-width: 1360px;
+          margin: 0 auto 12px;
+          padding: 9px 14px;
+          border: 1px solid #314a59;
+          border-radius: 10px;
+          background: #0c151e;
+          color: #9fb4be;
+          font-size: 12px;
+          letter-spacing: 0.03em;
+        }
+
+        .workshop-flow span {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .workshop-flow b {
+          color: #d9eef2;
+          font-weight: 750;
+        }
+
+        .workshop-flow i {
+          color: #4cd4e7;
+          font-style: normal;
+          font-size: 16px;
         }
 
         .workshop-heading {
@@ -1296,6 +1462,96 @@ export default function WorkshopShell({
           letter-spacing: -0.02em;
         }
 
+        .workshop-project-name {
+          margin: 7px 0 0;
+          color: #a9c0c8;
+          font-size: 13px;
+        }
+
+        .workshop-header-status {
+          max-width: 460px;
+          padding: 14px 16px;
+          border-left: 2px solid #33d8ef;
+          background: rgba(8, 20, 28, 0.56);
+        }
+
+        .rev-partner-label {
+          color: #72e2ef;
+          font-size: 12px;
+          font-weight: 850;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        .workshop-header-status p {
+          margin: 8px 0 0;
+          color: #c3d1d7;
+          line-height: 1.5;
+        }
+
+        .bench-overview {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 10px;
+          max-width: 1360px;
+          margin: 18px auto 0;
+        }
+
+        .bench-overview-card {
+          min-height: 150px;
+          padding: 14px;
+          border: 1px solid #334b5b;
+          border-radius: 10px;
+          background: #0c151e;
+          color: #b9cbd1;
+          text-align: left;
+          cursor: pointer;
+          transition: border-color 140ms ease, background 140ms ease;
+        }
+
+        .bench-overview-card:hover,
+        .bench-overview-card.is-selected {
+          border-color: #35d8ed;
+          background: #12232d;
+        }
+
+        .bench-overview-card > span:not(.bench-overview-heading) {
+          display: block;
+          margin-top: 11px;
+          font-size: 12px;
+          line-height: 1.45;
+        }
+
+        .bench-overview-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .bench-overview-heading strong {
+          color: #eef8fa;
+          font-size: 13px;
+        }
+
+        .bench-overview-heading em {
+          color: #70dce9;
+          font-size: 10px;
+          font-style: normal;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
+
+        .bench-overview-card small {
+          display: block;
+          margin-top: 10px;
+          color: #819da7;
+          font-size: 11px;
+          line-height: 1.4;
+        }
+
         .workshop-summary {
           margin: 0;
           color: #b7c1cf;
@@ -1304,7 +1560,7 @@ export default function WorkshopShell({
 
         .room {
           position: relative;
-          min-height: 680px;
+          min-height: 610px;
           overflow: hidden;
           border: 1px solid #546375;
           border-radius: 17px;
@@ -2904,6 +3160,7 @@ export default function WorkshopShell({
         @media (max-width: 980px) {
           .living-workshop { width: calc(100vw - 18px); padding: 16px; }
           .workshop-heading { grid-template-columns: 1fr; gap: 10px; }
+          .bench-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .room { min-height: 760px; }
           .wall-life {
           position: absolute;
@@ -3109,6 +3366,10 @@ export default function WorkshopShell({
           .room-caption { max-width: 85%; }
         }
         @media (max-width: 700px) {
+          .project-core-heading { flex-direction: column; }
+          .project-signals span:last-child { flex-basis: auto; }
+          .bench-overview { grid-template-columns: 1fr; }
+          .workshop-flow { justify-content: flex-start; }
           .concept-refinement-grid { grid-template-columns:1fr; }
           .concept-refinement-heading { flex-direction:column; }
         }

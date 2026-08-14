@@ -39,6 +39,7 @@ export type WorkshopBenchDefinition = {
   shortLabel: string;
   positionClass: string;
   route?: string;
+  informational?: boolean;
 };
 
 export const CANONICAL_WORKSHOP_BENCHES: WorkshopBenchDefinition[] = [
@@ -46,10 +47,10 @@ export const CANONICAL_WORKSHOP_BENCHES: WorkshopBenchDefinition[] = [
   { id: "engineering", label: "Engineering", shortLabel: "Engineering", positionClass: "slot-engineering" },
   { id: "prototype", label: "Prototype", shortLabel: "Prototype", positionClass: "slot-prototype" },
   { id: "validation", label: "Validation", shortLabel: "Validation", positionClass: "slot-validation" },
-  { id: "patent", label: "Patent / IP", shortLabel: "Patent / IP", positionClass: "slot-patent" },
-  { id: "marketing", label: "Marketing", shortLabel: "Marketing", positionClass: "slot-marketing" },
-  { id: "manufacturing", label: "Manufacturing / Costing", shortLabel: "Manufacturing / Costing", positionClass: "slot-manufacturing" },
-  { id: "reality", label: "Reality", shortLabel: "Reality", positionClass: "slot-reality" },
+  { id: "patent", label: "Patent / IP", shortLabel: "Patent / IP", positionClass: "slot-patent", informational: true },
+  { id: "marketing", label: "Marketing", shortLabel: "Marketing", positionClass: "slot-marketing", informational: true },
+  { id: "manufacturing", label: "Manufacturing / Costing", shortLabel: "Manufacturing / Costing", positionClass: "slot-manufacturing", informational: true },
+  { id: "reality", label: "Reality", shortLabel: "Reality", positionClass: "slot-reality", informational: true },
 ];
 
 function hasMeaningfulEngineeringDefinition(project: Project): boolean {
