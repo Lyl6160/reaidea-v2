@@ -179,3 +179,84 @@ HP-24.4 live acceptance and static quality requirements have been satisfied. The
 **HP-24.4 STATUS: VERIFIED**
 
 The mission-driven Discovery journey, static quality gate, persistence testing, validation handoff, validation execution, and Workshop/Discovery continuity checks have passed. The verified construction remains within the approved HP-24.4 scope.
+
+## HP-24.5 — Structured Knowledge Capture
+
+**Scope:** Implement F-001 AI Interview v1.0 as conversational text-based knowledge capture using the existing Project Timeline as the authoritative record.
+
+### Entry condition
+
+- Build 24.4 is protected at `v24.4-verified-mission-discovery`.
+- Branch begins from verified Build 24.4.
+- F-001_AI_INTERVIEW approved feature has been reviewed.
+- Architectural decision on ProjectTimelineEventType has been documented.
+
+### Approved knowledge categories
+
+- Problem
+- Customer
+- Existing Solutions
+- Competitive Advantage
+- Customer Outcome
+
+### Architectural decision
+
+- Add exactly one new ProjectTimelineEventType: `"knowledge-input-recorded"`.
+- Do not add a knowledgeCapture field to EngineeringState.
+- Do not create a second knowledge store.
+- Project remains the single source of engineering truth.
+- Project.timeline remains the authoritative historical record.
+- Existing storage/persistence remains unchanged.
+
+### Construction constraint
+
+- Do not modify Discovery reasoning.
+- Do not modify Validation planning or execution.
+- Do not modify HP-24.4 Mission behaviour.
+- Do not alter Concept 01 → 02 → 03 workflow.
+- Interview is optional and must not block Discovery.
+- Knowledge is not evidence.
+- Do not introduce AI confidence, innovation scoring, recommendations or inference.
+- Do not introduce Knowledge Graph, Knowledge Vault, voice, image/CAD or document ingestion.
+
+### Target experience
+
+The inventor can provide structured knowledge about their project in a conversational format. Each knowledge entry:
+
+- Is recorded with a timestamp in the Project timeline
+- Persists across sessions
+- Can be edited, creating new timeline entries rather than replacing originals
+- Remains available alongside Discovery, Validation, and Workshop activities
+
+### Acceptance
+
+- AT-011: Knowledge Input Capture — Inventor records a Problem statement; it appears in the UI
+- AT-012: All Five Categories Capturable — All 5 knowledge categories can be entered and stored
+- AT-013: Knowledge Persistence — Knowledge survives browser refresh
+- AT-014: Timeline Entry Created — Each capture creates a ProjectTimelineEvent with type `knowledge-input-recorded`
+- AT-015: Edit Preserves History — Editing knowledge creates a new timeline entry; original is not overwritten
+- AT-016: Knowledge Isolation — Interview knowledge does not interfere with Discovery, Validation, or Engineering State
+- AT-017: Discovery Remains Available Without Interview Completion — Inventor can proceed to Discovery without completing Interview
+- AT-018: Workshop/Interview Continuity — Workshop displays Project with interview knowledge; both are available simultaneously
+- AT-019: Non-Regression against AT-001 through AT-010 — All existing Discovery, Validation, Workshop, Persistence tests remain passing
+- AT-020: Static Quality Gate — `npx tsc --noEmit`, `npm run lint`, `npm run build` all PASS
+
+### Verification Record
+
+**Live acceptance — PENDING**
+
+This hold point has not yet been verified.
+
+**Static quality gate — PENDING**
+
+This hold point has not yet been verified.
+
+**Verification conclusion — PENDING**
+
+This hold point awaits construction and acceptance testing.
+
+### Sign-off
+
+**HP-24.5 STATUS: PENDING**
+
+HP-24.5 may only become VERIFIED after live acceptance, persistence testing, regression testing, and static quality gates pass.

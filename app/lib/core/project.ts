@@ -84,7 +84,8 @@ export type ProjectTimelineEventType =
   | "validation-plan-created"
   | "validation-item-started"
   | "validation-result-recorded"
-  | "validation-plan-completed";
+  | "validation-plan-completed"
+  | "knowledge-input-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
