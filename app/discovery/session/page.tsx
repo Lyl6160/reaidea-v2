@@ -27,6 +27,7 @@ import { recordEngineeringConclusion } from "../../lib/workshop/engineeringConcl
 import { recordEngineeringDirection } from "../../lib/workshop/engineeringDirections";
 import { recordEngineeringAction } from "../../lib/workshop/engineeringActions";
 import { recordEngineeringActionResult } from "../../lib/workshop/engineeringActionResults";
+import { recordProjectEvidenceFromActionResult } from "../../lib/workshop/engineeringEvidence";
 import { summarizeEngineeringTrace } from "../../lib/workshop/traceSummary";
 import {
   getProjectStorageSnapshot,
@@ -700,6 +701,10 @@ function ValidationPlanView({
   const [actionResultActionId, setActionResultActionId] = useState("");
   const [actionResult, setActionResult] = useState("");
   const [actionResultError, setActionResultError] = useState("");
+  const [evidenceActionResultEventId, setEvidenceActionResultEventId] = useState("");
+  const [actionResultEvidenceSummary, setActionResultEvidenceSummary] = useState("");
+  const [actionResultEvidenceSource, setActionResultEvidenceSource] = useState("");
+  const [actionResultEvidenceError, setActionResultEvidenceError] = useState("");
   const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
@@ -722,6 +727,15 @@ function ValidationPlanView({
   const currentEngineeringDirections = engineeringTrace.currentEngineeringDirections;
   const existingDirections = project.decisions.filter(
     (decision) => decision.category === "engineering-direction"
+  );
+  const adoptableActionResultEvents = project.timeline.filter(
+    (event) =>
+      event.type === "engineering-action-result-recorded" &&
+      Boolean(event.engineeringActionId) &&
+      Boolean(event.response?.trim()) &&
+      project.engineeringActions.some(
+        (engineeringAction) => engineeringAction.id === event.engineeringActionId
+      )
   );
 
   function startItem(itemId: string) {
@@ -930,6 +944,37 @@ function ValidationPlanView({
     setActionResultActionId("");
     setActionResult("");
     setActionResultError("");
+  }
+
+  function recordActionResultEvidence() {
+    if (
+      !evidenceActionResultEventId ||
+      !actionResultEvidenceSummary.trim() ||
+      !actionResultEvidenceSource.trim()
+    ) {
+      setActionResultEvidenceError(
+        "Select a recorded action result and explicitly record the evidence summary and source."
+      );
+      return;
+    }
+
+    const latestProject = loadProject() ?? project;
+    const result = recordProjectEvidenceFromActionResult(latestProject, {
+      actionResultEventId: evidenceActionResultEventId,
+      summary: actionResultEvidenceSummary,
+      source: actionResultEvidenceSource,
+    });
+
+    if (result.status === "invalid") {
+      setActionResultEvidenceError(result.reason);
+      return;
+    }
+
+    saveProject(result.project);
+    setEvidenceActionResultEventId("");
+    setActionResultEvidenceSummary("");
+    setActionResultEvidenceSource("");
+    setActionResultEvidenceError("");
   }
 
   return (
@@ -1394,6 +1439,92 @@ function ValidationPlanView({
         </section>
       )}
 
+
+      {adoptableActionResultEvents.length > 0 && (
+        <section
+          className="engineering-action-evidence"
+          aria-label="Adopt project evidence from action result"
+        >
+          <p className="validation-label">Adopt Project Evidence</p>
+          <p>
+            Explicitly adopt a recorded engineering action result as Project evidence.
+            A result does not become evidence automatically.
+          </p>
+
+          <div className="validation-field">
+            <label htmlFor="action-result-evidence-result">Recorded engineering action result</label>
+            <select
+              id="action-result-evidence-result"
+              className="engineering-action-result-select"
+              value={evidenceActionResultEventId}
+              onChange={(event) => {
+                setEvidenceActionResultEventId(event.target.value);
+                if (actionResultEvidenceError) setActionResultEvidenceError("");
+              }}
+            >
+              <option value="">Select a recorded engineering action result</option>
+              {adoptableActionResultEvents.map((resultEvent) => {
+                const engineeringAction = project.engineeringActions.find(
+                  (action) => action.id === resultEvent.engineeringActionId
+                );
+
+                return (
+                  <option key={resultEvent.id} value={resultEvent.id}>
+                    {engineeringAction?.action}: {resultEvent.response}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="action-result-evidence-summary">Evidence summary</label>
+            <textarea
+              id="action-result-evidence-summary"
+              className="validation-textarea"
+              value={actionResultEvidenceSummary}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setActionResultEvidenceSummary(event.target.value);
+                if (actionResultEvidenceError) setActionResultEvidenceError("");
+              }}
+              placeholder="Record the evidence you explicitly adopt from this result."
+            />
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="action-result-evidence-source">Evidence source / reference</label>
+            <input
+              id="action-result-evidence-source"
+              value={actionResultEvidenceSource}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setActionResultEvidenceSource(event.target.value);
+                if (actionResultEvidenceError) setActionResultEvidenceError("");
+              }}
+              placeholder="Record the source or reference for this evidence."
+            />
+          </div>
+
+          {actionResultEvidenceError && (
+            <p className="validation-form-error" role="alert">
+              {actionResultEvidenceError}
+            </p>
+          )}
+
+          <button
+            type="button"
+            className="validation-action"
+            disabled={
+              !evidenceActionResultEventId ||
+              !actionResultEvidenceSummary.trim() ||
+              !actionResultEvidenceSource.trim()
+            }
+            onClick={recordActionResultEvidence}
+          >
+            Adopt as Project Evidence
+          </button>
+        </section>
+      )}
+
       <style jsx>{`
         .validation-plan {
           margin-top: 22px;
@@ -1522,6 +1653,21 @@ function ValidationPlanView({
           background: #0a1821;
           color: #e1edf0;
           font: inherit;
+        }
+
+        .engineering-action-evidence {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(178, 151, 86, 0.46);
+          border-radius: 9px;
+          background: rgba(54, 42, 15, 0.24);
+        }
+
+        .engineering-action-evidence > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #d0c39e;
+          font-size: 13px;
+          line-height: 1.5;
         }
 
         .conclusion-evidence-selector {
