@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
+import ProjectReviewView from "./ProjectReviewView";
+
 import type { Project } from "../../lib/core/project";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import type {
@@ -1389,6 +1391,11 @@ export default function WorkshopShell({
             <p><strong>Constraints:</strong> {project.engineeringState.currentConstraints.length}</p>
             <p><strong>Assumptions:</strong> {project.engineeringState.currentAssumptions.length}</p>
             <p><strong>Remaining uncertainty:</strong> {project.engineeringState.greatestRemainingUncertainty}</p>
+          </div>
+        )}
+        {selectedBench.id === "engineering" && (
+          <div style={{ gridColumn: "1 / -1" }}>
+            <ProjectReviewView project={project} showValidationPlan={false} />
           </div>
         )}
         {selectedBench.id === "validation" && (
