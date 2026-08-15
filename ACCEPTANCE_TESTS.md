@@ -578,6 +578,70 @@ Structurally valid `engineeringActionId` values are preserved by storage even wh
 - Automatic action/result generation, direction-driven routing, automatic Validation creation, and REV Project write authority.
 - Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
 
+## HP-24.16 Consolidated Acceptance Record
+
+**Hold point:** HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results
+**Branch:** `sprint006-build24-16-action-result-evidence`
+**Accepted implementation HEAD:** `e003835`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.16-action-result-evidence`
+
+### Build Chain
+
+- Build 1 — `ed146a0` — Establish explicit action-result evidence adoption.
+- Build 2 — `ad7dbee` — Adopt action results as Project evidence.
+- Build 3 — `e003835` — Explain Project evidence source provenance.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- A recorded engineering action result remains Project timeline history and does not become Project evidence automatically.
+- `recordProjectEvidenceFromActionResult()` is the sole production writer for this adoption path. It requires explicit inventor evidence summary/source plus an exact existing `engineering-action-result-recorded` event whose `engineeringActionId` resolves to an existing adopted action and whose recorded result text is usable.
+- One successful explicit adoption creates exactly one `ProjectEvidence` item and one `project-evidence-recorded` event. The evidence stores the exact selected source result event ID in `sourceTimelineEventIds`; `validationItemId` and `validationOutcome` remain absent.
+- Invalid summary/source, missing/wrong event type, missing linked action, and blank recorded result detail fail closed without Project mutation.
+- No automatic evidence adoption, evidence summary generation, source generation, result selection, Validation creation, ProjectDecision mutation, Engineering State mutation, assertion mutation, action mutation, action lifecycle/status, or recommendation change is introduced.
+- The inventor UI exposes only valid result events, begins with no selection and empty evidence fields, requires all explicit input before adoption, uses one writer and one save path, resets after success, preserves historical result usability, and supports multiple/duplicate explicit adoptions without inventing lifecycle semantics.
+- `ProjectEvidence.sourceTimelineEventIds` is direct recorded source-event provenance only. Read-side trace resolution uses exact stored IDs in stored order and safely distinguishes recorded-and-available, partially available, unavailable, and not-recorded provenance.
+- The Workshop Brief explains available action-result detail and exact linked adopted action where present; generic Project source events remain generic; missing/blank relationships remain safe; no raw IDs, source repair, ranking, proof semantics, Project writes, or recommendation changes are introduced.
+
+### Acceptance Results
+
+- Fail-closed domain writer cases, exact result-event provenance, exact linked action, absent Validation fields, unrelated state preservation, historical result usability, multiple-result exact selection, duplicate adoption without lifecycle, legacy evidence compatibility, structural storage preservation, and original Project immutability: **PASS**.
+- Inventor UI filtering, zero-valid-result blocking, no preselection/autofill, explicit summary/source gating, one writer caller, one save path, exact persisted provenance, success reset, historical result selection, multiple independent results, duplicate explicit adoption, navigation/refresh persistence, and no automatic writes: **PASS**.
+- Pure trace coverage for all provenance availability states, exact event resolution, stored order including duplicate IDs, generic non-action source events, blank result safety, missing linked action safety, read purity, and recommendation invariance: **PASS**.
+- Workshop Brief browser coverage for available, missing, partial, generic, blank-result, and missing-action provenance; no raw IDs; stable Workshop → Discovery → Workshop → refresh behavior; source-less legacy evidence creates no provenance noise: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+The accepted loop is:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ Explicit ProjectEvidence adoption
+```
+
+The final step is explicit inventor authority. The presence of a recorded result alone never promotes it into Project evidence.
+
+### Defensive / Legacy Behavior
+
+Legacy evidence with no source provenance remains valid. Missing source IDs remain unavailable; partial provenance stays partial; source order is preserved; generic source events are not mislabeled; blank result detail and missing action relationships are not fabricated or substituted. Readers remain pure and do not repair or mutate Project data.
+
+### Deferred Capabilities
+
+- Evidence lifecycle/status, ranking, proof/verification scoring, evidence supersession, deduplication, merging, or automatic promotion.
+- Automatic result-to-evidence adoption, automatic evidence wording/source generation, automatic conclusion/direction/action creation, or REV Project write authority.
+- Generic causality/dependency graphs or indirect relationship inference.
+- Action lifecycle/status/completion/cancellation, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

@@ -522,6 +522,38 @@ The trace summary and Workshop Brief consume result history read-only. A result 
 HP-24.15 does not introduce action lifecycle or completion semantics. “Result recorded” does not mean current, active, pending, complete, successful, failed, cancelled, superseded, validated, or promoted to Project evidence. An adopted action whose direction basis later becomes superseded remains historically unchanged and can still carry result history. REV remains a read-only trace consumer and recommender.
 
 Deferred capabilities include explicit action lifecycle/status/completion/cancellation, action supersession, generic task management, deliberate promotion of result history into evidence/Validation if ever required, direct action/result links to Validation/evidence/bench/source/assertions/dependencies, automatic action/result generation, direction-driven routing, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification. Build 4 implementation is not required.
+
+---
+
+# 27. Current HP-24.16 REV Continuity
+
+HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-16-action-result-evidence`. The final tag is `v24.16-action-result-evidence`.
+
+A recorded engineering action result remains Project timeline history until the inventor explicitly adopts that exact result event as Project evidence. `recordProjectEvidenceFromActionResult()` is the sole production writer for this path. It requires an exact valid `engineering-action-result-recorded` event linked to an existing adopted engineering action, usable recorded result detail, and explicit inventor-written evidence summary plus source/reference.
+
+Successful adoption creates one `ProjectEvidence` item and one `project-evidence-recorded` timeline event. The evidence records direct source-event provenance in `sourceTimelineEventIds`, containing the exact selected action-result event ID for this writer. This field is direct recorded source provenance only; it is not a generic dependency graph, proof claim, Validation outcome, decision reason, ranking, or inferred causality.
+
+The existing inventor review surface exposes only valid action-result events, begins with no selection and empty evidence fields, and performs no automatic result selection, summary generation, source generation, or evidence promotion. Historical action results remain usable even if their direction basis is later superseded. Repeated explicit adoption of the same valid result may create separate evidence records because no evidence deduplication/lifecycle policy is introduced.
+
+The existing trace summary and Workshop Brief consume `sourceTimelineEventIds` read-only and resolve only exact stored timeline event IDs in stored order. Source provenance may be not recorded, available, partially available, or unavailable. Generic non-action source events remain generic. Missing events, blank result detail, and missing linked actions remain safely unresolved without guessing, repair, substitution, raw-ID presentation, or Project mutation.
+
+HP-24.16 does not modify Validation authority, Engineering State, engineering assertions, adopted engineering actions, Project decisions, action lifecycle/status, recommendation precedence, Workshop routing, or REV write authority. REV remains a read-only trace consumer and recommender.
+
+The accepted engineering feedback loop is:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ Explicit ProjectEvidence adoption
+```
+
+Evidence lifecycle/status/ranking, proof semantics, deduplication, generic dependency graphs, automatic result-to-evidence promotion, automatic evidence wording/source generation, automatic conclusion/direction/action creation, action lifecycle/task management, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

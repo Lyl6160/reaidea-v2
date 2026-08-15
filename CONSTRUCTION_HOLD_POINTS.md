@@ -818,3 +818,78 @@ Storage preserves structurally valid `engineeringActionId` strings without refer
 
 HP-24.15 is a coherent, tested action-result history capability. It records explicit inventor observations against adopted actions without turning action history into task lifecycle, Validation evidence, engineering conclusions, or autonomous REV authority.
 
+## HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.15 at `6da8c22`, tag `v24.15-engineering-action-results`
+
+**Construction branch:** `sprint006-build24-16-action-result-evidence`
+
+### Build 1 — Explicit Action-Result Evidence Adoption Contract
+
+**Commit:** `ed146a0`
+
+Added the optional narrow `ProjectEvidence.sourceTimelineEventIds` provenance relationship, the dedicated `project-evidence-recorded` timeline event, and the sole `recordProjectEvidenceFromActionResult()` writer. The writer requires an exact existing `engineering-action-result-recorded` event, its exact linked adopted action, usable recorded result text, and explicit inventor-written evidence summary plus source/reference. Invalid input fails closed and leaves the Project unchanged.
+
+### Build 2 — Inventor Project Evidence Adoption
+
+**Commit:** `ad7dbee`
+
+The existing review surface now lets the inventor explicitly select one valid recorded action result and explicitly enter an evidence summary plus source/reference. No result is preselected, no summary/source is generated or copied automatically, invalid result events are excluded, one successful adoption uses one writer and one save path, and temporary UI state resets after success. Historical action results remain valid even after later direction supersession, and repeated explicit adoption remains possible without hidden lifecycle semantics.
+
+### Build 3 — Trace-Aware Project Evidence Source Provenance
+
+**Commit:** `e003835`
+
+The existing trace summary and Workshop Brief now explain exact stored Project evidence source provenance read-only. Stored source event IDs remain in stored order and are resolved only by exact timeline event identity. Available, partially available, unavailable, generic non-action, blank-detail, and missing-action relationships are handled without repair, guessing, source substitution, raw-ID presentation, evidence ranking, Project mutation, or recommendation changes.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified fail-closed explicit evidence adoption, exact action-result provenance, one-writer/one-caller authority, no automatic promotion, no Validation field creation, Project immutability, historical action-result validity, multiple-result exact selection, duplicate explicit adoption without lifecycle invention, structural legacy-safe provenance preservation, exact read-side source resolution, stored-order preservation, malformed/missing-data safety, read purity, browser persistence, recommendation invariance, and HP-24.15 frozen-foundation regression.
+
+### Final Outcome
+
+- **HP-24.16 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.16-action-result-evidence`
+- **Freeze blockers:** NONE
+- **Evidence-adoption writer:** `recordProjectEvidenceFromActionResult()` only
+- **Explicit inventor caller:** Existing Discovery/Validation review surface only
+- **Evidence provenance:** Exact stored `sourceTimelineEventIds` only
+- **Automatic result-to-evidence promotion:** NOT INTRODUCED
+- **Evidence lifecycle/ranking:** NOT INTRODUCED
+- **Validation fields on adopted evidence:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.16 extends the accepted engineering loop to:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ Explicit ProjectEvidence adoption
+```
+
+The last step is deliberate. A result event remains recorded action history unless the inventor explicitly chooses that exact event and records Project evidence from it. The resulting evidence records direct source-event provenance; it does not claim that the source proves the evidence, that Validation succeeded, or that any conclusion/direction/action should change automatically.
+
+### Defensive / Legacy Behavior
+
+Legacy Project evidence without `sourceTimelineEventIds` remains valid and is reported as having no recorded source provenance. Missing source events remain unavailable rather than guessed. Partial source lists remain partial in stored order. Non-action source events are described generically. Action-result events with blank detail or missing linked actions remain safe and available as source events without fabricated text or substituted actions. Readers never repair Project data or infer indirect relationships.
+
+### Deferred Capabilities
+
+- Evidence lifecycle/status, ranking, quality scoring, proof/verification semantics, evidence supersession, deduplication, merging, or automatic promotion policy.
+- Automatic action-result-to-evidence adoption, automatic evidence summary/source generation, automatic conclusion/direction/action creation, and REV Project write authority.
+- Generic causality/dependency graphs connecting evidence, results, actions, directions, conclusions, assertions, Validation, or Workshop benches.
+- Action lifecycle/status/completion/cancellation, task management, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.16 is a coherent, tested inventor-owned evidence-adoption capability. It closes the engineering feedback loop without collapsing recorded action history into evidence automatically and without broadening Validation, lifecycle, recommendation, or REV authority.

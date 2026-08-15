@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.15 — Explicit Engineering Action Result History
-**Branch:** `sprint006-build24-15-engineering-action-results`
-**Accepted HEAD:** `595e946`
+**Construction checkpoint:** HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results
+**Branch:** `sprint006-build24-16-action-result-evidence`
+**Accepted HEAD:** `e003835`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
-**Last governance update:** 2026-08-15
+**Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.15 — Explicit Engineering Action Result History**
+**HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.15-engineering-action-results`
+Final freeze tag: `v24.16-action-result-evidence`
 
 Accepted HP-24.9 construction chain:
 
@@ -82,6 +82,18 @@ Accepted HP-24.15 construction chain:
 - Build 1 — `e017ea9` — Engineering action result history contract
 - Build 2 — `3b397f1` — Inventor engineering action result recording
 - Build 3 — `595e946` — Trace-aware engineering action result explanation
+- Build 4 — Readiness audit only; implementation not required
+
+Protected HP-24.15 foundation:
+
+- `6da8c22`
+- `v24.15-engineering-action-results`
+
+Accepted HP-24.16 construction chain:
+
+- Build 1 — `ed146a0` — Explicit action-result evidence adoption contract
+- Build 2 — `ad7dbee` — Inventor Project evidence adoption UI
+- Build 3 — `e003835` — Trace-aware Project evidence source provenance
 - Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -216,6 +228,34 @@ The inventor UI starts with no selected action, requires both action selection a
 HP-24.15 deliberately introduces no action lifecycle or completion semantics. A recorded action result does not mean current, active, pending, completed, successful, failed, cancelled, superseded, validated, or promoted to Project evidence. REV remains a read-only trace consumer and recommender.
 
 Deferred capabilities include explicit action lifecycle/status/completion/cancellation, action supersession, generic task management, deliberate promotion of result history into evidence/Validation if ever designed, direct action/result links to Validation/evidence/bench/source/assertions/dependencies, automatic action/result generation, direction-driven routing, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+
+## HP-24.16 Capability
+
+HP-24.16 closes the explicit engineering feedback loop by allowing the inventor to deliberately adopt a recorded engineering action result as Project evidence. A recorded action result remains history until the inventor explicitly selects that exact result event and supplies an evidence summary plus source/reference.
+
+`recordProjectEvidenceFromActionResult()` is the sole production evidence-adoption writer introduced by this hold point. It accepts only an exact `engineering-action-result-recorded` timeline event linked to an existing adopted engineering action and containing usable recorded result text. One successful adoption creates exactly one `ProjectEvidence` item plus one `project-evidence-recorded` timeline event.
+
+`ProjectEvidence.sourceTimelineEventIds` is the narrow explicit direct-source relationship for recorded Project evidence provenance. For HP-24.16 evidence adoption it contains the exact selected action-result event ID. It is not a generic causality graph, proof claim, Validation outcome, decision reason, ranking, or evidence lifecycle.
+
+The accepted inventor UI offers only valid action-result events, starts with no selection and empty evidence fields, performs no automatic summary/source generation, and calls the domain writer only after explicit selection plus nonblank inventor input. A previously used result remains independently selectable; HP-24.16 introduces no evidence lifecycle, merge, replacement, or deduplication policy.
+
+The trace summary and Workshop Brief consume evidence provenance read-only. Exact stored source event IDs are resolved in stored order. Available, partially available, unavailable, generic non-action, blank-detail, and missing-action relationships are explained safely without source substitution, raw-ID presentation, Project mutation, evidence ranking, or recommendation changes.
+
+HP-24.16 does not alter Validation authority, Engineering State, engineering assertions, engineering actions, Project decisions, action lifecycle/status, recommendation precedence, routing, or REV write authority. REV remains a read-only trace consumer and recommender.
+
+The accepted loop is now:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ Explicit ProjectEvidence adoption
+```
+
+The final step is explicit and inventor-owned. Result history does not become evidence merely because it exists.
 
 ## Historical Build 24.2 Record
 
