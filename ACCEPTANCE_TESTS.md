@@ -277,6 +277,52 @@ Passed:
 - Assertion source provenance remains deferred.
 - No Project writer or provenance writer was added.
 
+## HP-24.10 Consolidated Acceptance Record
+
+**Hold point:** HP-24.10 — Engineering Assertion Source Provenance
+**Branch:** `sprint006-build24-10-assertion-provenance`
+**Accepted implementation HEAD:** `135c1b1`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.10-assertion-source-provenance`
+
+### Build Chain
+
+- Build 1 — `c247e98` — Establish assertion source provenance contract.
+- Build 2 — `209ae04` — Capture Discovery assertion source provenance.
+- Build 3 — `135c1b1` — Explain assertion source provenance.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- `ProjectEngineeringAssertion.sourceTimelineEventIds` is optional, structurally normalized, and preserves valid unknown IDs without repair, generated IDs, or legacy backfill.
+- Discovery is the only production assertion provenance writer. It captures the current `discovery-answer-recorded` event ID directly for each newly created assumption or constraint in the same Project action.
+- One Discovery event can source multiple newly created assertions. Existing duplicates receive no added source; legacy strings are not promoted; resolved assertions reintroduced later receive a new identity and a new source event.
+- Trace resolution matches stored assertion source IDs exactly to `Project.timeline` event IDs. Not recorded, available, unavailable, and partially available provenance remain distinct.
+- The existing Brief separates Recorded Project fact, Source, Validation, and REV guidance. Source records where an assertion was captured, not proof, complete causality, derivation, exact wording, or Validation evidence.
+- Identity-backed assertions without source provenance remain valid. Engineering State-only legacy assumptions remain distinct because stable assertion provenance is unavailable.
+- Validation lifecycle transitions preserve source IDs. Read-side provenance explanation is pure, shows no raw IDs, and does not alter REV authority or HP-24.9 recommendation precedence.
+
+### Acceptance Results
+
+- Provenance contract, exact-ID resolution, assumption and constraint provenance: **PASS**.
+- Duplicate, legacy, reintroduction, multiple/mixed/missing/non-Discovery source cases: **PASS**.
+- Validation/origin boundary, lifecycle provenance stability, source versus Validation/lifecycle/derivation: **PASS**.
+- Read-side purity, navigation persistence, and live Discovery persistence: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Capabilities
+
+- Manual or multi-source enrichment writers, supporting-source provenance, and derivation/rationale.
+- Interview and original-observation assertion provenance.
+- Concept evidence selection and engineering decision writers.
+- Constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+Discovery only creates assertions for its existing extraction patterns; an unclassified sentence creates neither an assertion nor assertion provenance. This is not an HP-24.10 provenance defect.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

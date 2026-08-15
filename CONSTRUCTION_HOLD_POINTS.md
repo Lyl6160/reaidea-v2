@@ -452,3 +452,56 @@ The existing Workshop Brief now separates recorded Project facts, Validation fac
 ### Freeze Decision
 
 HP-24.9 is a coherent, tested read-side explanation capability ready for final freeze. Build 3 is not required.
+
+## HP-24.10 — Engineering Assertion Source Provenance
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.9 at `744a24a`, tag `v24.9-trace-aware-guidance`
+
+**Construction branch:** `sprint006-build24-10-assertion-provenance`
+
+### Build 1 — Assertion Source Provenance Contract
+
+**Commit:** `c247e98`
+
+Added optional `ProjectEngineeringAssertion.sourceTimelineEventIds` with structural-only storage normalization. Valid IDs are preserved without referential repair, generated IDs, or legacy backfill. No writer was introduced.
+
+### Build 2 — Discovery Direct Source Provenance
+
+**Commit:** `209ae04`
+
+Discovery is the only production assertion provenance writer. A newly created assumption or constraint directly stores the current `discovery-answer-recorded` event ID. One event may source multiple assertions; existing duplicates and legacy strings are not enriched.
+
+### Build 3 — Provenance-Aware Assertion Explanation
+
+**Commit:** `135c1b1`
+
+The existing Project trace summary and Workshop Brief resolve assertion provenance only by exact event ID. The Brief separates Recorded Project fact, Source, Validation, and REV guidance while keeping provenance distinct from proof, derivation, lifecycle, and Validation evidence.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified forward-only provenance, legacy compatibility, missing and partially available source states, generic non-Discovery handling, lifecycle stability, read-side purity, browser persistence, writer boundaries, and HP-24.9 recommendation precedence.
+
+### Final Outcome
+
+- **HP-24.10 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.10-assertion-source-provenance`
+- **Freeze blockers:** NONE
+- **Assertion provenance writer:** Discovery only
+- **Source resolution:** Exact stored event ID only
+- **Legacy provenance backfill:** None
+- **REV authority:** Unchanged and read-only
+
+### Deferred Capabilities
+
+- Manual and multi-source enrichment writers, supporting-source provenance, and derivation/rationale.
+- Interview and original-observation assertion provenance.
+- Concept evidence selection and engineering decision writers.
+- Constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.10 is a coherent, tested, forward-only assertion source provenance capability. Build 4 implementation is not required.

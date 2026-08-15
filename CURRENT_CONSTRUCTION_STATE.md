@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.9 — Trace-Aware Assertion Explanation and Engineering Guidance
-**Branch:** `sprint006-build24-9-trace-aware-guidance`
-**Accepted HEAD:** `605c200`
-**Status:** COMPLETE / VERIFIED / READY TO FREEZE
+**Construction checkpoint:** HP-24.10 — Engineering Assertion Source Provenance
+**Branch:** `sprint006-build24-10-assertion-provenance`
+**Accepted HEAD:** `135c1b1`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.7 — Project-Native Engineering Traceability and Decision Chain**
+**HP-24.10 — Engineering Assertion Source Provenance**
 
 Protected previous foundation:
 
@@ -35,12 +35,19 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.9-trace-aware-guidance`
+Final freeze tag: `v24.10-assertion-source-provenance`
 
 Accepted HP-24.9 construction chain:
 
 - Build 1 — `7f5bce0` — Assertion trace summary foundation
 - Build 2 — `605c200` — Trace-aware assertion explanation in Workshop Brief
+
+Accepted HP-24.10 construction chain:
+
+- Build 1 — `c247e98` — Assertion source provenance contract
+- Build 2 — `209ae04` — Discovery direct assertion source provenance
+- Build 3 — `135c1b1` — Provenance-aware assertion explanation
+- Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
 
@@ -112,6 +119,16 @@ Missing historical identity and provenance are acceptable. Fabricated identity a
 HP-24.9 provides a pure read-side assertion trace summary and a concise Workshop Brief explanation. REV can distinguish recorded Project facts from its guidance, explain active and historical assertion context, consume explicit Validation links and outcomes, preserve legacy assumptions without fabricated identity, and keep missing provenance visibly missing.
 
 HP-24.9 does not add Project writers, provenance, decisions, evidence, lifecycle transitions, or schema changes. HP-24.8 remains frozen underneath it. HP-24.9 Build 3 is not required for the current hold-point claim.
+
+## HP-24.10 Capability
+
+HP-24.10 establishes forward-only, explicit assertion source provenance. New Discovery-created assumptions and constraints store the exact current `discovery-answer-recorded` event ID. One event may source multiple assertions; later duplicate Discovery actions do not enrich existing assertions; and resolved values reintroduced later receive new assertion identity and new source provenance.
+
+`ProjectEngineeringAssertion.sourceTimelineEventIds` is optional and structurally normalized. Missing legacy provenance remains missing, including identity-backed assertions. Source resolution reads only exact stored event IDs from Project timeline history, retaining not-recorded, available, unavailable, and partially available states without inference or repair.
+
+The existing trace summary and Workshop Brief now separate Recorded Project fact, Source, Validation, and REV guidance. Source is not proof, complete causality, derivation, exact inventor wording, or Validation evidence. Validation lifecycle updates preserve assertion origin provenance. REV remains read-only, no second provenance store exists, and HP-24.9 recommendation precedence remains unchanged.
+
+Deferred capabilities include manual/multi-source enrichment writers, supporting-source and derivation models, Interview/original-observation provenance, Concept evidence selection, engineering decision writers, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
 ## Historical Build 24.2 Record
 
