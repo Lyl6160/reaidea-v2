@@ -24,6 +24,8 @@ import {
   startValidationItem,
 } from "../../lib/workshop/validationExecution";
 import { recordEngineeringConclusion } from "../../lib/workshop/engineeringConclusions";
+import { recordEngineeringDirection } from "../../lib/workshop/engineeringDirections";
+import { summarizeEngineeringTrace } from "../../lib/workshop/traceSummary";
 import {
   getProjectStorageSnapshot,
   loadProject,
@@ -684,6 +686,11 @@ function ValidationPlanView({
   const [selectedConclusionEvidenceIds, setSelectedConclusionEvidenceIds] = useState<string[]>([]);
   const [supersedesConclusionId, setSupersedesConclusionId] = useState("");
   const [conclusionError, setConclusionError] = useState("");
+  const [direction, setDirection] = useState("");
+  const [directionReason, setDirectionReason] = useState("");
+  const [selectedDirectionBasisIds, setSelectedDirectionBasisIds] = useState<string[]>([]);
+  const [supersedesDirectionId, setSupersedesDirectionId] = useState("");
+  const [directionError, setDirectionError] = useState("");
   const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
@@ -700,6 +707,12 @@ function ValidationPlanView({
   );
   const existingConclusions = project.decisions.filter(
     (decision) => decision.category === "engineering-conclusion"
+  );
+  const currentEngineeringConclusions = summarizeEngineeringTrace(
+    project
+  ).currentEngineeringConclusions;
+  const existingDirections = project.decisions.filter(
+    (decision) => decision.category === "engineering-direction"
   );
 
   function startItem(itemId: string) {
@@ -815,6 +828,41 @@ function ValidationPlanView({
     setSelectedConclusionEvidenceIds([]);
     setSupersedesConclusionId("");
     setConclusionError("");
+  }
+
+  function toggleDirectionBasis(conclusionId: string) {
+    setSelectedDirectionBasisIds((selectedIds) =>
+      selectedIds.includes(conclusionId)
+        ? selectedIds.filter((id) => id !== conclusionId)
+        : [...selectedIds, conclusionId]
+    );
+  }
+
+  function recordDirection() {
+    if (!direction.trim() || selectedDirectionBasisIds.length === 0) {
+      setDirectionError("Record a direction and select at least one current conclusion.");
+      return;
+    }
+
+    const latestProject = loadProject() ?? project;
+    const result = recordEngineeringDirection(latestProject, {
+      direction,
+      reason: directionReason,
+      basisConclusionIds: selectedDirectionBasisIds,
+      ...(supersedesDirectionId ? { supersedesDirectionId } : {}),
+    });
+
+    if (result.status === "invalid") {
+      setDirectionError(result.reason);
+      return;
+    }
+
+    saveProject(result.project);
+    setDirection("");
+    setDirectionReason("");
+    setSelectedDirectionBasisIds([]);
+    setSupersedesDirectionId("");
+    setDirectionError("");
   }
 
   return (
@@ -1066,6 +1114,90 @@ function ValidationPlanView({
         </section>
       )}
 
+      {currentEngineeringConclusions.length > 0 && (
+        <section className="engineering-direction" aria-label="Engineering direction">
+          <p className="validation-label">Engineering Direction</p>
+          <p>
+            After reviewing current engineering conclusions, you may deliberately record the engineering course you choose to pursue next.
+          </p>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-direction">Direction</label>
+            <textarea
+              id="engineering-direction"
+              className="validation-textarea"
+              value={direction}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setDirection(event.target.value);
+                if (directionError) setDirectionError("");
+              }}
+              placeholder="Record the engineering course you deliberately choose in your own words."
+            />
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-direction-reason">Reason</label>
+            <textarea
+              id="engineering-direction-reason"
+              className="validation-textarea"
+              value={directionReason}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setDirectionReason(event.target.value);
+                if (directionError) setDirectionError("");
+              }}
+              placeholder="Optionally record why you chose this direction."
+            />
+          </div>
+
+          <fieldset className="direction-basis-selector">
+            <legend>Based on current conclusions</legend>
+            <div className="direction-basis-options">
+              {currentEngineeringConclusions.map((conclusion) => (
+                <label key={conclusion.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedDirectionBasisIds.includes(conclusion.id)}
+                    onChange={() => toggleDirectionBasis(conclusion.id)}
+                  />
+                  <span>
+                    <strong>{conclusion.conclusion}</strong>
+                    {conclusion.reason && <small>{conclusion.reason}</small>}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          {existingDirections.length > 0 && (
+            <label className="validation-field direction-supersession">
+              <span>Supersedes previous direction (optional)</span>
+              <select
+                value={supersedesDirectionId}
+                onChange={(event) => setSupersedesDirectionId(event.target.value)}
+              >
+                <option value="">Do not supersede a previous direction</option>
+                {existingDirections.map((existingDirection) => (
+                  <option key={existingDirection.id} value={existingDirection.id}>
+                    {existingDirection.decision}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {directionError && <p className="validation-form-error" role="alert">{directionError}</p>}
+
+          <button
+            type="button"
+            className="validation-action"
+            disabled={!direction.trim() || selectedDirectionBasisIds.length === 0}
+            onClick={recordDirection}
+          >
+            Record Engineering Direction
+          </button>
+        </section>
+      )}
+
       <style jsx>{`
         .validation-plan {
           margin-top: 22px;
@@ -1138,6 +1270,21 @@ function ValidationPlanView({
           line-height: 1.5;
         }
 
+        .engineering-direction {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(196, 163, 94, 0.46);
+          border-radius: 9px;
+          background: rgba(48, 37, 14, 0.26);
+        }
+
+        .engineering-direction > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #c9c0a5;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
         .conclusion-evidence-selector {
           margin: 14px 0;
           padding: 11px;
@@ -1146,12 +1293,57 @@ function ValidationPlanView({
         }
 
         .conclusion-evidence-selector legend,
-        .conclusion-supersession > span {
+        .conclusion-supersession > span,
+        .direction-supersession > span,
+        .direction-basis-selector legend {
           padding: 0 4px;
           color: #8fd5df;
           font-size: 11px;
           font-weight: 800;
           letter-spacing: 0.06em;
+        }
+
+        .direction-basis-selector {
+          margin: 14px 0;
+          padding: 11px;
+          border: 1px solid rgba(162, 134, 73, 0.4);
+          border-radius: 7px;
+        }
+
+        .direction-basis-options {
+          display: grid;
+          gap: 7px;
+        }
+
+        .direction-basis-options label {
+          display: flex;
+          align-items: flex-start;
+          gap: 9px;
+          padding: 8px;
+          border: 1px solid rgba(162, 134, 73, 0.28);
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .direction-basis-options input {
+          margin-top: 3px;
+          accent-color: #d3ad59;
+        }
+
+        .direction-basis-options strong,
+        .direction-basis-options small {
+          display: block;
+        }
+
+        .direction-basis-options strong {
+          color: #eee5ca;
+          font-size: 12px;
+        }
+
+        .direction-basis-options small {
+          margin-top: 3px;
+          color: #b9ab88;
+          font-size: 11px;
         }
 
         .conclusion-evidence-selector > p {
@@ -1196,7 +1388,8 @@ function ValidationPlanView({
           font-size: 11px;
         }
 
-        .conclusion-supersession select {
+        .conclusion-supersession select,
+        .direction-supersession select {
           display: block;
           width: 100%;
           box-sizing: border-box;
