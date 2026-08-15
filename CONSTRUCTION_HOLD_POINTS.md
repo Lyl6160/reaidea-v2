@@ -260,3 +260,71 @@ This hold point awaits construction and acceptance testing.
 **HP-24.5 STATUS: PENDING**
 
 HP-24.5 may only become VERIFIED after live acceptance, persistence testing, regression testing, and static quality gates pass.
+
+## HP-24.7 — Project-Native Engineering Traceability and Decision Chain
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.6 at `62bb4e6`, tag `v24.6-living-workshop`
+
+**Construction branch:** `sprint006-build24-7-engineering-traceability`
+
+### Build 1 — Engineering Traceability Contract
+
+**Commit:** `857cf8b`
+
+Established the backward-compatible `ProjectDecision` and `ProjectConceptRef` contracts, optional validation references, supersession fields, and safe legacy normalization. Assumptions and constraints remained `string[]`; no provenance was fabricated and no active decision writer was added at this stage.
+
+### Build 2 — Validation Result Linkage and Engineering State Change History
+
+**Commit:** `12f43a9`
+
+Established the new validation history chain from ValidationPlanItem through ProjectEvidence and `validation-result-recorded` events to typed outcomes and factual Engineering State changed-field names. Inconclusive results remain unresolved, and validation completion does not create a ProjectDecision.
+
+### Build 3 — Project-Native Concept Review and Direction Decisions
+
+**Commit:** `3695953`
+
+Persisted explicit Concept 01 review and Concept 02 direction decisions in the Project, with shared Concept family identity, revisions, timeline decision links, duplicate protection, and same-stage supersession. Generated Concept artifacts and Workshop Concept Validation remained local.
+
+### Build 4 — Trace-Aware REV Workshop Orchestration
+
+**Commit:** `f4dbcf9`
+
+Added a pure read-side trace summary and deterministic Workshop recommendation precedence. REV now consumes active Project decisions and validation trace while remaining read-only with respect to Project truth.
+
+### Final Outcome
+
+- **HP-24.7 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Build 5 required:** NO
+- **Freeze blockers:** NONE
+- **Final freeze tag:** `v24.7-engineering-traceability`
+- **Tag status:** Created by the final freeze operation
+
+### Authority Boundaries
+
+- `Project.engineeringState` remains the current engineering snapshot.
+- `Project.timeline` remains append-only engineering history.
+- `Project.evidence` remains authoritative validation evidence.
+- `Project.decisions` remains the authority for deliberate engineering choices and directions.
+- Validation results do not become Project decisions automatically.
+- REV recommendations do not become Project decisions.
+- Workshop Concept Validation remains separate from Discovery-owned Project Validation.
+
+### Deferred Capabilities
+
+The following are intentionally deferred and are not HP-24.7 failures:
+
+- Stable assumption identity.
+- Stable constraint identity.
+- Exact Interview/Discovery source-event provenance.
+- Provenance for rewritten uncertainty.
+- Explicit evidence selection for Concept decisions.
+- Engineering-conclusion and engineering-direction writers.
+- Workshop Validation unification.
+- Specialist bench engines.
+- Autonomous REV engineering decisions.
+
+### Freeze Decision
+
+HP-24.7 is a coherent, tested structural capability ready for freeze preparation. Documentation updates and the final freeze commit/tag remain subject to REV authorization.

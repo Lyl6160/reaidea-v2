@@ -6,6 +6,115 @@ These tests protect behaviour already constructed.
 
 A build is not considered verified merely because TypeScript, lint, or production compilation succeeds.
 
+## HP-24.7 Consolidated Acceptance Record
+
+**Hold point:** HP-24.7 — Project-Native Engineering Traceability and Decision Chain
+**Branch:** `sprint006-build24-7-engineering-traceability`
+**Accepted HEAD:** `f4dbcf9`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.7-engineering-traceability`
+
+### Build 1 — Traceability Contract
+
+**Commit:** `857cf8b`
+
+Passed:
+
+- Legacy Project compatibility and missing-decision normalization.
+- Legacy and new `ProjectDecision` normalization.
+- Valid and malformed optional reference handling.
+- No fabricated provenance.
+- Assumptions and constraints remain string arrays.
+- Real browser legacy Project load, refresh, and navigation compatibility.
+- No active decision writer introduced by the contract.
+
+### Build 2 — Validation Result Trace History
+
+**Commit:** `12f43a9`
+
+Passed:
+
+- Validation item → evidence → result event linkage.
+- Typed `confirmed`, `refined`, `challenged`, and `inconclusive` outcomes.
+- Engineering State changed-field history.
+- Inconclusive safety and unresolved uncertainty preservation.
+- Real browser persistence and refresh persistence.
+- No ProjectDecision created by validation completion.
+- Legacy validation events remain valid and unlinked where trace fields did not exist.
+- Discovery remains the authoritative Validation owner.
+
+### Build 3 — Project-Native Concept Decisions
+
+**Commit:** `3695953`
+
+Passed:
+
+- Explicit Concept 01 review decision.
+- Explicit Concept 02 direction decision.
+- Shared Concept family ID and revision identity.
+- Reason preservation, including honest empty reasons.
+- Timeline decision events linked with `decisionId`.
+- Empty supporting evidence and source arrays where no explicit source was selected.
+- Repeated identical action prevention.
+- Same-stage supersession and no cross-stage supersession.
+- Concept 03 regression.
+- No fabricated historical Concept decisions, evidence, or source links.
+- Generated SVGs remain local.
+- Workshop Concept Validation remains local.
+
+### Build 4 — Trace-Aware REV Workshop Orchestration
+
+**Commit:** `f4dbcf9`
+
+Passed:
+
+- Active Concept decision resolution.
+- Same-stage superseded decision resolution.
+- Broken and cross-stage supersession safety.
+- Validation trace consumption.
+- Safe semantics for all four validation outcomes.
+- Recommendation precedence for Concept accept, refine, and rethink.
+- Inconclusive and challenged validation remain visible as unresolved/reconsideration work.
+- Recorded Project facts are distinguished from REV recommendations.
+- Read-only Project mutation purity.
+- Legacy fallback.
+- Refresh and Workshop → Discovery → Workshop regression.
+- Living Workshop and Concept workflow regression.
+
+### Authority and Deferred Capability Checks
+
+The accepted authority model is:
+
+- `Project.engineeringState` — current engineering snapshot.
+- `Project.timeline` — append-only engineering history.
+- `Project.evidence` — authoritative validation evidence.
+- `Project.decisions` — deliberate engineering choices and directions.
+- REV — read-only trace consumer and recommender.
+
+Validation result is not a Project decision. REV recommendation is not a Project decision. Workshop Concept Validation is not Discovery-owned Project Validation.
+
+The following remain deferred and are not HP-24.7 failures:
+
+- Stable assumption identity.
+- Stable constraint identity.
+- Exact source-event provenance.
+- Provenance for rewritten uncertainty.
+- Explicit evidence selection for Concept decisions.
+- Engineering-conclusion and engineering-direction writers.
+- Workshop Validation unification.
+- Specialist bench engines.
+- Autonomous REV engineering decisions.
+
+### Final Gates
+
+- TypeScript: **PASS**
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings
+- Production build: **PASS**
+- `git diff --check`: **PASS**
+- Hold-point readiness: **PASS**
+- Build 5 required: **NO**
+- Freeze blockers: **NONE**
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

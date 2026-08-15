@@ -1,13 +1,52 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** Sprint 006 / Build 24.2  
-**Status:** CANDIDATE — NOT YET VERIFIED  
-**Last governance update:** 2026-08-11
+**Construction checkpoint:** HP-24.7 — Project-Native Engineering Traceability and Decision Chain
+**Branch:** `sprint006-build24-7-engineering-traceability`
+**Accepted HEAD:** `f4dbcf9`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Last governance update:** 2026-08-15
 
-## Current Position
+## Current Hold-Point Candidate
 
-Build 24.2 is the current validation-workshop construction target.
+**HP-24.7 — Project-Native Engineering Traceability and Decision Chain**
+
+Protected previous foundation:
+
+- `62bb4e6`
+- `v24.6-living-workshop`
+
+Accepted construction chain:
+
+- Build 1 — `857cf8b` — Project engineering traceability contract
+- Build 2 — `12f43a9` — Validation result linkage and Engineering State change history
+- Build 3 — `3695953` — Project-native Concept review and direction decisions
+- Build 4 — `f4dbcf9` — Trace-aware REV Workshop orchestration
+
+Final freeze tag: `v24.7-engineering-traceability`
+
+## HP-24.7 Capability
+
+HP-24.7 establishes a Project-native traceability backbone for new authoritative engineering history:
+
+- Validation items link to Project evidence, typed outcomes, result events, and changed Engineering State fields.
+- Explicit Concept 01 review and Concept 02 direction actions create Project decisions and timeline records.
+- Concept revisions share a stable family reference and support same-stage supersession.
+- REV reads Engineering State, validation trace, and active Project decisions to recommend the next Workshop bench without mutating Project truth.
+
+The authority model remains:
+
+- `Project.engineeringState` — current engineering snapshot
+- `Project.timeline` — append-only engineering history
+- `Project.evidence` — authoritative validation evidence
+- `Project.decisions` — deliberate engineering choices and directions
+- REV — read-only trace consumer and recommender
+
+HP-24.7 does not provide complete inventor-statement provenance. Stable assumption identity, stable constraint identity, exact source-event provenance, explicit evidence selection for Concept decisions, specialist benches, Workshop Validation unification, and autonomous REV decisions remain deferred. Build 5 is not required for this hold point.
+
+## Historical Build 24.2 Record
+
+The following Build 24.2 record is retained as historical construction context. It is not the current checkpoint.
 
 The intended direction is to connect the existing validation execution domain to the Living Workshop without creating a second validation engine.
 

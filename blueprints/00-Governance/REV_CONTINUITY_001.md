@@ -389,6 +389,27 @@ Important UX finding:
 
 # 16. Anti-Drift Rules
 
+---
+
+# 18. Current HP-24.7 REV Continuity
+
+HP-24.7 is complete, verified, tagged, pushed, and frozen at the final documentation checkpoint after Build 4, commit `f4dbcf9`, on branch `sprint006-build24-7-engineering-traceability`. The final tag is `v24.7-engineering-traceability`.
+
+REV now has deterministic, read-only trace awareness in Workshop orchestration. It can consume:
+
+- the current Engineering State,
+- Project validation trace and typed outcomes,
+- Project decisions,
+- active and superseded Concept direction decisions.
+
+REV may summarize recorded history and recommend the next Workshop bench. REV does not autonomously mutate Engineering State, create Project decisions, create evidence, complete Validation, or write provenance.
+
+HP-24.7 does not provide full inventor-statement provenance. Assumption identity, constraint identity, exact source-event lineage, explicit Concept evidence selection, specialist engines, and autonomous engineering decisions remain future capabilities. Missing historical provenance is acceptable; fabricated provenance is not.
+
+Build 5 is not required for HP-24.7.
+
+---
+
 Do not reintroduce old prototype concepts as product truth without explicit review.
 
 Legacy terms / concepts that require caution include:
