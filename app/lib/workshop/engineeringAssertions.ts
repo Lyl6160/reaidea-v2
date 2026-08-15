@@ -8,6 +8,7 @@ export function createEngineeringAssertion(input: {
   kind: EngineeringAssertionKind;
   value: string;
   createdAt: string;
+  sourceTimelineEventIds?: string[];
 }): ProjectEngineeringAssertion {
   return {
     id: createId(),
@@ -15,6 +16,9 @@ export function createEngineeringAssertion(input: {
     value: input.value,
     status: "active",
     createdAt: input.createdAt,
+    ...(input.sourceTimelineEventIds
+      ? { sourceTimelineEventIds: [...input.sourceTimelineEventIds] }
+      : {}),
   };
 }
 

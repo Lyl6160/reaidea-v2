@@ -443,6 +443,7 @@ export function recordDiscoveryAnswer(
         kind: "assumption",
         value,
         createdAt: now,
+        sourceTimelineEventIds: [timelineEvent.id],
       })
     ),
     ...newConstraints.map((value) =>
@@ -450,6 +451,7 @@ export function recordDiscoveryAnswer(
         kind: "constraint",
         value,
         createdAt: now,
+        sourceTimelineEventIds: [timelineEvent.id],
       })
     ),
   ];
