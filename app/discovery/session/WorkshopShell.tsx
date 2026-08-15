@@ -252,6 +252,12 @@ function formatEngineeringDirectionBasis(
     : basisText;
 }
 
+function formatEngineeringActionResult(
+  result: WorkshopState["trace"]["adoptedEngineeringActions"][number]["results"][number]
+): string {
+  return result.result ?? "Recorded result detail is unavailable in the current Project.";
+}
+
 function formatEngineeringActionBasis(
   action: WorkshopState["trace"]["adoptedEngineeringActions"][number]
 ): string {
@@ -1099,6 +1105,14 @@ export default function WorkshopShell({
                   <p><strong>Action:</strong> {action.action}</p>
                   {action.reason && <p><strong>Reason:</strong> {action.reason}</p>}
                   <p><strong>Based on:</strong> {formatEngineeringActionBasis(action)}</p>
+                  {action.results.length > 0 && (
+                    <>
+                      <p><strong>Recorded results:</strong></p>
+                      {action.results.map((result) => (
+                        <p key={result.eventId}>{formatEngineeringActionResult(result)}</p>
+                      ))}
+                    </>
+                  )}
                 </div>
               ))}
             </div>

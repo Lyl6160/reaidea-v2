@@ -93,6 +93,12 @@ export type EngineeringActionDirectionBasisReference = {
   directionStatus?: "current" | "superseded";
 };
 
+export type EngineeringActionResultTraceEntry = {
+  eventId: string;
+  result?: string;
+  createdAt: string;
+};
+
 export type EngineeringActionTraceEntry = {
   id: string;
   action: string;
@@ -100,6 +106,7 @@ export type EngineeringActionTraceEntry = {
   createdAt: string;
   basisState: EngineeringActionDirectionBasisState;
   basisDirections: EngineeringActionDirectionBasisReference[];
+  results: EngineeringActionResultTraceEntry[];
 };
 
 export type LatestValidationResult = {
@@ -305,7 +312,27 @@ function createEngineeringActionTraceEntry(
     createdAt: action.createdAt,
     basisState: engineeringActionDirectionBasisState(basisDirections),
     basisDirections,
+    results: resolveEngineeringActionResults(project, action.id),
   };
+}
+
+function resolveEngineeringActionResults(
+  project: Project,
+  actionId: string
+): EngineeringActionResultTraceEntry[] {
+  return project.timeline
+    .filter(
+      (event) =>
+        event.type === "engineering-action-result-recorded" &&
+        event.engineeringActionId === actionId
+    )
+    .map((event) => ({
+      eventId: event.id,
+      ...(typeof event.response === "string" && event.response.trim()
+        ? { result: event.response }
+        : {}),
+      createdAt: event.createdAt,
+    }));
 }
 
 function resolveEngineeringActionBasisDirections(
