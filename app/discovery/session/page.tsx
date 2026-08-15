@@ -23,6 +23,7 @@ import {
   completeValidationItem,
   startValidationItem,
 } from "../../lib/workshop/validationExecution";
+import { recordEngineeringConclusion } from "../../lib/workshop/engineeringConclusions";
 import {
   getProjectStorageSnapshot,
   loadProject,
@@ -678,6 +679,11 @@ function ValidationPlanView({
   const [evidenceSource, setEvidenceSource] = useState("");
   const [resultSummary, setResultSummary] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [conclusion, setConclusion] = useState("");
+  const [conclusionReason, setConclusionReason] = useState("");
+  const [selectedConclusionEvidenceIds, setSelectedConclusionEvidenceIds] = useState<string[]>([]);
+  const [supersedesConclusionId, setSupersedesConclusionId] = useState("");
+  const [conclusionError, setConclusionError] = useState("");
   const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
@@ -689,6 +695,12 @@ function ValidationPlanView({
   const completedCount = plan.items.filter(
     (item) => item.status === "completed"
   ).length;
+  const hasRecordedValidationResult = project.evidence.some(
+    (evidence) => evidence.validationOutcome
+  );
+  const existingConclusions = project.decisions.filter(
+    (decision) => decision.category === "engineering-conclusion"
+  );
 
   function startItem(itemId: string) {
     const result = startValidationItem(project, itemId);
@@ -766,6 +778,43 @@ function ValidationPlanView({
         nextTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
+  }
+
+  function toggleConclusionEvidence(evidenceId: string) {
+    setSelectedConclusionEvidenceIds((selectedIds) =>
+      selectedIds.includes(evidenceId)
+        ? selectedIds.filter((id) => id !== evidenceId)
+        : [...selectedIds, evidenceId]
+    );
+  }
+
+  function recordConclusion() {
+    if (!conclusion.trim()) {
+      setConclusionError("Record a conclusion before saving it.");
+      return;
+    }
+
+    const latestProject = loadProject() ?? project;
+    const result = recordEngineeringConclusion(latestProject, {
+      conclusion,
+      reason: conclusionReason,
+      supportingEvidenceIds: selectedConclusionEvidenceIds,
+      ...(supersedesConclusionId
+        ? { supersedesConclusionId }
+        : {}),
+    });
+
+    if (result.status === "invalid") {
+      setConclusionError(result.reason);
+      return;
+    }
+
+    saveProject(result.project);
+    setConclusion("");
+    setConclusionReason("");
+    setSelectedConclusionEvidenceIds([]);
+    setSupersedesConclusionId("");
+    setConclusionError("");
   }
 
   return (
@@ -926,6 +975,97 @@ function ValidationPlanView({
         ))}
       </div>
 
+      {hasRecordedValidationResult && (
+        <section className="engineering-conclusion" aria-label="Engineering conclusion">
+          <p className="validation-label">Engineering Conclusion</p>
+          <p>
+            After reviewing the recorded Validation results, you may deliberately record what you conclude from the evidence you selected.
+          </p>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-conclusion">Conclusion</label>
+            <textarea
+              id="engineering-conclusion"
+              className="validation-textarea"
+              value={conclusion}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setConclusion(event.target.value);
+                if (conclusionError) setConclusionError("");
+              }}
+              placeholder="Record your bounded engineering conclusion in your own words."
+            />
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-conclusion-reason">Reason</label>
+            <textarea
+              id="engineering-conclusion-reason"
+              className="validation-textarea"
+              value={conclusionReason}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setConclusionReason(event.target.value);
+                if (conclusionError) setConclusionError("");
+              }}
+              placeholder="Optionally record why you reached this conclusion."
+            />
+          </div>
+
+          <fieldset className="conclusion-evidence-selector">
+            <legend>Supporting evidence (optional)</legend>
+            {project.evidence.length === 0 ? (
+              <p>No Project evidence recorded yet.</p>
+            ) : (
+              <div className="conclusion-evidence-options">
+                {project.evidence.map((evidence) => (
+                  <label key={evidence.id}>
+                    <input
+                      type="checkbox"
+                      checked={selectedConclusionEvidenceIds.includes(evidence.id)}
+                      onChange={() => toggleConclusionEvidence(evidence.id)}
+                    />
+                    <span>
+                      <strong>{evidence.summary}</strong>
+                      <small>
+                        {evidence.source}
+                        {evidence.validationOutcome && ` · ${evidence.validationOutcome}`}
+                      </small>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </fieldset>
+
+          {existingConclusions.length > 0 && (
+            <label className="validation-field conclusion-supersession">
+              <span>Supersedes previous conclusion (optional)</span>
+              <select
+                value={supersedesConclusionId}
+                onChange={(event) => setSupersedesConclusionId(event.target.value)}
+              >
+                <option value="">Do not supersede a previous conclusion</option>
+                {existingConclusions.map((decision) => (
+                  <option key={decision.id} value={decision.id}>
+                    {decision.decision}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {conclusionError && <p className="validation-form-error" role="alert">{conclusionError}</p>}
+
+          <button
+            type="button"
+            className="validation-action"
+            disabled={!conclusion.trim()}
+            onClick={recordConclusion}
+          >
+            Record Engineering Conclusion
+          </button>
+        </section>
+      )}
+
       <style jsx>{`
         .validation-plan {
           margin-top: 22px;
@@ -981,6 +1121,92 @@ function ValidationPlanView({
 
         .validation-complete-note p:last-child {
           margin-bottom: 0;
+        }
+
+        .engineering-conclusion {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(101, 184, 198, 0.4);
+          border-radius: 9px;
+          background: rgba(11, 38, 48, 0.42);
+        }
+
+        .engineering-conclusion > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #b3c6cd;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .conclusion-evidence-selector {
+          margin: 14px 0;
+          padding: 11px;
+          border: 1px solid rgba(100, 139, 150, 0.35);
+          border-radius: 7px;
+        }
+
+        .conclusion-evidence-selector legend,
+        .conclusion-supersession > span {
+          padding: 0 4px;
+          color: #8fd5df;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+        }
+
+        .conclusion-evidence-selector > p {
+          margin: 0;
+          color: #9fb2b9;
+          font-size: 12px;
+        }
+
+        .conclusion-evidence-options {
+          display: grid;
+          gap: 7px;
+        }
+
+        .conclusion-evidence-options label {
+          display: flex;
+          align-items: flex-start;
+          gap: 9px;
+          padding: 8px;
+          border: 1px solid rgba(100, 139, 150, 0.26);
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .conclusion-evidence-options input {
+          margin-top: 3px;
+          accent-color: #54c8d5;
+        }
+
+        .conclusion-evidence-options strong,
+        .conclusion-evidence-options small {
+          display: block;
+        }
+
+        .conclusion-evidence-options strong {
+          color: #e1edf0;
+          font-size: 12px;
+        }
+
+        .conclusion-evidence-options small {
+          margin-top: 3px;
+          color: #96acb4;
+          font-size: 11px;
+        }
+
+        .conclusion-supersession select {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 7px;
+          padding: 10px;
+          border: 1px solid #38566a;
+          border-radius: 6px;
+          background: #0a1821;
+          color: #e1edf0;
+          font: inherit;
         }
 
         .validation-items {
