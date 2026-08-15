@@ -134,7 +134,8 @@ export type ProjectTimelineEventType =
   | "validation-plan-completed"
   | "knowledge-input-recorded"
   | "concept-review-recorded"
-  | "concept-direction-recorded";
+  | "concept-direction-recorded"
+  | "engineering-conclusion-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
