@@ -215,6 +215,9 @@ function normalizeEngineeringAssertion(
     value: assertion.value,
     status: assertion.status,
     createdAt: assertion.createdAt,
+    ...(Array.isArray(assertion.sourceTimelineEventIds)
+      ? { sourceTimelineEventIds: stringList(assertion.sourceTimelineEventIds, true) }
+      : {}),
     ...(typeof assertion.supersedesAssertionId === "string" &&
     assertion.supersedesAssertionId.trim()
       ? { supersedesAssertionId: assertion.supersedesAssertionId }

@@ -112,6 +112,7 @@ export type ProjectEngineeringAssertion = {
   value: string;
   status: EngineeringAssertionStatus;
   createdAt: string;
+  sourceTimelineEventIds?: string[];
   supersedesAssertionId?: string;
 };
 
