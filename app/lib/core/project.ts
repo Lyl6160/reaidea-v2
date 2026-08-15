@@ -147,7 +147,8 @@ export type ProjectTimelineEventType =
   | "concept-direction-recorded"
   | "engineering-conclusion-recorded"
   | "engineering-direction-recorded"
-  | "engineering-action-recorded";
+  | "engineering-action-recorded"
+  | "engineering-action-result-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -162,6 +163,7 @@ export type ProjectTimelineEvent = {
   validationOutcome?: ValidationOutcome;
   engineeringStateChangedFields?: EngineeringStateField[];
   decisionId?: string;
+  engineeringActionId?: string;
 };
 
 export type Project = {

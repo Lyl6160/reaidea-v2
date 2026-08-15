@@ -326,6 +326,9 @@ function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent
     ...(typeof event.decisionId === "string"
       ? { decisionId: event.decisionId }
       : {}),
+    ...(typeof event.engineeringActionId === "string"
+      ? { engineeringActionId: event.engineeringActionId }
+      : {}),
   }));
 }
 
