@@ -2,6 +2,8 @@ import type {
   Project,
   ProjectEvidence,
   ProjectTimelineEvent,
+  EngineeringState,
+  EngineeringStateField,
   ValidationOutcome,
   ValidationPlan,
   ValidationPlanItem,
@@ -86,6 +88,7 @@ export function startValidationItem(
     description: `Targeted validation began for: ${targetItem.target}`,
     subject: targetItem.title,
     createdAt: now,
+    validationItemId: targetItem.id,
   };
 
   return {
@@ -213,6 +216,25 @@ export function completeValidationItem(
           createdAt: now,
         }
       : null;
+  const nextEngineeringState: EngineeringState = {
+    ...project.engineeringState,
+    currentUnderstanding: understanding,
+    currentEvidence: projectEvidence,
+    currentAssumptions: projectAssumptions,
+    greatestRemainingUncertainty: nextState.uncertainty,
+    nextEngineeringStep: nextState.nextStep,
+  };
+  const engineeringStateChangedFields = getChangedEngineeringStateFields(
+    project.engineeringState,
+    nextEngineeringState
+  );
+  const enrichedResultEvent: ProjectTimelineEvent = {
+    ...resultEvent,
+    validationItemId: targetItem.id,
+    evidenceId: evidence.id,
+    validationOutcome: assessment.outcome,
+    engineeringStateChangedFields,
+  };
 
   return {
     status: "completed",
@@ -220,23 +242,53 @@ export function completeValidationItem(
       ...project,
       readiness: "validation",
       validationPlan: updatedPlan,
-      engineeringState: {
-        ...project.engineeringState,
-        currentUnderstanding: understanding,
-        currentEvidence: projectEvidence,
-        currentAssumptions: projectAssumptions,
-        greatestRemainingUncertainty: nextState.uncertainty,
-        nextEngineeringStep: nextState.nextStep,
-      },
+      engineeringState: nextEngineeringState,
       evidence: [...project.evidence, evidence],
       timeline: [
         ...project.timeline,
-        resultEvent,
+        enrichedResultEvent,
         ...(completionEvent ? [completionEvent] : []),
       ],
       updatedAt: now,
     },
   };
+}
+
+function getChangedEngineeringStateFields(
+  before: EngineeringState,
+  after: EngineeringState
+): EngineeringStateField[] {
+  const changedFields: EngineeringStateField[] = [];
+
+  if (before.currentUnderstanding !== after.currentUnderstanding) {
+    changedFields.push("currentUnderstanding");
+  }
+  if (!sameStringList(before.currentEvidence, after.currentEvidence)) {
+    changedFields.push("currentEvidence");
+  }
+  if (!sameStringList(before.currentAssumptions, after.currentAssumptions)) {
+    changedFields.push("currentAssumptions");
+  }
+  if (!sameStringList(before.currentConstraints, after.currentConstraints)) {
+    changedFields.push("currentConstraints");
+  }
+  if (
+    before.greatestRemainingUncertainty !== after.greatestRemainingUncertainty
+  ) {
+    changedFields.push("greatestRemainingUncertainty");
+  }
+  if (before.nextEngineeringStep !== after.nextEngineeringStep) {
+    changedFields.push("nextEngineeringStep");
+  }
+
+  return changedFields;
+}
+
+function sameStringList(left: string[], right: string[]): boolean {
+  return (
+    left.length === right.length &&
+    left.every((value, index) => value === right[index])
+  );
 }
 
 export function assessValidationEvidence(

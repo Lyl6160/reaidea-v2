@@ -94,6 +94,14 @@ export type EngineeringState = {
   nextEngineeringStep: string;
 };
 
+export type EngineeringStateField =
+  | "currentUnderstanding"
+  | "currentEvidence"
+  | "currentAssumptions"
+  | "currentConstraints"
+  | "greatestRemainingUncertainty"
+  | "nextEngineeringStep";
+
 export type ProjectTimelineEventType =
   | "project-created"
   | "discovery-understanding-added"
@@ -112,6 +120,10 @@ export type ProjectTimelineEvent = {
   subject?: string;
   response?: string;
   createdAt: string;
+  validationItemId?: string;
+  evidenceId?: string;
+  validationOutcome?: ValidationOutcome;
+  engineeringStateChangedFields?: EngineeringStateField[];
 };
 
 export type Project = {

@@ -1,8 +1,10 @@
 import type {
   EngineeringState,
+  EngineeringStateField,
   Project,
   ProjectDecision,
   ProjectDecisionCategory,
+  ProjectTimelineEvent,
   ValidationOutcome,
   ValidationPlan,
   ValidationPlanItem,
@@ -161,7 +163,51 @@ function normalizeProject(project: StoredProject): Project {
       currentConstraints: stringList(project.engineeringState.currentConstraints),
     },
     validationPlan: normalizeValidationPlan(project.validationPlan),
+    timeline: normalizeTimeline(project.timeline),
   };
+}
+
+function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent[] {
+  return events.map((event) => ({
+    id: event.id,
+    type: event.type,
+    title: event.title,
+    description: event.description,
+    ...(typeof event.subject === "string" ? { subject: event.subject } : {}),
+    ...(typeof event.response === "string" ? { response: event.response } : {}),
+    createdAt: event.createdAt,
+    ...(typeof event.validationItemId === "string"
+      ? { validationItemId: event.validationItemId }
+      : {}),
+    ...(typeof event.evidenceId === "string"
+      ? { evidenceId: event.evidenceId }
+      : {}),
+    ...(isValidationOutcome(event.validationOutcome)
+      ? { validationOutcome: event.validationOutcome }
+      : {}),
+    ...(Array.isArray(event.engineeringStateChangedFields)
+      ? {
+          engineeringStateChangedFields: engineeringStateFields(
+            event.engineeringStateChangedFields
+          ),
+        }
+      : {}),
+  }));
+}
+
+function engineeringStateFields(value: unknown[]): EngineeringStateField[] {
+  return value.filter(isEngineeringStateField);
+}
+
+function isEngineeringStateField(value: unknown): value is EngineeringStateField {
+  return (
+    value === "currentUnderstanding" ||
+    value === "currentEvidence" ||
+    value === "currentAssumptions" ||
+    value === "currentConstraints" ||
+    value === "greatestRemainingUncertainty" ||
+    value === "nextEngineeringStep"
+  );
 }
 
 function normalizeProjectDecisions(value: unknown): ProjectDecision[] {
