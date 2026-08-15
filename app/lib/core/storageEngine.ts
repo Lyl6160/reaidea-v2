@@ -336,6 +336,9 @@ function normalizeProjectDecision(value: unknown): ProjectDecision | null {
     ...(Array.isArray(decision.validationItemIds)
       ? { validationItemIds: stringList(decision.validationItemIds) }
       : {}),
+    ...(Array.isArray(decision.basisConclusionIds)
+      ? { basisConclusionIds: stringList(decision.basisConclusionIds, true) }
+      : {}),
     ...(isProjectConceptRef(decision.conceptRef)
       ? { conceptRef: decision.conceptRef }
       : {}),

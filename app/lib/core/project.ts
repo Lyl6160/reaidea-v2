@@ -43,6 +43,7 @@ export type ProjectDecision = {
   category?: ProjectDecisionCategory;
   sourceTimelineEventIds?: string[];
   validationItemIds?: string[];
+  basisConclusionIds?: string[];
   conceptRef?: ProjectConceptRef;
   supersedesDecisionId?: string;
 };
@@ -135,7 +136,8 @@ export type ProjectTimelineEventType =
   | "knowledge-input-recorded"
   | "concept-review-recorded"
   | "concept-direction-recorded"
-  | "engineering-conclusion-recorded";
+  | "engineering-conclusion-recorded"
+  | "engineering-direction-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
