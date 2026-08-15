@@ -26,7 +26,36 @@ export type LatestValidationResult = {
   createdAt: string;
 };
 
+export type AssertionValidationLink = {
+  validationItemId: string;
+  planStatus: "planned" | "in-progress" | "completed";
+  outcome?: ValidationOutcome;
+  evidenceId?: string;
+  evidenceSummary?: string;
+  evidenceSource?: string;
+  resultCreatedAt?: string;
+};
+
+export type AssertionTraceEntry = {
+  assertionId: string;
+  kind: "assumption" | "constraint" | "uncertainty";
+  value: string;
+  status: "active" | "resolved" | "challenged" | "superseded";
+  createdAt: string;
+  supersededAssertionId?: string;
+  validationLinks: AssertionValidationLink[];
+  latestValidationOutcome?: ValidationOutcome;
+  sourceProvenance: "not-recorded";
+};
+
+export type AssertionTraceSummary = {
+  assertions: AssertionTraceEntry[];
+  activeAssumptions: AssertionTraceEntry[];
+  legacyCurrentAssumptions: string[];
+};
+
 export type EngineeringTraceSummary = {
+  assertionTrace: AssertionTraceSummary;
   activeConceptReview: ActiveConceptDecision | null;
   activeConceptDirection: ActiveConceptDecision | null;
   latestValidationResult: LatestValidationResult | null;
@@ -39,6 +68,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
   const latestValidationResult = findLatestValidationResult(project);
 
   return {
+    assertionTrace: summarizeAssertions(project),
     activeConceptReview: resolveActiveConceptDecision(
       project.decisions,
       "concept-review",
@@ -61,6 +91,97 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
       )
     ),
   };
+}
+
+function summarizeAssertions(project: Project): AssertionTraceSummary {
+  const assertions = project.engineeringAssertions ?? [];
+  const entries = assertions.map((assertion) => {
+    const validationLinks = project.validationPlan?.items
+      .filter((item) => item.sourceAssertionIds?.includes(assertion.id))
+      .map((item) => createAssertionValidationLink(project, item)) ?? [];
+    const latestValidationOutcome = [...validationLinks]
+      .filter((link) => link.outcome)
+      .sort(compareValidationLinks)
+      .at(-1)?.outcome;
+
+    return {
+      assertionId: assertion.id,
+      kind: assertion.kind,
+      value: assertion.value,
+      status: assertion.status,
+      createdAt: assertion.createdAt,
+      ...(assertion.supersedesAssertionId
+        ? { supersededAssertionId: assertion.supersedesAssertionId }
+        : {}),
+      validationLinks,
+      ...(latestValidationOutcome ? { latestValidationOutcome } : {}),
+      sourceProvenance: "not-recorded" as const,
+    };
+  });
+  const activeAssumptions = entries.filter(
+    (entry) => entry.kind === "assumption" && entry.status === "active"
+  );
+  const activeValues = new Set(activeAssumptions.map((entry) => entry.value));
+  const legacyCurrentAssumptions = project.engineeringState.currentAssumptions.filter(
+    (value) => !activeValues.has(value)
+  );
+
+  return {
+    assertions: entries,
+    activeAssumptions,
+    legacyCurrentAssumptions,
+  };
+}
+
+function createAssertionValidationLink(
+  project: Project,
+  item: NonNullable<Project["validationPlan"]>["items"][number]
+): AssertionValidationLink {
+  const evidence = item.evidenceId
+    ? project.evidence.find(
+        (candidate) =>
+          candidate.id === item.evidenceId &&
+          candidate.validationItemId === item.id &&
+          candidate.validationOutcome === item.outcome
+      )
+    : undefined;
+  const resultEvent = evidence
+    ? project.timeline.find(
+        (event) =>
+          event.type === "validation-result-recorded" &&
+          event.validationItemId === item.id &&
+          event.evidenceId === evidence.id &&
+          event.validationOutcome === evidence.validationOutcome
+      )
+    : undefined;
+
+  return {
+    validationItemId: item.id,
+    planStatus: item.status,
+    ...(resultEvent && evidence?.validationOutcome
+      ? {
+          outcome: evidence.validationOutcome,
+          evidenceId: evidence.id,
+          evidenceSummary: evidence.summary,
+          evidenceSource: evidence.source,
+          resultCreatedAt: resultEvent.createdAt,
+        }
+      : {}),
+  };
+}
+
+function compareValidationLinks(
+  left: AssertionValidationLink,
+  right: AssertionValidationLink
+): number {
+  const leftTime = left.resultCreatedAt ? Date.parse(left.resultCreatedAt) : NaN;
+  const rightTime = right.resultCreatedAt ? Date.parse(right.resultCreatedAt) : NaN;
+
+  if (Number.isFinite(leftTime) && Number.isFinite(rightTime) && leftTime !== rightTime) {
+    return leftTime - rightTime;
+  }
+
+  return 0;
 }
 
 function resolveActiveConceptDecision(
