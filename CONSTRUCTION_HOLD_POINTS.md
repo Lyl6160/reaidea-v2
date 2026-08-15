@@ -742,3 +742,79 @@ Malformed external direction relationships are read safely without mutating acti
 ### Freeze Decision
 
 HP-24.14 is a coherent, tested inventor-owned action-adoption capability. It extends the explicit authority chain from evidence to conclusion to direction to adopted action without turning actions into a task-management lifecycle or allowing REV to silently execute Project authority.
+
+## HP-24.15 — Explicit Engineering Action Result History
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.14 at `a11ac8b`, tag `v24.14-engineering-action-adoption`
+
+**Construction branch:** `sprint006-build24-15-engineering-action-results`
+
+### Build 1 — Engineering Action Result History Contract
+
+**Commit:** `e017ea9`
+
+Added the dedicated `engineering-action-result-recorded` timeline event, the narrow optional `ProjectTimelineEvent.engineeringActionId` relationship, structural storage preservation, and the sole `recordEngineeringActionResult()` writer. A valid result requires explicit nonblank inventor text and an exact existing adopted action ID. One success appends one linked timeline event without changing the action or any other Project authority.
+
+### Build 2 — Inventor Engineering Action Result Recording
+
+**Commit:** `3b397f1`
+
+The existing review surface now lets the inventor explicitly select any adopted engineering action and record what happened. No action is preselected, both action selection and result text are required, one successful action uses one writer and one save path, temporary state resets after success, and historical actions remain valid result targets even when their direction basis is later superseded.
+
+### Build 3 — Trace-Aware Engineering Action Result Explanation
+
+**Commit:** `595e946`
+
+The existing trace summary and Workshop Brief now attach result history to adopted actions only through exact `engineering-action-result-recorded` event type plus exact `engineeringActionId`. Multiple results remain independent and follow timeline order. Unknown links are not guessed, missing result detail is handled neutrally, historical direction basis remains unchanged, and no action lifecycle state is inferred.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified exact writer authority, append-only result history, exact action linkage, multiple results per action, historical action validity, structural storage behavior, UI persistence, exact read-side resolution, timeline-order preservation, missing/malformed-data safety, read purity, recommendation invariance, writer/caller boundaries, and HP-24.14 frozen-foundation regression.
+
+### Final Outcome
+
+- **HP-24.15 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.15-engineering-action-results`
+- **Freeze blockers:** NONE
+- **Engineering action result writer:** `recordEngineeringActionResult()` only
+- **Result relationship:** Exact timeline event to existing adopted engineering action ID only
+- **Result store:** Project timeline only; no second result store
+- **Action lifecycle/status:** NOT INTRODUCED
+- **Action completion semantics:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.15 extends the accepted trace to:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+```
+
+The result layer answers only, “What happened while undertaking this adopted action?” It does not answer whether the action is complete, successful, validated, current, cancelled, superseded, or ready for a particular Workshop bench.
+
+### Defensive / Legacy Behavior
+
+Storage preserves structurally valid `engineeringActionId` strings without referential repair. Read-side result history attaches only when the dedicated result event type and exact existing action ID both match. Unknown action IDs, wrong event types, blank/missing result detail, and actions whose direction basis later became superseded are handled safely without substitution, lifecycle inference, raw-ID presentation, or Project mutation.
+
+### Deferred Capabilities
+
+- Action lifecycle/status, explicit completion/cancellation, action supersession, priority, due dates, assignees, and generic task management.
+- Deliberate promotion of action-result history into Project evidence or Validation, if ever required; no automatic evidence or conclusion generation.
+- Direct action/action-result links to Validation, evidence, bench, source, assertions, dependencies, or execution routing.
+- Automatic action/result generation, direction-driven routing, automatic Validation creation, and REV Project write authority.
+- Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.15 is a coherent, tested action-result history capability. It records explicit inventor observations against adopted actions without turning action history into task lifecycle, Validation evidence, engineering conclusions, or autonomous REV authority.
+

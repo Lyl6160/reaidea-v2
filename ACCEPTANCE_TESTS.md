@@ -514,6 +514,70 @@ Malformed external direction history is read without action-basis repair or subs
 - Direction-driven recommendation/routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, and REV Project write authority.
 - Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
 
+
+## HP-24.15 Consolidated Acceptance Record
+
+**Hold point:** HP-24.15 — Explicit Engineering Action Result History  
+**Branch:** `sprint006-build24-15-engineering-action-results`  
+**Accepted implementation HEAD:** `595e946`  
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN  
+**Final tag:** `v24.15-engineering-action-results`
+
+### Build Chain
+
+- Build 1 — `e017ea9` — Establish engineering action result history.
+- Build 2 — `3b397f1` — Record inventor engineering action results.
+- Build 3 — `595e946` — Explain engineering action result history.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- Engineering action results are append-only Project timeline history, not a second action/result store. `engineering-action-result-recorded` is the dedicated event type and `engineeringActionId` is the narrow explicit relationship to one existing adopted engineering action.
+- `recordEngineeringActionResult()` is the sole production result writer. It requires nonblank inventor-written result text and an exact existing `Project.engineeringActions[].id`; invalid or unknown action targets fail without a Project write.
+- One successful result action appends exactly one `engineering-action-result-recorded` event and preserves the selected engineering action unchanged. Multiple result events may legitimately reference the same adopted action and remain independent history in timeline order.
+- An engineering action result records what happened while undertaking an adopted action. It does not mean the action is current, active, pending, completed, successful, failed, cancelled, superseded, or otherwise lifecycle-classified.
+- Recording a result does not create or mutate Project evidence, Validation results or plans, Project decisions, Engineering State, engineering assertions, engineering actions, direction/conclusion history, Workshop routing, or recommendation precedence.
+- The existing review surface requires explicit inventor selection of an adopted action and explicit inventor-written result text. No action is preselected, all adopted actions remain selectable including actions whose direction basis later became superseded, one successful record uses one Project save path, and temporary UI state resets after success.
+- The existing trace and Workshop Brief resolve result history only when both the timeline event type is `engineering-action-result-recorded` and `engineeringActionId` exactly matches the adopted action. Result order follows Project timeline order; unknown action links are not guessed or attached; unusable result text is handled safely without raw IDs.
+- Result history remains read-only context for REV. It does not change `recommendedBench`, recommendation precedence, routing, or REV Project write authority.
+
+### Acceptance Results
+
+- Blank result and unknown adopted-action target rejection; exact adopted-action link; multiple results for one action; historical action target after later direction supersession; Project immutability and structural storage preservation: **PASS**.
+- Inventor result UI with zero-action blocking, no action preselection, explicit action/result requirements, one writer caller, one save path, success reset, multiple results, historical action selection, navigation and refresh persistence: **PASS**.
+- Exact read-side action-result resolution by event type plus action ID, timeline-order preservation, action separation, missing/unknown relationship safety, neutral missing-detail handling, no lifecycle inference, read purity, and recommendation invariance: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+The accepted Project trace can now retain:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+```
+
+The final arrow records explicit history only. It does not promote a result into Project evidence, Validation, conclusion, direction, completion state, or new Project authority.
+
+### Defensive / Legacy Behavior
+
+Structurally valid `engineeringActionId` values are preserved by storage even when the referenced action is unavailable. Read-side result history attaches only to an exact existing adopted action and only for the dedicated result event type. Missing links, unknown actions, blank/missing result detail, and historically superseded direction bases are handled without repair, substitution, lifecycle invention, or Project mutation.
+
+### Deferred Capabilities
+
+- Action lifecycle/status, explicit completion/cancellation, action supersession, priority, due dates, assignees, and generic task-management behavior.
+- Explicit promotion or conversion of action-result history into Project evidence or Validation, if ever deliberately designed; action-result evidence ranking or automatic engineering conclusions remain absent.
+- Direct action/action-result links to Validation, evidence, bench, source, assertions, dependencies, or execution routing.
+- Automatic action/result generation, direction-driven routing, automatic Validation creation, and REV Project write authority.
+- Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

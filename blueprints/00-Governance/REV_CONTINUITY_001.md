@@ -506,6 +506,22 @@ HP-24.14 records adoption only. There is no current/active/pending/completed/can
 Malformed and legacy action-basis data is read safely without mutation or fabrication. Zero-basis legacy actions remain readable, missing and wrong-category references remain unavailable, partial basis remains partial, and malformed direction supersession does not cause basis replacement or action-status invention.
 
 Action lifecycle/status/completion/results, action supersession, generic task management, direct action links to Validation/evidence/bench/source/assertions, direction-driven recommendation/routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
+
+---
+
+# 26. Current HP-24.15 REV Continuity
+
+HP-24.15 — Explicit Engineering Action Result History is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-15-engineering-action-results`. The final tag is `v24.15-engineering-action-results`.
+
+Engineering action result history lives in the existing Project timeline. `engineering-action-result-recorded` is the dedicated event type, `ProjectTimelineEvent.engineeringActionId` is the narrow explicit relationship to one adopted engineering action, and `recordEngineeringActionResult()` is the sole production writer. There is no separate result collection or task-execution store.
+
+The inventor explicitly selects an adopted action and explicitly records what happened. No action is preselected. One successful record appends one result event and leaves actions, decisions, evidence, Validation, Engineering State, assertions, directions, conclusions, Workshop routing, and recommendation precedence unchanged. Multiple results may legitimately reference the same adopted action and remain independent recorded history.
+
+The trace summary and Workshop Brief consume result history read-only. A result attaches to an action only when the event is exactly `engineering-action-result-recorded` and `engineeringActionId` exactly matches that action. Timeline order is preserved. Missing/unknown relationships are not guessed, wrong event types are ignored, unusable result text is handled neutrally, and no raw IDs are presented.
+
+HP-24.15 does not introduce action lifecycle or completion semantics. “Result recorded” does not mean current, active, pending, complete, successful, failed, cancelled, superseded, validated, or promoted to Project evidence. An adopted action whose direction basis later becomes superseded remains historically unchanged and can still carry result history. REV remains a read-only trace consumer and recommender.
+
+Deferred capabilities include explicit action lifecycle/status/completion/cancellation, action supersession, generic task management, deliberate promotion of result history into evidence/Validation if ever required, direct action/result links to Validation/evidence/bench/source/assertions/dependencies, automatic action/result generation, direction-driven routing, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification. Build 4 implementation is not required.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

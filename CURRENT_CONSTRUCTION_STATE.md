@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.14 — Explicit Engineering Action Adoption with Direction Basis
-**Branch:** `sprint006-build24-14-engineering-action`
-**Accepted HEAD:** `f85bac2`
+**Construction checkpoint:** HP-24.15 — Explicit Engineering Action Result History
+**Branch:** `sprint006-build24-15-engineering-action-results`
+**Accepted HEAD:** `595e946`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.14 — Explicit Engineering Action Adoption with Direction Basis**
+**HP-24.15 — Explicit Engineering Action Result History**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.14-engineering-action-adoption`
+Final freeze tag: `v24.15-engineering-action-results`
 
 Accepted HP-24.9 construction chain:
 
@@ -75,6 +75,13 @@ Accepted HP-24.14 construction chain:
 - Build 1 — `70a1daf` — Engineering action adoption contract
 - Build 2 — `6163198` — Inventor engineering action adoption
 - Build 3 — `f85bac2` — Trace-aware adopted engineering action explanation
+- Build 4 — Readiness audit only; implementation not required
+
+Accepted HP-24.15 construction chain:
+
+- Build 1 — `e017ea9` — Engineering action result history contract
+- Build 2 — `3b397f1` — Inventor engineering action result recording
+- Build 3 — `595e946` — Trace-aware engineering action result explanation
 - Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -197,6 +204,18 @@ The inventor UI exposes current directions only, starts with no selected basis, 
 HP-24.14 deliberately introduces no concept of current, active, pending, completed, cancelled, or superseded actions. Adopted actions do not alter `recommendedBench`, recommendation precedence, Workshop routing, Validation planning, or REV authority. REV remains a read-only trace consumer and recommender.
 
 Deferred capabilities include action lifecycle/status/completion/results, action supersession, generic task management, action-to-Validation/evidence/bench/source/assertion links, direction-driven routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+## HP-24.15 Capability
+
+HP-24.15 establishes explicit inventor-recorded result history for adopted engineering actions. Results remain append-only Project timeline events rather than a second action/result store. `recordEngineeringActionResult()` is the sole production result writer, and `ProjectTimelineEvent.engineeringActionId` is the narrow explicit relationship from a dedicated `engineering-action-result-recorded` event to one existing adopted engineering action.
+
+A result requires explicit inventor-written text and exact adopted-action selection. One successful record appends one result event and leaves engineering actions, decisions, evidence, Validation, Engineering State, assertions, direction/conclusion history, routing, and recommendation precedence unchanged. Multiple result events may reference the same action and remain independent history in Project timeline order.
+
+The inventor UI starts with no selected action, requires both action selection and result text, supports historical adopted actions even when their direction basis is later superseded, uses one writer and one Project save path, and resets temporary state after success. The trace and Workshop Brief resolve result history only through exact event type plus exact `engineeringActionId`, do not attach unknown relationships by inference, and present missing result detail neutrally.
+
+HP-24.15 deliberately introduces no action lifecycle or completion semantics. A recorded action result does not mean current, active, pending, completed, successful, failed, cancelled, superseded, validated, or promoted to Project evidence. REV remains a read-only trace consumer and recommender.
+
+Deferred capabilities include explicit action lifecycle/status/completion/cancellation, action supersession, generic task management, deliberate promotion of result history into evidence/Validation if ever designed, direct action/result links to Validation/evidence/bench/source/assertions/dependencies, automatic action/result generation, direction-driven routing, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
 
 ## Historical Build 24.2 Record
 
