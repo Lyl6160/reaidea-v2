@@ -1,5 +1,9 @@
 import type { Project } from "../core/project";
 import { assessDiscovery } from "./discoveryReasoning";
+import {
+  summarizeEngineeringTrace,
+  type EngineeringTraceSummary,
+} from "./traceSummary";
 
 export type WorkshopBenchId =
   | "knowledge"
@@ -31,6 +35,7 @@ export type WorkshopState = {
   benches: WorkshopBenchSignal[];
   recommendedBench: WorkshopBenchId;
   summary: string;
+  trace: EngineeringTraceSummary;
 };
 
 export type WorkshopBenchDefinition = {
@@ -82,6 +87,7 @@ function discoveryComplete(project: Project): boolean {
 }
 
 export function assessWorkshop(project: Project): WorkshopState {
+  const trace = summarizeEngineeringTrace(project);
   const engineeringDefined = hasMeaningfulEngineeringDefinition(project);
   const validationPlanned = hasValidationActivity(project);
   const validationCompleted = hasCompletedValidation(project);
@@ -199,19 +205,74 @@ export function assessWorkshop(project: Project): WorkshopState {
     },
   ];
 
-  const recommended =
+  const baselineRecommended =
     benches.find((bench) => bench.state === "pulse") ??
     benches.find((bench) => bench.state === "active") ??
     benches.find((bench) => bench.state === "ready") ??
     benches.find((bench) => bench.state === "available") ??
     benches[0];
+  const direction = trace.activeConceptDirection?.outcome;
+  const latestOutcome = trace.latestValidationResult?.outcome;
+  let recommended = baselineRecommended;
+
+  if (direction === "rethink") {
+    recommended = benches.find((bench) => bench.id === "engineering") ?? recommended;
+  } else if (direction === "refine") {
+    recommended = benches.find((bench) => bench.id === "prototype") ?? recommended;
+  } else if (direction === "accept" && trace.unresolvedValidation) {
+    recommended = benches.find((bench) => bench.id === "validation") ?? recommended;
+  } else if (
+    !direction &&
+    trace.validationPlanComplete &&
+    (latestOutcome === "inconclusive" || latestOutcome === "challenged")
+  ) {
+    recommended = benches.find((bench) => bench.id === "engineering") ?? recommended;
+  }
+
+  const recommendationReason = recommendationReasonForTrace(
+    recommended,
+    trace,
+    direction,
+    latestOutcome
+  );
 
   return {
     benches,
     recommendedBench: recommended.id,
     summary:
-      recommended.state === "pulse"
+      recommendationReason ??
+      (recommended.state === "pulse"
         ? `${recommended.label} has new value waiting because another part of the Project has advanced.`
-        : `${recommended.label} is the strongest next place to work from the current Project state.`,
+        : `${recommended.label} is the strongest next place to work from the current Project state.`),
+    trace,
   };
+}
+
+function recommendationReasonForTrace(
+  recommended: WorkshopBenchSignal,
+  trace: EngineeringTraceSummary,
+  direction: string | undefined,
+  latestOutcome: string | undefined
+): string | null {
+  if (direction === "rethink") {
+    return "Recorded direction: rethink Concept 02. REV recommends Engineering to reconsider the working direction.";
+  }
+
+  if (direction === "refine") {
+    return "Recorded direction: refine Concept 02. REV recommends Prototype to develop the next Concept revision.";
+  }
+
+  if (direction === "accept" && trace.unresolvedValidation) {
+    return "Recorded direction: accept Concept 02. REV recommends Validation while planned work remains.";
+  }
+
+  if (latestOutcome === "inconclusive") {
+    return `Latest validation: inconclusive. REV recommends ${recommended.label} without treating the result as support or closure.`;
+  }
+
+  if (latestOutcome === "challenged") {
+    return `Latest validation: challenged. REV recommends ${recommended.label} for engineering reconsideration.`;
+  }
+
+  return null;
 }

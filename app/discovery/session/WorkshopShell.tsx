@@ -157,6 +157,12 @@ function summarizeUnderstanding(value: string): string {
   return summary.length > 220 ? `${summary.slice(0, 217).trim()}...` : summary;
 }
 
+function formatTraceField(value: string): string {
+  return value
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/^./, (character) => character.toUpperCase());
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -866,6 +872,24 @@ export default function WorkshopShell({
           <p className="workshop-brief-partner">AI Engineering Partner · {workshop.summary}</p>
           <h3>Recommended next: {recommendedBench.label}</h3>
           <p className="workshop-brief-reason"><strong>Why:</strong> {recommendedBench.reason}</p>
+          {workshop.trace.activeConceptDirection && (
+            <p className="workshop-brief-trace">
+              <strong>Recorded direction:</strong>{" "}
+              {workshop.trace.activeConceptDirection.outcome} Concept 02
+              {workshop.trace.activeConceptDirection.reason &&
+                ` · ${workshop.trace.activeConceptDirection.reason}`}
+            </p>
+          )}
+          {workshop.trace.latestValidationResult && (
+            <p className="workshop-brief-trace">
+              <strong>Latest validation:</strong>{" "}
+              {workshop.trace.latestValidationResult.outcome}
+              {workshop.trace.latestValidationResult.changedFields.length > 0 &&
+                ` · changed ${workshop.trace.latestValidationResult.changedFields
+                  .map(formatTraceField)
+                  .join(", ")}`}
+            </p>
+          )}
           <div className="workshop-brief-move">
             <span>Next move</span>
             <strong>{recommendedBench.nextMove}</strong>
