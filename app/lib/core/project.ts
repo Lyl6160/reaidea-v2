@@ -19,6 +19,7 @@ export type ProjectEvidence = {
   source: string;
   validationItemId?: string;
   validationOutcome?: ValidationOutcome;
+  sourceTimelineEventIds?: string[];
   createdAt: string;
 };
 
@@ -148,7 +149,8 @@ export type ProjectTimelineEventType =
   | "engineering-conclusion-recorded"
   | "engineering-direction-recorded"
   | "engineering-action-recorded"
-  | "engineering-action-result-recorded";
+  | "engineering-action-result-recorded"
+  | "project-evidence-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
