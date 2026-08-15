@@ -1,7 +1,6 @@
 import type {
   EngineeringStateField,
   Project,
-  ProjectDecision,
   ProjectTimelineEvent,
   ValidationOutcome,
 } from "../core/project";
