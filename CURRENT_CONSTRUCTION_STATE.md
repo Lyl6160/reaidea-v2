@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review
-**Branch:** `sprint006-build24-17-project-evidence-conclusions`
-**Accepted HEAD:** `49f4980`
+**Construction checkpoint:** HP-24.18 — Engineering Review Independence from Validation Plan
+**Branch:** `sprint006-build24-18-independent-engineering-review`
+**Accepted HEAD:** `bd29f07`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review**
+**HP-24.18 — Engineering Review Independence from Validation Plan**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.17-project-evidence-conclusions`
+Final freeze tag: `v24.18-independent-engineering-review`
 
 Accepted HP-24.9 construction chain:
 
@@ -104,6 +104,16 @@ Protected HP-24.16 foundation:
 Accepted HP-24.17 construction chain:
 
 - Build 1 — `49f4980` — Drive Engineering Conclusion review from Project evidence
+- Build 2 — Readiness audit only; implementation not required
+
+Protected HP-24.17 foundation:
+
+- `7b3270b`
+- `v24.17-project-evidence-conclusions`
+
+Accepted HP-24.18 construction chain:
+
+- Build 1 — `bd29f07` — Decouple Engineering Review from Validation Plan
 - Build 2 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -287,6 +297,33 @@ Recorded ProjectEvidence
 ```
 
 ProjectEvidence origin can be explained by provenance where recorded, but provenance does not determine whether evidence may be deliberately considered for an Engineering Conclusion.
+
+## HP-24.18 Capability
+
+HP-24.18 removes the remaining structural UI dependency between the inventor engineering loop and formal Validation planning. The existing post-Discovery review surface now keeps Validation Plan rendering conditional on `Project.validationPlan`, while Engineering Review can continue independently from already recorded Project truth.
+
+With no Validation Plan, Engineering Review appears only when useful review activity exists: Project evidence, a current engineering conclusion, a current engineering direction, an adopted engineering action, or a valid adoptable engineering-action-result event. A no-plan Project with none of that recorded truth does not show an empty review panel. The existing Create Validation Plan action remains independently available.
+
+When a Validation Plan exists, its existing plan display and execution path remain unchanged, and the same inventor engineering-review controls remain available according to Project truth. The accepted engineering loop can therefore continue without formal Validation when appropriate:
+
+```text
+Recorded ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+Formal Validation remains a separate deliberate path:
+
+```text
+Validation Plan
+→ Validation execution
+→ ProjectEvidence
+```
+
+HP-24.18 adds no Project schema, no writer, no automatic Validation creation, no automatic Project write, no lifecycle/status semantics, no trace or storage change, no recommendation change, and no REV Project-write authority. Existing conclusion, direction, action, result, evidence-adoption, and Validation writers remain unchanged.
 
 ## Historical Build 24.2 Record
 

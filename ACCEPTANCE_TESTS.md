@@ -698,6 +698,65 @@ Evidence provenance can explain where evidence came from, but provenance source 
 
 Build 1 fully closes the HP-24.17 seam because the existing conclusion domain writer, trace model, supersession behavior, and downstream direction contract were already source-agnostic. No additional production implementation is required.
 
+## HP-24.18 Consolidated Acceptance Record
+
+**Hold point:** HP-24.18 — Engineering Review Independence from Validation Plan
+**Branch:** `sprint006-build24-18-independent-engineering-review`
+**Accepted implementation HEAD:** `bd29f07`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.18-independent-engineering-review`
+
+### Build Chain
+
+- Build 1 — `bd29f07` — Decouple Engineering Review from Validation Plan.
+- Build 2 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- The existing inventor engineering loop is available from recorded Project truth whether or not `Project.validationPlan` exists.
+- Formal Validation planning/execution remains conditional on the existing Validation Plan and keeps its existing domain writers and behavior unchanged.
+- With no Validation Plan, Engineering Review is exposed only when useful recorded Project truth exists: Project evidence, a current engineering conclusion, a current engineering direction, an adopted engineering action, or a valid adoptable engineering-action-result event.
+- A no-plan Project with none of those conditions does not show an empty Engineering Review panel; the existing Create Validation Plan path remains available.
+- Existing Engineering Conclusion, Engineering Direction, Engineering Action, Engineering Action Result, and Adopt Project Evidence controls retain their existing explicit inventor-owned writers and save behavior.
+- HP-24.18 introduces no automatic Validation Plan creation, no automatic Project writes, no new writer, no lifecycle/status semantics, no trace change, no recommendation change, and no REV Project-write authority.
+
+### Acceptance Results
+
+- No Validation Plan plus zero engineering-review activity hides Engineering Review while preserving Create Validation Plan: **PASS**.
+- No Validation Plan plus Project evidence exposes Engineering Review and Engineering Conclusion: **PASS**.
+- No Validation Plan plus current conclusion exposes Engineering Direction: **PASS**.
+- No Validation Plan plus current direction exposes Engineering Action: **PASS**.
+- No Validation Plan plus adopted action exposes Engineering Action Result: **PASS**.
+- No Validation Plan plus valid recorded action result exposes explicit Project evidence adoption: **PASS**.
+- The explicit Evidence → Conclusion → Direction → Action → Result → Evidence loop remains usable without a Validation Plan and does not create a Validation Plan automatically: **PASS**.
+- Existing Create Validation Plan behavior remains available and functional: **PASS**.
+- Existing Validation Plan rendering and Start Validation behavior remain functional after plan creation: **PASS**.
+- Navigation/refresh creates no automatic Project writes and review availability remains stable: **PASS**.
+- Conclusion, direction, action, result, evidence-adoption, trace, storage, Validation, and recommendation domain surfaces remain unchanged: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+Engineering Review is now driven by recorded Project truth rather than by the existence of a formal Validation Plan:
+
+```text
+Recorded Project truth
+→ explicit inventor Engineering Review
+
+Formal Validation Plan
+→ formal Validation planning/execution
+```
+
+These paths may coexist, but neither silently creates or owns the other.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.18 because the required domain writers and engineering-review controls already existed. The needed correction was structural UI decoupling, not new Project machinery. No additional production implementation is required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

@@ -581,6 +581,30 @@ Evidence provenance explains recorded origin where present; it does not grant, r
 
 ---
 
+# 29. Current HP-24.18 REV Continuity
+
+HP-24.18 — Engineering Review Independence from Validation Plan is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-18-independent-engineering-review`. The final tag is `v24.18-independent-engineering-review`.
+
+The inventor engineering loop no longer depends on `Project.validationPlan` existing merely because its controls historically lived inside the Validation Plan view. The review surface is now structurally separated: formal Validation remains conditional on a formal Validation Plan, while Engineering Review can continue from useful recorded Project truth.
+
+Without a Validation Plan, Engineering Review appears only when at least one meaningful review input exists: Project evidence, a current engineering conclusion, a current engineering direction, an adopted engineering action, or a valid adoptable engineering-action-result event. With none of those, no empty review panel is shown and the existing Create Validation Plan path remains available.
+
+The five existing inventor engineering-loop writers remain unchanged: `recordEngineeringConclusion()`, `recordEngineeringDirection()`, `recordEngineeringAction()`, `recordEngineeringActionResult()`, and `recordProjectEvidenceFromActionResult()`. Existing Validation planning/execution writers also remain unchanged. No new Project writer, automatic plan, automatic engineering transition, lifecycle/status semantics, trace/storage change, recommendation change, or REV write authority is introduced.
+
+The accepted separation is:
+
+```text
+Recorded Project truth
+→ explicit inventor Engineering Review
+
+Formal Validation Plan
+→ formal Validation planning/execution
+```
+
+These responsibilities may coexist and exchange Project evidence through existing explicit contracts, but neither silently creates or owns the other. Additional implementation beyond Build 1 is not required for HP-24.18.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

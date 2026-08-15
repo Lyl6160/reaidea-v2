@@ -955,3 +955,64 @@ The Project may record provenance explaining where evidence came from, but neith
 ### Freeze Decision
 
 HP-24.17 is a narrow but necessary authority correction. It removes a stale Validation-only UI assumption after HP-24.16 made ProjectEvidence source-agnostic, while preserving explicit inventor selection and the existing conclusion domain contract without adding new authority or machinery.
+
+## HP-24.18 — Engineering Review Independence from Validation Plan
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.17 at `7b3270b`, tag `v24.17-project-evidence-conclusions`
+
+**Construction branch:** `sprint006-build24-18-independent-engineering-review`
+
+### Build 1 — Independent Engineering Review Surface
+
+**Commit:** `bd29f07`
+
+Refactored the existing post-Discovery review surface so the formal Validation Plan remains conditional on `Project.validationPlan`, while the inventor-owned Engineering Review can be available independently from recorded Project truth. No domain writer, Project model, storage path, trace model, Validation logic, or recommendation logic changed.
+
+Without a Validation Plan, Engineering Review appears only when there is useful review activity: recorded Project evidence, a current engineering conclusion, a current engineering direction, an adopted engineering action, or a valid adoptable engineering-action-result event. An empty no-plan Project does not show an empty review panel, and Create Validation Plan remains available independently.
+
+The existing Engineering Conclusion, Direction, Action, Action Result, and Project Evidence Adoption controls continue using their existing explicit inventor-owned writers. Formal Validation planning/execution remains unchanged when a plan exists.
+
+### Build 2 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified no-plan zero-activity safety, each no-plan engineering-review activity gate, explicit engineering-loop operation without a Validation Plan, unchanged Create Validation Plan behavior, unchanged Validation Plan/Start Validation behavior, no automatic Project writes, unchanged five writer boundaries, unchanged trace/storage/recommendation/Validation surfaces, navigation/refresh stability, browser fixture cleanup, and static quality gates.
+
+### Final Outcome
+
+- **HP-24.18 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.18-independent-engineering-review`
+- **Freeze blockers:** NONE
+- **Engineering Review dependency:** Recorded Project truth, not Validation Plan existence
+- **Formal Validation dependency:** Existing Validation Plan only; unchanged
+- **Automatic Validation Plan creation:** NOT INTRODUCED
+- **Automatic Project writes:** NOT INTRODUCED
+- **New Project/domain writer:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.18 separates two responsibilities that previously shared one UI container:
+
+```text
+Recorded Project truth
+→ explicit inventor Engineering Review
+
+Formal Validation Plan
+→ formal Validation planning/execution
+```
+
+The engineering loop may continue from already recorded Project truth without requiring a formal Validation Plan. Formal Validation remains available whenever deliberately planned and does not become automatic.
+
+### Deferred Capabilities
+
+- Automatic Validation planning or automatic creation of Validation items from engineering review.
+- Evidence lifecycle/status/ranking, automatic conclusions/directions/actions/results/evidence adoption, action lifecycle/task management, or REV Project-write authority.
+- Generic causality/dependency graphs, inferred indirect relationships, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.18 removes the remaining structural UI dependency between the inventor engineering loop and formal Validation planning while preserving both authority boundaries. The existing machinery was sufficient; no additional Build 2 implementation is required.
