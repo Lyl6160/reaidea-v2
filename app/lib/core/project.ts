@@ -110,7 +110,9 @@ export type ProjectTimelineEventType =
   | "validation-item-started"
   | "validation-result-recorded"
   | "validation-plan-completed"
-  | "knowledge-input-recorded";
+  | "knowledge-input-recorded"
+  | "concept-review-recorded"
+  | "concept-direction-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -124,6 +126,7 @@ export type ProjectTimelineEvent = {
   evidenceId?: string;
   validationOutcome?: ValidationOutcome;
   engineeringStateChangedFields?: EngineeringStateField[];
+  decisionId?: string;
 };
 
 export type Project = {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
 import type { Project } from "../../lib/core/project";
+import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import type {
   WorkshopBenchId,
   WorkshopBenchSignal,
@@ -14,6 +15,7 @@ import { CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
 type WorkshopShellProps = {
   project: Project;
   workshop: WorkshopState;
+  onProjectChange: (project: Project) => void;
 };
 
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
@@ -158,6 +160,7 @@ function summarizeUnderstanding(value: string): string {
 export default function WorkshopShell({
   project,
   workshop,
+  onProjectChange,
 }: WorkshopShellProps) {
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
@@ -230,6 +233,28 @@ export default function WorkshopShell({
       return "unreviewed";
     }
   });
+  const [conceptFamilyId, setConceptFamilyId] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { conceptFamilyId?: string };
+      return parsed.conceptFamilyId ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [conceptReviewDecisionId, setConceptReviewDecisionId] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { conceptReviewDecisionId?: string };
+      return parsed.conceptReviewDecisionId ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [conceptReviewNotes, setConceptReviewNotes] = useState<Record<Exclude<ConceptReview, "unreviewed">, string>>(() => {
     if (typeof window === "undefined") return { accepted: "", refine: "", rethink: "" };
     try {
@@ -253,6 +278,7 @@ export default function WorkshopShell({
       return { accepted: "", refine: "", rethink: "" };
     }
   });
+  const [conceptReviewDraftNote, setConceptReviewDraftNote] = useState("");
 
   const [refinedConceptGenerated, setRefinedConceptGenerated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -288,6 +314,17 @@ export default function WorkshopShell({
       return "undecided";
     }
   });
+  const [conceptDirectionDecisionId, setConceptDirectionDecisionId] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { conceptDirectionDecisionId?: string };
+      return parsed.conceptDirectionDecisionId ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [conceptDecisionNotes, setConceptDecisionNotes] = useState<Record<Exclude<ConceptDecision, "undecided">, string>>(() => {
     if (typeof window === "undefined") return { accept: "", refine: "", rethink: "" };
     try {
@@ -311,6 +348,7 @@ export default function WorkshopShell({
       return { accept: "", refine: "", rethink: "" };
     }
   });
+  const [conceptDecisionDraftNote, setConceptDecisionDraftNote] = useState("");
   const [thirdConceptGenerated, setThirdConceptGenerated] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -581,7 +619,24 @@ export default function WorkshopShell({
   function reviewConcept(review: Exclude<ConceptReview, "unreviewed">) {
     if (!conceptGenerated) return;
 
+    const reviewNote = conceptReviewNotes[review] || conceptReviewDraftNote;
+    const nextReviewNotes = { ...conceptReviewNotes, [review]: reviewNote };
+    const trace = recordConceptDecision(project, {
+      stage: "review",
+      decision: review,
+      reason: reviewNote,
+      conceptFamilyId: conceptFamilyId || undefined,
+      existingDecisionId: conceptReviewDecisionId || undefined,
+    });
+
     setConceptReview(review);
+    setConceptReviewNotes(nextReviewNotes);
+    setConceptReviewDraftNote("");
+    setConceptFamilyId(trace.conceptFamilyId);
+    setConceptReviewDecisionId(trace.decisionId);
+    if (trace.created) {
+      onProjectChange(trace.project);
+    }
 
     try {
       const saved = window.localStorage.getItem(conceptStorageKey);
@@ -595,8 +650,10 @@ export default function WorkshopShell({
           ...existing,
           version: 3,
           conceptGenerated: true,
+          conceptFamilyId: trace.conceptFamilyId,
+          conceptReviewDecisionId: trace.decisionId,
           conceptReview: review,
-          conceptReviewNotes,
+          conceptReviewNotes: nextReviewNotes,
           reviewedAt: new Date().toISOString(),
         })
       );
@@ -644,7 +701,24 @@ export default function WorkshopShell({
   function decideConcept(decision: Exclude<ConceptDecision, "undecided">) {
     if (!refinedConceptGenerated) return;
 
+    const decisionNote = conceptDecisionNotes[decision] || conceptDecisionDraftNote;
+    const nextDecisionNotes = { ...conceptDecisionNotes, [decision]: decisionNote };
+    const trace = recordConceptDecision(project, {
+      stage: "direction",
+      decision,
+      reason: decisionNote,
+      conceptFamilyId: conceptFamilyId || undefined,
+      existingDecisionId: conceptDirectionDecisionId || undefined,
+    });
+
     setConceptDecision(decision);
+    setConceptDecisionNotes(nextDecisionNotes);
+    setConceptDecisionDraftNote("");
+    setConceptFamilyId(trace.conceptFamilyId);
+    setConceptDirectionDecisionId(trace.decisionId);
+    if (trace.created) {
+      onProjectChange(trace.project);
+    }
     try {
       const saved = window.localStorage.getItem(conceptStorageKey);
       const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
@@ -653,8 +727,10 @@ export default function WorkshopShell({
         JSON.stringify({
           ...existing,
           version: 5,
+          conceptFamilyId: trace.conceptFamilyId,
+          conceptDirectionDecisionId: trace.decisionId,
           conceptDecision: decision,
-          conceptDecisionNotes,
+          conceptDecisionNotes: nextDecisionNotes,
           decidedAt: new Date().toISOString(),
         })
       );
@@ -671,7 +747,10 @@ export default function WorkshopShell({
   }
 
   function saveConceptDecisionNote(value: string) {
-    if (conceptDecision === "undecided") return;
+    if (conceptDecision === "undecided") {
+      setConceptDecisionDraftNote(value);
+      return;
+    }
 
     const nextNotes = { ...conceptDecisionNotes, [conceptDecision]: value };
     setConceptDecisionNotes(nextNotes);
@@ -724,7 +803,10 @@ export default function WorkshopShell({
   }
 
   function saveConceptReviewNote(value: string) {
-    if (conceptReview === "unreviewed") return;
+    if (conceptReview === "unreviewed") {
+      setConceptReviewDraftNote(value);
+      return;
+    }
 
     const nextNotes = { ...conceptReviewNotes, [conceptReview]: value };
     setConceptReviewNotes(nextNotes);

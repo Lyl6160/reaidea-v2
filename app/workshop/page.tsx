@@ -8,6 +8,7 @@ import {
   getProjectStorageSnapshot,
   getServerProjectStorageSnapshot,
   parseProjectSnapshot,
+  saveProject,
   subscribeToProjectStorage,
 } from "../lib/core/storageEngine";
 import { assessWorkshop } from "../lib/workshop/workshopBrain";
@@ -60,7 +61,11 @@ export default function WorkshopPage() {
         <Link href="/discovery/session">← Return to Discovery</Link>
       </header>
 
-      <WorkshopShell project={project} workshop={workshop} />
+      <WorkshopShell
+        project={project}
+        workshop={workshop}
+        onProjectChange={saveProject}
+      />
 
       <style jsx>{`
         .workshop-page {
