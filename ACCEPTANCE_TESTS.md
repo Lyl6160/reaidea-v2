@@ -757,6 +757,71 @@ These paths may coexist, but neither silently creates or owns the other.
 
 Build 1 fully closes HP-24.18 because the required domain writers and engineering-review controls already existed. The needed correction was structural UI decoupling, not new Project machinery. No additional production implementation is required.
 
+## HP-24.19 Consolidated Acceptance Record
+
+**Hold point:** HP-24.19 — Shared Engineering Review Surface for the Living Workshop
+**Branch:** `sprint006-build24-19-shared-engineering-review`
+**Accepted implementation HEAD:** `6bfe302`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.19-shared-engineering-review`
+
+### Build Chain
+
+- Build 1 — `6660f59` — Establish shared Project review surface.
+- Build 2 — `6bfe302` — Mount Project review on the Engineering bench.
+- Build 3 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- `ProjectReviewView` is the single production implementation of the inventor-owned Engineering Review surface.
+- Discovery continues to mount the shared review with default `showValidationPlan=true`, preserving formal Validation Plan rendering/execution and the existing Engineering Review behavior.
+- The Living Workshop Engineering bench mounts the same shared review with `showValidationPlan=false`.
+- Workshop Engineering Review therefore exposes only the existing explicit inventor engineering loop; it does not expose formal Validation Plan execution.
+- The shared review appears on the Workshop Engineering bench only when recorded Project truth provides useful engineering-review activity. It is not mounted on other Workshop benches.
+- The five existing engineering-loop writers remain unchanged and sole: `recordEngineeringConclusion()`, `recordEngineeringDirection()`, `recordEngineeringAction()`, `recordEngineeringActionResult()`, and `recordProjectEvidenceFromActionResult()`.
+- Existing Validation writers, Project storage, trace machinery, recommendation precedence, Concept workflow, and REV read-only authority remain unchanged.
+- HP-24.19 introduces no new Project schema, no new domain writer, no automatic Project write, no automatic selection, no automatic engineering transition, no automatic Validation, and no action lifecycle/status semantics.
+
+### Acceptance Results
+
+- Build 1 extracted one shared `ProjectReviewView` implementation and left Discovery user-visible behavior unchanged: **PASS**.
+- `showValidationPlan` defaults to `true`; Discovery remains the formal Validation execution surface: **PASS**.
+- Build 1 no-plan/Project-evidence/Validation regressions and explicit existing engineering controls remained functional after extraction: **PASS**.
+- Build 2 changes only `WorkshopShell.tsx`; the shared component, Discovery mount, domain writers, storage, trace, Validation, and recommendation surfaces remain unchanged: **PASS**.
+- Workshop Engineering bench mounts `ProjectReviewView` exactly once with `showValidationPlan=false`: **PASS**.
+- No shared Engineering Review is mounted on the Workshop Validation bench or other benches: **PASS**.
+- Workshop Engineering Review does not expose formal Validation Plan heading, progress, items, Start Validation, or Record Validation Result controls: **PASS**.
+- Project evidence remains initially unselected in Workshop Engineering Review: **PASS**.
+- An explicit Workshop Engineering Conclusion persisted with exact supporting evidence `['E1']` through the existing writer: **PASS**.
+- The existing shared Direction, Action, Action Result, and Project Evidence adoption controls remain the same implementation accepted in Build 1; Build 2 adds no alternate caller or writer: **PASS**.
+- Workshop Brief/trace continues to update through the existing Project refresh/trace path; no duplicate trace machinery is introduced: **PASS**.
+- Navigation/refresh and bench switching create no automatic Project writes: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+The same inventor-owned review now serves both Discovery and the Living Workshop without creating competing engineering truth:
+
+```text
+Discovery checkpoint
+→ shared ProjectReviewView(showValidationPlan=true)
+→ formal Validation + explicit Engineering Review
+
+Living Workshop · Engineering bench
+→ shared ProjectReviewView(showValidationPlan=false)
+→ explicit Engineering Review only
+```
+
+Both surfaces act on the same Project and the same existing domain writers. The Workshop mount adds access, not authority.
+
+### Freeze Decision
+
+Builds 1 and 2 fully close HP-24.19. The shared review implementation is singular, Discovery behavior is preserved, the Engineering bench now reuses that same review without exposing formal Validation execution, and no new domain or authority machinery is required. Build 3 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

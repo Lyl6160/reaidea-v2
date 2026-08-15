@@ -605,6 +605,33 @@ These responsibilities may coexist and exchange Project evidence through existin
 
 ---
 
+# 30. Current HP-24.19 REV Continuity
+
+HP-24.19 — Shared Engineering Review Surface for the Living Workshop is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-19-shared-engineering-review`. The final tag is `v24.19-shared-engineering-review`.
+
+HP-24.18 established that the inventor Engineering Review is driven by recorded Project truth rather than by the existence of a formal Validation Plan. HP-24.19 makes that accepted review one reusable production surface instead of leaving its implementation owned by the Discovery page.
+
+`ProjectReviewView` is now the single production implementation. Discovery mounts it with default `showValidationPlan=true`, preserving formal Validation Plan rendering/execution and the explicit Engineering Review. The Living Workshop Engineering bench mounts the same component with `showValidationPlan=false`, exposing the existing inventor engineering loop without exposing formal Validation Plan execution there.
+
+The shared engineering loop remains:
+
+```text
+ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+The five existing writers remain sole and unchanged: `recordEngineeringConclusion()`, `recordEngineeringDirection()`, `recordEngineeringAction()`, `recordEngineeringActionResult()`, and `recordProjectEvidenceFromActionResult()`. Project storage, trace machinery, recommendation precedence, Validation domain writers, Concept workflow, and REV read-only authority remain unchanged.
+
+The Workshop mount is Engineering-bench-only. Formal authoritative Validation execution remains in Discovery; the Workshop Validation bench is not converted into a second Validation engine. No new Project schema, writer, automatic Project write, automatic transition, lifecycle/status semantics, or automatic Validation is introduced.
+
+Build 1 established the singular shared component and preserved Discovery behavior. Build 2 mounted that exact component on the Workshop Engineering bench with Validation Plan rendering suppressed. No additional Build 3 implementation is required.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

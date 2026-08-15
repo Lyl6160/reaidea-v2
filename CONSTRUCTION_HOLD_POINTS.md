@@ -1016,3 +1016,74 @@ The engineering loop may continue from already recorded Project truth without re
 ### Freeze Decision
 
 HP-24.18 removes the remaining structural UI dependency between the inventor engineering loop and formal Validation planning while preserving both authority boundaries. The existing machinery was sufficient; no additional Build 2 implementation is required.
+
+## HP-24.19 — Shared Engineering Review Surface for the Living Workshop
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.18 at `5fb7387`, tag `v24.18-independent-engineering-review`
+
+**Construction branch:** `sprint006-build24-19-shared-engineering-review`
+
+### Build 1 — Shared Project Review Surface
+
+**Commit:** `6660f59`
+
+Extracted the accepted HP-24.18 `ProjectReviewView` from the Discovery page into a single reusable production component. Discovery continues to mount that component at the same checkpoint location with default `showValidationPlan=true`, preserving formal Validation Plan rendering/execution and the existing inventor Engineering Review behavior.
+
+The shared component adds one optional visibility seam, `showValidationPlan`, defaulting to `true`. When false, formal Validation Plan UI is suppressed while the engineering-review availability rules remain driven by recorded Project truth. No Workshop mount was added in Build 1.
+
+### Build 2 — Engineering Bench Shared Review Mount
+
+**Commit:** `6bfe302`
+
+Mounted the same shared `ProjectReviewView` on the Living Workshop Engineering bench only, with `showValidationPlan=false`. This makes the accepted inventor Engineering Conclusion → Direction → Action → Action Result → Project Evidence loop available from the Engineering bench without creating a second review implementation or exposing formal Validation Plan execution there.
+
+The Workshop Validation bench remains unchanged. Discovery remains the formal Validation execution surface. Existing engineering-loop writers, Validation writers, Project storage, trace machinery, recommendation precedence, Concept workflow, and REV authority remain unchanged.
+
+### Build 3 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Build 1 already verified the extracted shared component against the accepted Discovery/no-plan engineering-review behavior. Build 2 changed only the Workshop mount and passed static gates, source/mount audits, Engineering-bench-only visibility, formal Validation suppression, non-Engineering unmount behavior, exact explicit supporting-evidence persistence through the existing conclusion writer, and no automatic Project writes. No additional production machinery is required.
+
+### Final Outcome
+
+- **HP-24.19 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.19-shared-engineering-review`
+- **Freeze blockers:** NONE
+- **ProjectReviewView implementations:** ONE
+- **Discovery mount:** Shared review with `showValidationPlan=true`
+- **Workshop mount:** Engineering bench only with `showValidationPlan=false`
+- **Formal Validation execution in Workshop review:** NOT INTRODUCED
+- **New Project/domain writer:** NOT INTRODUCED
+- **Automatic Project writes:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.19 makes the inventor Engineering Review a shared Project surface rather than a Discovery-owned implementation:
+
+```text
+One Project
+→ one shared ProjectReviewView
+
+Discovery
+→ formal Validation + explicit Engineering Review
+
+Living Workshop · Engineering bench
+→ explicit Engineering Review only
+```
+
+The Workshop mount reuses existing authority; it does not create competing Project truth, separate engineering decisions, or a second Validation engine.
+
+### Deferred Capabilities
+
+- Formal authoritative Validation execution directly from the Workshop Validation bench.
+- Automatic Validation planning, automatic engineering transitions, automatic evidence/conclusion/direction/action/result creation, or REV Project-write authority.
+- Evidence lifecycle/status/ranking, action lifecycle/task management, generic dependency graphs, specialist benches, and inferred indirect relationships.
+
+### Freeze Decision
+
+HP-24.19 completes the shared inventor Engineering Review surface. Discovery and the Living Workshop Engineering bench now use one implementation and one set of Project writers, while formal Validation execution remains deliberately separated. Build 3 implementation is not required.

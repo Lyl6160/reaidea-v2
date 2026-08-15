@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.18 — Engineering Review Independence from Validation Plan
-**Branch:** `sprint006-build24-18-independent-engineering-review`
-**Accepted HEAD:** `bd29f07`
+**Construction checkpoint:** HP-24.19 — Shared Engineering Review Surface for the Living Workshop
+**Branch:** `sprint006-build24-19-shared-engineering-review`
+**Accepted HEAD:** `6bfe302`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.18 — Engineering Review Independence from Validation Plan**
+**HP-24.19 — Shared Engineering Review Surface for the Living Workshop**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.18-independent-engineering-review`
+Final freeze tag: `v24.19-shared-engineering-review`
 
 Accepted HP-24.9 construction chain:
 
@@ -115,6 +115,17 @@ Accepted HP-24.18 construction chain:
 
 - Build 1 — `bd29f07` — Decouple Engineering Review from Validation Plan
 - Build 2 — Readiness audit only; implementation not required
+
+Protected HP-24.18 foundation:
+
+- `5fb7387`
+- `v24.18-independent-engineering-review`
+
+Accepted HP-24.19 construction chain:
+
+- Build 1 — `6660f59` — Establish shared Project review surface
+- Build 2 — `6bfe302` — Mount Project review on the Engineering bench
+- Build 3 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
 
@@ -324,6 +335,27 @@ Validation Plan
 ```
 
 HP-24.18 adds no Project schema, no writer, no automatic Validation creation, no automatic Project write, no lifecycle/status semantics, no trace or storage change, no recommendation change, and no REV Project-write authority. Existing conclusion, direction, action, result, evidence-adoption, and Validation writers remain unchanged.
+
+## HP-24.19 Capability
+
+HP-24.19 turns the accepted inventor Engineering Review into one shared Project surface used by both Discovery and the Living Workshop. `ProjectReviewView` now has one production implementation. Discovery mounts it with the default `showValidationPlan=true`; the Workshop Engineering bench mounts the same component with `showValidationPlan=false`.
+
+The result is a single explicit engineering loop over one Project:
+
+```text
+ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+In Discovery, a formal Validation Plan can still render and execute alongside that review. In the Living Workshop Engineering bench, formal Validation Plan UI is deliberately suppressed, so the shared review adds Engineering access without moving authoritative Validation execution out of Discovery.
+
+The Workshop mount is Engineering-bench-only. Other benches do not mount the shared review, and the Workshop Validation bench retains its existing read-only authoritative Project Validation summary/local concept-validation behavior.
+
+HP-24.19 adds no Project schema, no new writer, no alternate storage path, no duplicate trace machinery, no recommendation change, no automatic Project write, no automatic selection, no automatic engineering transition, no automatic Validation, no lifecycle/status semantics, and no REV Project-write authority. The existing five engineering-loop writers remain sole.
 
 ## Historical Build 24.2 Record
 
