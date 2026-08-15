@@ -1,9 +1,9 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.8 — Stable Engineering Assertion Identity
-**Branch:** `sprint006-build24-8-engineering-provenance`
-**Accepted HEAD:** `841324f`
+**Construction checkpoint:** HP-24.9 — Trace-Aware Assertion Explanation and Engineering Guidance
+**Branch:** `sprint006-build24-9-trace-aware-guidance`
+**Accepted HEAD:** `605c200`
 **Status:** COMPLETE / VERIFIED / READY TO FREEZE
 **Last governance update:** 2026-08-15
 
@@ -35,7 +35,12 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.8-engineering-assertion-identity`
+Final freeze tag: `v24.9-trace-aware-guidance`
+
+Accepted HP-24.9 construction chain:
+
+- Build 1 — `7f5bce0` — Assertion trace summary foundation
+- Build 2 — `605c200` — Trace-aware assertion explanation in Workshop Brief
 
 ## HP-24.8 Capability
 
@@ -101,6 +106,12 @@ HP-24.7 remains frozen underneath HP-24.8. Its Project-native validation trace, 
 - Autonomous REV engineering decisions.
 
 Missing historical identity and provenance are acceptable. Fabricated identity and provenance are prohibited.
+
+## HP-24.9 Capability
+
+HP-24.9 provides a pure read-side assertion trace summary and a concise Workshop Brief explanation. REV can distinguish recorded Project facts from its guidance, explain active and historical assertion context, consume explicit Validation links and outcomes, preserve legacy assumptions without fabricated identity, and keep missing provenance visibly missing.
+
+HP-24.9 does not add Project writers, provenance, decisions, evidence, lifecycle transitions, or schema changes. HP-24.8 remains frozen underneath it. HP-24.9 Build 3 is not required for the current hold-point claim.
 
 ## Historical Build 24.2 Record
 

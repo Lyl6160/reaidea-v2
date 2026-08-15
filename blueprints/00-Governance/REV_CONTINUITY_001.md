@@ -417,6 +417,16 @@ REV remains read-only. Validation outcomes do not become Project decisions. Sour
 HP-24.9 — Engineering Assertion Source Provenance is not started.
 
 Build 5 is not required for HP-24.8.
+
+---
+
+# 20. Current HP-24.9 REV Continuity
+
+HP-24.9 is complete and verified through Build 2 at commit `605c200` on branch `sprint006-build24-9-trace-aware-guidance`, pending final freeze documentation commit and tag. The intended final tag is `v24.9-trace-aware-guidance`.
+
+REV now explains stored assertion and Validation context in the existing Workshop Brief. It distinguishes recorded Project facts, Validation facts, and REV guidance while remaining read-only. It does not create Project truth, decisions, evidence, provenance, or lifecycle transitions.
+
+HP-24.9 Build 3 is not required. Source provenance, evidence selection, engineering decision writers, constraint/uncertainty expansion, specialist benches, and Workshop Validation unification remain future capabilities.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

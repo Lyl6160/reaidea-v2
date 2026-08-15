@@ -398,3 +398,57 @@ The following are intentionally deferred and are not HP-24.8 failures:
 ### Freeze Decision
 
 HP-24.8 is a coherent, tested stable assertion identity and lifecycle capability ready for final freeze. HP-24.9 is not started.
+
+## HP-24.9 — Trace-Aware Assertion Explanation and Engineering Guidance
+
+**Status:** COMPLETE / VERIFIED / READY TO FREEZE
+
+**Protected foundation:** HP-24.8 at `7a7e303`, tag `v24.8-engineering-assertion-identity`
+
+**Construction branch:** `sprint006-build24-9-trace-aware-guidance`
+
+### Build 1 — Assertion Trace Summary Foundation
+
+**Commit:** `7f5bce0`
+
+Established a pure read model for assertion records, explicit Validation links, typed outcomes, historical assertion state, legacy current assumptions, and unavailable source provenance.
+
+### Build 2 — Trace-Aware Workshop Brief
+
+**Commit:** `605c200`
+
+The existing Workshop Brief now separates recorded Project facts, Validation facts, and REV guidance. It explains active, planned, in-progress, inconclusive, resolved, challenged, and legacy assertion contexts without mutating Project truth.
+
+### Final Outcome
+
+- **HP-24.9 status:** COMPLETE / VERIFIED / READY TO FREEZE
+- **Build 3 required:** NO
+- **Freeze blockers:** NONE
+- **Final freeze tag:** `v24.9-trace-aware-guidance`
+- **Tag status:** To be created by the final freeze operation
+
+### Authority Boundaries
+
+- `Project.engineeringState` remains the current engineering snapshot.
+- `Project.engineeringAssertions` remains stable assertion identity and lifecycle history.
+- `Project.timeline` remains append-only engineering history.
+- `Project.evidence` remains authoritative Validation evidence.
+- `Project.decisions` remains deliberate engineering choices.
+- REV remains a read-only explainer and recommender.
+- Validation outcomes do not become Project decisions.
+
+### Deferred Capabilities
+
+- Assertion source provenance.
+- Multi-source provenance.
+- Interview and original-observation provenance.
+- Concept evidence selection.
+- Engineering-conclusion and engineering-direction writers.
+- Constraint Validation lifecycle.
+- Uncertainty identity and lifecycle.
+- Specialist benches.
+- Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.9 is a coherent, tested read-side explanation capability ready for final freeze. Build 3 is not required.

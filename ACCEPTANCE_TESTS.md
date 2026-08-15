@@ -218,6 +218,65 @@ HP-24.8 does not store assertion source timeline provenance. It does not provide
 - Build 5 required: **NO**
 - Freeze blockers: **NONE**
 
+## HP-24.9 Consolidated Acceptance Record
+
+**Hold point:** HP-24.9 — Trace-Aware Assertion Explanation and Engineering Guidance
+**Branch:** `sprint006-build24-9-trace-aware-guidance`
+**Accepted implementation HEAD:** `605c200`
+**Status:** COMPLETE / VERIFIED / READY TO FREEZE
+**Final tag:** `v24.9-trace-aware-guidance`
+
+### Build 1 — Assertion Trace Summary Foundation
+
+**Commit:** `7f5bce0`
+
+Passed:
+
+- Pure read-only assertion trace summary.
+- Active and historical assertion explanation.
+- Explicit Validation linkage through `sourceAssertionIds`.
+- Typed Validation outcomes remain distinct from assertion lifecycle.
+- Legacy current assumptions remain unpromoted.
+- Missing relations and provenance remain missing.
+- No Project mutation, writer, or schema change.
+
+### Build 2 — Trace-Aware Workshop Brief
+
+**Commit:** `605c200`
+
+Passed:
+
+- Existing Brief explains recorded Project facts and Validation facts.
+- REV guidance is visibly separate from stored Project truth.
+- Active/no-link, planned, in-progress, inconclusive, resolved, challenged, and legacy cases remain safe.
+- Active/inconclusive guidance explains unresolved uncertainty without calling it failure.
+- Historical assertions are not presented as current when an active identity exists.
+- No raw assertion IDs are exposed in normal UI.
+- Concept decision precedence remains unchanged.
+- Refresh, navigation, legacy fallback, and read-only purity remain intact.
+
+### Final Gates
+
+- TypeScript: **PASS**
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings
+- Production build: **PASS**
+- `git diff --check`: **PASS**
+- Live disposable Brief acceptance: **PASS**
+- Build 3 required: **NO**
+- Freeze blockers: **NONE**
+
+### Authority and Deferred Capability Checks
+
+- `Project.engineeringState` remains the current engineering snapshot.
+- `Project.engineeringAssertions` remains stable identity and lifecycle history.
+- `Project.timeline` remains append-only history.
+- `Project.evidence` remains authoritative Validation evidence.
+- `Project.decisions` remains deliberate choices.
+- REV remains read-only.
+- Validation result is not a Project decision.
+- Assertion source provenance remains deferred.
+- No Project writer or provenance writer was added.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
