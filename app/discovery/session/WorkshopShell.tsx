@@ -258,6 +258,49 @@ function formatEngineeringActionResult(
   return result.result ?? "Recorded result detail is unavailable in the current Project.";
 }
 
+function formatProjectEvidenceSourceReference(
+  reference: WorkshopState["trace"]["projectEvidence"][number]["sourceReferences"][number]
+): string {
+  if (!reference.available) {
+    return "A recorded source reference is unavailable in the current Project.";
+  }
+
+  if (reference.eventType === "engineering-action-result-recorded") {
+    const result = reference.result ?? "Recorded action-result detail is unavailable.";
+    const action = reference.actionAvailable
+      ? ` Adopted action: ${reference.action}.`
+      : " The linked adopted action is unavailable in the current Project.";
+
+    return `Engineering action result: ${result}.${action}`;
+  }
+
+  return reference.title
+    ? `Recorded Project event: ${reference.title}.`
+    : "Recorded Project source event is available.";
+}
+
+function formatProjectEvidenceSourceProvenance(
+  evidence: WorkshopState["trace"]["projectEvidence"][number]
+): string {
+  if (evidence.sourceProvenance === "not-recorded") {
+    return "No explicit source timeline provenance was recorded for this evidence.";
+  }
+
+  const references = evidence.sourceReferences
+    .map(formatProjectEvidenceSourceReference)
+    .join(" ");
+
+  if (evidence.sourceProvenance === "recorded-partially-available") {
+    return `${references} Some recorded source references are unavailable.`;
+  }
+
+  if (evidence.sourceProvenance === "recorded-source-unavailable") {
+    return "Recorded source provenance is unavailable in the current Project.";
+  }
+
+  return references;
+}
+
 function formatEngineeringActionBasis(
   action: WorkshopState["trace"]["adoptedEngineeringActions"][number]
 ): string {
@@ -1068,6 +1111,25 @@ export default function WorkshopShell({
                   workshop.trace.activeConceptDirection ?? workshop.trace.activeConceptReview
                 )}
               </p>
+            </div>
+          )}
+          {workshop.trace.projectEvidence.some(
+            (evidence) => evidence.sourceProvenance !== "not-recorded"
+          ) && (
+            <div className="workshop-brief-trace" aria-label="Project evidence source provenance">
+              <p><strong>Project evidence with recorded source provenance:</strong></p>
+              {workshop.trace.projectEvidence
+                .filter((evidence) => evidence.sourceProvenance !== "not-recorded")
+                .map((evidence) => (
+                  <div key={evidence.evidenceId} className="workshop-brief-evidence-record">
+                    <p><strong>Evidence:</strong> {evidence.summary}</p>
+                    <p><strong>Recorded source:</strong> {evidence.source}</p>
+                    <p>
+                      <strong>Source provenance:</strong>{" "}
+                      {formatProjectEvidenceSourceProvenance(evidence)}
+                    </p>
+                  </div>
+                ))}
             </div>
           )}
           {workshop.trace.currentEngineeringConclusions.length > 0 && (

@@ -109,6 +109,33 @@ export type EngineeringActionTraceEntry = {
   results: EngineeringActionResultTraceEntry[];
 };
 
+export type ProjectEvidenceSourceProvenanceState =
+  | "not-recorded"
+  | "recorded-and-available"
+  | "recorded-partially-available"
+  | "recorded-source-unavailable";
+
+export type ProjectEvidenceSourceReference = {
+  eventId: string;
+  available: boolean;
+  eventType?: ProjectTimelineEvent["type"];
+  title?: string;
+  createdAt?: string;
+  result?: string;
+  action?: string;
+  actionAvailable?: boolean;
+};
+
+export type ProjectEvidenceTraceEntry = {
+  evidenceId: string;
+  summary: string;
+  source: string;
+  createdAt: string;
+  validationOutcome?: ValidationOutcome;
+  sourceProvenance: ProjectEvidenceSourceProvenanceState;
+  sourceReferences: ProjectEvidenceSourceReference[];
+};
+
 export type LatestValidationResult = {
   validationItemId: string;
   evidenceId: string;
@@ -174,6 +201,7 @@ export type EngineeringTraceSummary = {
   currentEngineeringDirections: EngineeringDirectionTraceEntry[];
   supersededEngineeringDirections: EngineeringDirectionTraceEntry[];
   adoptedEngineeringActions: EngineeringActionTraceEntry[];
+  projectEvidence: ProjectEvidenceTraceEntry[];
   latestValidationResult: LatestValidationResult | null;
   unresolvedValidation: boolean;
   validationPlanComplete: boolean;
@@ -198,6 +226,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
     ...summarizeEngineeringConclusions(project),
     ...summarizeEngineeringDirections(project),
     adoptedEngineeringActions: summarizeEngineeringActions(project),
+    projectEvidence: summarizeProjectEvidence(project),
     latestValidationResult,
     unresolvedValidation: Boolean(
       validationPlan?.items.some((item) => item.status !== "completed") ||
@@ -294,6 +323,79 @@ function summarizeEngineeringActions(project: Project): EngineeringActionTraceEn
   return project.engineeringActions.map((action) =>
     createEngineeringActionTraceEntry(project, action)
   );
+}
+
+function summarizeProjectEvidence(project: Project): ProjectEvidenceTraceEntry[] {
+  return project.evidence.map((evidence) => {
+    const sourceReferences = resolveProjectEvidenceSourceReferences(
+      project,
+      evidence.sourceTimelineEventIds
+    );
+
+    return {
+      evidenceId: evidence.id,
+      summary: evidence.summary,
+      source: evidence.source,
+      createdAt: evidence.createdAt,
+      ...(evidence.validationOutcome
+        ? { validationOutcome: evidence.validationOutcome }
+        : {}),
+      sourceProvenance: projectEvidenceSourceProvenanceState(sourceReferences),
+      sourceReferences,
+    };
+  });
+}
+
+function resolveProjectEvidenceSourceReferences(
+  project: Project,
+  sourceTimelineEventIds: string[] | undefined
+): ProjectEvidenceSourceReference[] {
+  if (!sourceTimelineEventIds?.length) return [];
+
+  return sourceTimelineEventIds.map((eventId) => {
+    const event = project.timeline.find((candidate) => candidate.id === eventId);
+    if (!event) return { eventId, available: false };
+
+    if (event.type !== "engineering-action-result-recorded") {
+      return {
+        eventId,
+        available: true,
+        eventType: event.type,
+        title: event.title,
+        createdAt: event.createdAt,
+      };
+    }
+
+    const action = event.engineeringActionId
+      ? project.engineeringActions.find(
+          (candidate) => candidate.id === event.engineeringActionId
+        )
+      : undefined;
+
+    return {
+      eventId,
+      available: true,
+      eventType: event.type,
+      title: event.title,
+      createdAt: event.createdAt,
+      ...(event.response?.trim() ? { result: event.response } : {}),
+      ...(action
+        ? { action: action.action, actionAvailable: true }
+        : { actionAvailable: false }),
+    };
+  });
+}
+
+function projectEvidenceSourceProvenanceState(
+  sourceReferences: ProjectEvidenceSourceReference[]
+): ProjectEvidenceSourceProvenanceState {
+  if (sourceReferences.length === 0) return "not-recorded";
+
+  const resolvedCount = sourceReferences.filter((reference) => reference.available).length;
+  if (resolvedCount === 0) return "recorded-source-unavailable";
+  if (resolvedCount === sourceReferences.length) return "recorded-and-available";
+
+  return "recorded-partially-available";
 }
 
 function createEngineeringActionTraceEntry(
