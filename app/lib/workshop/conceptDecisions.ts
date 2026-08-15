@@ -11,6 +11,7 @@ export type RecordConceptDecisionInput = {
   stage: ConceptDecisionStage;
   decision: string;
   reason: string;
+  supportingEvidenceIds?: string[];
   conceptFamilyId?: string;
   existingDecisionId?: string;
 };
@@ -56,12 +57,16 @@ export function recordConceptDecision(
   const now = new Date().toISOString();
   const decisionId = createId();
   const eventId = createId();
+  const supportingEvidenceIds = normalizeSupportingEvidenceIds(
+    project.evidence,
+    input.supportingEvidenceIds
+  );
   const decision: ProjectDecision = {
     id: decisionId,
     category,
     decision: input.decision,
     reason: input.reason,
-    supportingEvidenceIds: [],
+    supportingEvidenceIds,
     sourceTimelineEventIds: [],
     validationItemIds: [],
     conceptRef: {
@@ -94,6 +99,20 @@ export function recordConceptDecision(
     decisionId,
     created: true,
   };
+}
+
+function normalizeSupportingEvidenceIds(
+  evidence: Project["evidence"],
+  supportingEvidenceIds: string[] | undefined
+): string[] {
+  if (!supportingEvidenceIds?.length) return [];
+
+  const availableIds = new Set(evidence.map((item) => item.id));
+  const selectedIds = new Set<string>();
+
+  return supportingEvidenceIds.filter(
+    (id) => availableIds.has(id) && !selectedIds.has(id) && Boolean(selectedIds.add(id))
+  );
 }
 
 function categoryForStage(stage: ConceptDecisionStage): ProjectDecisionCategory {
