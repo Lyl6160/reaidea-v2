@@ -197,9 +197,7 @@ export default function DiscoverySession() {
               </p>
             </details>
 
-            {project.validationPlan ? (
-              <ValidationPlanView project={project} />
-            ) : (
+            {!project.validationPlan && (
               <section className="validation-planning">
                 <p className="reasoning-label">Next Responsible Step</p>
                 <h3>Turn the remaining uncertainty into a validation plan.</h3>
@@ -214,6 +212,8 @@ export default function DiscoverySession() {
                 </button>
               </section>
             )}
+
+            <ProjectReviewView project={project} />
 
             <Link href="/dashboard" className="checkpoint-link secondary-link">
               Return to Project Workshop
@@ -674,7 +674,7 @@ export default function DiscoverySession() {
   );
 }
 
-function ValidationPlanView({
+function ProjectReviewView({
   project,
 }: {
   project: Project;
@@ -709,13 +709,9 @@ function ValidationPlanView({
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
 
-  if (!plan) {
-    return null;
-  }
-
-  const completedCount = plan.items.filter(
+  const completedCount = plan?.items.filter(
     (item) => item.status === "completed"
-  ).length;
+  ).length ?? 0;
   const hasProjectEvidence = project.evidence.length > 0;
   const existingConclusions = project.decisions.filter(
     (decision) => decision.category === "engineering-conclusion"
@@ -735,6 +731,16 @@ function ValidationPlanView({
         (engineeringAction) => engineeringAction.id === event.engineeringActionId
       )
   );
+  const hasEngineeringReviewActivity =
+    hasProjectEvidence ||
+    currentEngineeringConclusions.length > 0 ||
+    currentEngineeringDirections.length > 0 ||
+    project.engineeringActions.length > 0 ||
+    adoptableActionResultEvents.length > 0;
+
+  if (!plan && !hasEngineeringReviewActivity) {
+    return null;
+  }
 
   function startItem(itemId: string) {
     const result = startValidationItem(project, itemId);
@@ -976,8 +982,10 @@ function ValidationPlanView({
   }
 
   return (
-    <section className="validation-plan" id="validation-plan">
-      <div className="validation-heading">
+    <>
+      {plan && (
+        <section className="validation-plan" id="validation-plan">
+          <div className="validation-heading">
         <div>
           <p className="validation-label">
             Validation Plan · {formatValidationStatus(plan.status)}
@@ -1132,6 +1140,16 @@ function ValidationPlanView({
           </article>
         ))}
       </div>
+        </section>
+      )}
+
+      {hasEngineeringReviewActivity && (
+        <section className="engineering-review" aria-label="Engineering review">
+          <p className="validation-label">Engineering Review</p>
+          <p className="engineering-review-intro">
+            Continue the inventor-owned engineering loop from recorded Project truth.
+            This review remains available whether or not a formal Validation plan exists.
+          </p>
 
       {hasProjectEvidence && (
         <section className="engineering-conclusion" aria-label="Engineering conclusion">
@@ -1522,14 +1540,23 @@ function ValidationPlanView({
           </button>
         </section>
       )}
+        </section>
+      )}
 
       <style jsx>{`
-        .validation-plan {
+        .validation-plan,
+        .engineering-review {
           margin-top: 22px;
           padding: 20px;
           background: #0b1320;
           border: 1px solid #27435a;
           border-radius: 12px;
+        }
+
+        .engineering-review-intro {
+          margin: 0 0 4px;
+          color: #a8b3c7;
+          line-height: 1.65;
         }
 
         .validation-heading,
@@ -2079,7 +2106,7 @@ function ValidationPlanView({
           padding: 14px;
         }
       `}</style>
-    </section>
+    </>
   );
 }
 
