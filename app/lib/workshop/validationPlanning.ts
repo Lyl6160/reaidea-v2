@@ -4,6 +4,7 @@ import type {
   ValidationPlan,
   ValidationPlanItem,
 } from "../core/project";
+import { findSingleActiveAssertionForValue } from "./assertionLookup";
 import { assessDiscovery } from "./discoveryReasoning";
 
 const MAX_VALIDATION_ITEMS = 4;
@@ -79,6 +80,7 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
       completionRule:
         "The assumption is no longer carried as an untested belief; the Project records what the evidence actually showed.",
       status: "planned",
+      ...getAssumptionAssertionLink(project, assumption),
     });
   }
 
@@ -134,6 +136,19 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
   }
 
   return items;
+}
+
+function getAssumptionAssertionLink(
+  project: Project,
+  assumption: string
+): { sourceAssertionIds?: string[] } {
+  const assertion = findSingleActiveAssertionForValue({
+    assertions: project.engineeringAssertions ?? [],
+    kind: "assumption",
+    value: assumption,
+  });
+
+  return assertion ? { sourceAssertionIds: [assertion.id] } : {};
 }
 
 function addUniqueItem(

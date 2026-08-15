@@ -450,6 +450,9 @@ function normalizeValidationPlanItem(value: unknown): ValidationPlanItem | null 
     ...(typeof item.startedAt === "string" ? { startedAt: item.startedAt } : {}),
     ...(typeof item.completedAt === "string" ? { completedAt: item.completedAt } : {}),
     ...(typeof item.evidenceId === "string" ? { evidenceId: item.evidenceId } : {}),
+    ...(Array.isArray(item.sourceAssertionIds)
+      ? { sourceAssertionIds: stringList(item.sourceAssertionIds, true) }
+      : {}),
     ...(Array.isArray(item.sourceTimelineEventIds)
       ? { sourceTimelineEventIds: stringList(item.sourceTimelineEventIds) }
       : {}),
@@ -517,10 +520,13 @@ function isValidationOutcome(value: unknown): value is ValidationOutcome {
   );
 }
 
-function stringList(value: unknown): string[] {
+function stringList(value: unknown, requireNonEmpty = false): string[] {
   if (!Array.isArray(value)) {
     return [];
   }
 
-  return value.filter((item): item is string => typeof item === "string");
+  return value.filter(
+    (item): item is string =>
+      typeof item === "string" && (!requireNonEmpty || item.trim().length > 0)
+  );
 }

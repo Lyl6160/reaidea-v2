@@ -69,6 +69,7 @@ export type ValidationPlanItem = {
   startedAt?: string;
   completedAt?: string;
   evidenceId?: string;
+  sourceAssertionIds?: string[];
   sourceTimelineEventIds?: string[];
   evidenceSummary?: string;
   evidenceSource?: string;
