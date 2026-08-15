@@ -285,6 +285,7 @@ export default function WorkshopShell({
     }
   });
   const [conceptReviewDraftNote, setConceptReviewDraftNote] = useState("");
+  const [selectedSupportingEvidenceIds, setSelectedSupportingEvidenceIds] = useState<string[]>([]);
 
   const [refinedConceptGenerated, setRefinedConceptGenerated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -631,6 +632,7 @@ export default function WorkshopShell({
       stage: "review",
       decision: review,
       reason: reviewNote,
+      supportingEvidenceIds: selectedSupportingEvidenceIds,
       conceptFamilyId: conceptFamilyId || undefined,
       existingDecisionId: conceptReviewDecisionId || undefined,
     });
@@ -642,6 +644,7 @@ export default function WorkshopShell({
     setConceptReviewDecisionId(trace.decisionId);
     if (trace.created) {
       onProjectChange(trace.project);
+      setSelectedSupportingEvidenceIds([]);
     }
 
     try {
@@ -713,6 +716,7 @@ export default function WorkshopShell({
       stage: "direction",
       decision,
       reason: decisionNote,
+      supportingEvidenceIds: selectedSupportingEvidenceIds,
       conceptFamilyId: conceptFamilyId || undefined,
       existingDecisionId: conceptDirectionDecisionId || undefined,
     });
@@ -724,6 +728,7 @@ export default function WorkshopShell({
     setConceptDirectionDecisionId(trace.decisionId);
     if (trace.created) {
       onProjectChange(trace.project);
+      setSelectedSupportingEvidenceIds([]);
     }
     try {
       const saved = window.localStorage.getItem(conceptStorageKey);
@@ -750,6 +755,45 @@ export default function WorkshopShell({
     if (decision === "rethink") {
       setSelectedId("engineering");
     }
+  }
+
+  function toggleSupportingEvidence(evidenceId: string) {
+    setSelectedSupportingEvidenceIds((selectedIds) =>
+      selectedIds.includes(evidenceId)
+        ? selectedIds.filter((id) => id !== evidenceId)
+        : [...selectedIds, evidenceId]
+    );
+  }
+
+  function renderSupportingEvidenceSelector() {
+    if (project.evidence.length === 0) {
+      return <p className="concept-evidence-empty">No Project evidence recorded yet.</p>;
+    }
+
+    return (
+      <fieldset className="concept-evidence-selector">
+        <legend>Supporting evidence (optional)</legend>
+        <p>Select only the Project evidence you want recorded as support for this decision.</p>
+        <div className="concept-evidence-options">
+          {project.evidence.map((evidence) => (
+            <label key={evidence.id}>
+              <input
+                type="checkbox"
+                checked={selectedSupportingEvidenceIds.includes(evidence.id)}
+                onChange={() => toggleSupportingEvidence(evidence.id)}
+              />
+              <span>
+                <strong>{evidence.summary}</strong>
+                <small>
+                  {evidence.source}
+                  {evidence.validationOutcome && ` · ${evidence.validationOutcome}`}
+                </small>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    );
   }
 
   function saveConceptDecisionNote(value: string) {
@@ -1306,6 +1350,8 @@ export default function WorkshopShell({
                       The render is a hypothesis, not a conclusion. Record the inventor&apos;s judgement before the next refinement.
                     </p>
 
+                    {renderSupportingEvidenceSelector()}
+
                     <div className="concept-review-actions">
                       <button type="button" className={conceptReview === "accepted" ? "is-selected" : ""} onClick={() => reviewConcept("accepted")}>ACCEPT CONCEPT</button>
                       <button type="button" className={conceptReview === "refine" ? "is-selected" : ""} onClick={() => reviewConcept("refine")}>NEEDS REFINEMENT</button>
@@ -1384,6 +1430,7 @@ export default function WorkshopShell({
                             <p className="concept-decision-intro">
                               This is a stage gate. Accept the direction for validation, refine it again, or deliberately rethink the direction.
                             </p>
+                            {renderSupportingEvidenceSelector()}
                             <div className="concept-decision-actions">
                               <button type="button" className={conceptDecision === "accept" ? "is-selected" : ""} onClick={() => decideConcept("accept")}>ACCEPT FOR VALIDATION</button>
                               <button type="button" className={conceptDecision === "refine" ? "is-selected" : ""} onClick={() => decideConcept("refine")}>REFINE AGAIN</button>
@@ -3151,6 +3198,78 @@ export default function WorkshopShell({
           color: #9eb0b8;
           font-size: 11px;
           line-height: 1.5;
+        }
+
+        .concept-evidence-selector {
+          margin: 12px 0;
+          padding: 10px 11px;
+          border: 1px solid rgba(106, 151, 164, 0.3);
+          border-radius: 7px;
+          background: rgba(220, 232, 235, 0.025);
+        }
+
+        .concept-evidence-selector legend {
+          padding: 0 5px;
+          color: #a9d6de;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.1em;
+        }
+
+        .concept-evidence-selector > p,
+        .concept-evidence-empty {
+          margin: 0 0 9px;
+          color: #94a8af;
+          font-size: 10px;
+          line-height: 1.45;
+        }
+
+        .concept-evidence-empty {
+          margin-top: 12px;
+        }
+
+        .concept-evidence-options {
+          display: grid;
+          gap: 6px;
+        }
+
+        .concept-evidence-options label {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          padding: 7px 8px;
+          border: 1px solid rgba(106, 132, 144, 0.24);
+          border-radius: 5px;
+          color: #d4e0e3;
+          cursor: pointer;
+        }
+
+        .concept-evidence-options input {
+          flex: 0 0 auto;
+          margin: 2px 0 0;
+          accent-color: #72cdda;
+        }
+
+        .concept-evidence-options span {
+          min-width: 0;
+        }
+
+        .concept-evidence-options strong,
+        .concept-evidence-options small {
+          display: block;
+        }
+
+        .concept-evidence-options strong {
+          color: #e4eff1;
+          font-size: 10px;
+          line-height: 1.35;
+        }
+
+        .concept-evidence-options small {
+          margin-top: 2px;
+          color: #8fa9b1;
+          font-size: 9px;
+          line-height: 1.35;
         }
 
         .concept-review-actions {
