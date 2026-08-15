@@ -22,6 +22,17 @@ export type ProjectEvidence = {
   createdAt: string;
 };
 
+export type ProjectDecisionCategory =
+  | "engineering-conclusion"
+  | "concept-review"
+  | "concept-direction"
+  | "engineering-direction";
+
+export type ProjectConceptRef = {
+  id: string;
+  revision: number;
+};
+
 export type ProjectDecision = {
   id: string;
   decision: string;
@@ -29,6 +40,11 @@ export type ProjectDecision = {
   supportingEvidenceIds: string[];
   ownerId: string;
   createdAt: string;
+  category?: ProjectDecisionCategory;
+  sourceTimelineEventIds?: string[];
+  validationItemIds?: string[];
+  conceptRef?: ProjectConceptRef;
+  supersedesDecisionId?: string;
 };
 
 export type ValidationPlanItemSource =
@@ -53,6 +69,7 @@ export type ValidationPlanItem = {
   startedAt?: string;
   completedAt?: string;
   evidenceId?: string;
+  sourceTimelineEventIds?: string[];
   evidenceSummary?: string;
   evidenceSource?: string;
   resultSummary?: string;

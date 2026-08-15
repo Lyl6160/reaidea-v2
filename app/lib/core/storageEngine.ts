@@ -1,6 +1,8 @@
 import type {
   EngineeringState,
   Project,
+  ProjectDecision,
+  ProjectDecisionCategory,
   ValidationOutcome,
   ValidationPlan,
   ValidationPlanItem,
@@ -143,7 +145,6 @@ function isValidStoredProject(value: unknown): value is StoredProject {
     typeof engineeringState.greatestRemainingUncertainty === "string" &&
     typeof engineeringState.nextEngineeringStep === "string" &&
     Array.isArray(project.evidence) &&
-    Array.isArray(project.decisions) &&
     Array.isArray(project.files) &&
     Array.isArray(project.timeline)
   );
@@ -152,6 +153,7 @@ function isValidStoredProject(value: unknown): value is StoredProject {
 function normalizeProject(project: StoredProject): Project {
   return {
     ...project,
+    decisions: normalizeProjectDecisions(project.decisions),
     engineeringState: {
       ...project.engineeringState,
       currentEvidence: stringList(project.engineeringState.currentEvidence),
@@ -160,6 +162,80 @@ function normalizeProject(project: StoredProject): Project {
     },
     validationPlan: normalizeValidationPlan(project.validationPlan),
   };
+}
+
+function normalizeProjectDecisions(value: unknown): ProjectDecision[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map(normalizeProjectDecision)
+    .filter((decision): decision is ProjectDecision => decision !== null);
+}
+
+function normalizeProjectDecision(value: unknown): ProjectDecision | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const decision = value as Partial<ProjectDecision>;
+
+  if (
+    typeof decision.id !== "string" ||
+    typeof decision.decision !== "string" ||
+    typeof decision.reason !== "string" ||
+    !Array.isArray(decision.supportingEvidenceIds) ||
+    typeof decision.ownerId !== "string" ||
+    typeof decision.createdAt !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    id: decision.id,
+    decision: decision.decision,
+    reason: decision.reason,
+    supportingEvidenceIds: stringList(decision.supportingEvidenceIds),
+    ownerId: decision.ownerId,
+    createdAt: decision.createdAt,
+    ...(isProjectDecisionCategory(decision.category)
+      ? { category: decision.category }
+      : {}),
+    ...(Array.isArray(decision.sourceTimelineEventIds)
+      ? { sourceTimelineEventIds: stringList(decision.sourceTimelineEventIds) }
+      : {}),
+    ...(Array.isArray(decision.validationItemIds)
+      ? { validationItemIds: stringList(decision.validationItemIds) }
+      : {}),
+    ...(isProjectConceptRef(decision.conceptRef)
+      ? { conceptRef: decision.conceptRef }
+      : {}),
+    ...(typeof decision.supersedesDecisionId === "string"
+      ? { supersedesDecisionId: decision.supersedesDecisionId }
+      : {}),
+  };
+}
+
+function isProjectDecisionCategory(
+  value: unknown
+): value is ProjectDecisionCategory {
+  return (
+    value === "engineering-conclusion" ||
+    value === "concept-review" ||
+    value === "concept-direction" ||
+    value === "engineering-direction"
+  );
+}
+
+function isProjectConceptRef(value: unknown): value is ProjectDecision["conceptRef"] {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const conceptRef = value as Partial<NonNullable<ProjectDecision["conceptRef"]>>;
+
+  return typeof conceptRef.id === "string" && Number.isInteger(conceptRef.revision);
 }
 
 function normalizeValidationPlan(value: unknown): ValidationPlan | null {
@@ -249,6 +325,9 @@ function normalizeValidationPlanItem(value: unknown): ValidationPlanItem | null 
     ...(typeof item.startedAt === "string" ? { startedAt: item.startedAt } : {}),
     ...(typeof item.completedAt === "string" ? { completedAt: item.completedAt } : {}),
     ...(typeof item.evidenceId === "string" ? { evidenceId: item.evidenceId } : {}),
+    ...(Array.isArray(item.sourceTimelineEventIds)
+      ? { sourceTimelineEventIds: stringList(item.sourceTimelineEventIds) }
+      : {}),
     ...(typeof item.evidenceSummary === "string"
       ? { evidenceSummary: item.evidenceSummary }
       : {}),
