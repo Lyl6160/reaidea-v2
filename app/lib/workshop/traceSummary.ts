@@ -13,7 +13,23 @@ export type ActiveConceptDecision = {
   conceptFamilyId: string;
   revision: number;
   createdAt: string;
+  supportingEvidenceState: ConceptSupportingEvidenceState;
+  supportingEvidence: ConceptSupportingEvidenceReference[];
   supersededDecisionId?: string;
+};
+
+export type ConceptSupportingEvidenceState =
+  | "none-explicitly-selected"
+  | "selected-and-available"
+  | "selected-partially-available"
+  | "selected-unavailable";
+
+export type ConceptSupportingEvidenceReference = {
+  evidenceId: string;
+  available: boolean;
+  summary?: string;
+  source?: string;
+  validationOutcome?: ValidationOutcome;
 };
 
 export type LatestValidationResult = {
@@ -88,12 +104,12 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
   return {
     assertionTrace: summarizeAssertions(project),
     activeConceptReview: resolveActiveConceptDecision(
-      project.decisions,
+      project,
       "concept-review",
       1
     ),
     activeConceptDirection: resolveActiveConceptDecision(
-      project.decisions,
+      project,
       "concept-direction",
       2
     ),
@@ -271,11 +287,11 @@ function compareValidationLinks(
 }
 
 function resolveActiveConceptDecision(
-  decisions: ProjectDecision[],
+  project: Project,
   category: "concept-review" | "concept-direction",
   revision: number
 ): ActiveConceptDecision | null {
-  const candidates = decisions
+  const candidates = project.decisions
     .map((decision, index) => ({ decision, index }))
     .filter(
       ({ decision }) =>
@@ -307,6 +323,11 @@ function resolveActiveConceptDecision(
   const selected = active[0]?.decision;
   if (!selected?.conceptRef) return null;
 
+  const supportingEvidence = resolveConceptSupportingEvidence(
+    project.evidence,
+    selected.supportingEvidenceIds
+  );
+
   return {
     id: selected.id,
     outcome: selected.decision,
@@ -314,10 +335,45 @@ function resolveActiveConceptDecision(
     conceptFamilyId: selected.conceptRef.id,
     revision: selected.conceptRef.revision,
     createdAt: selected.createdAt,
+    supportingEvidenceState: conceptSupportingEvidenceState(supportingEvidence),
+    supportingEvidence,
     ...(selected.supersedesDecisionId
       ? { supersededDecisionId: selected.supersedesDecisionId }
       : {}),
   };
+}
+
+function resolveConceptSupportingEvidence(
+  evidence: Project["evidence"],
+  supportingEvidenceIds: string[]
+): ConceptSupportingEvidenceReference[] {
+  return supportingEvidenceIds.map((evidenceId) => {
+    const selectedEvidence = evidence.find((item) => item.id === evidenceId);
+
+    return selectedEvidence
+      ? {
+          evidenceId,
+          available: true,
+          summary: selectedEvidence.summary,
+          source: selectedEvidence.source,
+          ...(selectedEvidence.validationOutcome
+            ? { validationOutcome: selectedEvidence.validationOutcome }
+            : {}),
+        }
+      : { evidenceId, available: false };
+  });
+}
+
+function conceptSupportingEvidenceState(
+  supportingEvidence: ConceptSupportingEvidenceReference[]
+): ConceptSupportingEvidenceState {
+  if (supportingEvidence.length === 0) return "none-explicitly-selected";
+
+  const availableCount = supportingEvidence.filter((reference) => reference.available).length;
+  if (availableCount === 0) return "selected-unavailable";
+  if (availableCount === supportingEvidence.length) return "selected-and-available";
+
+  return "selected-partially-available";
 }
 
 function findLatestValidationResult(project: Project): LatestValidationResult | null {

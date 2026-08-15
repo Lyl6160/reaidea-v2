@@ -163,6 +163,37 @@ function formatTraceField(value: string): string {
     .replace(/^./, (character) => character.toUpperCase());
 }
 
+function formatConceptSupportingEvidence(
+  decision: WorkshopState["trace"]["activeConceptReview"]
+): string {
+  if (!decision || decision.supportingEvidenceState === "none-explicitly-selected") {
+    return "No supporting evidence was explicitly selected for this decision.";
+  }
+
+  const available = decision.supportingEvidence.filter(
+    (reference) => reference.available
+  );
+  const unavailableCount = decision.supportingEvidence.length - available.length;
+
+  if (available.length === 0) {
+    return "Selected supporting evidence references are unavailable in the current Project.";
+  }
+
+  const selectedEvidence = available
+    .map((reference) => {
+      const validationOutcome = reference.validationOutcome
+        ? ` · outcome: ${reference.validationOutcome}`
+        : "";
+      return `${reference.summary} — ${reference.source}${validationOutcome}`;
+    })
+    .join("; ");
+  const selectedText = `The inventor recorded this evidence as supporting the decision: ${selectedEvidence}.`;
+
+  return unavailableCount > 0
+    ? `${selectedText} ${unavailableCount} selected evidence ${unavailableCount === 1 ? "reference is" : "references are"} unavailable in the current Project.`
+    : selectedText;
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -931,6 +962,22 @@ export default function WorkshopShell({
               {workshop.trace.activeConceptDirection.reason &&
                 ` · ${workshop.trace.activeConceptDirection.reason}`}
             </p>
+          )}
+          {(workshop.trace.activeConceptDirection || workshop.trace.activeConceptReview) && (
+            <div className="workshop-brief-trace" aria-label="Concept supporting evidence">
+              {!workshop.trace.activeConceptDirection && workshop.trace.activeConceptReview && (
+                <p>
+                  <strong>Recorded review:</strong>{" "}
+                  {workshop.trace.activeConceptReview.outcome} Concept 01
+                </p>
+              )}
+              <p>
+                <strong>Supporting evidence:</strong>{" "}
+                {formatConceptSupportingEvidence(
+                  workshop.trace.activeConceptDirection ?? workshop.trace.activeConceptReview
+                )}
+              </p>
+            </div>
           )}
           {workshop.trace.latestValidationResult && (
             <p className="workshop-brief-trace">
