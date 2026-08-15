@@ -6,6 +6,7 @@ import type {
   Project,
   ProjectDecision,
   ProjectDecisionCategory,
+  ProjectEngineeringAction,
   ProjectEngineeringAssertion,
   ProjectTimelineEvent,
   ValidationOutcome,
@@ -22,9 +23,13 @@ type StoredEngineeringState = Omit<
 > &
   Partial<Pick<EngineeringState, "currentAssumptions" | "currentConstraints">>;
 
-type StoredProject = Omit<Project, "engineeringState" | "validationPlan"> & {
+type StoredProject = Omit<
+  Project,
+  "engineeringState" | "validationPlan" | "engineeringActions"
+> & {
   engineeringState: StoredEngineeringState;
   validationPlan?: ValidationPlan | null;
+  engineeringActions?: unknown;
 };
 
 const STORAGE_KEY = "reaidea-project";
@@ -168,6 +173,7 @@ function normalizeProject(project: StoredProject): Project {
     engineeringAssertions: normalizeEngineeringAssertions(
       project.engineeringAssertions
     ),
+    engineeringActions: normalizeEngineeringActions(project.engineeringActions),
     validationPlan: normalizeValidationPlan(project.validationPlan),
     timeline: normalizeTimeline(project.timeline),
   };
@@ -185,6 +191,52 @@ function normalizeEngineeringAssertions(
     .filter(
       (assertion): assertion is ProjectEngineeringAssertion => assertion !== null
     );
+}
+
+function normalizeEngineeringActions(value: unknown): ProjectEngineeringAction[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map(normalizeEngineeringAction)
+    .filter(
+      (action): action is ProjectEngineeringAction => action !== null
+    );
+}
+
+function normalizeEngineeringAction(
+  value: unknown
+): ProjectEngineeringAction | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const action = value as Partial<ProjectEngineeringAction>;
+
+  if (
+    typeof action.id !== "string" ||
+    !action.id.trim() ||
+    typeof action.action !== "string" ||
+    !action.action.trim() ||
+    typeof action.reason !== "string" ||
+    !Array.isArray(action.basisDirectionIds) ||
+    typeof action.ownerId !== "string" ||
+    !action.ownerId.trim() ||
+    typeof action.createdAt !== "string" ||
+    !action.createdAt.trim()
+  ) {
+    return null;
+  }
+
+  return {
+    id: action.id,
+    action: action.action,
+    reason: action.reason,
+    basisDirectionIds: stringList(action.basisDirectionIds, true),
+    ownerId: action.ownerId,
+    createdAt: action.createdAt,
+  };
 }
 
 function normalizeEngineeringAssertion(

@@ -117,6 +117,15 @@ export type ProjectEngineeringAssertion = {
   supersedesAssertionId?: string;
 };
 
+export type ProjectEngineeringAction = {
+  id: string;
+  action: string;
+  reason: string;
+  basisDirectionIds: string[];
+  ownerId: string;
+  createdAt: string;
+};
+
 export type EngineeringStateField =
   | "currentUnderstanding"
   | "currentEvidence"
@@ -137,7 +146,8 @@ export type ProjectTimelineEventType =
   | "concept-review-recorded"
   | "concept-direction-recorded"
   | "engineering-conclusion-recorded"
-  | "engineering-direction-recorded";
+  | "engineering-direction-recorded"
+  | "engineering-action-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -164,6 +174,7 @@ export type Project = {
   readiness: ProjectReadiness;
   engineeringState: EngineeringState;
   engineeringAssertions: ProjectEngineeringAssertion[];
+  engineeringActions: ProjectEngineeringAction[];
   validationPlan: ValidationPlan | null;
   evidence: ProjectEvidence[];
   decisions: ProjectDecision[];
@@ -207,6 +218,7 @@ export function createProject(input: CreateProjectInput): Project {
         "Clarify what is happening now and why the observation matters.",
     },
     engineeringAssertions: [],
+    engineeringActions: [],
     validationPlan: null,
     evidence: [],
     decisions: [],
