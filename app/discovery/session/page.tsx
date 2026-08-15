@@ -26,6 +26,7 @@ import {
 import { recordEngineeringConclusion } from "../../lib/workshop/engineeringConclusions";
 import { recordEngineeringDirection } from "../../lib/workshop/engineeringDirections";
 import { recordEngineeringAction } from "../../lib/workshop/engineeringActions";
+import { recordEngineeringActionResult } from "../../lib/workshop/engineeringActionResults";
 import { summarizeEngineeringTrace } from "../../lib/workshop/traceSummary";
 import {
   getProjectStorageSnapshot,
@@ -696,6 +697,9 @@ function ValidationPlanView({
   const [actionReason, setActionReason] = useState("");
   const [selectedActionBasisIds, setSelectedActionBasisIds] = useState<string[]>([]);
   const [actionError, setActionError] = useState("");
+  const [actionResultActionId, setActionResultActionId] = useState("");
+  const [actionResult, setActionResult] = useState("");
+  const [actionResultError, setActionResultError] = useState("");
   const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
@@ -901,6 +905,31 @@ function ValidationPlanView({
     setActionReason("");
     setSelectedActionBasisIds([]);
     setActionError("");
+  }
+
+  function recordActionResult() {
+    if (!actionResultActionId || !actionResult.trim()) {
+      setActionResultError(
+        "Select an adopted engineering action and record what happened before saving the result."
+      );
+      return;
+    }
+
+    const latestProject = loadProject() ?? project;
+    const result = recordEngineeringActionResult(latestProject, {
+      actionId: actionResultActionId,
+      result: actionResult,
+    });
+
+    if (result.status === "invalid") {
+      setActionResultError(result.reason);
+      return;
+    }
+
+    saveProject(result.project);
+    setActionResultActionId("");
+    setActionResult("");
+    setActionResultError("");
   }
 
   return (
@@ -1303,6 +1332,68 @@ function ValidationPlanView({
         </section>
       )}
 
+      {project.engineeringActions.length > 0 && (
+        <section
+          className="engineering-action-result"
+          aria-label="Engineering action result"
+        >
+          <p className="validation-label">Engineering Action Result</p>
+          <p>
+            Record what actually happened while undertaking an adopted engineering action.
+            This records engineering history only and does not mark the action complete.
+          </p>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-action-result-action">Adopted engineering action</label>
+            <select
+              id="engineering-action-result-action"
+              className="engineering-action-result-select"
+              value={actionResultActionId}
+              onChange={(event) => {
+                setActionResultActionId(event.target.value);
+                if (actionResultError) setActionResultError("");
+              }}
+            >
+              <option value="">Select an adopted engineering action</option>
+              {project.engineeringActions.map((engineeringAction) => (
+                <option key={engineeringAction.id} value={engineeringAction.id}>
+                  {engineeringAction.action}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-action-result">What happened?</label>
+            <textarea
+              id="engineering-action-result"
+              className="validation-textarea"
+              value={actionResult}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setActionResult(event.target.value);
+                if (actionResultError) setActionResultError("");
+              }}
+              placeholder="Record what actually happened while undertaking this adopted action."
+            />
+          </div>
+
+          {actionResultError && (
+            <p className="validation-form-error" role="alert">
+              {actionResultError}
+            </p>
+          )}
+
+          <button
+            type="button"
+            className="validation-action"
+            disabled={!actionResultActionId || !actionResult.trim()}
+            onClick={recordActionResult}
+          >
+            Record Engineering Action Result
+          </button>
+        </section>
+      )}
+
       <style jsx>{`
         .validation-plan {
           margin-top: 22px;
@@ -1403,6 +1494,34 @@ function ValidationPlanView({
           color: #b5cbb7;
           font-size: 13px;
           line-height: 1.5;
+        }
+
+        .engineering-action-result {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(93, 151, 165, 0.46);
+          border-radius: 9px;
+          background: rgba(16, 44, 52, 0.28);
+        }
+
+        .engineering-action-result > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #aec8ce;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .engineering-action-result-select {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 7px;
+          padding: 10px;
+          border: 1px solid #38566a;
+          border-radius: 6px;
+          background: #0a1821;
+          color: #e1edf0;
+          font: inherit;
         }
 
         .conclusion-evidence-selector {
