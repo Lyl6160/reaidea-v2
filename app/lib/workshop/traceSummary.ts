@@ -55,6 +55,30 @@ export type EngineeringConclusionTraceEntry = {
   supersedesDecisionId?: string;
 };
 
+export type EngineeringDirectionBasisState =
+  | "no-basis-recorded"
+  | "recorded-and-available"
+  | "recorded-partially-available"
+  | "recorded-unavailable";
+
+export type EngineeringDirectionBasisReference = {
+  conclusionId: string;
+  available: boolean;
+  conclusion?: string;
+  reason?: string;
+  conclusionStatus?: "current" | "superseded";
+};
+
+export type EngineeringDirectionTraceEntry = {
+  id: string;
+  direction: string;
+  reason: string;
+  createdAt: string;
+  basisState: EngineeringDirectionBasisState;
+  basisConclusions: EngineeringDirectionBasisReference[];
+  supersedesDecisionId?: string;
+};
+
 export type LatestValidationResult = {
   validationItemId: string;
   evidenceId: string;
@@ -117,6 +141,8 @@ export type EngineeringTraceSummary = {
   activeConceptDirection: ActiveConceptDecision | null;
   currentEngineeringConclusions: EngineeringConclusionTraceEntry[];
   supersededEngineeringConclusions: EngineeringConclusionTraceEntry[];
+  currentEngineeringDirections: EngineeringDirectionTraceEntry[];
+  supersededEngineeringDirections: EngineeringDirectionTraceEntry[];
   latestValidationResult: LatestValidationResult | null;
   unresolvedValidation: boolean;
   validationPlanComplete: boolean;
@@ -139,6 +165,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
       2
     ),
     ...summarizeEngineeringConclusions(project),
+    ...summarizeEngineeringDirections(project),
     latestValidationResult,
     unresolvedValidation: Boolean(
       validationPlan?.items.some((item) => item.status !== "completed") ||
@@ -153,15 +180,13 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
   };
 }
 
-function summarizeEngineeringConclusions(project: Project): Pick<
-  EngineeringTraceSummary,
-  "currentEngineeringConclusions" | "supersededEngineeringConclusions"
-> {
+function engineeringConclusionSupersededIds(project: Project): Set<string> {
   const conclusions = project.decisions.filter(
     (decision) => decision.category === "engineering-conclusion"
   );
   const conclusionIds = new Set(conclusions.map((decision) => decision.id));
-  const supersededIds = new Set(
+
+  return new Set(
     conclusions
       .map((decision) => {
         const supersededId = decision.supersedesDecisionId;
@@ -171,6 +196,16 @@ function summarizeEngineeringConclusions(project: Project): Pick<
       })
       .filter((id): id is string => Boolean(id))
   );
+}
+
+function summarizeEngineeringConclusions(project: Project): Pick<
+  EngineeringTraceSummary,
+  "currentEngineeringConclusions" | "supersededEngineeringConclusions"
+> {
+  const conclusions = project.decisions.filter(
+    (decision) => decision.category === "engineering-conclusion"
+  );
+  const supersededIds = engineeringConclusionSupersededIds(project);
   const toTraceEntry = (decision: (typeof conclusions)[number]) =>
     createEngineeringConclusionTraceEntry(project, decision);
 
@@ -182,6 +217,99 @@ function summarizeEngineeringConclusions(project: Project): Pick<
       .filter((decision) => supersededIds.has(decision.id))
       .map(toTraceEntry),
   };
+}
+
+function summarizeEngineeringDirections(project: Project): Pick<
+  EngineeringTraceSummary,
+  "currentEngineeringDirections" | "supersededEngineeringDirections"
+> {
+  const directions = project.decisions.filter(
+    (decision) => decision.category === "engineering-direction"
+  );
+  const directionIds = new Set(directions.map((decision) => decision.id));
+  const supersededIds = new Set(
+    directions
+      .map((decision) => {
+        const supersededId = decision.supersedesDecisionId;
+        return supersededId && supersededId !== decision.id && directionIds.has(supersededId)
+          ? supersededId
+          : null;
+      })
+      .filter((id): id is string => Boolean(id))
+  );
+  const toTraceEntry = (decision: (typeof directions)[number]) =>
+    createEngineeringDirectionTraceEntry(project, decision);
+
+  return {
+    currentEngineeringDirections: directions
+      .filter((decision) => !supersededIds.has(decision.id))
+      .map(toTraceEntry),
+    supersededEngineeringDirections: directions
+      .filter((decision) => supersededIds.has(decision.id))
+      .map(toTraceEntry),
+  };
+}
+
+function createEngineeringDirectionTraceEntry(
+  project: Project,
+  decision: Project["decisions"][number]
+): EngineeringDirectionTraceEntry {
+  const basisConclusions = resolveEngineeringDirectionBasisConclusions(
+    project,
+    decision.basisConclusionIds
+  );
+
+  return {
+    id: decision.id,
+    direction: decision.decision,
+    reason: decision.reason,
+    createdAt: decision.createdAt,
+    basisState: engineeringDirectionBasisState(basisConclusions),
+    basisConclusions,
+    ...(decision.supersedesDecisionId
+      ? { supersedesDecisionId: decision.supersedesDecisionId }
+      : {}),
+  };
+}
+
+function resolveEngineeringDirectionBasisConclusions(
+  project: Project,
+  basisConclusionIds: string[] | undefined
+): EngineeringDirectionBasisReference[] {
+  if (!basisConclusionIds?.length) return [];
+
+  const supersededConclusionIds = engineeringConclusionSupersededIds(project);
+
+  return basisConclusionIds.map((conclusionId) => {
+    const conclusion = project.decisions.find(
+      (decision) =>
+        decision.id === conclusionId && decision.category === "engineering-conclusion"
+    );
+
+    return conclusion
+      ? {
+          conclusionId,
+          available: true,
+          conclusion: conclusion.decision,
+          reason: conclusion.reason,
+          conclusionStatus: supersededConclusionIds.has(conclusion.id)
+            ? "superseded"
+            : "current",
+        }
+      : { conclusionId, available: false };
+  });
+}
+
+function engineeringDirectionBasisState(
+  basisConclusions: EngineeringDirectionBasisReference[]
+): EngineeringDirectionBasisState {
+  if (basisConclusions.length === 0) return "no-basis-recorded";
+
+  const availableCount = basisConclusions.filter((basis) => basis.available).length;
+  if (availableCount === 0) return "recorded-unavailable";
+  if (availableCount === basisConclusions.length) return "recorded-and-available";
+
+  return "recorded-partially-available";
 }
 
 function createEngineeringConclusionTraceEntry(

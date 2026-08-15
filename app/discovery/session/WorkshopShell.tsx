@@ -225,6 +225,33 @@ function formatEngineeringConclusionSupportingEvidence(
     : selectedText;
 }
 
+function formatEngineeringDirectionBasis(
+  direction: WorkshopState["trace"]["currentEngineeringDirections"][number]
+): string {
+  if (direction.basisState === "no-basis-recorded") {
+    return "No conclusion basis was explicitly recorded.";
+  }
+
+  const available = direction.basisConclusions.filter((basis) => basis.available);
+  const unavailableCount = direction.basisConclusions.length - available.length;
+
+  if (available.length === 0) {
+    return "A recorded conclusion basis is unavailable in the current Project.";
+  }
+
+  const basisText = available
+    .map((basis) =>
+      basis.conclusionStatus === "superseded"
+        ? `${basis.conclusion} (recorded basis; conclusion now superseded)`
+        : basis.conclusion
+    )
+    .join("; ");
+
+  return unavailableCount > 0
+    ? `${basisText}. ${unavailableCount} recorded conclusion basis ${unavailableCount === 1 ? "is" : "are"} unavailable in the current Project.`
+    : basisText;
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -1021,6 +1048,18 @@ export default function WorkshopShell({
                     <strong>Supporting evidence:</strong>{" "}
                     {formatEngineeringConclusionSupportingEvidence(conclusion)}
                   </p>
+                </div>
+              ))}
+            </div>
+          )}
+          {workshop.trace.currentEngineeringDirections.length > 0 && (
+            <div className="workshop-brief-trace" aria-label="Current engineering directions">
+              <p><strong>Engineering directions:</strong></p>
+              {workshop.trace.currentEngineeringDirections.map((direction) => (
+                <div key={direction.id} className="workshop-brief-direction">
+                  <p><strong>Direction:</strong> {direction.direction}</p>
+                  {direction.reason && <p><strong>Reason:</strong> {direction.reason}</p>}
+                  <p><strong>Based on:</strong> {formatEngineeringDirectionBasis(direction)}</p>
                 </div>
               ))}
             </div>
@@ -2902,6 +2941,16 @@ export default function WorkshopShell({
         }
 
         .workshop-brief-conclusion p {
+          margin: 4px 0 0;
+        }
+
+        .workshop-brief-direction {
+          margin-top: 9px;
+          padding-top: 9px;
+          border-top: 1px solid rgba(191, 158, 85, 0.24);
+        }
+
+        .workshop-brief-direction p {
           margin: 4px 0 0;
         }
 
