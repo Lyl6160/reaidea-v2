@@ -25,6 +25,7 @@ import {
 } from "../../lib/workshop/validationExecution";
 import { recordEngineeringConclusion } from "../../lib/workshop/engineeringConclusions";
 import { recordEngineeringDirection } from "../../lib/workshop/engineeringDirections";
+import { recordEngineeringAction } from "../../lib/workshop/engineeringActions";
 import { summarizeEngineeringTrace } from "../../lib/workshop/traceSummary";
 import {
   getProjectStorageSnapshot,
@@ -691,6 +692,10 @@ function ValidationPlanView({
   const [selectedDirectionBasisIds, setSelectedDirectionBasisIds] = useState<string[]>([]);
   const [supersedesDirectionId, setSupersedesDirectionId] = useState("");
   const [directionError, setDirectionError] = useState("");
+  const [action, setAction] = useState("");
+  const [actionReason, setActionReason] = useState("");
+  const [selectedActionBasisIds, setSelectedActionBasisIds] = useState<string[]>([]);
+  const [actionError, setActionError] = useState("");
   const inProgressItemId = plan?.items.find((item) => item.status === "in-progress")?.id ?? null;
   const [optimisticActiveItemId, setOptimisticActiveItemId] = useState<string | null>(null);
   const activeItemId = inProgressItemId ?? optimisticActiveItemId;
@@ -708,9 +713,9 @@ function ValidationPlanView({
   const existingConclusions = project.decisions.filter(
     (decision) => decision.category === "engineering-conclusion"
   );
-  const currentEngineeringConclusions = summarizeEngineeringTrace(
-    project
-  ).currentEngineeringConclusions;
+  const engineeringTrace = summarizeEngineeringTrace(project);
+  const currentEngineeringConclusions = engineeringTrace.currentEngineeringConclusions;
+  const currentEngineeringDirections = engineeringTrace.currentEngineeringDirections;
   const existingDirections = project.decisions.filter(
     (decision) => decision.category === "engineering-direction"
   );
@@ -863,6 +868,39 @@ function ValidationPlanView({
     setSelectedDirectionBasisIds([]);
     setSupersedesDirectionId("");
     setDirectionError("");
+  }
+
+  function toggleActionBasis(directionId: string) {
+    setSelectedActionBasisIds((selectedIds) =>
+      selectedIds.includes(directionId)
+        ? selectedIds.filter((id) => id !== directionId)
+        : [...selectedIds, directionId]
+    );
+  }
+
+  function recordAction() {
+    if (!action.trim() || selectedActionBasisIds.length === 0) {
+      setActionError("Record an action and select at least one current engineering direction.");
+      return;
+    }
+
+    const latestProject = loadProject() ?? project;
+    const result = recordEngineeringAction(latestProject, {
+      action,
+      reason: actionReason,
+      basisDirectionIds: selectedActionBasisIds,
+    });
+
+    if (result.status === "invalid") {
+      setActionError(result.reason);
+      return;
+    }
+
+    saveProject(result.project);
+    setAction("");
+    setActionReason("");
+    setSelectedActionBasisIds([]);
+    setActionError("");
   }
 
   return (
@@ -1198,6 +1236,73 @@ function ValidationPlanView({
         </section>
       )}
 
+      {currentEngineeringDirections.length > 0 && (
+        <section className="engineering-action" aria-label="Engineering action">
+          <p className="validation-label">Engineering Action</p>
+          <p>
+            Based on the current engineering directions you select, you may deliberately adopt a concrete engineering action.
+          </p>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-action">Action</label>
+            <textarea
+              id="engineering-action"
+              className="validation-textarea"
+              value={action}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setAction(event.target.value);
+                if (actionError) setActionError("");
+              }}
+              placeholder="Record the concrete engineering action you deliberately adopt."
+            />
+          </div>
+
+          <div className="validation-field">
+            <label htmlFor="engineering-action-reason">Reason</label>
+            <textarea
+              id="engineering-action-reason"
+              className="validation-textarea"
+              value={actionReason}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+                setActionReason(event.target.value);
+                if (actionError) setActionError("");
+              }}
+              placeholder="Optionally record why you adopted this action."
+            />
+          </div>
+
+          <fieldset className="action-basis-selector">
+            <legend>Based on current engineering directions</legend>
+            <div className="action-basis-options">
+              {currentEngineeringDirections.map((direction) => (
+                <label key={direction.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedActionBasisIds.includes(direction.id)}
+                    onChange={() => toggleActionBasis(direction.id)}
+                  />
+                  <span>
+                    <strong>{direction.direction}</strong>
+                    {direction.reason && <small>{direction.reason}</small>}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          {actionError && <p className="validation-form-error" role="alert">{actionError}</p>}
+
+          <button
+            type="button"
+            className="validation-action"
+            disabled={!action.trim() || selectedActionBasisIds.length === 0}
+            onClick={recordAction}
+          >
+            Adopt Engineering Action
+          </button>
+        </section>
+      )}
+
       <style jsx>{`
         .validation-plan {
           margin-top: 22px;
@@ -1285,6 +1390,21 @@ function ValidationPlanView({
           line-height: 1.5;
         }
 
+        .engineering-action {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(108, 178, 118, 0.46);
+          border-radius: 9px;
+          background: rgba(21, 49, 27, 0.28);
+        }
+
+        .engineering-action > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #b5cbb7;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
         .conclusion-evidence-selector {
           margin: 14px 0;
           padding: 11px;
@@ -1295,12 +1415,56 @@ function ValidationPlanView({
         .conclusion-evidence-selector legend,
         .conclusion-supersession > span,
         .direction-supersession > span,
-        .direction-basis-selector legend {
+        .direction-basis-selector legend,
+        .action-basis-selector legend {
           padding: 0 4px;
           color: #8fd5df;
           font-size: 11px;
           font-weight: 800;
           letter-spacing: 0.06em;
+        }
+
+        .action-basis-selector {
+          margin: 14px 0;
+          padding: 11px;
+          border: 1px solid rgba(89, 154, 100, 0.42);
+          border-radius: 7px;
+        }
+
+        .action-basis-options {
+          display: grid;
+          gap: 7px;
+        }
+
+        .action-basis-options label {
+          display: flex;
+          align-items: flex-start;
+          gap: 9px;
+          padding: 8px;
+          border: 1px solid rgba(89, 154, 100, 0.28);
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .action-basis-options input {
+          margin-top: 3px;
+          accent-color: #72c982;
+        }
+
+        .action-basis-options strong,
+        .action-basis-options small {
+          display: block;
+        }
+
+        .action-basis-options strong {
+          color: #e0f0e2;
+          font-size: 12px;
+        }
+
+        .action-basis-options small {
+          margin-top: 3px;
+          color: #a8c5ac;
+          font-size: 11px;
         }
 
         .direction-basis-selector {
