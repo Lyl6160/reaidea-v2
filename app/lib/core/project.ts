@@ -94,6 +94,26 @@ export type EngineeringState = {
   nextEngineeringStep: string;
 };
 
+export type EngineeringAssertionKind =
+  | "assumption"
+  | "constraint"
+  | "uncertainty";
+
+export type EngineeringAssertionStatus =
+  | "active"
+  | "resolved"
+  | "challenged"
+  | "superseded";
+
+export type ProjectEngineeringAssertion = {
+  id: string;
+  kind: EngineeringAssertionKind;
+  value: string;
+  status: EngineeringAssertionStatus;
+  createdAt: string;
+  supersedesAssertionId?: string;
+};
+
 export type EngineeringStateField =
   | "currentUnderstanding"
   | "currentEvidence"
@@ -138,6 +158,7 @@ export type Project = {
   status: ProjectStatus;
   readiness: ProjectReadiness;
   engineeringState: EngineeringState;
+  engineeringAssertions: ProjectEngineeringAssertion[];
   validationPlan: ValidationPlan | null;
   evidence: ProjectEvidence[];
   decisions: ProjectDecision[];
@@ -180,6 +201,7 @@ export function createProject(input: CreateProjectInput): Project {
       nextEngineeringStep:
         "Clarify what is happening now and why the observation matters.",
     },
+    engineeringAssertions: [],
     validationPlan: null,
     evidence: [],
     decisions: [],

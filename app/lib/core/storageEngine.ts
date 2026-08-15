@@ -1,9 +1,12 @@
 import type {
   EngineeringState,
   EngineeringStateField,
+  EngineeringAssertionKind,
+  EngineeringAssertionStatus,
   Project,
   ProjectDecision,
   ProjectDecisionCategory,
+  ProjectEngineeringAssertion,
   ProjectTimelineEvent,
   ValidationOutcome,
   ValidationPlan,
@@ -162,9 +165,82 @@ function normalizeProject(project: StoredProject): Project {
       currentAssumptions: stringList(project.engineeringState.currentAssumptions),
       currentConstraints: stringList(project.engineeringState.currentConstraints),
     },
+    engineeringAssertions: normalizeEngineeringAssertions(
+      project.engineeringAssertions
+    ),
     validationPlan: normalizeValidationPlan(project.validationPlan),
     timeline: normalizeTimeline(project.timeline),
   };
+}
+
+function normalizeEngineeringAssertions(
+  value: unknown
+): ProjectEngineeringAssertion[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map(normalizeEngineeringAssertion)
+    .filter(
+      (assertion): assertion is ProjectEngineeringAssertion => assertion !== null
+    );
+}
+
+function normalizeEngineeringAssertion(
+  value: unknown
+): ProjectEngineeringAssertion | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const assertion = value as Partial<ProjectEngineeringAssertion>;
+
+  if (
+    typeof assertion.id !== "string" ||
+    !assertion.id.trim() ||
+    !isEngineeringAssertionKind(assertion.kind) ||
+    typeof assertion.value !== "string" ||
+    !assertion.value.trim() ||
+    !isEngineeringAssertionStatus(assertion.status) ||
+    typeof assertion.createdAt !== "string" ||
+    !assertion.createdAt.trim()
+  ) {
+    return null;
+  }
+
+  return {
+    id: assertion.id,
+    kind: assertion.kind,
+    value: assertion.value,
+    status: assertion.status,
+    createdAt: assertion.createdAt,
+    ...(typeof assertion.supersedesAssertionId === "string" &&
+    assertion.supersedesAssertionId.trim()
+      ? { supersedesAssertionId: assertion.supersedesAssertionId }
+      : {}),
+  };
+}
+
+function isEngineeringAssertionKind(
+  value: unknown
+): value is EngineeringAssertionKind {
+  return (
+    value === "assumption" ||
+    value === "constraint" ||
+    value === "uncertainty"
+  );
+}
+
+function isEngineeringAssertionStatus(
+  value: unknown
+): value is EngineeringAssertionStatus {
+  return (
+    value === "active" ||
+    value === "resolved" ||
+    value === "challenged" ||
+    value === "superseded"
+  );
 }
 
 function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent[] {
