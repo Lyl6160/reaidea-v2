@@ -397,10 +397,6 @@ HP-24.7 is complete, verified, tagged, pushed, and frozen at the final documenta
 
 REV now has deterministic, read-only trace awareness in Workshop orchestration. It can consume:
 
-- the current Engineering State,
-- Project validation trace and typed outcomes,
-- Project decisions,
-- active and superseded Concept direction decisions.
 
 REV may summarize recorded history and recommend the next Workshop bench. REV does not autonomously mutate Engineering State, create Project decisions, create evidence, complete Validation, or write provenance.
 
@@ -410,12 +406,17 @@ Build 5 is not required for HP-24.7.
 
 ---
 
-Do not reintroduce old prototype concepts as product truth without explicit review.
+# 19. Current HP-24.8 REV Continuity
 
-Legacy terms / concepts that require caution include:
+HP-24.8 is complete and verified through Build 4 at commit `841324f` on branch `sprint006-build24-8-engineering-provenance`, pending final freeze documentation commit and tag. The intended final tag is `v24.8-engineering-assertion-identity`.
 
-- AI Interview
-- fixed five-question interview
+The Project now supports stable identity for new Discovery-created assumptions and constraints, exact linkage from assumption-derived ValidationPlanItems, and identity-driven Validation lifecycle transitions. Engineering State remains the current snapshot; assertion records remain identity and lifecycle history.
+
+REV remains read-only. Validation outcomes do not become Project decisions. Source provenance, multi-source lineage, uncertainty identity, constraint Validation lifecycle, and other deferred layers remain future work.
+
+HP-24.9 — Engineering Assertion Source Provenance is not started.
+
+Build 5 is not required for HP-24.8.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

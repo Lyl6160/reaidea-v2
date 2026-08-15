@@ -327,4 +327,74 @@ The following are intentionally deferred and are not HP-24.7 failures:
 
 ### Freeze Decision
 
-HP-24.7 is a coherent, tested structural capability ready for freeze preparation. Documentation updates and the final freeze commit/tag remain subject to REV authorization.
+HP-24.7 is a coherent, tested structural capability frozen underneath HP-24.8.
+
+## HP-24.8 — Stable Engineering Assertion Identity
+
+**Status:** COMPLETE / VERIFIED / READY TO FREEZE
+
+**Protected foundation:** HP-24.7 at `e245c5d`, tag `v24.7-engineering-traceability`
+
+**Construction branch:** `sprint006-build24-8-engineering-provenance`
+
+### Build 1 — Stable Engineering Assertion Identity
+
+**Commit:** `c4f3103`
+
+Established the Project-owned assertion identity and lifecycle contract without changing Engineering State string arrays, adding writers, or fabricating legacy identity.
+
+### Build 2 — First Active Engineering Assertion Writer
+
+**Commit:** `baa04f2`
+
+Discovery creates an active assertion only when the same explicit action adds a genuinely new assumption or constraint string. Legacy matches, duplicates, and similar wording do not promote or infer identity.
+
+### Build 3 — Validation Planning to Active Assertion Identity Linkage
+
+**Commit:** `5f42a9c`
+
+Assumption-derived ValidationPlanItems link `sourceAssertionIds` only when exactly one active exact-value assertion matches. Legacy, ambiguous, uncertainty, evidence-gap, and reported-evidence items remain unlinked.
+
+### Build 4 — Identity-Driven Validation Assertion Lifecycle
+
+**Commit:** `841324f`
+
+Explicitly linked active assumption assertions transition through authoritative Validation: confirmed and refined resolve, challenged becomes challenged, and inconclusive remains active. Validation evidence/result trace remains intact and no ProjectDecision is created.
+
+### Final Outcome
+
+- **HP-24.8 status:** COMPLETE / VERIFIED / READY TO FREEZE
+- **Build 5 required:** NO
+- **Freeze blockers:** NONE
+- **Final freeze tag:** `v24.8-engineering-assertion-identity`
+- **Tag status:** To be created by the final freeze operation
+
+### Authority Boundaries
+
+- `Project.engineeringState` remains the current engineering snapshot.
+- `Project.engineeringAssertions` remains stable assertion identity and lifecycle history.
+- `Project.timeline` remains append-only engineering history.
+- `Project.evidence` remains authoritative Validation evidence.
+- `Project.decisions` remains deliberate engineering choices.
+- REV remains a read-only consumer.
+- Validation result is not a ProjectDecision.
+
+### Deferred Capabilities
+
+The following are intentionally deferred and are not HP-24.8 failures:
+
+- Assertion source provenance and `sourceTimelineEventIds`.
+- Discovery, Interview, and original-observation provenance.
+- Multi-source provenance and derivation rationale.
+- Constraint Validation planning and lifecycle execution.
+- Uncertainty assertion writer and lifecycle.
+- REV assertion presentation.
+- Evidence selection for Concept decisions.
+- Engineering-conclusion and engineering-direction writers.
+- Workshop Validation unification.
+- Specialist bench engines.
+- Autonomous REV engineering decisions.
+
+### Freeze Decision
+
+HP-24.8 is a coherent, tested stable assertion identity and lifecycle capability ready for final freeze. HP-24.9 is not started.

@@ -115,6 +115,109 @@ The following remain deferred and are not HP-24.7 failures:
 - Build 5 required: **NO**
 - Freeze blockers: **NONE**
 
+## HP-24.8 Consolidated Acceptance Record
+
+**Hold point:** HP-24.8 — Stable Engineering Assertion Identity
+**Branch:** `sprint006-build24-8-engineering-provenance`
+**Accepted implementation HEAD:** `841324f`
+**Status:** COMPLETE / VERIFIED / READY TO FREEZE
+**Final tag:** `v24.8-engineering-assertion-identity`
+
+### Build 1 — Assertion Identity Foundation
+
+**Commit:** `c4f3103`
+
+Passed:
+
+- Project-owned assertion contract and lifecycle statuses.
+- New Project initialization to an empty assertion collection.
+- Legacy normalization without promotion.
+- Valid and malformed assertion handling.
+- Engineering State string arrays unchanged.
+
+### Build 2 — Discovery Assertion Writer
+
+**Commit:** `baa04f2`
+
+Passed:
+
+- New assumption and constraint identities from explicit Discovery actions.
+- Exact Engineering State values and action timestamps preserved.
+- Multiple assertions receive distinct IDs.
+- Exact duplicate protection.
+- Legacy matching strings are not promoted.
+- Resolved reintroduction creates a new identity.
+- Similar wording does not infer a relationship.
+- No provenance or lifecycle transitions.
+
+### Build 3 — Validation Planning Linkage
+
+**Commit:** `5f42a9c`
+
+Passed:
+
+- Optional `sourceAssertionIds` on ValidationPlanItem.
+- Exactly-one active exact-value assumption match links its ID.
+- Zero matches remain unlinked.
+- Multiple active matches remain unlinked without guessing.
+- Human-readable target prefix stripping remains unchanged.
+- Legacy plans remain valid.
+- Non-assertion planning sources remain unlinked.
+- Structural storage normalization preserves valid IDs and drops malformed values.
+
+### Build 4 — Validation Assertion Lifecycle
+
+**Commit:** `841324f`
+
+Passed:
+
+- confirmed -> resolved.
+- refined -> resolved without supersession.
+- challenged -> challenged.
+- inconclusive -> active.
+- Missing and legacy links remain safe.
+- Multiple explicit links transition independently.
+- Historical statuses remain unchanged.
+- Assertion count and IDs remain stable.
+- Validation evidence/result trace remains intact.
+- No ProjectDecision, provenance, or extra assertion event is created.
+- Disposable browser validation and refresh persistence.
+
+### Authority and Deferred Capability Checks
+
+The accepted authority model is:
+
+- `Project.engineeringState` — current engineering snapshot.
+- `Project.engineeringAssertions` — stable assertion identity and lifecycle history.
+- `Project.timeline` — append-only engineering history.
+- `Project.evidence` — authoritative Validation evidence.
+- `Project.decisions` — deliberate engineering choices and directions.
+- REV — read-only consumer.
+
+The strongest implemented chain is:
+
+```text
+Discovery action
+-> current assumption
+-> ProjectEngineeringAssertion.id
+-> ValidationPlanItem.sourceAssertionIds
+-> ProjectEvidence
+-> validation result
+-> exact assertion lifecycle
+```
+
+HP-24.8 does not store assertion source timeline provenance. It does not provide constraint or uncertainty lifecycle coverage through the current Validation planner. Those are deferred capabilities, not freeze blockers.
+
+### Final Gates
+
+- TypeScript: **PASS**
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings
+- Production build: **PASS**
+- `git diff --check`: **PASS**
+- Live disposable Validation acceptance: **PASS**
+- Build 5 required: **NO**
+- Freeze blockers: **NONE**
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

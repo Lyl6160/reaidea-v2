@@ -1,10 +1,10 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.7 — Project-Native Engineering Traceability and Decision Chain
-**Branch:** `sprint006-build24-7-engineering-traceability`
-**Accepted HEAD:** `f4dbcf9`
-**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Construction checkpoint:** HP-24.8 — Stable Engineering Assertion Identity
+**Branch:** `sprint006-build24-8-engineering-provenance`
+**Accepted HEAD:** `841324f`
+**Status:** COMPLETE / VERIFIED / READY TO FREEZE
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
@@ -23,9 +23,51 @@ Accepted construction chain:
 - Build 3 — `3695953` — Project-native Concept review and direction decisions
 - Build 4 — `f4dbcf9` — Trace-aware REV Workshop orchestration
 
-Final freeze tag: `v24.7-engineering-traceability`
+Protected previous foundation:
 
-## HP-24.7 Capability
+- `e245c5d`
+- `v24.7-engineering-traceability`
+
+Accepted HP-24.8 construction chain:
+
+- Build 1 — `c4f3103` — Stable Engineering Assertion Identity
+- Build 2 — `baa04f2` — First active Engineering Assertion Writer from Discovery
+- Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
+- Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
+
+Final freeze tag: `v24.8-engineering-assertion-identity`
+
+## HP-24.8 Capability
+
+HP-24.8 establishes stable Project-owned identity for new Discovery-created assumptions and constraints, carries forward-created assumption identity into Validation planning, and transitions explicitly linked assumption assertions through authoritative Validation.
+
+The implemented forward chain is:
+
+```text
+Discovery action
+-> current assumption
+-> ProjectEngineeringAssertion.id
+-> ValidationPlanItem.sourceAssertionIds
+-> ValidationPlanItem.id
+-> ProjectEvidence.validationItemId
+-> ProjectEvidence.id
+-> validation-result-recorded
+-> typed validationOutcome
+-> exact assertion lifecycle status
+```
+
+The authority model remains:
+
+- `Project.engineeringState` — current engineering snapshot
+- `Project.engineeringAssertions` — stable assertion identity and lifecycle history
+- `Project.timeline` — append-only engineering history
+- `Project.evidence` — authoritative Validation evidence
+- `Project.decisions` — deliberate engineering choices and directions
+- REV — read-only trace consumer and recommender
+
+HP-24.8 does not change Engineering State string arrays or provide complete source provenance. Build 5 is not required.
+
+## HP-24.7 Frozen Foundation
 
 HP-24.7 establishes a Project-native traceability backbone for new authoritative engineering history:
 
@@ -42,7 +84,23 @@ The authority model remains:
 - `Project.decisions` — deliberate engineering choices and directions
 - REV — read-only trace consumer and recommender
 
-HP-24.7 does not provide complete inventor-statement provenance. Stable assumption identity, stable constraint identity, exact source-event provenance, explicit evidence selection for Concept decisions, specialist benches, Workshop Validation unification, and autonomous REV decisions remain deferred. Build 5 is not required for this hold point.
+HP-24.7 remains frozen underneath HP-24.8. Its Project-native validation trace, Concept decisions, and trace-aware REV remain unchanged.
+
+## HP-24.8 Deferred Capabilities
+
+- Assertion source timeline provenance.
+- Discovery, Interview, and original-observation provenance.
+- Multi-source provenance and derivation rationale.
+- Constraint Validation planning and lifecycle execution.
+- Uncertainty assertion writer and lifecycle.
+- REV assertion presentation.
+- Evidence selection for Concept decisions.
+- Engineering-conclusion and engineering-direction writers.
+- Workshop Validation unification.
+- Specialist bench engines.
+- Autonomous REV engineering decisions.
+
+Missing historical identity and provenance are acceptable. Fabricated identity and provenance are prohibited.
 
 ## Historical Build 24.2 Record
 
