@@ -441,6 +441,20 @@ Assertion source provenance is optional and structural. Missing historical sourc
 The existing Workshop Brief distinguishes Recorded Project fact, Source, Validation, and REV guidance. Validation lifecycle updates do not rewrite assertion source provenance. REV remains read-only; ProjectDecision provenance, Interview knowledge, and Original Observation are not assertion provenance without an explicit future writer.
 
 Manual/multi-source enrichment, supporting-source and derivation models, Interview/original-observation provenance, Concept evidence selection, engineering decision writers, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
+
+---
+
+# 22. Current HP-24.11 REV Continuity
+
+HP-24.11 — Explicit Concept Decision Evidence Selection is complete, verified, tagged, pushed, and frozen at the final documentation checkpoint on branch `sprint006-build24-11-concept-evidence-selection`. The final tag is `v24.11-concept-evidence-selection`.
+
+`ProjectDecision.supportingEvidenceIds` remains the existing Project-owned decision field, and `recordConceptDecision()` remains the only Concept decision writer. Before existing Concept 01 review and Concept 02 direction actions, the inventor may explicitly select zero-to-many current Project evidence records. The writer validates only exact evidence IDs, preserves supplied order, deduplicates first occurrence, filters unknown IDs, and permits zero selection.
+
+Selection is temporary UI state until a Concept decision is recorded. It clears after a successful action, does not carry from Concept 01 to Concept 02, and does not enrich historical or superseded decisions. The existing trace summary and Workshop Brief resolve only each stored decision evidence ID against Project evidence, retaining none-selected, available, unavailable, and partially available states without inference.
+
+Selected evidence is inventor-selected support, not proof, certainty, complete justification, Validation confirmation, decision provenance, or a recommendation input. REV does not select evidence and remains read-only. HP-24.10 remains frozen underneath.
+
+Post-decision editing, automatic recommendation/ranking, REV evidence selection, engineering-conclusion and engineering-direction workflows, supporting-source and derivation models, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

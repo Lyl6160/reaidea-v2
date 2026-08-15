@@ -323,6 +323,51 @@ Passed:
 
 Discovery only creates assertions for its existing extraction patterns; an unclassified sentence creates neither an assertion nor assertion provenance. This is not an HP-24.10 provenance defect.
 
+## HP-24.11 Consolidated Acceptance Record
+
+**Hold point:** HP-24.11 — Explicit Concept Decision Evidence Selection
+**Branch:** `sprint006-build24-11-concept-evidence-selection`
+**Accepted implementation HEAD:** `facdae6`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.11-concept-evidence-selection`
+
+### Build Chain
+
+- Build 1 — `e7d8bf9` — Accept explicit Concept supporting evidence.
+- Build 2 — `71c57ff` — Select evidence for Concept decisions.
+- Build 3 — `e3321ec` — Explain Concept supporting evidence.
+- Build 4 — `facdae6` — Restore clean evidence trace lint baseline.
+
+### Accepted Contract
+
+- `ProjectDecision.supportingEvidenceIds` remains the existing Project-owned field, and `recordConceptDecision()` remains the only Concept decision writer.
+- Before either existing Concept 01 review or Concept 02 direction action, the inventor may explicitly select zero-to-many current `ProjectEvidence` records. No evidence is automatically selected.
+- The writer persists only exact current evidence IDs, retains supplied order, deduplicates first occurrence, filters unknown IDs, and accepts zero selection.
+- Selection is temporary UI state until the existing decision action records it. It clears after a successful decision and does not carry from Concept 01 to Concept 02.
+- Historical and superseded decisions retain their own selections without enrichment, copying, or amendment.
+- The existing trace summary resolves a decision's stored evidence IDs exactly against `Project.evidence`, preserving empty, available, unavailable, and partially available states without inference.
+- Selected evidence is inventor-selected support, not proof, certainty, complete justification, Validation confirmation, decision provenance, or a recommendation input. Validation and decision source provenance remain separate.
+- REV does not select evidence and remains read-only. HP-24.10 remains frozen and unchanged.
+
+### Acceptance Results
+
+- Explicit selection, zero/one/multiple selection, deduplication, unknown filtering, and stored order: **PASS**.
+- Concept 01/Concept 02 selection, stage reset, success clearing, supersession, legacy decisions, and persistence: **PASS**.
+- Empty, missing, mixed, and selected Validation-evidence trace explanations: **PASS**.
+- Read-side purity, navigation persistence, and no recommendation-precedence change: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Capabilities
+
+- Post-decision evidence editing, automatic evidence recommendation, evidence strength/ranking, and REV evidence selection.
+- Engineering-conclusion and engineering-direction workflows.
+- Supporting-source provenance and derivation/rationale models.
+- Constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

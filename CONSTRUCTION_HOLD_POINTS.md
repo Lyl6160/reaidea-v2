@@ -505,3 +505,56 @@ Verified forward-only provenance, legacy compatibility, missing and partially av
 ### Freeze Decision
 
 HP-24.10 is a coherent, tested, forward-only assertion source provenance capability. Build 4 implementation is not required.
+
+## HP-24.11 — Explicit Concept Decision Evidence Selection
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.10 at `a4ada350`, tag `v24.10-assertion-source-provenance`
+
+**Construction branch:** `sprint006-build24-11-concept-evidence-selection`
+
+### Build 1 — Concept Decision Supporting-Evidence Writer Contract
+
+**Commit:** `e7d8bf9`
+
+The existing Concept decision writer accepts optional explicit supporting evidence IDs, validates exact current `ProjectEvidence` IDs, preserves order, deduplicates first occurrence, filters unknown IDs, and retains zero-selection and legacy caller compatibility.
+
+### Build 2 — Inventor Evidence Selection at Concept Decision
+
+**Commit:** `71c57ff`
+
+The existing Concept 01 review and Concept 02 direction controls allow the inventor to select zero-to-many current Project evidence records before recording the existing decision. Selection is temporary, clears after success, and does not carry between stages.
+
+### Build 3 — Trace-Aware Concept Decision Evidence Explanation
+
+**Commit:** `e3321ec`
+
+The existing trace summary and Workshop Brief resolve stored supporting evidence by exact ID only. They distinguish none explicitly selected, available, unavailable, and partially available evidence without changing active decision selection or Workshop recommendation precedence.
+
+### Build 4 — Clean Evidence Trace Lint Baseline
+
+**Commit:** `facdae6`
+
+Removed the unused trace type import. No behavior changed; the lint baseline returned to the three known Workshop image warnings.
+
+### Final Outcome
+
+- **HP-24.11 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.11-concept-evidence-selection`
+- **Freeze blockers:** NONE
+- **Concept decision writer:** `recordConceptDecision()` only
+- **Evidence selection:** Explicit inventor selection only
+- **Evidence resolution:** Exact stored evidence ID only
+- **REV authority:** Unchanged and read-only
+
+### Deferred Capabilities
+
+- Post-decision evidence editing, automatic evidence recommendation, evidence strength/ranking, and REV evidence selection.
+- Engineering-conclusion and engineering-direction workflows.
+- Supporting-source provenance and derivation/rationale models.
+- Constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.11 is a coherent, tested explicit Concept supporting-evidence capability. Supporting evidence remains selected support rather than proof, Validation confirmation, decision provenance, or a recommendation input.

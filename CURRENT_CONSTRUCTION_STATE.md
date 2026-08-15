@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.10 — Engineering Assertion Source Provenance
-**Branch:** `sprint006-build24-10-assertion-provenance`
-**Accepted HEAD:** `135c1b1`
+**Construction checkpoint:** HP-24.11 — Explicit Concept Decision Evidence Selection
+**Branch:** `sprint006-build24-11-concept-evidence-selection`
+**Accepted HEAD:** `facdae6`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.10 — Engineering Assertion Source Provenance**
+**HP-24.11 — Explicit Concept Decision Evidence Selection**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.10-assertion-source-provenance`
+Final freeze tag: `v24.11-concept-evidence-selection`
 
 Accepted HP-24.9 construction chain:
 
@@ -48,6 +48,13 @@ Accepted HP-24.10 construction chain:
 - Build 2 — `209ae04` — Discovery direct assertion source provenance
 - Build 3 — `135c1b1` — Provenance-aware assertion explanation
 - Build 4 — Readiness audit only; implementation not required
+
+Accepted HP-24.11 construction chain:
+
+- Build 1 — `e7d8bf9` — Explicit Concept supporting-evidence writer input
+- Build 2 — `71c57ff` — Inventor evidence selection at Concept decision
+- Build 3 — `e3321ec` — Trace-aware Concept supporting-evidence explanation
+- Build 4 — `facdae6` — Clean evidence trace lint baseline
 
 ## HP-24.8 Capability
 
@@ -129,6 +136,16 @@ HP-24.10 establishes forward-only, explicit assertion source provenance. New Dis
 The existing trace summary and Workshop Brief now separate Recorded Project fact, Source, Validation, and REV guidance. Source is not proof, complete causality, derivation, exact inventor wording, or Validation evidence. Validation lifecycle updates preserve assertion origin provenance. REV remains read-only, no second provenance store exists, and HP-24.9 recommendation precedence remains unchanged.
 
 Deferred capabilities include manual/multi-source enrichment writers, supporting-source and derivation models, Interview/original-observation provenance, Concept evidence selection, engineering decision writers, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+## HP-24.11 Capability
+
+HP-24.11 establishes explicit inventor-selected supporting evidence for existing Concept decisions. `ProjectDecision.supportingEvidenceIds` remains Project-owned, and `recordConceptDecision()` remains the only Concept decision writer. The inventor may select zero-to-many current Project evidence records before existing Concept 01 review or Concept 02 direction actions; selection is temporary until the decision records, clears after success, and does not carry across stages.
+
+The writer validates only exact current Project evidence IDs, preserves supplied order, deduplicates first occurrence, filters unknown IDs, and permits zero selection. Historical and superseded decisions retain their own selections without backfill, copying, or amendment.
+
+The existing trace summary and Workshop Brief resolve each selected evidence ID exactly against Project evidence and distinguish none explicitly selected, available, unavailable, and partially available states. Selected evidence is inventor-selected support, not proof, Validation confirmation, decision provenance, or a recommendation input. REV remains read-only, recommendation precedence is unchanged, and HP-24.10 remains frozen underneath.
+
+Deferred capabilities include post-decision evidence editing, automatic recommendation or ranking, REV evidence selection, engineering-conclusion and engineering-direction workflows, supporting-source and derivation models, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
 ## Historical Build 24.2 Record
 
