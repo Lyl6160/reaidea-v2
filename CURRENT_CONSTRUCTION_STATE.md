@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results
-**Branch:** `sprint006-build24-16-action-result-evidence`
-**Accepted HEAD:** `e003835`
+**Construction checkpoint:** HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review
+**Branch:** `sprint006-build24-17-project-evidence-conclusions`
+**Accepted HEAD:** `49f4980`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.16 — Explicit Project Evidence Adoption from Engineering Action Results**
+**HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.16-action-result-evidence`
+Final freeze tag: `v24.17-project-evidence-conclusions`
 
 Accepted HP-24.9 construction chain:
 
@@ -95,6 +95,16 @@ Accepted HP-24.16 construction chain:
 - Build 2 — `ad7dbee` — Inventor Project evidence adoption UI
 - Build 3 — `e003835` — Trace-aware Project evidence source provenance
 - Build 4 — Readiness audit only; implementation not required
+
+Protected HP-24.16 foundation:
+
+- `7319e12`
+- `v24.16-action-result-evidence`
+
+Accepted HP-24.17 construction chain:
+
+- Build 1 — `49f4980` — Drive Engineering Conclusion review from Project evidence
+- Build 2 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
 
@@ -256,6 +266,27 @@ ProjectEvidence
 ```
 
 The final step is explicit and inventor-owned. Result history does not become evidence merely because it exists.
+
+## HP-24.17 Capability
+
+HP-24.17 removes the remaining Validation-only UI gate from deliberate Engineering Conclusion review. `recordEngineeringConclusion()` was already source-agnostic and accepts exact Project evidence IDs; the review surface now becomes available whenever `project.evidence` contains at least one recorded ProjectEvidence item, regardless of how that evidence entered the Project.
+
+Validation evidence, explicitly adopted action-result-derived evidence, and legacy/source-less Project evidence are peers at the conclusion-review boundary. The existing selector preserves Project evidence order, starts with no selection, and passes only the inventor's explicitly selected evidence IDs to the unchanged conclusion writer. No evidence is auto-selected, ranked, promoted, or filtered by `validationOutcome`, `sourceTimelineEventIds`, source text, provenance type, or chronology.
+
+The inventor still writes the conclusion and reason deliberately. HP-24.17 adds no conclusion writer, no automatic conclusion generation, no evidence mutation, no Validation mutation, no Engineering State/assertion/action/direction mutation, no recommendation change, and no REV Project-write authority. Existing conclusion supersession, trace explanation, supporting-evidence resolution, and downstream direction behavior remain unchanged.
+
+The accepted authority loop is therefore source-agnostic at the evidence-to-conclusion boundary:
+
+```text
+Recorded ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+ProjectEvidence origin can be explained by provenance where recorded, but provenance does not determine whether evidence may be deliberately considered for an Engineering Conclusion.
 
 ## Historical Build 24.2 Record
 

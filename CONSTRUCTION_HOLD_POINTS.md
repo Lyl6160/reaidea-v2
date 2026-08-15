@@ -893,3 +893,65 @@ Legacy Project evidence without `sourceTimelineEventIds` remains valid and is re
 ### Freeze Decision
 
 HP-24.16 is a coherent, tested inventor-owned evidence-adoption capability. It closes the engineering feedback loop without collapsing recorded action history into evidence automatically and without broadening Validation, lifecycle, recommendation, or REV authority.
+
+## HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.16 at `7319e12`, tag `v24.16-action-result-evidence`
+
+**Construction branch:** `sprint006-build24-17-project-evidence-conclusions`
+
+### Build 1 — Project-Evidence-Driven Conclusion Review
+
+**Commit:** `49f4980`
+
+Removed the remaining Validation-outcome UI gate from the existing Engineering Conclusion review surface. The form is now available whenever the Project contains recorded ProjectEvidence, regardless of whether that evidence came from formal Validation, explicit action-result evidence adoption, or legacy/source-less Project evidence. The existing `recordEngineeringConclusion()` writer remains unchanged and remains the sole production conclusion writer.
+
+All Project evidence remains independently selectable in Project evidence order, with no preselection, ranking, provenance filtering, source-type filtering, automatic wording, or automatic conclusion creation. Exact inventor-selected supporting evidence IDs continue through the existing writer and existing conclusion supersession/trace behavior unchanged.
+
+### Build 2 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified zero-evidence blocking, action-result-derived evidence availability without Validation fields, Validation evidence regression, legacy/source-less evidence availability, mixed-evidence stored order, no automatic selection or wording, exact explicit supporting-evidence IDs, successful UI reset, navigation/refresh non-creation, unrelated-state preservation, one unchanged conclusion writer/caller boundary, unchanged HP-24.16 evidence adoption/provenance, unchanged recommendation precedence, and static quality gates.
+
+### Final Outcome
+
+- **HP-24.17 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.17-project-evidence-conclusions`
+- **Freeze blockers:** NONE
+- **Engineering Conclusion writer:** `recordEngineeringConclusion()` unchanged and sole production writer
+- **Conclusion-review gate:** Recorded ProjectEvidence exists
+- **Validation-outcome gate:** REMOVED from conclusion-review availability
+- **Evidence source-type filtering:** NOT INTRODUCED
+- **Automatic evidence selection:** NOT INTRODUCED
+- **Automatic conclusion generation:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.17 makes the existing evidence-to-conclusion boundary source-agnostic:
+
+```text
+Recorded ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+The Project may record provenance explaining where evidence came from, but neither Validation provenance nor action-result provenance determines whether an inventor may deliberately consider that Project evidence when recording an Engineering Conclusion.
+
+### Deferred Capabilities
+
+- Evidence lifecycle/status, ranking, proof/verification scoring, evidence supersession, deduplication, merging, or automatic promotion.
+- Automatic conclusion generation, evidence recommendation/ranking for conclusions, automatic supersession, or REV Project-write authority.
+- Generic causality/dependency graphs or inferred indirect relationships.
+- Action lifecycle/status/completion/cancellation, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.17 is a narrow but necessary authority correction. It removes a stale Validation-only UI assumption after HP-24.16 made ProjectEvidence source-agnostic, while preserving explicit inventor selection and the existing conclusion domain contract without adding new authority or machinery.

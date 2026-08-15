@@ -554,6 +554,33 @@ Evidence lifecycle/status/ranking, proof semantics, deduplication, generic depen
 
 ---
 
+# 28. Current HP-24.17 REV Continuity
+
+HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-17-project-evidence-conclusions`. The final tag is `v24.17-project-evidence-conclusions`.
+
+HP-24.16 made ProjectEvidence source-agnostic by allowing explicit inventor adoption of recorded engineering action results as Project evidence. The existing Engineering Conclusion domain writer was already source-agnostic, but the inventor UI still exposed the conclusion form only when at least one evidence item carried a Validation outcome. HP-24.17 removes that stale UI-only coupling.
+
+Engineering Conclusion review now becomes available whenever recorded ProjectEvidence exists. Validation evidence, action-result-derived evidence with `sourceTimelineEventIds`, and legacy/source-less evidence remain peers at this boundary. Project evidence order is preserved; no evidence is preselected, ranked, grouped by source authority, or filtered by provenance/source type.
+
+`recordEngineeringConclusion()` remains unchanged and remains the sole production Engineering Conclusion writer. Conclusion text, reason, and supporting evidence selection remain explicit inventor authority. Exact selected `supportingEvidenceIds` continue through the existing writer and existing supersession/trace behavior unchanged.
+
+HP-24.17 adds no Project schema, no new writer, no automatic conclusion, no evidence mutation, no Validation mutation, no Engineering State/assertion/action/direction mutation, no recommendation change, and no REV Project-write authority. Existing HP-24.16 evidence adoption and provenance remain unchanged.
+
+The accepted chain is now explicitly source-agnostic at the evidence-to-conclusion boundary:
+
+```text
+Recorded ProjectEvidence
+→ explicit inventor Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+→ Recorded Action Result History
+→ explicit ProjectEvidence adoption
+```
+
+Evidence provenance explains recorded origin where present; it does not grant, rank, or remove authority to consider Project evidence. Additional implementation beyond Build 1 is not required for HP-24.17.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

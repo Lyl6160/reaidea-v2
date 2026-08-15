@@ -642,6 +642,62 @@ Legacy evidence with no source provenance remains valid. Missing source IDs rema
 - Generic causality/dependency graphs or indirect relationship inference.
 - Action lifecycle/status/completion/cancellation, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
 
+## HP-24.17 Consolidated Acceptance Record
+
+**Hold point:** HP-24.17 — Project-Evidence-Driven Engineering Conclusion Review
+**Branch:** `sprint006-build24-17-project-evidence-conclusions`
+**Accepted implementation HEAD:** `49f4980`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.17-project-evidence-conclusions`
+
+### Build Chain
+
+- Build 1 — `49f4980` — Drive conclusions from Project evidence.
+- Build 2 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- The existing `recordEngineeringConclusion()` writer remains the sole production Engineering Conclusion writer and remains unchanged.
+- Engineering Conclusion review is exposed when `project.evidence.length > 0`; it no longer requires any evidence item to carry `validationOutcome`.
+- All recorded ProjectEvidence items remain independently available in stored Project evidence order, including Validation evidence, action-result-derived evidence carrying `sourceTimelineEventIds`, and legacy/source-less evidence.
+- Evidence is not preselected, ranked, grouped by source authority, filtered by provenance, or inferred from timeline history.
+- Conclusion and reason remain explicit inventor-written input. No automatic conclusion wording or conclusion creation is introduced.
+- Exact explicitly selected `supportingEvidenceIds` continue through the existing writer unchanged. Existing supersession behavior, trace explanation, downstream direction semantics, and recommendation precedence remain unchanged.
+- HP-24.17 introduces no evidence mutation, Validation mutation, Engineering State mutation, assertion mutation, engineering-action mutation, direction mutation, provenance mutation, additional Project writer, or REV Project-write authority.
+
+### Acceptance Results
+
+- Validation review with zero Project evidence hides Engineering Conclusion review: **PASS**.
+- Action-result-derived evidence with no Validation fields exposes Engineering Conclusion review and remains independently selectable: **PASS**.
+- Existing Validation evidence behavior remains available: **PASS**.
+- Legacy/source-less Project evidence remains available: **PASS**.
+- Mixed Project evidence preserves Project evidence order and exposes all evidence as peers: **PASS**.
+- Initial conclusion/reason fields remain empty and no supporting evidence is preselected: **PASS**.
+- Exact explicit supporting-evidence selections `["E1"]` and `["E1", "E3"]` persist exactly through the existing writer: **PASS**.
+- Successful recording resets temporary UI state; Workshop/Discovery navigation and refresh create no automatic conclusions: **PASS**.
+- Evidence, Validation Plan, Engineering State, engineering assertions, engineering actions, existing directions, and recorded action-result history remain unchanged except for the deliberate conclusion decision and its expected timeline event: **PASS**.
+- HP-24.16 evidence adoption/provenance and recommendation precedence remain unchanged: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+The evidence-to-conclusion boundary now depends on recorded ProjectEvidence itself, not on a Validation-specific evidence field:
+
+```text
+Recorded ProjectEvidence
+→ explicit inventor Engineering Conclusion
+```
+
+Evidence provenance can explain where evidence came from, but provenance source type does not grant or remove conclusion-review authority.
+
+### Freeze Decision
+
+Build 1 fully closes the HP-24.17 seam because the existing conclusion domain writer, trace model, supersession behavior, and downstream direction contract were already source-agnostic. No additional production implementation is required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
