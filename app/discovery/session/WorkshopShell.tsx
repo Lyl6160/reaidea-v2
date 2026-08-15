@@ -872,6 +872,13 @@ export default function WorkshopShell({
           <p className="workshop-brief-partner">AI Engineering Partner · {workshop.summary}</p>
           <h3>Recommended next: {recommendedBench.label}</h3>
           <p className="workshop-brief-reason"><strong>Why:</strong> {recommendedBench.reason}</p>
+          {workshop.assertionGuidance && (
+            <div className="workshop-brief-trace" aria-label="Recorded engineering trace">
+              <p><strong>Recorded Project fact:</strong> {workshop.assertionGuidance.recordedFact}</p>
+              <p><strong>Validation:</strong> {workshop.assertionGuidance.validationFact}</p>
+              <p><strong>REV guidance:</strong> {workshop.assertionGuidance.guidance}</p>
+            </div>
+          )}
           {workshop.trace.activeConceptDirection && (
             <p className="workshop-brief-trace">
               <strong>Recorded direction:</strong>{" "}

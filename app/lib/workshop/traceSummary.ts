@@ -51,7 +51,10 @@ export type AssertionTraceEntry = {
 export type AssertionTraceSummary = {
   assertions: AssertionTraceEntry[];
   activeAssumptions: AssertionTraceEntry[];
+  historicalAssertions: AssertionTraceEntry[];
   legacyCurrentAssumptions: string[];
+  primaryAssertion: AssertionTraceEntry | null;
+  primaryLegacyCurrentAssumption: string | null;
 };
 
 export type EngineeringTraceSummary = {
@@ -129,8 +132,38 @@ function summarizeAssertions(project: Project): AssertionTraceSummary {
   return {
     assertions: entries,
     activeAssumptions,
+    historicalAssertions: entries.filter((entry) => entry.status !== "active"),
     legacyCurrentAssumptions,
+    primaryAssertion: selectPrimaryAssertion(activeAssumptions),
+    primaryLegacyCurrentAssumption:
+      activeAssumptions.length === 0 ? legacyCurrentAssumptions[0] ?? null : null,
   };
+}
+
+function selectPrimaryAssertion(
+  assertions: AssertionTraceEntry[]
+): AssertionTraceEntry | null {
+  const ranked = assertions
+    .map((assertion, index) => ({ assertion, index, rank: assertionRank(assertion) }))
+    .sort((left, right) => right.rank - left.rank || left.index - right.index);
+
+  return ranked[0]?.assertion ?? null;
+}
+
+function assertionRank(assertion: AssertionTraceEntry): number {
+  if (assertion.validationLinks.some((link) => link.planStatus === "in-progress")) {
+    return 5;
+  }
+
+  if (assertion.latestValidationOutcome === "inconclusive") {
+    return 4;
+  }
+
+  if (assertion.validationLinks.some((link) => link.planStatus === "planned")) {
+    return 3;
+  }
+
+  return assertion.validationLinks.length > 0 ? 2 : 1;
 }
 
 function createAssertionValidationLink(

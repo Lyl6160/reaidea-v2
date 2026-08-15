@@ -2,6 +2,8 @@ import type { Project } from "../core/project";
 import { assessDiscovery } from "./discoveryReasoning";
 import {
   summarizeEngineeringTrace,
+  type AssertionTraceEntry,
+  type AssertionValidationLink,
   type EngineeringTraceSummary,
 } from "./traceSummary";
 
@@ -36,6 +38,13 @@ export type WorkshopState = {
   recommendedBench: WorkshopBenchId;
   summary: string;
   trace: EngineeringTraceSummary;
+  assertionGuidance: AssertionGuidance | null;
+};
+
+export type AssertionGuidance = {
+  recordedFact: string;
+  validationFact: string;
+  guidance: string;
 };
 
 export type WorkshopBenchDefinition = {
@@ -235,6 +244,10 @@ export function assessWorkshop(project: Project): WorkshopState {
     direction,
     latestOutcome
   );
+  const assertionGuidance = createAssertionGuidance(
+    trace,
+    recommended.label
+  );
 
   return {
     benches,
@@ -245,7 +258,78 @@ export function assessWorkshop(project: Project): WorkshopState {
         ? `${recommended.label} has new value waiting because another part of the Project has advanced.`
         : `${recommended.label} is the strongest next place to work from the current Project state.`),
     trace,
+    assertionGuidance,
   };
+}
+
+function createAssertionGuidance(
+  trace: EngineeringTraceSummary,
+  recommendedBenchLabel: string
+): AssertionGuidance | null {
+  const assertion =
+    trace.assertionTrace.primaryAssertion ??
+    (trace.assertionTrace.primaryLegacyCurrentAssumption
+      ? null
+      : trace.assertionTrace.historicalAssertions[0] ?? null);
+
+  if (!assertion) {
+    const legacy = trace.assertionTrace.primaryLegacyCurrentAssumption;
+    if (!legacy) return null;
+
+    return {
+      recordedFact: `Current assumption recorded in Engineering State: ${legacy}`,
+      validationFact: "No stable assertion identity or linked Project Validation is recorded.",
+      guidance: `REV recommends ${recommendedBenchLabel} from the current Engineering State.`,
+    };
+  }
+
+  const link = selectPrimaryValidationLink(assertion);
+  const recordedFact = `${assertion.kind === "assumption" ? "Current assumption" : "Recorded assertion"}: ${assertion.value}. Lifecycle: ${lifecycleLabel(assertion.status)}.`;
+  const validationFact = link
+    ? link.outcome
+      ? `Latest linked Validation outcome: ${outcomeLabel(link.outcome)}.`
+      : `Linked Project Validation is ${link.planStatus}.`
+    : "No linked Project Validation is recorded.";
+
+  let guidance = `REV recommends ${recommendedBenchLabel} from the current Project state.`;
+  if (link?.outcome === "inconclusive" && assertion.status === "active") {
+    guidance = `The assumption remains active because the latest linked Validation was inconclusive. REV recommends ${recommendedBenchLabel} while the uncertainty remains.`;
+  } else if (link?.outcome === "challenged" && assertion.status === "challenged") {
+    guidance = `Validation challenged this assumption. REV recommends ${recommendedBenchLabel} to reconsider the engineering direction.`;
+  } else if (link?.planStatus === "planned" || link?.planStatus === "in-progress") {
+    guidance = `REV recommends ${recommendedBenchLabel} to continue the recorded Validation path.`;
+  } else if (assertion.status === "resolved") {
+    guidance = `Validation addressed this assertion without claiming universal proof. REV recommends ${recommendedBenchLabel} from the current Project state.`;
+  }
+
+  return { recordedFact, validationFact, guidance };
+}
+
+function selectPrimaryValidationLink(
+  assertion: EngineeringTraceSummary["assertionTrace"]["assertions"][number]
+) {
+  return [...assertion.validationLinks].sort((left, right) => {
+    const leftRank = left.planStatus === "in-progress" ? 3 : left.planStatus === "planned" ? 2 : 1;
+    const rightRank = right.planStatus === "in-progress" ? 3 : right.planStatus === "planned" ? 2 : 1;
+    return rightRank - leftRank;
+  })[0];
+}
+
+function lifecycleLabel(status: AssertionTraceEntry["status"]): string {
+  switch (status) {
+    case "active":
+      return "still active / unresolved";
+    case "resolved":
+      return "addressed by Validation";
+    case "challenged":
+      return "challenged by Validation";
+    case "superseded":
+      return "superseded by an explicit later assertion";
+  }
+}
+
+function outcomeLabel(outcome: NonNullable<AssertionValidationLink["outcome"]>): string {
+  return outcome.charAt(0).toUpperCase() + outcome.slice(1);
 }
 
 function recommendationReasonForTrace(
