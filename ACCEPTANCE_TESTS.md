@@ -368,6 +368,53 @@ Discovery only creates assertions for its existing extraction patterns; an uncla
 - Supporting-source provenance and derivation/rationale models.
 - Constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
+## HP-24.12 Consolidated Acceptance Record
+
+**Hold point:** HP-24.12 — Explicit Engineering Conclusion from Validation Evidence
+**Branch:** `sprint006-build24-12-engineering-conclusion`
+**Accepted implementation HEAD:** `2a7da04`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.12-engineering-conclusion`
+
+### Build Chain
+
+- Build 1 — `fcab3e2` — Establish engineering conclusion writer.
+- Build 2 — `d9b6570` — Record inventor engineering conclusions.
+- Build 3 — `2a7da04` — Explain engineering conclusions.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- The existing `engineering-conclusion` ProjectDecision category is reused, and `recordEngineeringConclusion()` is the only conclusion writer.
+- Inventor-written conclusion text and reason are recorded only through the existing Validation review surface after Validation evidence exists.
+- Supporting evidence is explicit zero-to-many ProjectEvidence selection. Exact current evidence IDs are preserved in supplied order, duplicate first occurrences are retained once, unknown IDs are filtered, and zero selection is valid.
+- A successful action creates one decision and one `engineering-conclusion-recorded` timeline event atomically. Project and Project evidence inputs remain immutable.
+- Validation item IDs, source timeline event IDs, and assertion relationships are not inferred. Validation outcomes remain evidence context, not conclusion proof.
+- Supersession is explicit and only between engineering conclusions. Historical conclusions remain unchanged; independent conclusions remain current together, and no latest-as-active rule exists.
+- The trace resolves selected evidence by exact ID only, preserving none-selected, available, unavailable, and partially available states. Supporting evidence is inventor-selected support, not proof, decision provenance, or a recommendation input.
+- REV does not create, rank, or select conclusions/evidence. Engineering conclusions do not alter recommendation precedence, and engineering direction remains absent.
+
+### Acceptance Results
+
+- Explicit text/reason, zero/one/multiple evidence, duplicate filtering, unknown filtering, and no inferred links: **PASS**.
+- Same-category supersession, cross-category rejection, historical preservation, independent current conclusions, chains, and separate chains: **PASS**.
+- Exact evidence resolution, missing/mixed states, read purity, live Validation-review action, navigation, and refresh persistence: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Defensive Malformed-Data Behavior
+
+Malformed externally stored circular engineering-conclusion supersession can yield zero current conclusions. The read side does not crash, recurse, mutate Project, repair, or fabricate history. The legitimate conclusion writer cannot create a circular supersession relationship.
+
+### Deferred Capabilities
+
+- Engineering direction, explicit decision-to-Validation-item links, decision source-timeline provenance, and decision-to-assertion references.
+- Automatic evidence ranking, automatic conclusion generation, REV conclusion creation/ranking, and post-decision editing.
+- Derivation/rationale graphs, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.11 — Explicit Concept Decision Evidence Selection
-**Branch:** `sprint006-build24-11-concept-evidence-selection`
-**Accepted HEAD:** `facdae6`
+**Construction checkpoint:** HP-24.12 — Explicit Engineering Conclusion from Validation Evidence
+**Branch:** `sprint006-build24-12-engineering-conclusion`
+**Accepted HEAD:** `2a7da04`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.11 — Explicit Concept Decision Evidence Selection**
+**HP-24.12 — Explicit Engineering Conclusion from Validation Evidence**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.11-concept-evidence-selection`
+Final freeze tag: `v24.12-engineering-conclusion`
 
 Accepted HP-24.9 construction chain:
 
@@ -55,6 +55,13 @@ Accepted HP-24.11 construction chain:
 - Build 2 — `71c57ff` — Inventor evidence selection at Concept decision
 - Build 3 — `e3321ec` — Trace-aware Concept supporting-evidence explanation
 - Build 4 — `facdae6` — Clean evidence trace lint baseline
+
+Accepted HP-24.12 construction chain:
+
+- Build 1 — `fcab3e2` — Engineering conclusion domain writer
+- Build 2 — `d9b6570` — Inventor engineering conclusion action
+- Build 3 — `2a7da04` — Trace-aware engineering conclusion explanation
+- Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
 
@@ -146,6 +153,16 @@ The writer validates only exact current Project evidence IDs, preserves supplied
 The existing trace summary and Workshop Brief resolve each selected evidence ID exactly against Project evidence and distinguish none explicitly selected, available, unavailable, and partially available states. Selected evidence is inventor-selected support, not proof, Validation confirmation, decision provenance, or a recommendation input. REV remains read-only, recommendation precedence is unchanged, and HP-24.10 remains frozen underneath.
 
 Deferred capabilities include post-decision evidence editing, automatic recommendation or ranking, REV evidence selection, engineering-conclusion and engineering-direction workflows, supporting-source and derivation models, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+## HP-24.12 Capability
+
+HP-24.12 establishes explicit inventor-owned engineering conclusions after recorded Validation evidence is available for review. The existing `engineering-conclusion` ProjectDecision category is used by the sole `recordEngineeringConclusion()` writer. Inventor-written conclusion text, reason, and optional selected Project evidence are recorded atomically with one dedicated timeline event.
+
+Evidence selection and trace resolution use exact Project evidence IDs only. Unknown IDs are filtered, duplicates are normalized, zero selection remains valid, and no Validation-item, source-timeline, or assertion relationship is inferred. Selected evidence is support, not proof, Validation confirmation, decision provenance, or a recommendation input.
+
+Engineering conclusions supersede only by explicit same-category reference. Multiple independent conclusions can remain current together; no latest-as-active rule exists. The existing trace and Brief explain current conclusions and their selected evidence without changing recommendation precedence. REV remains read-only, engineering direction remains deferred, and HP-24.11 remains frozen underneath.
+
+Malformed external circular supersession safely yields no current conclusion without mutation, repair, or fabricated history. Deferred capabilities include engineering direction, explicit decision links, automatic generation/ranking, REV conclusion authority, post-decision editing, derivation graphs, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
 ## Historical Build 24.2 Record
 

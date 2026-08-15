@@ -558,3 +558,59 @@ Removed the unused trace type import. No behavior changed; the lint baseline ret
 ### Freeze Decision
 
 HP-24.11 is a coherent, tested explicit Concept supporting-evidence capability. Supporting evidence remains selected support rather than proof, Validation confirmation, decision provenance, or a recommendation input.
+
+## HP-24.12 — Explicit Engineering Conclusion from Validation Evidence
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.11 at `a25c314`, tag `v24.11-concept-evidence-selection`
+
+**Construction branch:** `sprint006-build24-12-engineering-conclusion`
+
+### Build 1 — Engineering Conclusion Domain Writer
+
+**Commit:** `fcab3e2`
+
+Established `recordEngineeringConclusion()` using the existing `engineering-conclusion` decision category. Explicit conclusion text, reason, and optional supporting evidence IDs create one decision and one conclusion-recorded timeline event atomically. Exact evidence ID filtering, same-category supersession, and no inferred Validation/source/assertion links are enforced.
+
+### Build 2 — Inventor Engineering Conclusion Action
+
+**Commit:** `d9b6570`
+
+The existing post-Validation review surface now lets the inventor deliberately enter a conclusion and reason, optionally select Project evidence, and explicitly supersede an earlier engineering conclusion. Temporary form state clears after success and is never Project truth before recording.
+
+### Build 3 — Trace-Aware Engineering Conclusion Explanation
+
+**Commit:** `2a7da04`
+
+The existing trace summary and Workshop Brief explain current engineering conclusions, inventor reasons, and exact selected evidence states. Currentness is defined only by explicit engineering-conclusion supersession; multiple independent conclusions may remain current and recommendation precedence is unchanged.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified explicit inputs, evidence validation, immutable history, supersession, plural current conclusions, malformed-data safety, exact evidence resolution, read purity, browser persistence, writer boundaries, and frozen foundation regression.
+
+### Final Outcome
+
+- **HP-24.12 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.12-engineering-conclusion`
+- **Freeze blockers:** NONE
+- **Engineering conclusion writer:** `recordEngineeringConclusion()` only
+- **Evidence selection and resolution:** Explicit, exact ID only
+- **Current conclusion rule:** Explicit same-category supersession only
+- **REV authority:** Unchanged and read-only
+
+### Defensive Malformed-Data Behavior
+
+Circular external conclusion supersession may yield zero current conclusions. It is read safely without recursion, mutation, repair, or fabricated history; the legitimate writer cannot create that shape.
+
+### Deferred Capabilities
+
+- Engineering direction, explicit decision-to-Validation-item links, decision source-timeline provenance, and decision-to-assertion references.
+- Automatic evidence ranking, conclusion generation, REV conclusion creation/ranking, and post-decision editing.
+- Derivation/rationale graphs, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.12 is a coherent, tested, explicit inventor engineering-conclusion capability. Supporting evidence remains support rather than proof, and conclusions remain trace explanation only without recommendation authority.

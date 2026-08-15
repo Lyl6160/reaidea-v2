@@ -455,6 +455,22 @@ Selection is temporary UI state until a Concept decision is recorded. It clears 
 Selected evidence is inventor-selected support, not proof, certainty, complete justification, Validation confirmation, decision provenance, or a recommendation input. REV does not select evidence and remains read-only. HP-24.10 remains frozen underneath.
 
 Post-decision editing, automatic recommendation/ranking, REV evidence selection, engineering-conclusion and engineering-direction workflows, supporting-source and derivation models, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred.
+
+---
+
+# 23. Current HP-24.12 REV Continuity
+
+HP-24.12 — Explicit Engineering Conclusion from Validation Evidence is complete, verified, tagged, pushed, and frozen at the final documentation checkpoint on branch `sprint006-build24-12-engineering-conclusion`. The final tag is `v24.12-engineering-conclusion`.
+
+The existing `engineering-conclusion` ProjectDecision category is now used by the sole `recordEngineeringConclusion()` writer. After reviewing recorded Validation evidence, the inventor may explicitly record a conclusion, a reason, and zero-to-many selected Project evidence records. One successful action creates one decision and one `engineering-conclusion-recorded` event atomically; empty conclusion text is rejected.
+
+Supporting evidence uses exact Project evidence IDs only. Unknown IDs are filtered, duplicate first occurrences are normalized, zero selection is valid, and no Validation-item, source-timeline, or assertion link is inferred. Conclusion supersession is explicit and same-category only; historical conclusions remain unchanged, while multiple independent conclusions can remain current together.
+
+The existing trace summary and Workshop Brief explain only current conclusions and their selected evidence states. Selected evidence is inventor-selected support, not proof, certainty, Validation confirmation, decision provenance, or recommendation authority. REV does not create, rank, or select conclusions/evidence and remains read-only. Engineering direction remains deferred.
+
+Malformed external circular conclusion supersession is read safely without mutation, repair, recursion, or fabricated history; it may yield zero current conclusions. The legitimate writer cannot create that malformed relationship.
+
+Engineering direction, explicit decision links, automatic generation/ranking, REV conclusion creation/ranking, post-decision editing, derivation graphs, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count
