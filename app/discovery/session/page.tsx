@@ -716,9 +716,7 @@ function ValidationPlanView({
   const completedCount = plan.items.filter(
     (item) => item.status === "completed"
   ).length;
-  const hasRecordedValidationResult = project.evidence.some(
-    (evidence) => evidence.validationOutcome
-  );
+  const hasProjectEvidence = project.evidence.length > 0;
   const existingConclusions = project.decisions.filter(
     (decision) => decision.category === "engineering-conclusion"
   );
@@ -1135,11 +1133,11 @@ function ValidationPlanView({
         ))}
       </div>
 
-      {hasRecordedValidationResult && (
+      {hasProjectEvidence && (
         <section className="engineering-conclusion" aria-label="Engineering conclusion">
           <p className="validation-label">Engineering Conclusion</p>
           <p>
-            After reviewing the recorded Validation results, you may deliberately record what you conclude from the evidence you selected.
+            After reviewing recorded Project evidence, you may deliberately record what you conclude from the evidence you explicitly select. Project evidence may come from Validation or another inventor-adopted engineering source.
           </p>
 
           <div className="validation-field">
@@ -1171,7 +1169,7 @@ function ValidationPlanView({
           </div>
 
           <fieldset className="conclusion-evidence-selector">
-            <legend>Supporting evidence (optional)</legend>
+            <legend>Supporting Project evidence (optional)</legend>
             {project.evidence.length === 0 ? (
               <p>No Project evidence recorded yet.</p>
             ) : (
