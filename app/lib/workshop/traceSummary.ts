@@ -31,6 +31,30 @@ export type ConceptSupportingEvidenceReference = {
   validationOutcome?: ValidationOutcome;
 };
 
+export type EngineeringConclusionSupportingEvidenceState =
+  | "none-explicitly-selected"
+  | "selected-and-available"
+  | "selected-partially-available"
+  | "selected-unavailable";
+
+export type EngineeringConclusionSupportingEvidenceReference = {
+  evidenceId: string;
+  available: boolean;
+  summary?: string;
+  source?: string;
+  validationOutcome?: ValidationOutcome;
+};
+
+export type EngineeringConclusionTraceEntry = {
+  id: string;
+  conclusion: string;
+  reason: string;
+  createdAt: string;
+  supportingEvidenceState: EngineeringConclusionSupportingEvidenceState;
+  supportingEvidence: EngineeringConclusionSupportingEvidenceReference[];
+  supersedesDecisionId?: string;
+};
+
 export type LatestValidationResult = {
   validationItemId: string;
   evidenceId: string;
@@ -91,6 +115,8 @@ export type EngineeringTraceSummary = {
   assertionTrace: AssertionTraceSummary;
   activeConceptReview: ActiveConceptDecision | null;
   activeConceptDirection: ActiveConceptDecision | null;
+  currentEngineeringConclusions: EngineeringConclusionTraceEntry[];
+  supersededEngineeringConclusions: EngineeringConclusionTraceEntry[];
   latestValidationResult: LatestValidationResult | null;
   unresolvedValidation: boolean;
   validationPlanComplete: boolean;
@@ -112,6 +138,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
       "concept-direction",
       2
     ),
+    ...summarizeEngineeringConclusions(project),
     latestValidationResult,
     unresolvedValidation: Boolean(
       validationPlan?.items.some((item) => item.status !== "completed") ||
@@ -124,6 +151,94 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
       )
     ),
   };
+}
+
+function summarizeEngineeringConclusions(project: Project): Pick<
+  EngineeringTraceSummary,
+  "currentEngineeringConclusions" | "supersededEngineeringConclusions"
+> {
+  const conclusions = project.decisions.filter(
+    (decision) => decision.category === "engineering-conclusion"
+  );
+  const conclusionIds = new Set(conclusions.map((decision) => decision.id));
+  const supersededIds = new Set(
+    conclusions
+      .map((decision) => {
+        const supersededId = decision.supersedesDecisionId;
+        return supersededId && supersededId !== decision.id && conclusionIds.has(supersededId)
+          ? supersededId
+          : null;
+      })
+      .filter((id): id is string => Boolean(id))
+  );
+  const toTraceEntry = (decision: (typeof conclusions)[number]) =>
+    createEngineeringConclusionTraceEntry(project, decision);
+
+  return {
+    currentEngineeringConclusions: conclusions
+      .filter((decision) => !supersededIds.has(decision.id))
+      .map(toTraceEntry),
+    supersededEngineeringConclusions: conclusions
+      .filter((decision) => supersededIds.has(decision.id))
+      .map(toTraceEntry),
+  };
+}
+
+function createEngineeringConclusionTraceEntry(
+  project: Project,
+  decision: Project["decisions"][number]
+): EngineeringConclusionTraceEntry {
+  const supportingEvidence = resolveEngineeringConclusionSupportingEvidence(
+    project.evidence,
+    decision.supportingEvidenceIds
+  );
+
+  return {
+    id: decision.id,
+    conclusion: decision.decision,
+    reason: decision.reason,
+    createdAt: decision.createdAt,
+    supportingEvidenceState: engineeringConclusionSupportingEvidenceState(
+      supportingEvidence
+    ),
+    supportingEvidence,
+    ...(decision.supersedesDecisionId
+      ? { supersedesDecisionId: decision.supersedesDecisionId }
+      : {}),
+  };
+}
+
+function resolveEngineeringConclusionSupportingEvidence(
+  evidence: Project["evidence"],
+  supportingEvidenceIds: string[]
+): EngineeringConclusionSupportingEvidenceReference[] {
+  return supportingEvidenceIds.map((evidenceId) => {
+    const selectedEvidence = evidence.find((item) => item.id === evidenceId);
+
+    return selectedEvidence
+      ? {
+          evidenceId,
+          available: true,
+          summary: selectedEvidence.summary,
+          source: selectedEvidence.source,
+          ...(selectedEvidence.validationOutcome
+            ? { validationOutcome: selectedEvidence.validationOutcome }
+            : {}),
+        }
+      : { evidenceId, available: false };
+  });
+}
+
+function engineeringConclusionSupportingEvidenceState(
+  supportingEvidence: EngineeringConclusionSupportingEvidenceReference[]
+): EngineeringConclusionSupportingEvidenceState {
+  if (supportingEvidence.length === 0) return "none-explicitly-selected";
+
+  const availableCount = supportingEvidence.filter((reference) => reference.available).length;
+  if (availableCount === 0) return "selected-unavailable";
+  if (availableCount === supportingEvidence.length) return "selected-and-available";
+
+  return "selected-partially-available";
 }
 
 function summarizeAssertions(project: Project): AssertionTraceSummary {

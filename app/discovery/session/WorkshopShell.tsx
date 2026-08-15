@@ -194,6 +194,37 @@ function formatConceptSupportingEvidence(
     : selectedText;
 }
 
+function formatEngineeringConclusionSupportingEvidence(
+  conclusion: WorkshopState["trace"]["currentEngineeringConclusions"][number]
+): string {
+  if (conclusion.supportingEvidenceState === "none-explicitly-selected") {
+    return "No supporting evidence was explicitly selected for this conclusion.";
+  }
+
+  const available = conclusion.supportingEvidence.filter(
+    (reference) => reference.available
+  );
+  const unavailableCount = conclusion.supportingEvidence.length - available.length;
+
+  if (available.length === 0) {
+    return "Selected supporting evidence references are unavailable in the current Project.";
+  }
+
+  const selectedEvidence = available
+    .map((reference) => {
+      const validationOutcome = reference.validationOutcome
+        ? ` · Validation outcome: ${reference.validationOutcome}`
+        : "";
+      return `${reference.summary} — ${reference.source}${validationOutcome}`;
+    })
+    .join("; ");
+  const selectedText = `The inventor recorded this evidence as supporting the conclusion: ${selectedEvidence}.`;
+
+  return unavailableCount > 0
+    ? `${selectedText} ${unavailableCount} selected evidence ${unavailableCount === 1 ? "reference is" : "references are"} unavailable in the current Project.`
+    : selectedText;
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -977,6 +1008,21 @@ export default function WorkshopShell({
                   workshop.trace.activeConceptDirection ?? workshop.trace.activeConceptReview
                 )}
               </p>
+            </div>
+          )}
+          {workshop.trace.currentEngineeringConclusions.length > 0 && (
+            <div className="workshop-brief-trace" aria-label="Current engineering conclusions">
+              <p><strong>Engineering conclusions:</strong></p>
+              {workshop.trace.currentEngineeringConclusions.map((conclusion) => (
+                <div key={conclusion.id} className="workshop-brief-conclusion">
+                  <p><strong>Conclusion:</strong> {conclusion.conclusion}</p>
+                  {conclusion.reason && <p><strong>Reason:</strong> {conclusion.reason}</p>}
+                  <p>
+                    <strong>Supporting evidence:</strong>{" "}
+                    {formatEngineeringConclusionSupportingEvidence(conclusion)}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
           {workshop.trace.latestValidationResult && (
@@ -2847,6 +2893,16 @@ export default function WorkshopShell({
 
         .station-summary p {
           margin: 6px 0 0;
+        }
+
+        .workshop-brief-conclusion {
+          margin-top: 9px;
+          padding-top: 9px;
+          border-top: 1px solid rgba(111, 156, 168, 0.2);
+        }
+
+        .workshop-brief-conclusion p {
+          margin: 4px 0 0;
         }
 
         .station-summary-label {
