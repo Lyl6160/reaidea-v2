@@ -79,6 +79,29 @@ export type EngineeringDirectionTraceEntry = {
   supersedesDecisionId?: string;
 };
 
+export type EngineeringActionDirectionBasisState =
+  | "no-basis-recorded"
+  | "recorded-and-available"
+  | "recorded-partially-available"
+  | "recorded-unavailable";
+
+export type EngineeringActionDirectionBasisReference = {
+  directionId: string;
+  available: boolean;
+  direction?: string;
+  reason?: string;
+  directionStatus?: "current" | "superseded";
+};
+
+export type EngineeringActionTraceEntry = {
+  id: string;
+  action: string;
+  reason: string;
+  createdAt: string;
+  basisState: EngineeringActionDirectionBasisState;
+  basisDirections: EngineeringActionDirectionBasisReference[];
+};
+
 export type LatestValidationResult = {
   validationItemId: string;
   evidenceId: string;
@@ -143,6 +166,7 @@ export type EngineeringTraceSummary = {
   supersededEngineeringConclusions: EngineeringConclusionTraceEntry[];
   currentEngineeringDirections: EngineeringDirectionTraceEntry[];
   supersededEngineeringDirections: EngineeringDirectionTraceEntry[];
+  adoptedEngineeringActions: EngineeringActionTraceEntry[];
   latestValidationResult: LatestValidationResult | null;
   unresolvedValidation: boolean;
   validationPlanComplete: boolean;
@@ -166,6 +190,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
     ),
     ...summarizeEngineeringConclusions(project),
     ...summarizeEngineeringDirections(project),
+    adoptedEngineeringActions: summarizeEngineeringActions(project),
     latestValidationResult,
     unresolvedValidation: Boolean(
       validationPlan?.items.some((item) => item.status !== "completed") ||
@@ -226,17 +251,7 @@ function summarizeEngineeringDirections(project: Project): Pick<
   const directions = project.decisions.filter(
     (decision) => decision.category === "engineering-direction"
   );
-  const directionIds = new Set(directions.map((decision) => decision.id));
-  const supersededIds = new Set(
-    directions
-      .map((decision) => {
-        const supersededId = decision.supersedesDecisionId;
-        return supersededId && supersededId !== decision.id && directionIds.has(supersededId)
-          ? supersededId
-          : null;
-      })
-      .filter((id): id is string => Boolean(id))
-  );
+  const supersededIds = engineeringDirectionSupersededIds(project);
   const toTraceEntry = (decision: (typeof directions)[number]) =>
     createEngineeringDirectionTraceEntry(project, decision);
 
@@ -248,6 +263,89 @@ function summarizeEngineeringDirections(project: Project): Pick<
       .filter((decision) => supersededIds.has(decision.id))
       .map(toTraceEntry),
   };
+}
+
+function engineeringDirectionSupersededIds(project: Project): Set<string> {
+  const directions = project.decisions.filter(
+    (decision) => decision.category === "engineering-direction"
+  );
+  const directionIds = new Set(directions.map((decision) => decision.id));
+
+  return new Set(
+    directions
+      .map((decision) => {
+        const supersededId = decision.supersedesDecisionId;
+        return supersededId && supersededId !== decision.id && directionIds.has(supersededId)
+          ? supersededId
+          : null;
+      })
+      .filter((id): id is string => Boolean(id))
+  );
+}
+
+function summarizeEngineeringActions(project: Project): EngineeringActionTraceEntry[] {
+  return project.engineeringActions.map((action) =>
+    createEngineeringActionTraceEntry(project, action)
+  );
+}
+
+function createEngineeringActionTraceEntry(
+  project: Project,
+  action: Project["engineeringActions"][number]
+): EngineeringActionTraceEntry {
+  const basisDirections = resolveEngineeringActionBasisDirections(
+    project,
+    action.basisDirectionIds
+  );
+
+  return {
+    id: action.id,
+    action: action.action,
+    reason: action.reason,
+    createdAt: action.createdAt,
+    basisState: engineeringActionDirectionBasisState(basisDirections),
+    basisDirections,
+  };
+}
+
+function resolveEngineeringActionBasisDirections(
+  project: Project,
+  basisDirectionIds: string[] | undefined
+): EngineeringActionDirectionBasisReference[] {
+  if (!basisDirectionIds?.length) return [];
+
+  const supersededDirectionIds = engineeringDirectionSupersededIds(project);
+
+  return basisDirectionIds.map((directionId) => {
+    const direction = project.decisions.find(
+      (decision) =>
+        decision.id === directionId && decision.category === "engineering-direction"
+    );
+
+    return direction
+      ? {
+          directionId,
+          available: true,
+          direction: direction.decision,
+          reason: direction.reason,
+          directionStatus: supersededDirectionIds.has(direction.id)
+            ? "superseded"
+            : "current",
+        }
+      : { directionId, available: false };
+  });
+}
+
+function engineeringActionDirectionBasisState(
+  basisDirections: EngineeringActionDirectionBasisReference[]
+): EngineeringActionDirectionBasisState {
+  if (basisDirections.length === 0) return "no-basis-recorded";
+
+  const availableCount = basisDirections.filter((basis) => basis.available).length;
+  if (availableCount === 0) return "recorded-unavailable";
+  if (availableCount === basisDirections.length) return "recorded-and-available";
+
+  return "recorded-partially-available";
 }
 
 function createEngineeringDirectionTraceEntry(

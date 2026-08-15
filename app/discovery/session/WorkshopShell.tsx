@@ -252,6 +252,33 @@ function formatEngineeringDirectionBasis(
     : basisText;
 }
 
+function formatEngineeringActionBasis(
+  action: WorkshopState["trace"]["adoptedEngineeringActions"][number]
+): string {
+  if (action.basisState === "no-basis-recorded") {
+    return "No engineering-direction basis was explicitly recorded.";
+  }
+
+  const available = action.basisDirections.filter((basis) => basis.available);
+  const unavailableCount = action.basisDirections.length - available.length;
+
+  if (available.length === 0) {
+    return "A recorded engineering-direction basis is unavailable in the current Project.";
+  }
+
+  const basisText = available
+    .map((basis) =>
+      basis.directionStatus === "superseded"
+        ? `${basis.direction} (recorded basis; direction now superseded)`
+        : basis.direction
+    )
+    .join("; ");
+
+  return unavailableCount > 0
+    ? `${basisText}. ${unavailableCount} recorded engineering-direction basis ${unavailableCount === 1 ? "is" : "are"} unavailable in the current Project.`
+    : basisText;
+}
+
 export default function WorkshopShell({
   project,
   workshop,
@@ -1060,6 +1087,18 @@ export default function WorkshopShell({
                   <p><strong>Direction:</strong> {direction.direction}</p>
                   {direction.reason && <p><strong>Reason:</strong> {direction.reason}</p>}
                   <p><strong>Based on:</strong> {formatEngineeringDirectionBasis(direction)}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {workshop.trace.adoptedEngineeringActions.length > 0 && (
+            <div className="workshop-brief-trace" aria-label="Adopted engineering actions">
+              <p><strong>Adopted engineering actions:</strong></p>
+              {workshop.trace.adoptedEngineeringActions.map((action) => (
+                <div key={action.id} className="workshop-brief-action-record">
+                  <p><strong>Action:</strong> {action.action}</p>
+                  {action.reason && <p><strong>Reason:</strong> {action.reason}</p>}
+                  <p><strong>Based on:</strong> {formatEngineeringActionBasis(action)}</p>
                 </div>
               ))}
             </div>
@@ -2951,6 +2990,16 @@ export default function WorkshopShell({
         }
 
         .workshop-brief-direction p {
+          margin: 4px 0 0;
+        }
+
+        .workshop-brief-action-record {
+          margin-top: 9px;
+          padding-top: 9px;
+          border-top: 1px solid rgba(101, 178, 112, 0.24);
+        }
+
+        .workshop-brief-action-record p {
           margin: 4px 0 0;
         }
 
