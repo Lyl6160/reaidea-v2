@@ -3,6 +3,7 @@ import type {
   Project,
   ProjectTimelineEvent,
 } from "../core/project";
+import { createEngineeringAssertion } from "./engineeringAssertions";
 
 export type DiscoveryQuestionFocus =
   | "purpose"
@@ -429,6 +430,29 @@ export function recordDiscoveryAnswer(
   const currentEvidence = updateEvidenceNotes(project, cleanedAnswer);
   const currentConstraints = updateConstraints(project, cleanedAnswer);
   const currentAssumptions = updateAssumptions(project, cleanedAnswer);
+  const newAssumptions = currentAssumptions.filter(
+    (value) => !project.engineeringState.currentAssumptions.includes(value)
+  );
+  const newConstraints = currentConstraints.filter(
+    (value) => !project.engineeringState.currentConstraints.includes(value)
+  );
+  const engineeringAssertions = [
+    ...(project.engineeringAssertions ?? []),
+    ...newAssumptions.map((value) =>
+      createEngineeringAssertion({
+        kind: "assumption",
+        value,
+        createdAt: now,
+      })
+    ),
+    ...newConstraints.map((value) =>
+      createEngineeringAssertion({
+        kind: "constraint",
+        value,
+        createdAt: now,
+      })
+    ),
+  ];
 
   const provisionalProject: Project = {
     ...project,
@@ -440,6 +464,7 @@ export function recordDiscoveryAnswer(
       currentAssumptions,
       currentConstraints,
     },
+    engineeringAssertions,
     timeline: [...project.timeline, timelineEvent],
     updatedAt: now,
   };
