@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.13 — Explicit Engineering Direction with Conclusion Basis
-**Branch:** `sprint006-build24-13-engineering-direction`
-**Accepted HEAD:** `3f92ac0`
+**Construction checkpoint:** HP-24.14 — Explicit Engineering Action Adoption with Direction Basis
+**Branch:** `sprint006-build24-14-engineering-action`
+**Accepted HEAD:** `f85bac2`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.13 — Explicit Engineering Direction with Conclusion Basis**
+**HP-24.14 — Explicit Engineering Action Adoption with Direction Basis**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.13-engineering-direction`
+Final freeze tag: `v24.14-engineering-action-adoption`
 
 Accepted HP-24.9 construction chain:
 
@@ -68,6 +68,13 @@ Accepted HP-24.13 construction chain:
 - Build 1 — `75f5357` — Engineering direction basis contract
 - Build 2 — `df9a742` — Inventor engineering direction action
 - Build 3 — `3f92ac0` — Trace-aware engineering direction explanation
+- Build 4 — Readiness audit only; implementation not required
+
+Accepted HP-24.14 construction chain:
+
+- Build 1 — `70a1daf` — Engineering action adoption contract
+- Build 2 — `6163198` — Inventor engineering action adoption
+- Build 3 — `f85bac2` — Trace-aware adopted engineering action explanation
 - Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -178,6 +185,18 @@ HP-24.13 establishes explicit inventor-owned engineering directions based on exp
 `basisConclusionIds` is a narrow direction-to-conclusion relationship, not a generic graph, evidence support, supersession, Validation scope, provenance, or REV reasoning. Directions do not copy evidence or infer Validation-item, source-timeline, or assertion links. Direction supersession is explicit and same-category only; multiple independent directions can remain current together.
 
 The existing trace and Workshop Brief explain current directions and their recorded conclusion bases. A later-superseded conclusion remains the stored historical basis and is never replaced. Directions do not alter recommendation precedence, routing, or REV authority. Engineering direction-related automation, direct links, editing, task execution, and broader lifecycle capabilities remain deferred.
+
+## HP-24.14 Capability
+
+HP-24.14 establishes explicit inventor-owned engineering action adoption based on one or more explicitly selected current engineering directions. `Project.engineeringActions` is a dedicated Project collection and `recordEngineeringAction()` is its sole production writer. Engineering actions are not Project decisions, Validation items, Workshop benches, REV recommendations, or `EngineeringState.nextEngineeringStep`.
+
+`basisDirectionIds` is the narrow action-to-direction relationship. Every newly selected basis must resolve exactly to a current `engineering-direction`; mixed valid/invalid basis selections fail closed, first-occurrence duplicate IDs are normalized, and explicit selection order is preserved. Recording an action creates one action record and one `engineering-action-recorded` event atomically without modifying decisions, Validation, evidence, Engineering State, assertions, conclusions, directions, or recommendation routing.
+
+The inventor UI exposes current directions only, starts with no selected basis, and adds no evidence, bench, lifecycle, completion, priority, due-date, supersession, or Validation controls. The read trace explains adopted actions neutrally in stored order and resolves their exact direction bases. A direction that is later superseded remains the historical basis recorded for the action; the reader may report that the basis direction is now superseded but never assigns lifecycle state to the action or substitutes a replacement direction.
+
+HP-24.14 deliberately introduces no concept of current, active, pending, completed, cancelled, or superseded actions. Adopted actions do not alter `recommendedBench`, recommendation precedence, Workshop routing, Validation planning, or REV authority. REV remains a read-only trace consumer and recommender.
+
+Deferred capabilities include action lifecycle/status/completion/results, action supersession, generic task management, action-to-Validation/evidence/bench/source/assertion links, direction-driven routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
 
 ## Historical Build 24.2 Record
 

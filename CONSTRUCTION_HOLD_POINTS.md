@@ -669,3 +669,76 @@ Circular external direction supersession may yield zero current directions. It i
 ### Freeze Decision
 
 HP-24.13 is a coherent, tested, explicit inventor engineering-direction capability. Direction basis, evidence support, supersession, provenance, Validation scope, and REV recommendation remain distinct relationships.
+
+
+## HP-24.14 — Explicit Engineering Action Adoption with Direction Basis
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.13 at `d251bc9`, tag `v24.13-engineering-direction`
+
+**Construction branch:** `sprint006-build24-14-engineering-action`
+
+### Build 1 — Engineering Action Adoption Contract
+
+**Commit:** `70a1daf`
+
+Added the dedicated Project-owned `ProjectEngineeringAction` record, `Project.engineeringActions`, structural legacy-safe storage normalization, and the sole `recordEngineeringAction()` writer. New actions require explicit inventor action text and one or more explicitly selected current engineering-direction IDs. Basis validation is exact and fail closed; no ProjectDecision, Validation, evidence, bench, recommendation, or lifecycle machinery is created.
+
+### Build 2 — Inventor Engineering Action Adoption
+
+**Commit:** `6163198`
+
+The existing post-Validation/conclusion/direction review surface now lets the inventor deliberately enter an action and reason and select one or more current engineering directions as its basis. No basis is preselected, zero basis is blocked, success clears temporary form state, and one successful UI action uses the existing writer and one Project save path.
+
+### Build 3 — Trace-Aware Adopted Engineering Action Explanation
+
+**Commit:** `f85bac2`
+
+The existing trace summary and Workshop Brief now explain adopted engineering actions in neutral stored order and resolve exact recorded direction bases. Legacy zero-basis, missing, partial, and wrong-category references remain readable without repair. A later-superseded direction remains the historical basis selected when the action was adopted; the Brief may identify that the direction is now superseded without assigning status to the action.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified dedicated action authority, fail-closed current-direction basis, atomic history, no action lifecycle/currentness semantics, exact read-side basis resolution, historical basis stability, malformed-data safety, UI persistence, writer boundaries, read purity, unchanged recommendation precedence, and HP-24.13 frozen-foundation regression.
+
+### Final Outcome
+
+- **HP-24.14 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.14-engineering-action-adoption`
+- **Freeze blockers:** NONE
+- **Engineering action writer:** `recordEngineeringAction()` only
+- **Basis relationship:** Explicit adopted engineering action to current engineering-direction IDs only
+- **Action lifecycle/currentness:** NOT INTRODUCED
+- **ProjectDecision category:** NONE ADDED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+The accepted Project trace is now:
+
+```text
+ProjectEvidence
+→ Engineering Conclusion
+→ Engineering Direction
+→ Adopted Engineering Action
+```
+
+Each arrow represents an explicit recorded relationship where HP-24.14 defines one. The action layer records what the inventor deliberately adopted; it does not claim that the action is active, pending, complete, successful, validated, assigned to a bench, or automatically executable.
+
+### Defensive Malformed-Data Behavior
+
+Malformed external direction relationships are read safely without mutating actions or replacing their stored bases. Missing and wrong-category basis references remain unavailable; later direction supersession changes only the read explanation of that direction's present status. The reader never fabricates action lifecycle state or substitute bases.
+
+### Deferred Capabilities
+
+- Action lifecycle/status, completion/result/cancellation, action supersession, priority, due date, assignee, and generic task-management behavior.
+- Explicit action links to Validation, evidence, Workshop benches, source events, assertions, or other generic dependencies.
+- Direction-driven recommendation/routing, automatic action generation/adoption, automatic direction-basis selection, automatic Validation creation, and REV Project writes.
+- Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.14 is a coherent, tested inventor-owned action-adoption capability. It extends the explicit authority chain from evidence to conclusion to direction to adopted action without turning actions into a task-management lifecycle or allowing REV to silently execute Project authority.

@@ -487,6 +487,25 @@ The existing trace summary and Workshop Brief explain current directions and exa
 Malformed external circular direction supersession is read safely without mutation, repair, recursion, or fabricated current direction; it may yield zero current directions. The legitimate writer cannot create that malformed relationship.
 
 Direction-driven recommendations/routing, automatic direction/basis/evidence selection, direct direction links beyond conclusion basis, generic decision graphs, post-decision editing, engineering task execution, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
+
+
+---
+
+# 25. Current HP-24.14 REV Continuity
+
+HP-24.14 — Explicit Engineering Action Adoption with Direction Basis is complete, verified, tagged, pushed, and frozen at the final documentation checkpoint on branch `sprint006-build24-14-engineering-action`. The final tag is `v24.14-engineering-action-adoption`.
+
+`Project.engineeringActions` is now the dedicated Project-owned collection for inventor-adopted engineering actions, and `recordEngineeringAction()` is the sole production writer. An inventor may explicitly adopt an action and reason only after selecting one or more current engineering directions as its basis. The writer validates every selected basis ID exactly and fails closed if any is missing, wrong-category, or superseded; it preserves selection order, normalizes duplicate first occurrences, and creates one action plus one `engineering-action-recorded` event atomically.
+
+`basisDirectionIds` is the narrow explicit relationship from an adopted action to its selected engineering directions. It is not a generic dependency graph, task status, evidence relationship, Validation scope, bench assignment, source provenance, or REV reasoning. Actions do not copy direction/conclusion evidence, infer Validation, modify `EngineeringState.nextEngineeringStep`, create Project decisions, or alter direction/conclusion history.
+
+The existing review surface provides explicit inventor action text, reason, and current-direction basis selection with no preselection. The existing trace summary and Workshop Brief explain adopted actions in neutral stored order and resolve only exact stored direction bases. A direction that is later superseded remains the historical action basis selected at adoption; its present direction status may be explained, but no replacement is substituted and no action lifecycle state is inferred.
+
+HP-24.14 records adoption only. There is no current/active/pending/completed/cancelled/superseded action model, no action completion/result machinery, no task manager, and no action-to-bench or action-to-Validation routing. Adopted actions do not change REV recommendation precedence or write authority. REV remains a read-only trace consumer and recommender.
+
+Malformed and legacy action-basis data is read safely without mutation or fabrication. Zero-basis legacy actions remain readable, missing and wrong-category references remain unavailable, partial basis remains partial, and malformed direction supersession does not cause basis replacement or action-status invention.
+
+Action lifecycle/status/completion/results, action supersession, generic task management, direct action links to Validation/evidence/bench/source/assertions, direction-driven recommendation/routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

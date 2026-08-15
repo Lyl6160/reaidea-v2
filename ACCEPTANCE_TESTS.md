@@ -463,6 +463,57 @@ Malformed externally stored circular engineering-direction supersession can yiel
 - Direct direction-to-evidence, Validation-item, source-timeline, or assertion relationships.
 - Generic decision graphs, post-decision direction/basis editing, engineering task execution, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
+
+## HP-24.14 Consolidated Acceptance Record
+
+**Hold point:** HP-24.14 — Explicit Engineering Action Adoption with Direction Basis
+**Branch:** `sprint006-build24-14-engineering-action`
+**Accepted implementation HEAD:** `f85bac2`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.14-engineering-action-adoption`
+
+### Build Chain
+
+- Build 1 — `70a1daf` — Establish engineering action adoption contract.
+- Build 2 — `6163198` — Adopt inventor engineering actions.
+- Build 3 — `f85bac2` — Explain adopted engineering actions.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- `Project.engineeringActions` is the dedicated Project-owned collection for explicitly adopted engineering actions. An action is not a `ProjectDecision`, `ValidationPlanItem`, Workshop bench, REV recommendation, or `EngineeringState.nextEngineeringStep`.
+- `basisDirectionIds` is the narrow explicit relationship from an adopted engineering action to one or more inventor-selected current engineering directions. It is not a generic dependency graph, action status, bench route, Validation relationship, evidence relationship, or recommendation input.
+- `recordEngineeringAction()` is the only engineering-action writer. Inventor-written action text requires one or more explicit current engineering-direction IDs. The writer deduplicates supplied basis IDs by first occurrence, preserves order, and fails closed if any selected basis is missing, wrong-category, or superseded.
+- One successful action creates one `ProjectEngineeringAction` and one `engineering-action-recorded` timeline event atomically. It does not create or mutate a ProjectDecision, Validation Plan, evidence, Engineering State, assertions, directions, conclusions, or Workshop routing.
+- The existing post-Validation/conclusion/direction review surface lets the inventor explicitly enter action text and reason and explicitly select current directions as basis. No basis is preselected; no evidence, bench, lifecycle, priority, due-date, completion, supersession, or Validation controls were added.
+- Engineering actions currently record adoption only. HP-24.14 introduces no action currentness, active/pending/completed state, completion result, cancellation, priority, task manager, or action supersession semantics.
+- The trace and Workshop Brief read `Project.engineeringActions` in stored order, resolve direction bases only by exact decision ID/category, preserve unavailable and partial references, and may report whether a resolved historical basis direction is now current or superseded. That present-day direction status never becomes action status.
+- A later direction supersession never rewrites an action's stored historical basis, substitutes a replacement direction, invalidates the action, or creates automatic execution/routing behavior.
+- Adopted actions do not alter REV recommendation precedence, `recommendedBench`, Workshop routing, Validation planning, or REV write authority. REV reads and explains adopted actions only.
+
+### Acceptance Results
+
+- Blank action and zero basis rejection; one/multiple current direction basis; first-occurrence duplicate normalization; fail-closed unknown/wrong-category/superseded/mixed basis handling: **PASS**.
+- Independent actions, multiple actions from the same direction, atomic action/event recording, Project immutability, no ProjectDecision/Validation/evidence/EngineeringState mutation, and historical basis stability: **PASS**.
+- Current-direction-only inventor UI, no preselection, ordered selection/deselection, one save path, success reset, zero-current-direction blocking, navigation, and refresh persistence: **PASS**.
+- Neutral adopted-action trace, exact basis resolution, legacy zero-basis, missing/partial/wrong-category basis safety, later-superseded basis explanation, no raw IDs, read purity, and recommendation invariance: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Defensive Malformed-Data Behavior
+
+Malformed external direction history is read without action-basis repair or substitution. Self-supersession does not erase a direction; missing or cross-category supersession targets do not count; a circular direction-supersession shape may leave a recorded action basis available while that direction is presently classified as superseded. The read side does not mutate the Project, recurse, fabricate a replacement direction, or invent action lifecycle state.
+
+### Deferred Capabilities
+
+- Action lifecycle/status, start/completion/cancellation/result semantics, action supersession, priority, due dates, assignees, and generic task management.
+- Action-to-Validation, action-to-evidence, action-to-bench, action-to-source, action-to-assertion, and generic dependency relationships.
+- Direction-driven recommendation/routing, automatic action generation/adoption, automatic basis selection, automatic Validation creation, and REV Project write authority.
+- Constraint lifecycle, uncertainty lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
