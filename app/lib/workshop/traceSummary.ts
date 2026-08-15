@@ -36,6 +36,20 @@ export type AssertionValidationLink = {
   resultCreatedAt?: string;
 };
 
+export type AssertionSourceProvenanceState =
+  | "not-recorded"
+  | "recorded-and-available"
+  | "recorded-partially-available"
+  | "recorded-source-unavailable";
+
+export type AssertionSourceReference = {
+  eventId: string;
+  available: boolean;
+  eventType?: ProjectTimelineEvent["type"];
+  title?: string;
+  createdAt?: string;
+};
+
 export type AssertionTraceEntry = {
   assertionId: string;
   kind: "assumption" | "constraint" | "uncertainty";
@@ -45,7 +59,8 @@ export type AssertionTraceEntry = {
   supersededAssertionId?: string;
   validationLinks: AssertionValidationLink[];
   latestValidationOutcome?: ValidationOutcome;
-  sourceProvenance: "not-recorded";
+  sourceProvenance: AssertionSourceProvenanceState;
+  sourceReferences: AssertionSourceReference[];
 };
 
 export type AssertionTraceSummary = {
@@ -106,6 +121,10 @@ function summarizeAssertions(project: Project): AssertionTraceSummary {
       .filter((link) => link.outcome)
       .sort(compareValidationLinks)
       .at(-1)?.outcome;
+    const sourceReferences = resolveSourceReferences(
+      project.timeline,
+      assertion.sourceTimelineEventIds
+    );
 
     return {
       assertionId: assertion.id,
@@ -118,7 +137,8 @@ function summarizeAssertions(project: Project): AssertionTraceSummary {
         : {}),
       validationLinks,
       ...(latestValidationOutcome ? { latestValidationOutcome } : {}),
-      sourceProvenance: "not-recorded" as const,
+      sourceProvenance: sourceProvenanceState(sourceReferences),
+      sourceReferences,
     };
   });
   const activeAssumptions = entries.filter(
@@ -138,6 +158,39 @@ function summarizeAssertions(project: Project): AssertionTraceSummary {
     primaryLegacyCurrentAssumption:
       activeAssumptions.length === 0 ? legacyCurrentAssumptions[0] ?? null : null,
   };
+}
+
+function resolveSourceReferences(
+  timeline: ProjectTimelineEvent[],
+  sourceTimelineEventIds: string[] | undefined
+): AssertionSourceReference[] {
+  if (!sourceTimelineEventIds?.length) return [];
+
+  return sourceTimelineEventIds.map((eventId) => {
+    const event = timeline.find((candidate) => candidate.id === eventId);
+
+    return event
+      ? {
+          eventId,
+          available: true,
+          eventType: event.type,
+          title: event.title,
+          createdAt: event.createdAt,
+        }
+      : { eventId, available: false };
+  });
+}
+
+function sourceProvenanceState(
+  sourceReferences: AssertionSourceReference[]
+): AssertionSourceProvenanceState {
+  if (sourceReferences.length === 0) return "not-recorded";
+
+  const resolvedCount = sourceReferences.filter((reference) => reference.available).length;
+  if (resolvedCount === 0) return "recorded-source-unavailable";
+  if (resolvedCount === sourceReferences.length) return "recorded-and-available";
+
+  return "recorded-partially-available";
 }
 
 function selectPrimaryAssertion(

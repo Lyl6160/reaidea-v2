@@ -875,6 +875,7 @@ export default function WorkshopShell({
           {workshop.assertionGuidance && (
             <div className="workshop-brief-trace" aria-label="Recorded engineering trace">
               <p><strong>Recorded Project fact:</strong> {workshop.assertionGuidance.recordedFact}</p>
+              <p><strong>Source:</strong> {workshop.assertionGuidance.sourceFact}</p>
               <p><strong>Validation:</strong> {workshop.assertionGuidance.validationFact}</p>
               <p><strong>REV guidance:</strong> {workshop.assertionGuidance.guidance}</p>
             </div>

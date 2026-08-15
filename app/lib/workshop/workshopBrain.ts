@@ -43,6 +43,7 @@ export type WorkshopState = {
 
 export type AssertionGuidance = {
   recordedFact: string;
+  sourceFact: string;
   validationFact: string;
   guidance: string;
 };
@@ -278,6 +279,7 @@ function createAssertionGuidance(
 
     return {
       recordedFact: `Current assumption recorded in Engineering State: ${legacy}`,
+      sourceFact: "Stable assertion provenance is unavailable.",
       validationFact: "No stable assertion identity or linked Project Validation is recorded.",
       guidance: `REV recommends ${recommendedBenchLabel} from the current Engineering State.`,
     };
@@ -290,6 +292,7 @@ function createAssertionGuidance(
       ? `Latest linked Validation outcome: ${outcomeLabel(link.outcome)}.`
       : `Linked Project Validation is ${link.planStatus}.`
     : "No linked Project Validation is recorded.";
+  const sourceFact = sourceFactForAssertion(assertion);
 
   let guidance = `REV recommends ${recommendedBenchLabel} from the current Project state.`;
   if (link?.outcome === "inconclusive" && assertion.status === "active") {
@@ -302,7 +305,53 @@ function createAssertionGuidance(
     guidance = `Validation addressed this assertion without claiming universal proof. REV recommends ${recommendedBenchLabel} from the current Project state.`;
   }
 
-  return { recordedFact, validationFact, guidance };
+  return { recordedFact, sourceFact, validationFact, guidance };
+}
+
+function sourceFactForAssertion(assertion: AssertionTraceEntry): string {
+  if (assertion.sourceProvenance === "not-recorded") {
+    return "Source provenance has not been recorded for this assertion.";
+  }
+
+  const availableSources = assertion.sourceReferences.filter(
+    (reference) => reference.available
+  );
+  const unavailableCount = assertion.sourceReferences.length - availableSources.length;
+
+  if (availableSources.length === 0) {
+    return "A recorded source reference is unavailable in the current Project history.";
+  }
+
+  const sourceDescriptions = availableSources.map(describeSourceReference);
+  const availableText =
+    sourceDescriptions.length === 1
+      ? `Recorded from ${sourceDescriptions[0]} in Project history.`
+      : `Recorded Project sources: ${sourceDescriptions.join("; ")}.`;
+
+  return unavailableCount > 0
+    ? `${availableText} ${unavailableCount} recorded source ${unavailableCount === 1 ? "reference is" : "references are"} unavailable in the current Project history.`
+    : availableText;
+}
+
+function describeSourceReference(
+  reference: AssertionTraceEntry["sourceReferences"][number]
+): string {
+  const recordedAt = formatRecordedAt(reference.createdAt);
+
+  if (reference.eventType === "discovery-answer-recorded") {
+    return `a Discovery response${recordedAt}`;
+  }
+
+  return `${reference.title ?? reference.eventType ?? "a Project event"}${recordedAt}`;
+}
+
+function formatRecordedAt(createdAt: string | undefined): string {
+  if (!createdAt || !Number.isFinite(Date.parse(createdAt))) return "";
+
+  return ` recorded ${new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(createdAt))}`;
 }
 
 function selectPrimaryValidationLink(
