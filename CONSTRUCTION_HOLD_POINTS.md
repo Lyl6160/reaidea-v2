@@ -614,3 +614,58 @@ Circular external conclusion supersession may yield zero current conclusions. It
 ### Freeze Decision
 
 HP-24.12 is a coherent, tested, explicit inventor engineering-conclusion capability. Supporting evidence remains support rather than proof, and conclusions remain trace explanation only without recommendation authority.
+
+## HP-24.13 — Explicit Engineering Direction with Conclusion Basis
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.12 at `ad0a662`, tag `v24.12-engineering-conclusion`
+
+**Construction branch:** `sprint006-build24-13-engineering-direction`
+
+### Build 1 — Engineering Direction Contract with Explicit Conclusion Basis
+
+**Commit:** `75f5357`
+
+Added the optional narrow `basisConclusionIds` decision field and `recordEngineeringDirection()`. New directions require one or more explicit current conclusion IDs, validate exact IDs fail closed, preserve order, and create one direction decision plus one direction-recorded event atomically. No evidence, Validation, source, or assertion links are copied or inferred.
+
+### Build 2 — Inventor Engineering Direction Action
+
+**Commit:** `df9a742`
+
+The existing post-Validation/conclusion review surface now lets the inventor deliberately enter a direction and reason, select current conclusions as basis, and optionally supersede a prior engineering direction. Basis and supersession remain separate controls; temporary state clears after success.
+
+### Build 3 — Trace-Aware Engineering Direction Explanation
+
+**Commit:** `3f92ac0`
+
+The existing trace summary and Workshop Brief explain plural current directions and exact stored conclusion bases. Later conclusion supersession never rewrites the recorded direction basis; the Brief may identify that the historical basis conclusion is now superseded.
+
+### Build 4 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Verified explicit basis authority, fail-closed validation, immutable history, plural direction semantics, malformed-data safety, exact basis resolution, read purity, browser persistence, writer boundaries, and frozen foundation regression.
+
+### Final Outcome
+
+- **HP-24.13 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.13-engineering-direction`
+- **Freeze blockers:** NONE
+- **Engineering direction writer:** `recordEngineeringDirection()` only
+- **Basis relationship:** Explicit engineering direction to current engineering conclusion IDs only
+- **Current direction rule:** Explicit same-category supersession only
+- **REV authority:** Unchanged and read-only
+
+### Defensive Malformed-Data Behavior
+
+Circular external direction supersession may yield zero current directions. It is read safely without recursion, mutation, repair, or fabricated direction; the legitimate writer cannot create that shape.
+
+### Deferred Capabilities
+
+- Direction-driven recommendations/routing, automatic direction/basis/evidence selection, and direct direction links beyond conclusion basis.
+- Generic decision graphs, post-decision direction/basis editing, engineering task execution, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+### Freeze Decision
+
+HP-24.13 is a coherent, tested, explicit inventor engineering-direction capability. Direction basis, evidence support, supersession, provenance, Validation scope, and REV recommendation remain distinct relationships.

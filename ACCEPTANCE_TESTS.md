@@ -415,6 +415,54 @@ Malformed externally stored circular engineering-conclusion supersession can yie
 - Automatic evidence ranking, automatic conclusion generation, REV conclusion creation/ranking, and post-decision editing.
 - Derivation/rationale graphs, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
 
+## HP-24.13 Consolidated Acceptance Record
+
+**Hold point:** HP-24.13 — Explicit Engineering Direction with Conclusion Basis
+**Branch:** `sprint006-build24-13-engineering-direction`
+**Accepted implementation HEAD:** `3f92ac0`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.13-engineering-direction`
+
+### Build Chain
+
+- Build 1 — `75f5357` — Establish engineering direction basis contract.
+- Build 2 — `df9a742` — Record inventor engineering directions.
+- Build 3 — `3f92ac0` — Explain engineering directions.
+- Build 4 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- The existing `engineering-direction` ProjectDecision category is reused; no new decision category or generic dependency graph was added.
+- `basisConclusionIds` is the narrow explicit relationship from an engineering direction to the engineering conclusions the inventor selected as its basis. It is not evidence, supersession, Validation scope, provenance, or REV reasoning.
+- `recordEngineeringDirection()` is the only direction writer. Inventor-written direction text and reason require one or more explicit current engineering-conclusion IDs, validated exactly and fail closed if any selected basis is missing, wrong-category, or superseded.
+- Basis order is preserved, duplicate first occurrences are retained once, and no conclusion is selected automatically. No conclusion evidence, Validation item, source event, or assertion relationship is copied or inferred into a direction.
+- One successful action creates one engineering-direction decision and one `engineering-direction-recorded` timeline event atomically. Direction supersession is explicit same-category replacement only; multiple independent directions remain current together.
+- The existing Validation review action presents current conclusion bases only, with no evidence selector and separate optional direction supersession control. Temporary form state is not Project truth and clears after success.
+- The trace resolves stored bases by exact conclusion ID and preserves no-basis, available, unavailable, and partially available states. A historical basis remains the recorded basis even if it is now superseded; it is never replaced by a later conclusion.
+- Directions explain Project truth but do not alter REV recommendation precedence, routing, or write authority. REV does not create directions, select bases, or supersede directions.
+
+### Acceptance Results
+
+- Required current basis, exact validation, duplicate normalization, unknown/wrong/superseded basis rejection, and no copied/inferred links: **PASS**.
+- Explicit direction supersession, independent current directions, chains, malformed-data safety, and historical basis stability: **PASS**.
+- Current-only basis UI, no preselection/evidence selector, reset, one save path, navigation, and refresh persistence: **PASS**.
+- Plural read trace, missing/partial/wrong-category/legacy basis explanation, and unchanged recommendation precedence: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Defensive Malformed-Data Behavior
+
+Malformed externally stored circular engineering-direction supersession can yield zero current directions. The read side does not crash, recurse, mutate Project, repair, or fabricate a current direction. The legitimate writer cannot create a circular direction supersession relationship.
+
+### Deferred Capabilities
+
+- Direction-driven REV recommendation/routing, automatic direction generation, basis selection, and evidence copying.
+- Direct direction-to-evidence, Validation-item, source-timeline, or assertion relationships.
+- Generic decision graphs, post-decision direction/basis editing, engineering task execution, constraint Validation lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

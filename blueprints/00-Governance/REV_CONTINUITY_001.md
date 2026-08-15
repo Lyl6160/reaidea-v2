@@ -471,6 +471,22 @@ The existing trace summary and Workshop Brief explain only current conclusions a
 Malformed external circular conclusion supersession is read safely without mutation, repair, recursion, or fabricated history; it may yield zero current conclusions. The legitimate writer cannot create that malformed relationship.
 
 Engineering direction, explicit decision links, automatic generation/ranking, REV conclusion creation/ranking, post-decision editing, derivation graphs, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
+
+---
+
+# 24. Current HP-24.13 REV Continuity
+
+HP-24.13 — Explicit Engineering Direction with Conclusion Basis is complete, verified, tagged, pushed, and frozen at the final documentation checkpoint on branch `sprint006-build24-13-engineering-direction`. The final tag is `v24.13-engineering-direction`.
+
+The existing `engineering-direction` ProjectDecision category is now used by the sole `recordEngineeringDirection()` writer. An inventor may explicitly record a direction and reason only after selecting one or more current engineering conclusions as its basis. The writer validates every selected basis ID exactly and fails closed if any is missing, wrong-category, or superseded; it preserves selection order, normalizes duplicate first occurrences, and creates one direction decision and one `engineering-direction-recorded` event atomically.
+
+`basisConclusionIds` is the narrow explicit relationship from an engineering direction to its selected conclusions. It is not a generic decision graph, evidence support, supersession, Validation scope, source provenance, or REV reasoning. Directions do not copy conclusion evidence or infer Validation-item, source-timeline, or assertion links. Direction supersession is explicit same-category replacement only, and independent directions may remain current together.
+
+The existing trace summary and Workshop Brief explain current directions and exact stored conclusion bases. A later-superseded conclusion remains the historical basis selected when the direction was recorded; it is never substituted with its successor. Directions remain separate from REV recommendations and do not change recommendation precedence, routing, or REV write authority.
+
+Malformed external circular direction supersession is read safely without mutation, repair, recursion, or fabricated current direction; it may yield zero current directions. The legitimate writer cannot create that malformed relationship.
+
+Direction-driven recommendations/routing, automatic direction/basis/evidence selection, direct direction links beyond conclusion basis, generic decision graphs, post-decision editing, engineering task execution, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification remain deferred. Build 4 implementation is not required.
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

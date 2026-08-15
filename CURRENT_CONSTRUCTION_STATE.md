@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.12 — Explicit Engineering Conclusion from Validation Evidence
-**Branch:** `sprint006-build24-12-engineering-conclusion`
-**Accepted HEAD:** `2a7da04`
+**Construction checkpoint:** HP-24.13 — Explicit Engineering Direction with Conclusion Basis
+**Branch:** `sprint006-build24-13-engineering-direction`
+**Accepted HEAD:** `3f92ac0`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-15
 
 ## Current Hold-Point Candidate
 
-**HP-24.12 — Explicit Engineering Conclusion from Validation Evidence**
+**HP-24.13 — Explicit Engineering Direction with Conclusion Basis**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.12-engineering-conclusion`
+Final freeze tag: `v24.13-engineering-direction`
 
 Accepted HP-24.9 construction chain:
 
@@ -61,6 +61,13 @@ Accepted HP-24.12 construction chain:
 - Build 1 — `fcab3e2` — Engineering conclusion domain writer
 - Build 2 — `d9b6570` — Inventor engineering conclusion action
 - Build 3 — `2a7da04` — Trace-aware engineering conclusion explanation
+- Build 4 — Readiness audit only; implementation not required
+
+Accepted HP-24.13 construction chain:
+
+- Build 1 — `75f5357` — Engineering direction basis contract
+- Build 2 — `df9a742` — Inventor engineering direction action
+- Build 3 — `3f92ac0` — Trace-aware engineering direction explanation
 - Build 4 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -163,6 +170,14 @@ Evidence selection and trace resolution use exact Project evidence IDs only. Unk
 Engineering conclusions supersede only by explicit same-category reference. Multiple independent conclusions can remain current together; no latest-as-active rule exists. The existing trace and Brief explain current conclusions and their selected evidence without changing recommendation precedence. REV remains read-only, engineering direction remains deferred, and HP-24.11 remains frozen underneath.
 
 Malformed external circular supersession safely yields no current conclusion without mutation, repair, or fabricated history. Deferred capabilities include engineering direction, explicit decision links, automatic generation/ranking, REV conclusion authority, post-decision editing, derivation graphs, constraint lifecycle, uncertainty identity/lifecycle, specialist benches, and Workshop Validation unification.
+
+## HP-24.13 Capability
+
+HP-24.13 establishes explicit inventor-owned engineering directions based on explicitly selected current engineering conclusions. The existing `engineering-direction` ProjectDecision category is used by the sole `recordEngineeringDirection()` writer. A direction requires one or more exact current conclusion IDs; invalid mixed selections fail closed, selection order is preserved, and duplicate first occurrences are normalized.
+
+`basisConclusionIds` is a narrow direction-to-conclusion relationship, not a generic graph, evidence support, supersession, Validation scope, provenance, or REV reasoning. Directions do not copy evidence or infer Validation-item, source-timeline, or assertion links. Direction supersession is explicit and same-category only; multiple independent directions can remain current together.
+
+The existing trace and Workshop Brief explain current directions and their recorded conclusion bases. A later-superseded conclusion remains the stored historical basis and is never replaced. Directions do not alter recommendation precedence, routing, or REV authority. Engineering direction-related automation, direct links, editing, task execution, and broader lifecycle capabilities remain deferred.
 
 ## Historical Build 24.2 Record
 
