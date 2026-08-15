@@ -8,6 +8,7 @@ import type {
   ValidationPlan,
   ValidationPlanItem,
 } from "../core/project";
+import { applyValidationOutcomeToAssertions } from "./engineeringAssertions";
 
 type StartValidationResult =
   | { status: "started"; project: Project }
@@ -189,6 +190,11 @@ export function completeValidationItem(
     targetItem,
     assessment.outcome
   );
+  const engineeringAssertions = applyValidationOutcomeToAssertions({
+    assertions: project.engineeringAssertions ?? [],
+    sourceAssertionIds: targetItem.sourceAssertionIds,
+    outcome: assessment.outcome,
+  });
   const nextState = describeNextState(updatedPlan);
   const understanding = appendValidationUnderstanding(
     project.engineeringState.currentUnderstanding,
@@ -243,6 +249,7 @@ export function completeValidationItem(
       readiness: "validation",
       validationPlan: updatedPlan,
       engineeringState: nextEngineeringState,
+      engineeringAssertions,
       evidence: [...project.evidence, evidence],
       timeline: [
         ...project.timeline,

@@ -1,5 +1,6 @@
 import type {
   EngineeringAssertionKind,
+  EngineeringAssertionStatus,
   ProjectEngineeringAssertion,
 } from "../core/project";
 
@@ -26,4 +27,46 @@ function createId(): string {
   }
 
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export function applyValidationOutcomeToAssertions(input: {
+  assertions: ProjectEngineeringAssertion[];
+  sourceAssertionIds?: string[];
+  outcome: "confirmed" | "refined" | "challenged" | "inconclusive";
+}): ProjectEngineeringAssertion[] {
+  if (!input.sourceAssertionIds?.length) {
+    return [...input.assertions];
+  }
+
+  const linkedIds = new Set(input.sourceAssertionIds);
+  const nextStatus = validationStatus(input.outcome);
+
+  return input.assertions.map((assertion) => {
+    if (
+      !linkedIds.has(assertion.id) ||
+      assertion.kind !== "assumption" ||
+      assertion.status !== "active"
+    ) {
+      return assertion;
+    }
+
+    return {
+      ...assertion,
+      status: nextStatus,
+    };
+  });
+}
+
+function validationStatus(
+  outcome: "confirmed" | "refined" | "challenged" | "inconclusive"
+): EngineeringAssertionStatus {
+  switch (outcome) {
+    case "confirmed":
+    case "refined":
+      return "resolved";
+    case "challenged":
+      return "challenged";
+    case "inconclusive":
+      return "active";
+  }
 }
