@@ -140,6 +140,7 @@ export type ProjectEvidenceTraceEntry = {
   sourceReferences: ProjectEvidenceSourceReference[];
   conclusionCoverageState: ProjectEvidenceConclusionCoverageState;
   currentConclusionIds: string[];
+  supersededConclusionIds: string[];
 };
 
 export type LatestValidationResult = {
@@ -235,7 +236,8 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
     adoptedEngineeringActions: summarizeEngineeringActions(project),
     projectEvidence: summarizeProjectEvidence(
       project,
-      engineeringConclusions.currentEngineeringConclusions
+      engineeringConclusions.currentEngineeringConclusions,
+      engineeringConclusions.supersededEngineeringConclusions
     ),
     latestValidationResult,
     unresolvedValidation: Boolean(
@@ -337,7 +339,8 @@ function summarizeEngineeringActions(project: Project): EngineeringActionTraceEn
 
 function summarizeProjectEvidence(
   project: Project,
-  currentEngineeringConclusions: EngineeringConclusionTraceEntry[]
+  currentEngineeringConclusions: EngineeringConclusionTraceEntry[],
+  supersededEngineeringConclusions: EngineeringConclusionTraceEntry[]
 ): ProjectEvidenceTraceEntry[] {
   return project.evidence.map((evidence) => {
     const sourceReferences = resolveProjectEvidenceSourceReferences(
@@ -345,6 +348,13 @@ function summarizeProjectEvidence(
       evidence.sourceTimelineEventIds
     );
     const currentConclusionIds = currentEngineeringConclusions
+      .filter((conclusion) =>
+        conclusion.supportingEvidence.some(
+          (reference) => reference.evidenceId === evidence.id
+        )
+      )
+      .map((conclusion) => conclusion.id);
+    const supersededConclusionIds = supersededEngineeringConclusions
       .filter((conclusion) =>
         conclusion.supportingEvidence.some(
           (reference) => reference.evidenceId === evidence.id
@@ -367,6 +377,7 @@ function summarizeProjectEvidence(
           ? "referenced-by-current-conclusion"
           : "not-referenced-by-current-conclusion",
       currentConclusionIds,
+      supersededConclusionIds,
     };
   });
 }

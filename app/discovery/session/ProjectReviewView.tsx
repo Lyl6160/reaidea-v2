@@ -509,9 +509,10 @@ export default function ProjectReviewView({
             <p className="validation-label">Project Evidence Review Coverage</p>
             <p className="evidence-review-coverage-intro">
               Read-only trace of whether each recorded Project evidence item is
-              explicitly selected as support for at least one current Engineering
-              Conclusion. This does not rank evidence, judge its importance or require
-              another conclusion.
+              explicitly selected as support by current or superseded Engineering
+              Conclusions. It reports recorded selection only; it does not prove whether
+              unselected evidence was read or reviewed, rank evidence, judge its
+              importance or require another conclusion.
             </p>
             <div className="evidence-review-coverage-list">
               {projectEvidenceCoverage.map((evidence) => (
@@ -522,16 +523,18 @@ export default function ProjectReviewView({
                   </div>
                   <span
                     className={
-                      evidence.conclusionCoverageState ===
-                      "referenced-by-current-conclusion"
+                      evidence.currentConclusionIds.length > 0
                         ? "coverage-referenced"
-                        : "coverage-unreferenced"
+                        : evidence.supersededConclusionIds.length > 0
+                          ? "coverage-historical"
+                          : "coverage-unreferenced"
                     }
                   >
-                    {evidence.conclusionCoverageState ===
-                    "referenced-by-current-conclusion"
-                      ? `Explicitly selected by ${evidence.currentConclusionIds.length} current Engineering Conclusion${evidence.currentConclusionIds.length === 1 ? "" : "s"}.`
-                      : "Not explicitly selected by a current Engineering Conclusion."}
+                    {evidence.currentConclusionIds.length > 0
+                      ? `Explicitly selected by ${evidence.currentConclusionIds.length} current Engineering Conclusion${evidence.currentConclusionIds.length === 1 ? "" : "s"}.${evidence.supersededConclusionIds.length > 0 ? ` Also selected by ${evidence.supersededConclusionIds.length} superseded Engineering Conclusion${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.` : ""}`
+                      : evidence.supersededConclusionIds.length > 0
+                        ? `Not explicitly selected by a current Engineering Conclusion. Previously selected by ${evidence.supersededConclusionIds.length} superseded Engineering Conclusion${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.`
+                        : "Never explicitly selected by an Engineering Conclusion."}
                   </span>
                 </article>
               ))}
@@ -1050,6 +1053,10 @@ export default function ProjectReviewView({
 
         .coverage-referenced {
           color: #8ed9c4;
+        }
+
+        .coverage-historical {
+          color: #d7c58f;
         }
 
         .coverage-unreferenced {
