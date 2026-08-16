@@ -2,8 +2,10 @@ import type {
   EngineeringStateField,
   Project,
   ProjectTimelineEvent,
+  SpecialistContributionBenchId,
   ValidationOutcome,
 } from "../core/project";
+import { isSpecialistContributionBenchId } from "../core/project";
 
 export type ActiveConceptDecision = {
   id: string;
@@ -145,6 +147,14 @@ export type ProjectEvidenceTraceEntry = {
   supersededConclusionIds: string[];
 };
 
+export type SpecialistContributionEvidenceTraceEntry = {
+  eventId: string;
+  specialistBenchId: SpecialistContributionBenchId;
+  contribution: string;
+  createdAt: string;
+  adoptedEvidenceIds: string[];
+};
+
 export type LatestValidationResult = {
   validationItemId: string;
   evidenceId: string;
@@ -210,6 +220,7 @@ export type EngineeringTraceSummary = {
   currentEngineeringDirections: EngineeringDirectionTraceEntry[];
   supersededEngineeringDirections: EngineeringDirectionTraceEntry[];
   adoptedEngineeringActions: EngineeringActionTraceEntry[];
+  specialistContributions: SpecialistContributionEvidenceTraceEntry[];
   projectEvidence: ProjectEvidenceTraceEntry[];
   latestValidationResult: LatestValidationResult | null;
   unresolvedValidation: boolean;
@@ -236,6 +247,7 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
     ...engineeringConclusions,
     ...summarizeEngineeringDirections(project),
     adoptedEngineeringActions: summarizeEngineeringActions(project),
+    specialistContributions: summarizeSpecialistContributions(project),
     projectEvidence: summarizeProjectEvidence(
       project,
       engineeringConclusions.currentEngineeringConclusions,
@@ -950,4 +962,29 @@ function toValidationResult(
     evidenceSource: evidence.source,
     createdAt: event.createdAt,
   };
+}
+
+function summarizeSpecialistContributions(
+  project: Project
+): SpecialistContributionEvidenceTraceEntry[] {
+  return project.timeline
+    .filter(
+      (event) =>
+        event.type === "specialist-contribution-recorded" &&
+        isSpecialistContributionBenchId(event.specialistBenchId) &&
+        event.description.trim().length > 0
+    )
+    .map((event) => ({
+      eventId: event.id,
+      specialistBenchId: event.specialistBenchId as SpecialistContributionBenchId,
+      contribution: event.description,
+      createdAt: event.createdAt,
+      adoptedEvidenceIds: project.evidence
+        .filter(
+          (evidence) =>
+            evidence.sourceTimelineEventIds?.length === 1 &&
+            evidence.sourceTimelineEventIds[0] === event.id
+        )
+        .map((evidence) => evidence.id),
+    }));
 }

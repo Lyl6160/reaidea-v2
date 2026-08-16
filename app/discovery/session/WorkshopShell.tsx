@@ -15,6 +15,7 @@ import {
   getSpecialistContributions,
   recordSpecialistContribution,
 } from "../../lib/workshop/specialistContributions";
+import { recordProjectEvidenceFromSpecialistContribution } from "../../lib/workshop/specialistContributionEvidence";
 import type {
   WorkshopBenchId,
   WorkshopBenchSignal,
@@ -31,6 +32,11 @@ type WorkshopShellProps = {
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
 type ConceptDecision = "undecided" | "accept" | "refine" | "rethink";
 type ValidationEvidenceOutcome = "pending" | "supported" | "not-supported" | "inconclusive";
+type SpecialistEvidenceInput = {
+  eventId: string;
+  summary: string;
+  source: string;
+};
 
 function getBench(workshop: WorkshopState, id: WorkshopBenchId) {
   return workshop.benches.find((bench) => bench.id === id);
@@ -362,6 +368,10 @@ export default function WorkshopShell({
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
   const [specialistContributionError, setSpecialistContributionError] = useState("");
+  const [specialistEvidenceInputs, setSpecialistEvidenceInputs] = useState<
+    Partial<Record<SpecialistContributionBenchId, SpecialistEvidenceInput>>
+  >({});
+  const [specialistEvidenceError, setSpecialistEvidenceError] = useState("");
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
   const [conceptCreated, setConceptCreated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -709,10 +719,16 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
-  const selectedSpecialistContributions = isSpecialistContributionBenchId(
-    selectedBench.id
-  )
-    ? getSpecialistContributions(project, selectedBench.id)
+  const selectedSpecialistBenchId = isSpecialistContributionBenchId(selectedBench.id)
+    ? selectedBench.id
+    : null;
+  const selectedSpecialistContributions = selectedSpecialistBenchId
+    ? getSpecialistContributions(project, selectedSpecialistBenchId)
+    : [];
+  const selectedSpecialistContributionTrace = selectedSpecialistBenchId
+    ? workshop.trace.specialistContributions.filter(
+        (contribution) => contribution.specialistBenchId === selectedSpecialistBenchId
+      )
     : [];
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
@@ -722,17 +738,18 @@ export default function WorkshopShell({
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
     setSpecialistContributionError("");
+    setSpecialistEvidenceError("");
     window.setTimeout(() => {
       workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
   }
 
   function submitSpecialistContribution() {
-    if (!isSpecialistContributionBenchId(selectedBench.id)) return;
+    if (!selectedSpecialistBenchId) return;
 
     const result = recordSpecialistContribution(project, {
-      specialistBenchId: selectedBench.id,
-      contribution: specialistContributionDrafts[selectedBench.id] ?? "",
+      specialistBenchId: selectedSpecialistBenchId,
+      contribution: specialistContributionDrafts[selectedSpecialistBenchId] ?? "",
     });
 
     if (result.status === "invalid") {
@@ -743,9 +760,36 @@ export default function WorkshopShell({
     onProjectChange(result.project);
     setSpecialistContributionDrafts((drafts) => ({
       ...drafts,
-      [selectedBench.id]: "",
+      [selectedSpecialistBenchId]: "",
     }));
     setSpecialistContributionError("");
+  }
+
+  function submitSpecialistEvidence() {
+    if (!selectedSpecialistBenchId) return;
+
+    const input = specialistEvidenceInputs[selectedSpecialistBenchId] ?? {
+      eventId: "",
+      summary: "",
+      source: "",
+    };
+    const result = recordProjectEvidenceFromSpecialistContribution(project, {
+      specialistContributionEventId: input.eventId,
+      summary: input.summary,
+      source: input.source,
+    });
+
+    if (result.status === "invalid") {
+      setSpecialistEvidenceError(result.reason);
+      return;
+    }
+
+    onProjectChange(result.project);
+    setSpecialistEvidenceInputs((inputs) => ({
+      ...inputs,
+      [selectedSpecialistBenchId]: { eventId: "", summary: "", source: "" },
+    }));
+    setSpecialistEvidenceError("");
   }
 
   function createConcept() {
@@ -1449,7 +1493,7 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {isSpecialistContributionBenchId(selectedBench.id) && (
+        {selectedSpecialistBenchId && (
           <div className="specialist-contribution-panel">
             <p className="station-summary-label">Specialist Contribution</p>
             <p>
@@ -1457,11 +1501,11 @@ export default function WorkshopShell({
               automatically become Project evidence or an engineering decision.
             </p>
             <textarea
-              value={specialistContributionDrafts[selectedBench.id] ?? ""}
+              value={specialistContributionDrafts[selectedSpecialistBenchId] ?? ""}
               onChange={(event) => {
                 setSpecialistContributionDrafts((drafts) => ({
                   ...drafts,
-                  [selectedBench.id]: event.target.value,
+                  [selectedSpecialistBenchId]: event.target.value,
                 }));
                 if (specialistContributionError) setSpecialistContributionError("");
               }}
@@ -1484,8 +1528,89 @@ export default function WorkshopShell({
                   <article key={event.id}>
                     <p>{event.description}</p>
                     <time dateTime={event.createdAt}>{event.createdAt}</time>
+                    <span>
+                      {(() => {
+                        const adoption = selectedSpecialistContributionTrace.find(
+                          (candidate) => candidate.eventId === event.id
+                        );
+                        const count = adoption?.adoptedEvidenceIds.length ?? 0;
+                        return count > 0
+                          ? `Explicitly adopted as ${count} Project evidence item${count === 1 ? "" : "s"}.`
+                          : "Not explicitly adopted as Project evidence.";
+                      })()}
+                    </span>
                   </article>
                 ))}
+              </div>
+            )}
+
+            {selectedSpecialistContributions.length > 0 && (
+              <div className="specialist-evidence-adoption">
+                <strong>Adopt specialist contribution as Project evidence</strong>
+                <p>
+                  A contribution is Project history only until you explicitly adopt it.
+                  Adoption creates Project evidence, not an Engineering Conclusion or Decision.
+                </p>
+                <select
+                  value={specialistEvidenceInputs[selectedSpecialistBenchId]?.eventId ?? ""}
+                  onChange={(event) => {
+                    setSpecialistEvidenceInputs((inputs) => ({
+                      ...inputs,
+                      [selectedSpecialistBenchId]: {
+                        eventId: event.target.value,
+                        summary: inputs[selectedSpecialistBenchId]?.summary ?? "",
+                        source: inputs[selectedSpecialistBenchId]?.source ?? "",
+                      },
+                    }));
+                    if (specialistEvidenceError) setSpecialistEvidenceError("");
+                  }}
+                >
+                  <option value="">Select a recorded specialist contribution</option>
+                  {selectedSpecialistContributions.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.description}
+                    </option>
+                  ))}
+                </select>
+                <textarea
+                  value={specialistEvidenceInputs[selectedSpecialistBenchId]?.summary ?? ""}
+                  onChange={(event) => {
+                    setSpecialistEvidenceInputs((inputs) => ({
+                      ...inputs,
+                      [selectedSpecialistBenchId]: {
+                        eventId: inputs[selectedSpecialistBenchId]?.eventId ?? "",
+                        summary: event.target.value,
+                        source: inputs[selectedSpecialistBenchId]?.source ?? "",
+                      },
+                    }));
+                    if (specialistEvidenceError) setSpecialistEvidenceError("");
+                  }}
+                  placeholder="Evidence summary"
+                  rows={3}
+                />
+                <input
+                  value={specialistEvidenceInputs[selectedSpecialistBenchId]?.source ?? ""}
+                  onChange={(event) => {
+                    setSpecialistEvidenceInputs((inputs) => ({
+                      ...inputs,
+                      [selectedSpecialistBenchId]: {
+                        eventId: inputs[selectedSpecialistBenchId]?.eventId ?? "",
+                        summary: inputs[selectedSpecialistBenchId]?.summary ?? "",
+                        source: event.target.value,
+                      },
+                    }));
+                    if (specialistEvidenceError) setSpecialistEvidenceError("");
+                  }}
+                  placeholder="Evidence source / reference"
+                />
+                {specialistEvidenceError && (
+                  <p className="specialist-contribution-error" role="alert">
+                    {specialistEvidenceError}
+                  </p>
+                )}
+                <button type="button" onClick={submitSpecialistEvidence}>
+                  Adopt as Project evidence
+                </button>
               </div>
             )}
           </div>
@@ -3270,6 +3395,57 @@ export default function WorkshopShell({
           margin-top: 5px;
           color: #9aa7b1;
           font-size: 10px;
+        }
+
+        .specialist-contribution-history article > span {
+          display: block;
+          margin-top: 7px;
+          color: #b8c8d3;
+          font-size: 11px;
+        }
+
+        .specialist-evidence-adoption {
+          display: grid;
+          gap: 9px;
+          margin-top: 16px;
+          padding-top: 14px;
+          border-top: 1px solid rgba(224, 173, 86, 0.22);
+        }
+
+        .specialist-evidence-adoption > strong {
+          color: #f0dba9;
+          font-size: 13px;
+        }
+
+        .specialist-evidence-adoption > p {
+          margin: 0;
+          color: #b9c3cb;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .specialist-evidence-adoption select,
+        .specialist-evidence-adoption input {
+          box-sizing: border-box;
+          width: 100%;
+          padding: 10px 11px;
+          border: 1px solid #655535;
+          border-radius: 7px;
+          background: #0b1119;
+          color: #eef3f7;
+          font: inherit;
+        }
+
+        .specialist-evidence-adoption > button {
+          justify-self: start;
+          padding: 9px 13px;
+          border: 1px solid #63b9ca;
+          border-radius: 7px;
+          background: #17333b;
+          color: #dff8fc;
+          font: inherit;
+          font-weight: 800;
+          cursor: pointer;
         }
 
         .readout-title,
