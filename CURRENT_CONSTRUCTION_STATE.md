@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.27 — Read-Only Specialist Inquiry Prompts
-**Branch:** `sprint006-build24-27-specialist-inquiry-prompts`
-**Accepted HEAD:** `4f0a80cf92fb437d0e9d69f9469a1e08d2305361`
+**Construction checkpoint:** HP-24.28 — Workshop-First Routing Foundation
+**Branch:** `sprint006-build24-28-workshop-first-routing`
+**Accepted HEAD:** `ee874dc68ff4012834a30ea579dc3abcbe721ccc`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.27 — Read-Only Specialist Inquiry Prompts**
+**HP-24.28 — Workshop-First Routing Foundation**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.27-specialist-inquiry-prompts`
+Final freeze tag: `v24.28-workshop-first-routing`
 
 Accepted HP-24.9 construction chain:
 
@@ -669,6 +669,14 @@ HP-24.27 gives exactly Patent / IP, Marketing, Manufacturing / Costing and Reali
 Each bench receives a transparent fixed discipline lens, at most four inquiry prompts and neutral presence/absence notes derived only from structural Project context. No free-text semantic interpretation or runtime AI/model analysis exists. The prompts are explicitly for consideration and are not recorded Project truth; Patent / IP also carries a non-legal-advice boundary.
 
 The helper and panel are transient and read-only. They create no Project, contribution, evidence or localStorage writes and introduce no persisted state, writer, storage, model/API integration, recommendation logic or schema change. `workshopBrain`, recommendation precedence, bench reason/`nextMove`, Project Context, both specialist workflows and the global REV Workshop Brief remain unchanged. HP-24.27 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.27-specialist-inquiry-prompts`; freeze blockers are NONE.
+
+## HP-24.28 Capability
+
+HP-24.28 establishes the Living Workshop as the canonical application hub. The frozen parent is `98d5741bb52819969b0226d7e8a9edf120b413b6`, tagged `v24.27-specialist-inquiry-prompts`. Accepted Build 1 is `ee874dc68ff4012834a30ea579dc3abcbe721ccc` (`Sprint 006 Build 24.28.1: establish Workshop-first routing`). Build 2 implementation is not required.
+
+The accepted normal journey is Entry / Home → Workshop Hub → existing work area → Back to Workshop. Fresh Project creation routes to `/workshop` through the “Enter Workshop” action. Knowledge exposes clear Discovery and Interview actions; both external work routes return explicitly to Workshop, including Discovery checkpoint and Interview completion. `/dashboard` remains only as a compatibility redirect to `/workshop`.
+
+The canonical eight benches and existing `workshopBrain` readiness/recommendation authority are unchanged. Routing introduces no Project state, writer, readiness engine, recommendation change, Discovery/Interview/Validation semantic change, specialist workflow change or automatic Project write. HP-24.28 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.28-workshop-first-routing`; freeze blockers are NONE.
 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 

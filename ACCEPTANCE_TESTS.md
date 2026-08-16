@@ -1306,6 +1306,58 @@ Build 1 fully closes HP-24.26. The four specialist benches now share concise rec
 
 Build 1 fully closes HP-24.27. Transparent fixed inquiry frameworks add discipline-oriented questions without pretending to perform model analysis or turning prompts into Project authority. Build 2 implementation is not required.
 
+## HP-24.28 Consolidated Acceptance Record
+
+**Hold point:** HP-24.28 — Workshop-First Routing Foundation
+**Branch:** `sprint006-build24-28-workshop-first-routing`
+**Frozen parent:** `98d5741bb52819969b0226d7e8a9edf120b413b6`, `v24.27-specialist-inquiry-prompts`
+**Accepted implementation HEAD:** `ee874dc68ff4012834a30ea579dc3abcbe721ccc`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.28-workshop-first-routing`
+
+### Build Chain
+
+- Build 1 — `ee874dc68ff4012834a30ea579dc3abcbe721ccc` — Establish Workshop-first routing.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- The Living Workshop is the canonical application hub.
+- The normal journey is Entry / Home → Workshop Hub → existing work area → Back to Workshop.
+- Fresh Project creation routes to `/workshop`, not `/discovery/session`, through “Enter Workshop.”
+- `/workshop` retains the canonical eight benches and existing readiness/recommendation authority.
+- Knowledge exposes obvious Continue Discovery and Open Knowledge Interview actions.
+- Discovery and Interview both expose explicit Back to Workshop navigation; checkpoint and completion states are included.
+- `/dashboard` no longer competes as a hub and redirects compatibly to `/workshop`.
+- No browser Back action is required for the supported journey.
+- No new Project state, writer, readiness engine, recommendation change, workflow semantic change or routing-induced Project write exists.
+
+### Accepted Results
+
+- Entry → Workshop and “Enter Workshop” CTA: **PASS**.
+- Workshop canonical hub and eight benches preserved: **PASS**.
+- Workshop recommendation: **UNCHANGED**.
+- Knowledge → Discovery and Discovery → Workshop: **PASS**.
+- Discovery checkpoint → Workshop: **PASS**.
+- Knowledge → Interview and Interview → Workshop: **PASS**.
+- Interview completion dead end: **REMOVED**.
+- `/dashboard` competing hub: **REMOVED**.
+- `/dashboard` compatibility: **PASS**.
+- Browser Back required: **NO**.
+- Project creation semantics, Engineering State, timeline, evidence, decisions, assertions, actions and Validation: **UNCHANGED**.
+- Specialist workflows and `workshopBrain`: **UNCHANGED**.
+- Recommendation precedence: **UNCHANGED**.
+- Automatic Project writes from routing: **NONE**.
+- TypeScript: **PASS**.
+- ESLint: **PASS**.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.28. The Workshop is now the unambiguous routing home while existing work routes, domain semantics and recommendation authority remain intact. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

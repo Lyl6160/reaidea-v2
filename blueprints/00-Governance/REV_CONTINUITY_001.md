@@ -1006,4 +1006,25 @@ No new persisted state, writer, storage, runtime model/API integration, recommen
 
 ---
 
+# 39. Current HP-24.28 REV Continuity
+
+HP-24.28 — Workshop-First Routing Foundation is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-28-workshop-first-routing`. The final tag is `v24.28-workshop-first-routing`.
+
+The frozen parent is `98d5741bb52819969b0226d7e8a9edf120b413b6`, tagged `v24.27-specialist-inquiry-prompts`. Accepted Build 1 is `ee874dc68ff4012834a30ea579dc3abcbe721ccc` (`Sprint 006 Build 24.28.1: establish Workshop-first routing`). Build 2 implementation is not required.
+
+The Living Workshop is the canonical application hub. Fresh Project creation now routes directly to `/workshop` through “Enter Workshop.” The accepted journey is:
+
+```text
+Entry / Home
+→ Workshop Hub
+→ existing work area
+→ explicit Back to Workshop
+```
+
+The Workshop retains its canonical eight benches and existing `workshopBrain` readiness/recommendation authority. Knowledge exposes clear Continue Discovery and Open Knowledge Interview actions. Discovery returns to Workshop during work and at checkpoint; Interview returns during work and after completion. `/dashboard` is a compatibility redirect to `/workshop` and no longer competes as a hub.
+
+No browser Back action is required for the normal journey. No new Project state, writer, readiness engine, recommendation change, Discovery/Interview/Validation semantic change, specialist workflow change or automatic routing Project write exists.
+
+---
+
 **END OF REV-CONTINUITY-001**

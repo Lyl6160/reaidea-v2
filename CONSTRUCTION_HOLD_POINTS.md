@@ -1545,3 +1545,53 @@ selected specialist bench + existing SpecialistProjectContext structure
 ### Freeze Decision
 
 HP-24.27 closes the specialist inquiry-prompt seam without simulating model analysis, interpreting free text, creating findings or changing Project authority. Build 2 implementation is not required.
+
+## HP-24.28 — Workshop-First Routing Foundation
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.27 at `98d5741bb52819969b0226d7e8a9edf120b413b6`, tag `v24.27-specialist-inquiry-prompts`
+
+**Construction branch:** `sprint006-build24-28-workshop-first-routing`
+
+### Build 1 — Workshop-First Routing Foundation
+
+**Commit:** `ee874dc68ff4012834a30ea579dc3abcbe721ccc`
+
+Established `/workshop` as the canonical application hub. Fresh Project creation now enters Workshop directly. The Knowledge bench exposes clear actions to existing Discovery and Interview routes, and both routes provide explicit returns to Workshop throughout normal work and completion states.
+
+The legacy `/dashboard` path now redirects compatibly to `/workshop` instead of competing as a second hub. No browser Back action is required for the supported Entry → Workshop → work area → Workshop journey.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed entry, eight-bench hub, recommendation preservation, Discovery/Interview round-trip, checkpoint/completion, dashboard compatibility, refresh, direct-route and static gates.
+
+### Final Outcome
+
+- **HP-24.28 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.28-workshop-first-routing`
+- **Freeze blockers:** NONE
+- **Canonical hub:** `/workshop`
+- **Normal journey:** ENTRY → WORKSHOP → WORK AREA → WORKSHOP
+- **Browser Back required:** NO
+- **Dashboard compatibility:** REDIRECTS TO WORKSHOP
+- **Eight benches and workshopBrain:** UNCHANGED
+- **Recommendation precedence:** UNCHANGED
+- **Project and workflow semantics:** UNCHANGED
+- **Automatic routing Project writes:** NONE
+
+### Navigation Boundary
+
+```text
+Entry / Home
+→ save existing Project exactly as before
+→ /workshop canonical hub
+→ existing Discovery or Interview route
+→ explicit Back to Workshop
+```
+
+### Freeze Decision
+
+HP-24.28 closes the Workshop-first routing foundation without migrating work components, duplicating readiness logic or changing Project authority. Build 2 implementation is not required.
