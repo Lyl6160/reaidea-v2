@@ -1845,3 +1845,31 @@ reAIdea shall own REV, Project truth, Workshop logic, memory, authority boundari
 ### Freeze Decision
 
 Accepted Builds 1–4 close HP-24.34. HP-24.35 is not started by this freeze.
+
+## HP-24.35 — Provisional Visual Mode + First Recognisable Concept
+
+**Status:** COMPLETE / VERIFIED / LIVE-BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** `3de691d53c24d352aa8b9c9c61435479067778c9` / `v24.34-engineering-definition`
+
+**Accepted builds:** `89e28c181a363addd191a66408e4e4a0306874ed` and `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2`
+
+### Frozen Capability
+
+Build 1 established provider-neutral visual modes, bounded deterministic suggestion, inventor confirmation/correction, a bounded source-event-traced brief, stable concept-family/revision identity, output selection and minimum readiness. Build 2 established the official OpenAI SDK, reAIdea-owned generation service, server-only OpenAI adapter, server API route, explicit transient Concept 01 generation, provider-neutral result normalization and shared Prototype / IDEA EVOLVING display.
+
+The live illuminated STOP/GO test passed PRODUCT → IMAGE semantic recognisability: pole/shaft, sign head, STOP/GO meaning and illumination intent were recognisable. Exact rotating hexagonal geometry was partial and accepted. HP-24.35 does not claim final fidelity, CAD, engineering correctness, feasibility, validation, approval or manufacturing accuracy.
+
+Visual classification remains provisional, inventor-correctable and non-authoritative. The provider receives a bounded brief rather than the full timeline. OpenAI remains a replaceable server-side supplier behind reAIdea-owned provider-neutral contracts. Generation is explicit-only, permits one in-flight request and does not automatically regenerate.
+
+Concept 01 is transient and non-authoritative. Image bytes are absent from Project, timeline, `storageEngine` and localStorage. Generation creates no Project update, decision, evidence, Engineering semantic object, readiness or `workshopBrain` change and never calls `recordConceptDecision()` merely because an image was generated.
+
+### Deferred
+
+Machine visuals, process diagrams, software UI representation, system graphs/workflows, environmental hybrids, mixed typed output and unknown-mode definition remain deferred. Durable artifact history, inventor-guided Concept 02 refinement and the HP-24.34 question-adaptivity items also remain deferred.
+
+### Next Proposed Hold Point
+
+HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. It should allow inventor feedback on Concept 01, preserve concept-family identity, advance revision identity, generate a deliberate Concept 02 and require explicit adoption before anything crosses into Project truth.
+
+Freeze blockers: NONE.

@@ -1645,6 +1645,41 @@ reAIdea shall use an internal AI service/orchestration layer between REV and ext
 
 Accepted Builds 1–4 fully close HP-24.34.
 
+## HP-24.35 Consolidated Acceptance Record
+
+**Hold point:** HP-24.35 — Provisional Visual Mode + First Recognisable Concept
+
+**Frozen parent:** `3de691d53c24d352aa8b9c9c61435479067778c9` / `v24.34-engineering-definition`
+
+**Accepted Build 1:** `89e28c181a363addd191a66408e4e4a0306874ed` — Sprint 006 Build 24.35.1: add provisional visual mode and concept brief
+
+**Accepted Build 2:** `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2` — Sprint 006 Build 24.35.2: generate first recognisable concept
+
+**Status:** COMPLETE / VERIFIED / LIVE-BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+### Accepted Results
+
+- Provider-neutral visual-mode contract, provisional classifier and inventor confirm/correct flow: PASS.
+- Bounded source-traced brief, concept family/revision identity and minimum readiness: PASS.
+- Official OpenAI SDK, server-only adapter, reAIdea service/API boundary and provider-neutral candidate: PASS.
+- Explicit PRODUCT → IMAGE generation with duplicate in-flight prevention and no automatic regeneration: PASS.
+- Live illuminated STOP/GO Concept 01 semantic recognisability: PASS.
+- Pole/shaft, sign head, STOP/GO concept and illumination/high-visibility intent: PASS.
+- Broadly hexagonal rotating-head fidelity: PARTIAL and accepted.
+- Prototype and shared IDEA EVOLVING candidate display: PASS.
+- Authority disclaimer and no Project, Engineering, readiness, decision, evidence, writer or `workshopBrain` mutation: PASS.
+- API key server-only, `.env.local` ignored/untracked, no client exposure and normalized errors: PASS.
+- Image bytes absent from Project, timeline, storage and localStorage; transient refresh-loss behavior accepted: PASS.
+- TypeScript, ESLint, production build and `git diff --check`: PASS. Three unchanged WorkshopShell `<img>` warnings remain permitted.
+
+### Acceptance Boundary
+
+HP-24.35 proves semantic recognisability, not final design fidelity, engineering correctness, manufacturing detail, CAD accuracy, validation or approval. The accepted live image resembled joined STOP and GO illuminated faces rather than a precise single rotating hexagonal STOP/GO head.
+
+Provider-neutral modes remain product, machine, process, software, system, environmental, mixed and unknown. Only PRODUCT → IMAGE is accepted as live generation capability. Other typed modes, durable candidate history, inventor-guided refinement and Engineering question adaptivity remain deferred.
+
+HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. A future correction may request one rotating hexagonal head, STOP front, GO reverse, one handheld shaft and retained illumination intent, producing Concept 02 without overwriting the original idea or creating Project truth.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

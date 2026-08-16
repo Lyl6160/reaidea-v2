@@ -1143,4 +1143,28 @@ HP-24.35 — Provisional Idea Type + First Recognisable Concept is proposed but 
 
 ---
 
+# 46. Current HP-24.35 REV Continuity
+
+HP-24.35 — Provisional Visual Mode + First Recognisable Concept is complete, verified, live-browser-accepted, tagged, pushed and frozen on branch `sprint006-build24-35-first-recognisable-concept`. The frozen parent is `3de691d53c24d352aa8b9c9c61435479067778c9`, tagged `v24.34-engineering-definition`.
+
+Accepted Build 1 is `89e28c181a363addd191a66408e4e4a0306874ed`, Sprint 006 Build 24.35.1: add provisional visual mode and concept brief. It established provider-neutral modes, deterministic provisional suggestion, inventor confirmation/correction, a bounded source-traced brief, stable concept-family and revision identity, output selection and minimum readiness without requiring all nine Engineering Definition areas.
+
+Accepted Build 2 is `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2`, Sprint 006 Build 24.35.2: generate first recognisable concept. It established the official OpenAI SDK, reAIdea-owned generation service and server API, a server-only OpenAI adapter, explicit PRODUCT → IMAGE generation, provider-neutral candidate normalization, transient Prototype display and shared IDEA EVOLVING display.
+
+The product breakthrough is recorded inventor idea → Discovery problem understanding → Engineering solution definition → provisional visual mode → bounded concept brief → provider-backed generation → recognisable Concept 01. This is the first frozen hold point where reAIdea both understands an invention and shows a recognisable visual interpretation.
+
+REV and the inventor live-browser-accepted the illuminated STOP/GO sign. PRODUCT mode was correctly suggested and confirmed. The result contained a recognisable handheld shaft/pole, sign head, STOP and GO concept and illuminated/high-visibility treatment. Its broadly hexagonal form was partial: it resembled joined illuminated STOP and GO faces rather than one precise rotating hexagonal head. This is accepted because HP-24.35 proves semantic recognisability, not final fidelity, CAD, feasibility, validation, approval or manufacturing correctness.
+
+Visual modes are product, machine, process, software, system, environmental, mixed and unknown. They are provisional, generation-oriented, inventor-correctable and not Project truth; no top-level Project idea-type field exists. Current live capability is intentionally PRODUCT → IMAGE. Other typed outputs remain deferred.
+
+The accepted path is Workshop / Prototype → reAIdea API → reAIdea service → provider-neutral `ConceptGenerationProvider` → server-only OpenAI adapter → provider-neutral `ConceptCandidate`. OpenAI owns no Project truth, authority, Engineering semantics, source trace, identity, readiness, review or adoption meaning. `OPENAI_API_KEY` remains server-side; `.env.local` is ignored and untracked; client exposure is none; raw errors are normalized.
+
+Generation occurs only on explicit action, admits one in-flight request and never runs on typing, Engineering answers, suggestion, page load, Workshop opening or timers. Concept 01 is an early, unvalidated, non-authoritative visual interpretation. Generation produces no Project timeline event, `updatedAt` mutation, decision, evidence, Engineering State, assertion, conclusion, direction, action, readiness or `workshopBrain` mutation and does not call `recordConceptDecision()`.
+
+Image bytes remain transient React state and are not stored in Project, timeline, `storageEngine` or localStorage. Refresh may lose the candidate. Original idea remains preserved independently of any generated candidate. Durable artifact history is deferred.
+
+Machine-aware visuals, process diagrams, software UI, system graphs, environmental hybrids, mixed typed output, unknown-mode continuation, question adaptivity and inventor-guided refinement remain deferred. HP-24.36 — Inventor-Guided Concept Refinement is proposed but NOT STARTED: Concept 01 → inventor feedback → Concept 02 should retain family identity, advance revision identity and require explicit adoption before crossing into Project truth.
+
+---
+
 **END OF REV-CONTINUITY-001**

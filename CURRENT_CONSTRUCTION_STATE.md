@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.34 — Engineering Interactive Solution Definition Foundation
-**Branch:** `sprint006-build24-34-engineering-definition`
-**Accepted HEAD:** `28c2a140b3f0967b4e56f16c341a96631bfe1311`
-**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Construction checkpoint:** HP-24.35 — Provisional Visual Mode + First Recognisable Concept
+**Branch:** `sprint006-build24-35-first-recognisable-concept`
+**Accepted HEAD:** `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2`
+**Status:** COMPLETE / VERIFIED / LIVE-BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.35 — Provisional Idea Type + First Recognisable Concept** — PROPOSED / NOT STARTED
+**HP-24.36 — Inventor-Guided Concept Refinement** — PROPOSED / NOT STARTED
 
 Protected previous foundation:
 
@@ -757,3 +757,17 @@ Question adaptivity is deferred: future REV may contextually phrase questions, m
 reAIdea shall place an internal AI service/orchestration layer between REV and external model providers. OpenAI may be the initial primary provider, but REV, Project truth, Workshop logic, memory, authority boundaries, engineering semantics and user experience remain owned by reAIdea and provider-independent. External providers are replaceable capability suppliers, never the system of record or owner of reAIdea authority semantics, and future integrations must use controlled internal adapters or service boundaries.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.
+
+## HP-24.35 Capability
+
+HP-24.35 — Provisional Visual Mode + First Recognisable Concept is COMPLETE / VERIFIED / LIVE-BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN. Its frozen parent is `3de691d53c24d352aa8b9c9c61435479067778c9`, tagged `v24.34-engineering-definition`. Accepted Build 1 is `89e28c181a363addd191a66408e4e4a0306874ed`, which established provider-neutral visual modes, deterministic inventor-correctable suggestion, a bounded source-traced concept brief, stable concept-family/revision identity and minimum generation readiness. Accepted Build 2 is `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2`, which established the official OpenAI SDK, reAIdea-owned service and provider boundary, server route, explicit transient Concept 01 generation and shared Prototype / IDEA EVOLVING candidate display.
+
+The frozen breakthrough is recorded inventor idea → Discovery problem understanding → Engineering solution definition → provisional visual mode → bounded concept brief → provider-backed generation → recognisable Concept 01. The live illuminated STOP/GO sign test confirmed PRODUCT mode, a recognisable pole, sign head, STOP/GO faces and illumination/high-visibility intent. The broadly hexagonal rotating form was only partial: the image resembled joined illuminated faces rather than one precise rotating hexagonal head. That limitation is accepted because this hold point proves semantic recognisability, not final fidelity, CAD, feasibility or manufacturing correctness.
+
+Visual mode remains provisional, generation-oriented, inventor-correctable and non-authoritative. Supported contract modes are product, machine, process, software, system, environmental, mixed and unknown; current live generation is intentionally limited to PRODUCT → IMAGE. Machine, process, software, system, environmental, mixed and unknown generation behavior remains deferred. The full Project timeline is never sent to the provider.
+
+Concept 01 is an early, unvalidated visual interpretation and not Project truth. Generation creates no timeline event, Project update, decision, evidence, Engineering State, assertion, conclusion, direction, action, readiness or `workshopBrain` mutation and does not call `recordConceptDecision()`. The API key remains server-side, `.env.local` is ignored and untracked, raw provider failures are normalized, and generation occurs only on explicit action with duplicate in-flight prevention and no automatic regeneration.
+
+Generated image bytes remain transient React state and are not stored in Project, timeline, `storageEngine` or localStorage. Refresh may lose Concept 01. Durable artifact history is deferred. Original idea preservation remains independent of generated concepts.
+
+HP-24.36 — Inventor-Guided Concept Refinement is proposed but NOT STARTED. Its purpose is a deliberate Concept 01 → inventor feedback → Concept 02 revision loop that retains family identity, advances revision identity and keeps every candidate non-authoritative until explicit adoption. Question adaptivity from HP-24.34 also remains deferred.
