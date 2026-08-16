@@ -942,4 +942,26 @@ The contribution is neutral Project history only. It is not automatically eviden
 
 ---
 
+# 36. Current HP-24.25 REV Continuity
+
+HP-24.25 — Explicit Specialist Contribution Evidence Adoption is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-25-specialist-evidence`. The final tag is `v24.25-specialist-evidence`.
+
+The frozen parent is `1822c69a81d731e9c379b72aa71488686a4d2f68`, tagged `v24.24-specialist-contributions`. Accepted Build 1 is `b808986db78c47be94e3e85b94664cca5a4e7e82` (`Sprint 006 Build 24.25.1: add specialist contribution evidence adoption`). Build 2 implementation is not required.
+
+```text
+specialist-contribution-recorded
+→ explicit inventor evidence adoption
+→ one ProjectEvidence
+→ sourceTimelineEventIds exactly [selected contribution event ID]
+→ one project-evidence-recorded audit event
+```
+
+The contribution remains neutral Project history until explicitly adopted through the separate specialist evidence writer. HP-24.16 `recordProjectEvidenceFromActionResult()` remains unchanged. Bench identity remains authoritative on the referenced contribution event and is not duplicated onto the audit event.
+
+Historical valid contributions remain adoptable. Duplicate explicit adoption is allowed, with one evidence item and one audit event per inventor action and no dedupe, merge, ranking, replacement or lifecycle. Read-only adoption trace uses exact single-event provenance; multi-source evidence does not count.
+
+There is no automatic promotion into Engineering State, an Engineering Assertion, Conclusion, Direction or Action, a Project Decision, Validation or recommendation. The Project model, storage, specialist contribution writer, existing engineering writers, Validation writers, recommendation precedence and REV authority remain unchanged.
+
+---
+
 **END OF REV-CONTINUITY-001**

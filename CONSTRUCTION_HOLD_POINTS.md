@@ -1393,3 +1393,54 @@ The contribution is neutral history. It is not automatically evidence, Engineeri
 ### Freeze Decision
 
 HP-24.24 closes the narrow contribution-capture seam for the four informational specialist benches without creating parallel Project state or broadening existing bench semantics. Build 2 implementation is not required.
+
+## HP-24.25 — Explicit Specialist Contribution Evidence Adoption
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.24 at `1822c69a81d731e9c379b72aa71488686a4d2f68`, tag `v24.24-specialist-contributions`
+
+**Construction branch:** `sprint006-build24-25-specialist-evidence`
+
+### Build 1 — Specialist Contribution Evidence Adoption
+
+**Commit:** `b808986db78c47be94e3e85b94664cca5a4e7e82`
+
+Added a separate pure writer that adopts one exact valid `specialist-contribution-recorded` event as ordinary Project evidence only after explicit inventor selection and inventor-supplied summary and source. Each adoption appends one `ProjectEvidence`, with `sourceTimelineEventIds` exactly `[selected contribution event ID]`, and one `project-evidence-recorded` audit event.
+
+Historical contributions remain adoptable and duplicate explicit adoption is allowed. Bench identity remains authoritative on the referenced contribution event and is not copied onto the audit event. The read-only trace counts exact single-event provenance only; multi-source evidence does not count.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed writer, provenance, trace, isolation, all-four-bench UI, excluded-bench, Engineering Review, refresh and static acceptance gates.
+
+### Final Outcome
+
+- **HP-24.25 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.25-specialist-evidence`
+- **Freeze blockers:** NONE
+- **Explicit adoption:** INVENTOR CONTROLLED
+- **Evidence provenance:** EXACT SINGLE CONTRIBUTION EVENT ID
+- **Historical and duplicate adoption:** ALLOWED
+- **Specialist contribution writer:** UNCHANGED
+- **HP-24.16 action-result writer:** UNCHANGED
+- **Project model and storage:** UNCHANGED
+- **Engineering objects, Validation and recommendation precedence:** UNCHANGED
+
+### Authority Boundary
+
+```text
+specialist-contribution-recorded
+→ explicit inventor evidence adoption
+→ one ProjectEvidence
+→ sourceTimelineEventIds exactly [selected contribution event ID]
+→ one project-evidence-recorded audit event
+```
+
+The contribution remains neutral Project history until explicitly adopted. Adoption does not automatically create or change Engineering State, an assertion, conclusion, direction, action, Project decision, Validation or recommendation.
+
+### Freeze Decision
+
+HP-24.25 closes the explicit specialist-contribution evidence-adoption seam without generalizing HP-24.16, duplicating bench provenance or creating persisted adoption state. Build 2 implementation is not required.

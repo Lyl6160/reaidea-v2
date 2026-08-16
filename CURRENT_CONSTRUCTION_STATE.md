@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.24 — Informational Specialist Bench Contribution Capture
-**Branch:** `sprint006-build24-24-specialist-contributions`
-**Accepted HEAD:** `e3a1813559e6b1a87b4eda1678106c87837929bf`
+**Construction checkpoint:** HP-24.25 — Explicit Specialist Contribution Evidence Adoption
+**Branch:** `sprint006-build24-25-specialist-evidence`
+**Accepted HEAD:** `b808986db78c47be94e3e85b94664cca5a4e7e82`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.24 — Informational Specialist Bench Contribution Capture**
+**HP-24.25 — Explicit Specialist Contribution Evidence Adoption**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.24-specialist-contributions`
+Final freeze tag: `v24.25-specialist-evidence`
 
 Accepted HP-24.9 construction chain:
 
@@ -643,6 +643,16 @@ Inventor explicit submit
 ```
 
 The authoritative record is `Project.timeline`; no top-level specialist contribution collection exists. Read-back is isolated by exact `specialistBenchId`, valid identity survives normalization, and invalid identity is removed without fabrication.
+
+## HP-24.25 Capability
+
+HP-24.25 establishes the explicit inventor-controlled boundary `specialist-contribution-recorded` → explicit inventor evidence adoption → `ProjectEvidence`. A contribution remains neutral Project history until explicitly adopted through the separate specialist evidence writer; HP-24.16 `recordProjectEvidenceFromActionResult()` remains unchanged.
+
+The frozen parent is `1822c69a81d731e9c379b72aa71488686a4d2f68`, tagged `v24.24-specialist-contributions`. Accepted Build 1 is `b808986db78c47be94e3e85b94664cca5a4e7e82` (`Sprint 006 Build 24.25.1: add specialist contribution evidence adoption`). Build 2 implementation is not required.
+
+Each explicit adoption creates one `ProjectEvidence` and one `project-evidence-recorded` timeline event. Exact provenance is `ProjectEvidence.sourceTimelineEventIds === [selected specialist contribution event ID]`; bench identity remains authoritative on the referenced contribution event and is not duplicated onto the audit event. Historical adoption and duplicate explicit adoption are allowed. The read-only trace counts only exact single-event provenance and excludes multi-source evidence.
+
+Engineering State, assertions, conclusions, directions, actions, Project decisions, Validation, recommendation precedence, Project model and storage remain unchanged. HP-24.25 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.25-specialist-evidence`; freeze blockers are NONE.
 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 

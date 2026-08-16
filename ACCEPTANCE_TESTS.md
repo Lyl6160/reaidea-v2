@@ -1147,6 +1147,62 @@ Build 1 fully closes HP-24.23. The existing exact `basisDirectionIds` relationsh
 
 Build 1 fully closes HP-24.24. The existing Project timeline and persistence seam now carry explicit, bench-provenanced neutral contribution history without creating another truth store or promoting contributions into engineering objects. Build 2 implementation is not required.
 
+## HP-24.25 Consolidated Acceptance Record
+
+**Hold point:** HP-24.25 — Explicit Specialist Contribution Evidence Adoption
+**Branch:** `sprint006-build24-25-specialist-evidence`
+**Frozen parent:** `1822c69a81d731e9c379b72aa71488686a4d2f68`, `v24.24-specialist-contributions`
+**Accepted implementation HEAD:** `b808986db78c47be94e3e85b94664cca5a4e7e82`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.25-specialist-evidence`
+
+### Build Chain
+
+- Build 1 — `b808986db78c47be94e3e85b94664cca5a4e7e82` — Add specialist contribution evidence adoption.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- `specialist-contribution-recorded` → explicit inventor evidence adoption → `ProjectEvidence`.
+- The contribution remains neutral Project history until explicitly adopted through a separate specialist evidence writer.
+- HP-24.16 `recordProjectEvidenceFromActionResult()` remains unchanged.
+- HP-24.25 provenance is exactly one selected specialist contribution event ID in `ProjectEvidence.sourceTimelineEventIds`.
+- Bench identity remains authoritative on the referenced contribution event and is not duplicated onto the evidence audit event.
+- Historical valid contributions remain adoptable; duplicate explicit adoption is allowed without dedupe, merge, ranking, replacement or lifecycle.
+- Every adoption creates one `ProjectEvidence` and one `project-evidence-recorded` event.
+- Read-only adoption trace uses exact single-event provenance; multi-source evidence is excluded.
+- No automatic promotion occurs into Engineering State, assertions, conclusions, directions, actions, Project decisions, Validation or recommendation.
+
+### Accepted Results
+
+- Separate specialist evidence writer: **PASS**.
+- HP-24.16 action-result writer: **UNCHANGED**.
+- Patent, Marketing, Manufacturing and Reality evidence adoption: **PASS**.
+- Blank summary, blank source, wrong event type, invalid bench metadata and blank contribution rejection: **PASS**.
+- Historical contribution adoption and duplicate explicit adoption: **PASS**.
+- Exact single-event provenance, one evidence item and one audit event per adoption: **PASS**.
+- Zero-adoption, exact linkage and duplicate-adoption trace: **PASS**.
+- Cross-contribution isolation: **PASS**.
+- Multi-source evidence excluded and missing provenance safe: **PASS**.
+- Read-model mutation: **NONE**.
+- Specialist contribution writer: **UNCHANGED**.
+- Engineering State, Project decisions, engineering assertions, engineering actions and Validation: **UNCHANGED**.
+- Recommendation precedence: **UNCHANGED**.
+- Originating-bench adoption UI and Engineering Review evidence visibility: **PASS**.
+- Excluded benches: **UNCHANGED**.
+- Refresh persistence: **PASS**.
+- Automatic evidence creation: **NONE**.
+- Project model and storage: **UNCHANGED**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with exactly 3 known WorkshopShell image warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.25. Explicit inventor adoption creates ordinary Project evidence with exact contribution-event provenance while preserving neutral contribution history and all existing engineering authority boundaries. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
