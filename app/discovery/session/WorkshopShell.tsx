@@ -16,6 +16,7 @@ import {
   recordSpecialistContribution,
 } from "../../lib/workshop/specialistContributions";
 import { recordProjectEvidenceFromSpecialistContribution } from "../../lib/workshop/specialistContributionEvidence";
+import { createSpecialistBenchGuidance } from "../../lib/workshop/specialistBenchGuidance";
 import {
   createSpecialistProjectContext,
   type LimitedSpecialistContextItems,
@@ -746,6 +747,12 @@ export default function WorkshopShell({
     () => createSpecialistProjectContext(project, workshop.trace),
     [project, workshop.trace]
   );
+  const specialistBenchGuidance = selectedSpecialistBenchId
+    ? createSpecialistBenchGuidance(
+        selectedSpecialistBenchId,
+        specialistProjectContext
+      )
+    : null;
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
@@ -1611,6 +1618,42 @@ export default function WorkshopShell({
                   <small>{specialistContextLimitNote(specialistProjectContext.actions)}</small>
                 )}
               </section>
+            </div>
+          </section>
+        )}
+        {specialistBenchGuidance && (
+          <section className="specialist-inquiry" aria-label="Specialist Inquiry">
+            <div className="specialist-inquiry-heading">
+              <div>
+                <p className="station-summary-label">Specialist Inquiry</p>
+                <strong>{specialistBenchGuidance.title}</strong>
+              </div>
+              <span>Read only</span>
+            </div>
+            <p className="specialist-inquiry-lens">
+              <strong>Lens:</strong> {specialistBenchGuidance.lens}
+            </p>
+            <p>{specialistBenchGuidance.explanation}</p>
+            <p className="specialist-inquiry-boundary">
+              These are prompts for consideration. They are not recorded Project truth.
+            </p>
+            {specialistBenchGuidance.disclaimer && (
+              <p className="specialist-inquiry-disclaimer">
+                {specialistBenchGuidance.disclaimer}
+              </p>
+            )}
+            <ol>
+              {specialistBenchGuidance.prompts.map((prompt) => (
+                <li key={prompt}>{prompt}</li>
+              ))}
+            </ol>
+            <div className="specialist-inquiry-notes">
+              <strong>Recorded structure</strong>
+              <ul>
+                {specialistBenchGuidance.structuralNotes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
             </div>
           </section>
         )}
@@ -3536,6 +3579,83 @@ export default function WorkshopShell({
 
         .specialist-project-context-records p {
           margin: 0;
+        }
+
+        .specialist-inquiry {
+          grid-column: 1 / -1;
+          padding: 16px;
+          border: 1px solid rgba(174, 147, 219, 0.3);
+          border-radius: 10px;
+          background: rgba(35, 24, 55, 0.34);
+        }
+
+        .specialist-inquiry-heading {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .specialist-inquiry-heading > div > strong {
+          display: block;
+          margin-top: 5px;
+          color: #eadcfa;
+          font-size: 14px;
+        }
+
+        .specialist-inquiry-heading > span {
+          color: #c3abd9;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .specialist-inquiry > p,
+        .specialist-inquiry > ol,
+        .specialist-inquiry-notes ul {
+          color: #d0c7d8;
+          font-size: 12px;
+          line-height: 1.55;
+        }
+
+        .specialist-inquiry > p {
+          margin: 9px 0 0;
+        }
+
+        .specialist-inquiry-lens strong,
+        .specialist-inquiry-notes > strong {
+          color: #e5d4f3;
+        }
+
+        .specialist-inquiry-boundary {
+          color: #c6e6ec !important;
+          font-weight: 700;
+        }
+
+        .specialist-inquiry-disclaimer {
+          color: #efcf9d !important;
+        }
+
+        .specialist-inquiry > ol {
+          margin: 12px 0 0;
+          padding-left: 21px;
+        }
+
+        .specialist-inquiry > ol li + li,
+        .specialist-inquiry-notes li + li {
+          margin-top: 6px;
+        }
+
+        .specialist-inquiry-notes {
+          margin-top: 13px;
+          padding-top: 11px;
+          border-top: 1px solid rgba(174, 147, 219, 0.18);
+        }
+
+        .specialist-inquiry-notes ul {
+          margin: 7px 0 0;
+          padding-left: 18px;
         }
 
         @media (max-width: 760px) {
