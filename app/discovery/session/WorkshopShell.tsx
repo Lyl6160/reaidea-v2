@@ -610,9 +610,16 @@ export default function WorkshopShell({
 
   const engineeringBench = getBench(workshop, "engineering");
   const canCreateConcept = engineeringBench?.state !== "dormant";
+  const engineeringDefinitionAssessment = useMemo(
+    () => assessEngineeringDefinition(project),
+    [project]
+  );
 
   const conceptSheet = useMemo(() => {
     const engineering = project.engineeringState;
+    const definition = engineeringDefinitionAssessment;
+    const definitionAnswers = definition.latestAnswers;
+    const hasEngineeringDefinition = definition.addressedAreas.length > 0;
     const constraints = engineering.currentConstraints.filter(Boolean);
     const assumptions = engineering.currentAssumptions.filter(Boolean);
     const validationQuestions =
@@ -631,7 +638,23 @@ export default function WorkshopShell({
         project.purpose.trim() ||
         `Develop a workable response to: ${project.originalObservation}`,
       operatingPrinciple:
-        engineering.currentUnderstanding.trim() || project.originalObservation,
+        definitionAnswers["operating-concept"]?.trim() ||
+        definitionAnswers["proposed-solution"]?.trim() ||
+        engineering.currentUnderstanding.trim() ||
+        project.originalObservation,
+      hasEngineeringDefinition,
+      proposedSolution: definitionAnswers["proposed-solution"]?.trim() || "",
+      howItWorks: definitionAnswers["operating-concept"]?.trim() || "",
+      mainElements: definitionAnswers["functional-elements"]?.trim() || "",
+      inputsOutputs: definitionAnswers["inputs-outputs"]?.trim() || "",
+      relationshipsFlow: definitionAnswers["relationships-flow"]?.trim() || "",
+      userInteraction: definitionAnswers["user-interaction"]?.trim() || "",
+      arrangement: definitionAnswers.arrangement?.trim() || "",
+      constraintSafetyResponse:
+        definitionAnswers["constraint-safety-response"]?.trim() || "",
+      technicalUncertainty:
+        definitionAnswers["technical-uncertainty"]?.trim() || "",
+      definitionSummary: definition.solutionDefinitionSummary,
       constraints:
         constraints.length > 0
           ? constraints
@@ -645,16 +668,30 @@ export default function WorkshopShell({
           ? unresolvedQuestions
           : ["REV has not yet identified the next engineering uncertainty."],
       nextEngineeringMove:
-        engineering.nextEngineeringStep || engineeringBench?.nextMove || workshop.summary,
+        definition.status === "ready-for-summary"
+          ? "Use this inventor-defined solution brief to create and inspect the first concept. Validation and formal Engineering Review remain separate."
+          : hasEngineeringDefinition && definition.nextQuestion
+            ? `Continue Engineering Definition with ${definition.nextQuestion.label}: ${definition.nextQuestion.prompt}`
+            : engineering.nextEngineeringStep || engineeringBench?.nextMove || workshop.summary,
       evidenceCount: project.evidence.length,
     };
-  }, [project, engineeringBench, workshop.summary]);
+  }, [project, engineeringBench, engineeringDefinitionAssessment, workshop.summary]);
 
   const visualConceptBrief = useMemo(() => {
     return {
       title: `CONCEPT 01 · ${projectName}`,
+      hasEngineeringDefinition: conceptSheet.hasEngineeringDefinition,
       purpose: conceptSheet.purpose,
       principle: conceptSheet.operatingPrinciple,
+      proposedSolution: conceptSheet.proposedSolution,
+      howItWorks: conceptSheet.howItWorks,
+      mainElements: conceptSheet.mainElements,
+      inputsOutputs: conceptSheet.inputsOutputs,
+      relationshipsFlow: conceptSheet.relationshipsFlow,
+      userInteraction: conceptSheet.userInteraction,
+      arrangement: conceptSheet.arrangement,
+      constraintSafetyResponse: conceptSheet.constraintSafetyResponse,
+      technicalUncertainty: conceptSheet.technicalUncertainty,
       constraints: conceptSheet.constraints,
       assumptions: conceptSheet.assumptions,
       unknowns: conceptSheet.unresolvedQuestions,
@@ -736,10 +773,6 @@ export default function WorkshopShell({
     [selectedId, workshop]
   );
   const discoveryAssessment = useMemo(() => assessDiscovery(project), [project]);
-  const engineeringDefinitionAssessment = useMemo(
-    () => assessEngineeringDefinition(project),
-    [project]
-  );
   const recentEngineeringDefinitionInputs = useMemo(
     () => getEngineeringDefinitionInputs(project).slice(-5).reverse(),
     [project]
@@ -2632,20 +2665,39 @@ export default function WorkshopShell({
                 </div>
 
                 <p className="visual-concept-brief-intro">
-                  Translate the current Project engineering state into a first-pass visual.
-                  This brief is the controlled handoff between REV reasoning and future visual generation.
+                  {visualConceptBrief.hasEngineeringDefinition
+                    ? "Use the inventor-defined solution understanding with the Project problem context to prepare a first-pass visual."
+                    : "Translate the current Project engineering state into a first-pass visual. This brief is the controlled handoff between REV reasoning and future visual generation."}
                 </p>
+
+                {visualConceptBrief.hasEngineeringDefinition && (
+                  <p className="concept-persistence-note">
+                    Engineering Definition reflects inventor-provided solution understanding. It is not validated or automatically adopted as formal Engineering truth.
+                  </p>
+                )}
 
                 <div className="visual-concept-brief-grid">
                   <section>
-                    <span>PURPOSE</span>
+                    <span>{visualConceptBrief.hasEngineeringDefinition ? "PROBLEM / PURPOSE" : "PURPOSE"}</span>
                     <p>{visualConceptBrief.purpose}</p>
                   </section>
 
-                  <section>
-                    <span>OPERATING PRINCIPLE</span>
-                    <p>{visualConceptBrief.principle}</p>
-                  </section>
+                  {visualConceptBrief.hasEngineeringDefinition ? (
+                    <>
+                      {visualConceptBrief.proposedSolution && <section><span>INVENTOR-DEFINED SOLUTION</span><p>{visualConceptBrief.proposedSolution}</p></section>}
+                      {visualConceptBrief.howItWorks && <section><span>HOW IT WORKS</span><p>{visualConceptBrief.howItWorks}</p></section>}
+                      {visualConceptBrief.mainElements && <section><span>MAIN ELEMENTS / STAGES</span><p>{visualConceptBrief.mainElements}</p></section>}
+                      {visualConceptBrief.inputsOutputs && <section><span>INPUTS / OUTPUTS</span><p>{visualConceptBrief.inputsOutputs}</p></section>}
+                      {visualConceptBrief.relationshipsFlow && <section><span>RELATIONSHIPS / FLOW</span><p>{visualConceptBrief.relationshipsFlow}</p></section>}
+                      {visualConceptBrief.userInteraction && <section><span>USER INTERACTION</span><p>{visualConceptBrief.userInteraction}</p></section>}
+                      {visualConceptBrief.arrangement && <section><span>ARRANGEMENT</span><p>{visualConceptBrief.arrangement}</p></section>}
+                    </>
+                  ) : (
+                    <section>
+                      <span>OPERATING PRINCIPLE</span>
+                      <p>{visualConceptBrief.principle}</p>
+                    </section>
+                  )}
 
                   <section>
                     <span>KEY CONSTRAINTS</span>
@@ -2655,6 +2707,13 @@ export default function WorkshopShell({
                       ))}
                     </ul>
                   </section>
+
+                  {visualConceptBrief.hasEngineeringDefinition && visualConceptBrief.constraintSafetyResponse && (
+                    <section>
+                      <span>INVENTOR CONSTRAINT / SAFETY RESPONSE</span>
+                      <p>{visualConceptBrief.constraintSafetyResponse}</p>
+                    </section>
+                  )}
 
                   <section>
                     <span>ASSUMPTIONS</span>
@@ -2666,13 +2725,20 @@ export default function WorkshopShell({
                   </section>
 
                   <section className="visual-concept-brief-warning">
-                    <span>UNRESOLVED QUESTIONS</span>
+                    <span>{visualConceptBrief.hasEngineeringDefinition ? "PROJECT UNCERTAINTIES" : "UNRESOLVED QUESTIONS"}</span>
                     <ul>
                       {visualConceptBrief.unknowns.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
                   </section>
+
+                  {visualConceptBrief.hasEngineeringDefinition && visualConceptBrief.technicalUncertainty && (
+                    <section className="visual-concept-brief-warning">
+                      <span>INVENTOR-IDENTIFIED TECHNICAL UNCERTAINTY</span>
+                      <p>{visualConceptBrief.technicalUncertainty}</p>
+                    </section>
+                  )}
 
                   <section className="visual-concept-brief-next">
                     <span>NEXT ENGINEERING MOVE</span>
@@ -2870,25 +2936,53 @@ export default function WorkshopShell({
             {!conceptVisualised && (
               <div className="concept-sheet-grid">
                 <section className="concept-sheet-card concept-sheet-wide">
-                  <span>PURPOSE</span>
+                  <span>{conceptSheet.hasEngineeringDefinition ? "PROBLEM / PURPOSE" : "PURPOSE"}</span>
                   <p>{conceptSheet.purpose}</p>
                 </section>
-                <section className="concept-sheet-card concept-sheet-wide">
-                  <span>CURRENT OPERATING PRINCIPLE</span>
-                  <p>{conceptSheet.operatingPrinciple}</p>
-                </section>
+                {conceptSheet.hasEngineeringDefinition ? (
+                  <>
+                    <section className="concept-sheet-card concept-sheet-wide">
+                      <span>ENGINEERING DEFINITION BOUNDARY</span>
+                      <p>Engineering Definition reflects inventor-provided solution understanding. It is not validated or automatically adopted as formal Engineering truth.</p>
+                    </section>
+                    {conceptSheet.proposedSolution && <section className="concept-sheet-card concept-sheet-wide"><span>INVENTOR-DEFINED SOLUTION</span><p>{conceptSheet.proposedSolution}</p></section>}
+                    {conceptSheet.howItWorks && <section className="concept-sheet-card concept-sheet-wide"><span>HOW IT WORKS</span><p>{conceptSheet.howItWorks}</p></section>}
+                    {conceptSheet.mainElements && <section className="concept-sheet-card"><span>MAIN ELEMENTS / STAGES</span><p>{conceptSheet.mainElements}</p></section>}
+                    {conceptSheet.inputsOutputs && <section className="concept-sheet-card"><span>INPUTS / OUTPUTS</span><p>{conceptSheet.inputsOutputs}</p></section>}
+                    {conceptSheet.relationshipsFlow && <section className="concept-sheet-card"><span>RELATIONSHIPS / FLOW</span><p>{conceptSheet.relationshipsFlow}</p></section>}
+                    {conceptSheet.userInteraction && <section className="concept-sheet-card"><span>USER INTERACTION</span><p>{conceptSheet.userInteraction}</p></section>}
+                    {conceptSheet.arrangement && <section className="concept-sheet-card"><span>ARRANGEMENT</span><p>{conceptSheet.arrangement}</p></section>}
+                  </>
+                ) : (
+                  <section className="concept-sheet-card concept-sheet-wide">
+                    <span>CURRENT OPERATING PRINCIPLE</span>
+                    <p>{conceptSheet.operatingPrinciple}</p>
+                  </section>
+                )}
                 <section className="concept-sheet-card">
-                  <span>KEY CONSTRAINTS</span>
+                  <span>{conceptSheet.hasEngineeringDefinition ? "KNOWN CONSTRAINTS" : "KEY CONSTRAINTS"}</span>
                   <ul>{conceptSheet.constraints.map((item) => <li key={item}>{item}</li>)}</ul>
                 </section>
+                {conceptSheet.hasEngineeringDefinition && conceptSheet.constraintSafetyResponse && (
+                  <section className="concept-sheet-card">
+                    <span>INVENTOR CONSTRAINT / SAFETY RESPONSE</span>
+                    <p>{conceptSheet.constraintSafetyResponse}</p>
+                  </section>
+                )}
                 <section className="concept-sheet-card">
                   <span>ASSUMPTIONS</span>
                   <ul>{conceptSheet.assumptions.map((item) => <li key={item}>{item}</li>)}</ul>
                 </section>
                 <section className="concept-sheet-card concept-sheet-alert">
-                  <span>UNRESOLVED QUESTIONS</span>
+                  <span>{conceptSheet.hasEngineeringDefinition ? "PROJECT UNCERTAINTIES" : "UNRESOLVED QUESTIONS"}</span>
                   <ul>{conceptSheet.unresolvedQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
                 </section>
+                {conceptSheet.hasEngineeringDefinition && conceptSheet.technicalUncertainty && (
+                  <section className="concept-sheet-card concept-sheet-alert">
+                    <span>INVENTOR-IDENTIFIED TECHNICAL UNCERTAINTY</span>
+                    <p>{conceptSheet.technicalUncertainty}</p>
+                  </section>
+                )}
                 <section className="concept-sheet-card concept-sheet-next">
                   <span>NEXT ENGINEERING MOVE</span>
                   <p>{conceptSheet.nextEngineeringMove}</p>
