@@ -13,6 +13,10 @@ import {
 } from "../../lib/core/project";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import {
+  assessDiscovery,
+  recordDiscoveryAnswer,
+} from "../../lib/workshop/discoveryReasoning";
+import {
   getSpecialistContributions,
   recordSpecialistContribution,
 } from "../../lib/workshop/specialistContributions";
@@ -368,6 +372,8 @@ export default function WorkshopShell({
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
+  const [knowledgeAnswerDraft, setKnowledgeAnswerDraft] = useState("");
+  const [knowledgeAnswerError, setKnowledgeAnswerError] = useState("");
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -720,6 +726,15 @@ export default function WorkshopShell({
     () => (selectedId ? getBench(workshop, selectedId) ?? null : null),
     [selectedId, workshop]
   );
+  const discoveryAssessment = useMemo(() => assessDiscovery(project), [project]);
+  const recentDiscoveryResponses = useMemo(
+    () =>
+      project.timeline
+        .filter((event) => event.type === "discovery-answer-recorded")
+        .slice(-4)
+        .reverse(),
+    [project.timeline]
+  );
   const prototypeBenchIsFocused =
     prototypeBenchFocused && selectedBench?.id === "prototype";
   const selectedSpecialistBenchId = selectedBench && isSpecialistContributionBenchId(selectedBench.id)
@@ -763,6 +778,24 @@ export default function WorkshopShell({
     setSelectedId(null);
     setPatentBenchFocused(false);
     setPrototypeBenchFocused(false);
+    setKnowledgeAnswerDraft("");
+    setKnowledgeAnswerError("");
+  }
+
+  function submitDiscoveryAnswer() {
+    const currentQuestion = discoveryAssessment.nextQuestion;
+    const cleanedAnswer = knowledgeAnswerDraft.trim();
+
+    if (!currentQuestion) return;
+
+    if (!cleanedAnswer) {
+      setKnowledgeAnswerError("Add your response before recording this Discovery answer.");
+      return;
+    }
+
+    onProjectChange(recordDiscoveryAnswer(project, currentQuestion, cleanedAnswer));
+    setKnowledgeAnswerDraft("");
+    setKnowledgeAnswerError("");
   }
 
   function submitSpecialistContribution() {
@@ -1332,6 +1365,143 @@ export default function WorkshopShell({
     </>
   );
 
+  if (selectedBench?.id === "knowledge") {
+    const currentQuestion = discoveryAssessment.nextQuestion;
+
+    return (
+      <StandardBenchShell
+        benchId={selectedBench.id}
+        benchTitle={selectedBench.label}
+        benchState={selectedBench.state}
+        reason={selectedBench.reason}
+        nextMove={selectedBench.nextMove}
+        onBackToWorkshop={returnToWorkshop}
+        askRevState="unavailable"
+        thisBenchLedger={
+          <div className="knowledge-ledger-view">
+            <p className="knowledge-ledger-label">Discovery progress</p>
+            <dl>
+              <div><dt>Current focus</dt><dd>{currentQuestion?.focusLabel ?? "Discovery checkpoint reached"}</dd></div>
+              <div><dt>Addressed areas</dt><dd>{discoveryAssessment.addressedFocuses.length}</dd></div>
+              <div><dt>Remaining areas</dt><dd>{discoveryAssessment.unansweredFocuses.length}</dd></div>
+              <div><dt>Checkpoint</dt><dd>{discoveryAssessment.readyToAdvance ? "Reached" : "Not reached"}</dd></div>
+              <div><dt>Evidence position</dt><dd>{discoveryAssessment.evidenceStatus}</dd></div>
+            </dl>
+            <p className="knowledge-ledger-label">Recorded responses</p>
+            {recentDiscoveryResponses.length > 0 ? (
+              <div className="knowledge-response-list">
+                {recentDiscoveryResponses.map((event) => (
+                  <section key={event.id}>
+                    <strong>{event.title.replace(/^Discovery ·\s*/, "")}</strong>
+                    <p>{event.response ?? event.description}</p>
+                    <small>{new Date(event.createdAt).toLocaleString()}</small>
+                  </section>
+                ))}
+              </div>
+            ) : (
+              <p className="knowledge-ledger-empty">No Discovery responses recorded yet.</p>
+            )}
+          </div>
+        }
+        projectLedger={
+          <div className="knowledge-ledger-view">
+            <strong className="knowledge-project-name">{project.projectName}</strong>
+            <section><strong>Original observation</strong><p>{project.originalObservation}</p></section>
+            <section><strong>Current understanding</strong><p>{project.engineeringState.currentUnderstanding}</p></section>
+            <dl>
+              <div><dt>Readiness</dt><dd>{project.readiness}</dd></div>
+              <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+              <div><dt>Assumptions</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
+              <div><dt>Evidence notes</dt><dd>{project.engineeringState.currentEvidence.length}</dd></div>
+              <div><dt>ProjectEvidence</dt><dd>{project.evidence.length}</dd></div>
+            </dl>
+            <section><strong>Greatest remaining uncertainty</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
+            <section><strong>Next engineering step</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
+            <section><strong>Formal Validation</strong><p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p></section>
+          </div>
+        }
+      >
+        <div className="knowledge-work-area">
+          {currentQuestion ? (
+            <>
+              <div className="knowledge-question-heading">
+                <div><span>DISCOVERY · CURRENT QUESTION</span><h2>{currentQuestion.focusLabel}</h2></div>
+                <b>{discoveryAssessment.addressedFocuses.length} / {discoveryAssessment.addressedFocuses.length + discoveryAssessment.unansweredFocuses.length} AREAS</b>
+              </div>
+              <section className="knowledge-question-card">
+                <p className="knowledge-question-prompt">{currentQuestion.prompt}</p>
+                <p>{currentQuestion.purpose}</p>
+                <details><summary>Why REV is asking this now</summary><p>{currentQuestion.reason}</p></details>
+              </section>
+              <label className="knowledge-answer-input">
+                <span>Your response</span>
+                <textarea
+                  value={knowledgeAnswerDraft}
+                  onChange={(event) => {
+                    setKnowledgeAnswerDraft(event.target.value);
+                    if (knowledgeAnswerError) setKnowledgeAnswerError("");
+                  }}
+                  placeholder="Answer in your own words..."
+                  rows={7}
+                />
+              </label>
+              {knowledgeAnswerError && <p className="knowledge-answer-error" role="alert">{knowledgeAnswerError}</p>}
+              <button type="button" className="knowledge-record-action" onClick={submitDiscoveryAnswer}>RECORD &amp; CONTINUE</button>
+              <section className="knowledge-next-context">
+                <strong>Current uncertainty</strong><p>{currentQuestion.uncertainty}</p>
+                <strong>Next engineering step</strong><p>{currentQuestion.nextEngineeringStep}</p>
+              </section>
+            </>
+          ) : (
+            <section className="knowledge-checkpoint-card">
+              <span>DISCOVERY CHECKPOINT REACHED</span>
+              <h2>Sufficient broad understanding has been recorded.</h2>
+              <p>{discoveryAssessment.summary}</p>
+              <p>Use the full Discovery route for existing checkpoint review and Validation planning.</p>
+              <Link href="/discovery/session">OPEN DISCOVERY CHECKPOINT</Link>
+            </section>
+          )}
+          <div className="knowledge-compatibility-links">
+            <Link href="/discovery/session">Open full Discovery</Link>
+            <Link href="/interview">Open Knowledge Interview</Link>
+          </div>
+        </div>
+
+        <style jsx>{`
+          .knowledge-work-area { display: grid; gap: 18px; }
+          .knowledge-question-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+          .knowledge-question-heading span, .knowledge-ledger-label, .knowledge-next-context strong, .knowledge-checkpoint-card > span { color: #69d9e9; font-size: 10px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+          .knowledge-question-heading h2, .knowledge-checkpoint-card h2 { margin: 6px 0 0; color: #f2f5f3; font-size: 25px; }
+          .knowledge-question-heading b { color: #b7a879; font-size: 10px; letter-spacing: .08em; white-space: nowrap; }
+          .knowledge-question-card, .knowledge-next-context, .knowledge-checkpoint-card { padding: 18px; border: 1px solid #3e5055; border-radius: 10px; background: rgba(7, 13, 15, .5); }
+          .knowledge-question-card > p, .knowledge-next-context p, .knowledge-checkpoint-card p { color: #aeb9b9; line-height: 1.6; }
+          .knowledge-question-prompt { margin-top: 0; color: #f1f3ef !important; font-size: 20px; font-weight: 720; }
+          .knowledge-question-card details { margin-top: 14px; color: #aeb9b9; }
+          .knowledge-question-card summary { cursor: pointer; color: #9edce5; font-weight: 750; }
+          .knowledge-answer-input { display: grid; gap: 8px; color: #c7d0cd; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+          .knowledge-answer-input textarea { resize: vertical; box-sizing: border-box; width: 100%; padding: 13px; border: 1px solid #496069; border-radius: 9px; background: #081114; color: #edf2ef; font: inherit; line-height: 1.55; }
+          .knowledge-answer-input textarea:focus { outline: 2px solid rgba(79, 205, 224, .45); border-color: #67d6e7; }
+          .knowledge-answer-error { margin: -8px 0 0; color: #ffb6a9; font-size: 12px; }
+          .knowledge-record-action { justify-self: start; padding: 12px 18px; border: 1px solid #69d9e9; border-radius: 8px; background: #173c44; color: #edfdff; font: inherit; font-size: 12px; font-weight: 850; letter-spacing: .07em; cursor: pointer; }
+          .knowledge-next-context p { margin: 5px 0 13px; }
+          .knowledge-next-context p:last-child { margin-bottom: 0; }
+          .knowledge-compatibility-links { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 14px; border-top: 1px solid #334448; }
+          .knowledge-compatibility-links a, .knowledge-checkpoint-card a { color: #89dce8; font-size: 12px; font-weight: 750; }
+          .knowledge-ledger-view { display: grid; gap: 14px; color: #dce1de; }
+          .knowledge-ledger-view dl { display: grid; gap: 7px; margin: 0; }
+          .knowledge-ledger-view dl div, .knowledge-ledger-view section { padding: 10px; border: 1px solid #454d4e; border-radius: 8px; background: rgba(8, 12, 13, .38); }
+          .knowledge-ledger-view dt, .knowledge-ledger-view section strong { color: #c5b999; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+          .knowledge-ledger-view dd, .knowledge-ledger-view section p { margin: 5px 0 0; color: #eef0ec; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+          .knowledge-ledger-view section small { display: block; margin-top: 6px; color: #8d9997; font-size: 10px; }
+          .knowledge-response-list { display: grid; gap: 8px; }
+          .knowledge-ledger-empty { margin: 0; color: #929d9b; font-size: 12px; line-height: 1.5; }
+          .knowledge-project-name { color: #f4efe6; font-size: 18px; }
+          @media (max-width: 700px) { .knowledge-question-heading { flex-direction: column; } }
+        `}</style>
+      </StandardBenchShell>
+    );
+  }
+
   if (patentBenchFocused && selectedBench?.id === "patent") {
     const latestContribution = selectedSpecialistContributionTrace.at(-1);
     const adoptedEvidenceCount = latestContribution?.adoptedEvidenceIds.length ?? 0;
@@ -1809,16 +1979,6 @@ export default function WorkshopShell({
           <strong>{selectedBench.nextMove}</strong>
         </div>
           </>
-        )}
-        {selectedBench?.id === "knowledge" && (
-          <div className="station-summary">
-            <p className="station-summary-label">Knowledge station</p>
-            <p>Structured inventor knowledge is managed through the existing Interview capability and Project timeline.</p>
-            <div className="knowledge-actions">
-              <Link href="/discovery/session">Continue Discovery</Link>
-              <Link href="/interview">Open Knowledge Interview</Link>
-            </div>
-          </div>
         )}
         {selectedBench?.id === "engineering" && (
           <div className="station-summary engineering-summary">
