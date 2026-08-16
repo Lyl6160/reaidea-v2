@@ -5,8 +5,16 @@ import { useMemo, useRef, useState } from "react";
 
 import ProjectReviewView from "./ProjectReviewView";
 
-import type { Project } from "../../lib/core/project";
+import {
+  isSpecialistContributionBenchId,
+  type Project,
+  type SpecialistContributionBenchId,
+} from "../../lib/core/project";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
+import {
+  getSpecialistContributions,
+  recordSpecialistContribution,
+} from "../../lib/workshop/specialistContributions";
 import type {
   WorkshopBenchId,
   WorkshopBenchSignal,
@@ -350,6 +358,10 @@ export default function WorkshopShell({
     }
     return workshop.recommendedBench;
   });
+  const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
+    Partial<Record<SpecialistContributionBenchId, string>>
+  >({});
+  const [specialistContributionError, setSpecialistContributionError] = useState("");
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
   const [conceptCreated, setConceptCreated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -697,6 +709,11 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
+  const selectedSpecialistContributions = isSpecialistContributionBenchId(
+    selectedBench.id
+  )
+    ? getSpecialistContributions(project, selectedBench.id)
+    : [];
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
@@ -704,9 +721,31 @@ export default function WorkshopShell({
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
+    setSpecialistContributionError("");
     window.setTimeout(() => {
       workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
+  }
+
+  function submitSpecialistContribution() {
+    if (!isSpecialistContributionBenchId(selectedBench.id)) return;
+
+    const result = recordSpecialistContribution(project, {
+      specialistBenchId: selectedBench.id,
+      contribution: specialistContributionDrafts[selectedBench.id] ?? "",
+    });
+
+    if (result.status === "invalid") {
+      setSpecialistContributionError(result.reason);
+      return;
+    }
+
+    onProjectChange(result.project);
+    setSpecialistContributionDrafts((drafts) => ({
+      ...drafts,
+      [selectedBench.id]: "",
+    }));
+    setSpecialistContributionError("");
   }
 
   function createConcept() {
@@ -1410,10 +1449,45 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {["patent", "marketing", "manufacturing", "reality"].includes(selectedBench.id) && (
-          <div className="station-summary informational-summary">
-            <p className="station-summary-label">Informational · Future capability</p>
-            <p>This station remains an orientation point for a future specialist capability. No specialist actions are available yet.</p>
+        {isSpecialistContributionBenchId(selectedBench.id) && (
+          <div className="specialist-contribution-panel">
+            <p className="station-summary-label">Specialist Contribution</p>
+            <p>
+              Record an inventor-controlled contribution into Project history. It does not
+              automatically become Project evidence or an engineering decision.
+            </p>
+            <textarea
+              value={specialistContributionDrafts[selectedBench.id] ?? ""}
+              onChange={(event) => {
+                setSpecialistContributionDrafts((drafts) => ({
+                  ...drafts,
+                  [selectedBench.id]: event.target.value,
+                }));
+                if (specialistContributionError) setSpecialistContributionError("");
+              }}
+              placeholder="Record the specialist contribution in your own words."
+              rows={4}
+            />
+            {specialistContributionError && (
+              <p className="specialist-contribution-error" role="alert">
+                {specialistContributionError}
+              </p>
+            )}
+            <button type="button" onClick={submitSpecialistContribution}>
+              Record contribution
+            </button>
+
+            {selectedSpecialistContributions.length > 0 && (
+              <div className="specialist-contribution-history">
+                <strong>Recorded Project history</strong>
+                {selectedSpecialistContributions.map((event) => (
+                  <article key={event.id}>
+                    <p>{event.description}</p>
+                    <time dateTime={event.createdAt}>{event.createdAt}</time>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {selectedBench.id === "validation" && (
@@ -3119,8 +3193,83 @@ export default function WorkshopShell({
           font-size: 12px;
         }
 
-        .informational-summary {
-          border-color: rgba(224, 173, 86, 0.28);
+        .specialist-contribution-panel {
+          grid-column: 1 / -1;
+          margin-top: 4px;
+          padding: 16px;
+          border-top: 1px solid rgba(224, 173, 86, 0.38);
+          background: rgba(45, 33, 14, 0.24);
+        }
+
+        .specialist-contribution-panel > p:not(.station-summary-label) {
+          margin: 7px 0 12px;
+          color: #c9c1b3;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .specialist-contribution-panel textarea {
+          box-sizing: border-box;
+          width: 100%;
+          padding: 11px 12px;
+          border: 1px solid #655535;
+          border-radius: 8px;
+          background: #0b1119;
+          color: #eef3f7;
+          font: inherit;
+          resize: vertical;
+        }
+
+        .specialist-contribution-panel > button {
+          margin-top: 10px;
+          padding: 9px 13px;
+          border: 1px solid #d6a64e;
+          border-radius: 7px;
+          background: #3a2c13;
+          color: #f5dfb4;
+          font: inherit;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .specialist-contribution-error {
+          margin: 8px 0 0 !important;
+          color: #ffb4b4 !important;
+          font-size: 12px !important;
+        }
+
+        .specialist-contribution-history {
+          display: grid;
+          gap: 8px;
+          margin-top: 16px;
+          padding-top: 13px;
+          border-top: 1px solid rgba(224, 173, 86, 0.22);
+        }
+
+        .specialist-contribution-history > strong {
+          color: #e8d5ad;
+          font-size: 12px;
+        }
+
+        .specialist-contribution-history article {
+          padding: 10px;
+          border: 1px solid rgba(224, 173, 86, 0.2);
+          border-radius: 7px;
+          background: rgba(7, 17, 29, 0.48);
+        }
+
+        .specialist-contribution-history article p {
+          margin: 0;
+          color: #dbe2e7;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .specialist-contribution-history time {
+          display: block;
+          margin-top: 5px;
+          color: #9aa7b1;
+          font-size: 10px;
         }
 
         .readout-title,

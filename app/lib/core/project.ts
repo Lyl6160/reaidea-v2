@@ -127,6 +127,23 @@ export type ProjectEngineeringAction = {
   createdAt: string;
 };
 
+export type SpecialistContributionBenchId =
+  | "patent"
+  | "marketing"
+  | "manufacturing"
+  | "reality";
+
+export function isSpecialistContributionBenchId(
+  value: unknown
+): value is SpecialistContributionBenchId {
+  return (
+    value === "patent" ||
+    value === "marketing" ||
+    value === "manufacturing" ||
+    value === "reality"
+  );
+}
+
 export type EngineeringStateField =
   | "currentUnderstanding"
   | "currentEvidence"
@@ -150,7 +167,8 @@ export type ProjectTimelineEventType =
   | "engineering-direction-recorded"
   | "engineering-action-recorded"
   | "engineering-action-result-recorded"
-  | "project-evidence-recorded";
+  | "project-evidence-recorded"
+  | "specialist-contribution-recorded";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -166,6 +184,7 @@ export type ProjectTimelineEvent = {
   engineeringStateChangedFields?: EngineeringStateField[];
   decisionId?: string;
   engineeringActionId?: string;
+  specialistBenchId?: SpecialistContributionBenchId;
 };
 
 export type Project = {

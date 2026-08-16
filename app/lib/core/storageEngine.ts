@@ -16,6 +16,7 @@ import type {
   ValidationPlanItemStatus,
   ValidationPlanStatus,
 } from "./project";
+import { isSpecialistContributionBenchId } from "./project";
 
 type StoredEngineeringState = Omit<
   EngineeringState,
@@ -328,6 +329,9 @@ function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent
       : {}),
     ...(typeof event.engineeringActionId === "string"
       ? { engineeringActionId: event.engineeringActionId }
+      : {}),
+    ...(isSpecialistContributionBenchId(event.specialistBenchId)
+      ? { specialistBenchId: event.specialistBenchId }
       : {}),
   }));
 }
