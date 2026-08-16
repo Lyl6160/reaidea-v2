@@ -16,6 +16,10 @@ import {
   recordSpecialistContribution,
 } from "../../lib/workshop/specialistContributions";
 import { recordProjectEvidenceFromSpecialistContribution } from "../../lib/workshop/specialistContributionEvidence";
+import {
+  createSpecialistProjectContext,
+  type LimitedSpecialistContextItems,
+} from "../../lib/workshop/specialistProjectContext";
 import type {
   WorkshopBenchId,
   WorkshopBenchSignal,
@@ -40,6 +44,14 @@ type SpecialistEvidenceInput = {
 
 function getBench(workshop: WorkshopState, id: WorkshopBenchId) {
   return workshop.benches.find((bench) => bench.id === id);
+}
+
+function specialistContextLimitNote(
+  collection: LimitedSpecialistContextItems<unknown>
+) {
+  if (!collection.truncated) return null;
+
+  return `Showing ${collection.items.length} of ${collection.total} recorded items.`;
 }
 
 
@@ -730,6 +742,10 @@ export default function WorkshopShell({
         (contribution) => contribution.specialistBenchId === selectedSpecialistBenchId
       )
     : [];
+  const specialistProjectContext = useMemo(
+    () => createSpecialistProjectContext(project, workshop.trace),
+    [project, workshop.trace]
+  );
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
@@ -1492,6 +1508,111 @@ export default function WorkshopShell({
               <span>Evidence: {project.evidence.length}</span>
             </div>
           </div>
+        )}
+        {selectedSpecialistBenchId && (
+          <section className="specialist-project-context" aria-label="Project Context">
+            <div className="specialist-project-context-heading">
+              <p className="station-summary-label">Project Context</p>
+              <span>Read only</span>
+            </div>
+            <p className="specialist-project-context-name">
+              {specialistProjectContext.projectName}
+            </p>
+            <div className="specialist-project-context-grid">
+              <section>
+                <strong>Current Understanding</strong>
+                <p>
+                  {specialistProjectContext.currentUnderstanding ||
+                    "No current Project understanding recorded."}
+                </p>
+              </section>
+              <section>
+                <strong>Constraints</strong>
+                {specialistProjectContext.constraints.items.length > 0 ? (
+                  <ul>
+                    {specialistProjectContext.constraints.items.map((constraint, index) => (
+                      <li key={index}>{constraint}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No recorded current constraints.</p>
+                )}
+                {specialistContextLimitNote(specialistProjectContext.constraints) && (
+                  <small>{specialistContextLimitNote(specialistProjectContext.constraints)}</small>
+                )}
+              </section>
+              <section>
+                <strong>Greatest Remaining Uncertainty</strong>
+                <p>
+                  {specialistProjectContext.greatestRemainingUncertainty ||
+                    "No greatest remaining uncertainty recorded."}
+                </p>
+              </section>
+              <section>
+                <strong>Project Evidence</strong>
+                {specialistProjectContext.evidence.items.length > 0 ? (
+                  <div className="specialist-project-context-records">
+                    {specialistProjectContext.evidence.items.map((evidence) => (
+                      <article key={evidence.evidenceId}>
+                        <p>{evidence.summary}</p>
+                        <small>Source / reference: {evidence.source}</small>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No recorded Project evidence.</p>
+                )}
+                {specialistContextLimitNote(specialistProjectContext.evidence) && (
+                  <small>{specialistContextLimitNote(specialistProjectContext.evidence)}</small>
+                )}
+              </section>
+              <section>
+                <strong>Current Engineering Conclusions</strong>
+                {specialistProjectContext.conclusions.items.length > 0 ? (
+                  <ul>
+                    {specialistProjectContext.conclusions.items.map((conclusion) => (
+                      <li key={conclusion.id}>{conclusion.conclusion}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No current Engineering Conclusions.</p>
+                )}
+                {specialistContextLimitNote(specialistProjectContext.conclusions) && (
+                  <small>{specialistContextLimitNote(specialistProjectContext.conclusions)}</small>
+                )}
+              </section>
+              <section>
+                <strong>Current Engineering Directions</strong>
+                {specialistProjectContext.directions.items.length > 0 ? (
+                  <ul>
+                    {specialistProjectContext.directions.items.map((direction) => (
+                      <li key={direction.id}>{direction.direction}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No current Engineering Directions.</p>
+                )}
+                {specialistContextLimitNote(specialistProjectContext.directions) && (
+                  <small>{specialistContextLimitNote(specialistProjectContext.directions)}</small>
+                )}
+              </section>
+              <section>
+                <strong>Adopted Engineering Actions</strong>
+                {specialistProjectContext.actions.items.length > 0 ? (
+                  <ul>
+                    {specialistProjectContext.actions.items.map((action) => (
+                      <li key={action.id}>{action.action}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No adopted Engineering Actions.</p>
+                )}
+                {specialistContextLimitNote(specialistProjectContext.actions) && (
+                  <small>{specialistContextLimitNote(specialistProjectContext.actions)}</small>
+                )}
+              </section>
+            </div>
+          </section>
         )}
         {selectedSpecialistBenchId && (
           <div className="specialist-contribution-panel">
@@ -3324,6 +3445,103 @@ export default function WorkshopShell({
           padding: 16px;
           border-top: 1px solid rgba(224, 173, 86, 0.38);
           background: rgba(45, 33, 14, 0.24);
+        }
+
+        .specialist-project-context {
+          grid-column: 1 / -1;
+          padding: 16px;
+          border: 1px solid rgba(99, 185, 202, 0.28);
+          border-radius: 10px;
+          background: rgba(15, 37, 45, 0.42);
+        }
+
+        .specialist-project-context-heading {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .specialist-project-context-heading > span {
+          color: #9fc4cb;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .specialist-project-context-name {
+          margin: 7px 0 13px;
+          color: #e4f3f5;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        .specialist-project-context-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .specialist-project-context-grid > section {
+          padding: 11px;
+          border: 1px solid rgba(99, 185, 202, 0.18);
+          border-radius: 8px;
+          background: rgba(7, 17, 29, 0.44);
+        }
+
+        .specialist-project-context-grid strong {
+          color: #cce8ed;
+          font-size: 12px;
+        }
+
+        .specialist-project-context-grid p,
+        .specialist-project-context-grid ul {
+          margin: 7px 0 0;
+          color: #c5d0d6;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .specialist-project-context-grid ul {
+          padding-left: 18px;
+        }
+
+        .specialist-project-context-grid li + li {
+          margin-top: 5px;
+        }
+
+        .specialist-project-context-grid small {
+          display: block;
+          margin-top: 7px;
+          color: #98aab4;
+          font-size: 10px;
+        }
+
+        .specialist-project-context-records {
+          display: grid;
+          gap: 7px;
+          margin-top: 7px;
+        }
+
+        .specialist-project-context-records article {
+          padding-top: 7px;
+          border-top: 1px solid rgba(99, 185, 202, 0.14);
+        }
+
+        .specialist-project-context-records article:first-child {
+          padding-top: 0;
+          border-top: 0;
+        }
+
+        .specialist-project-context-records p {
+          margin: 0;
+        }
+
+        @media (max-width: 760px) {
+          .specialist-project-context-grid {
+            grid-template-columns: 1fr;
+          }
         }
 
         .specialist-contribution-panel > p:not(.station-summary-label) {
