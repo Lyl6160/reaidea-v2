@@ -76,6 +76,7 @@ export type EngineeringDirectionTraceEntry = {
   createdAt: string;
   basisState: EngineeringDirectionBasisState;
   basisConclusions: EngineeringDirectionBasisReference[];
+  adoptedActionIds: string[];
   supersedesDecisionId?: string;
 };
 
@@ -537,6 +538,9 @@ function createEngineeringDirectionTraceEntry(
     createdAt: decision.createdAt,
     basisState: engineeringDirectionBasisState(basisConclusions),
     basisConclusions,
+    adoptedActionIds: project.engineeringActions
+      .filter((action) => action.basisDirectionIds?.includes(decision.id))
+      .map((action) => action.id),
     ...(decision.supersedesDecisionId
       ? { supersedesDecisionId: decision.supersedesDecisionId }
       : {}),

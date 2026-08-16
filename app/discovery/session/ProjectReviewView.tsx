@@ -67,6 +67,16 @@ export default function ProjectReviewView({
   const engineeringTrace = summarizeEngineeringTrace(project);
   const currentEngineeringConclusions = engineeringTrace.currentEngineeringConclusions;
   const currentEngineeringDirections = engineeringTrace.currentEngineeringDirections;
+  const directionActionAdoptionTrace = [
+    ...engineeringTrace.currentEngineeringDirections.map((direction) => ({
+      ...direction,
+      status: "Current" as const,
+    })),
+    ...engineeringTrace.supersededEngineeringDirections.map((direction) => ({
+      ...direction,
+      status: "Superseded" as const,
+    })),
+  ];
   const projectEvidenceCoverage = engineeringTrace.projectEvidence;
   const actionResultEvidenceCoverage = engineeringTrace.adoptedEngineeringActions.flatMap(
     (engineeringAction) =>
@@ -507,6 +517,56 @@ export default function ProjectReviewView({
             Continue the inventor-owned engineering loop from recorded Project truth.
             This review remains available whether or not a formal Validation plan exists.
           </p>
+
+      {directionActionAdoptionTrace.length > 0 && (
+        <section
+          className="direction-action-adoption-trace"
+          aria-label="Engineering direction action adoption trace"
+        >
+          <p className="validation-label">Engineering Direction Action Adoption Trace</p>
+          <p>
+            Read-only trace of exact recorded basis links from current and superseded
+            Engineering Directions to adopted Engineering Actions. Superseded directions
+            remain visible as engineering history. The absence of a linked action is not
+            a judgement or a requirement to adopt one.
+          </p>
+
+          <div className="direction-action-adoption-list">
+            {directionActionAdoptionTrace.map((direction) => {
+              const adoptedActions = direction.adoptedActionIds.flatMap((actionId) => {
+                const adoptedAction = engineeringTrace.adoptedEngineeringActions.find(
+                  (action) => action.id === actionId
+                );
+                return adoptedAction ? [adoptedAction] : [];
+              });
+
+              return (
+                <article key={direction.id}>
+                  <div className="direction-action-adoption-heading">
+                    <span className={`direction-status direction-status-${direction.status.toLowerCase()}`}>
+                      {direction.status}
+                    </span>
+                    <strong>{direction.direction}</strong>
+                    {direction.reason && <small>{direction.reason}</small>}
+                  </div>
+                  <p>
+                    {adoptedActions.length > 0
+                      ? `Explicitly referenced by ${adoptedActions.length} adopted Engineering Action${adoptedActions.length === 1 ? "" : "s"}.`
+                      : "No adopted Engineering Action explicitly references this direction."}
+                  </p>
+                  {adoptedActions.length > 0 && (
+                    <ul>
+                      {adoptedActions.map((adoptedAction) => (
+                        <li key={adoptedAction.id}>{adoptedAction.action}</li>
+                      ))}
+                    </ul>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {hasProjectEvidence && (
         <>
@@ -993,6 +1053,88 @@ export default function ProjectReviewView({
           margin: 0 0 4px;
           color: #a8b3c7;
           line-height: 1.65;
+        }
+
+        .direction-action-adoption-trace {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(150, 130, 91, 0.42);
+          border-radius: 9px;
+          background: rgba(42, 34, 20, 0.34);
+        }
+
+        .direction-action-adoption-trace > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #c8bea8;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .direction-action-adoption-list {
+          display: grid;
+          gap: 9px;
+        }
+
+        .direction-action-adoption-list article {
+          padding: 11px;
+          border: 1px solid rgba(150, 130, 91, 0.26);
+          border-radius: 7px;
+          background: rgba(7, 17, 29, 0.5);
+        }
+
+        .direction-action-adoption-heading strong,
+        .direction-action-adoption-heading small {
+          display: block;
+        }
+
+        .direction-action-adoption-heading strong {
+          margin-top: 7px;
+          color: #ece4d3;
+          font-size: 13px;
+        }
+
+        .direction-action-adoption-heading small {
+          margin-top: 4px;
+          color: #aa9e87;
+          font-size: 11px;
+          line-height: 1.45;
+        }
+
+        .direction-status {
+          display: inline-block;
+          padding: 3px 7px;
+          border-radius: 999px;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+
+        .direction-status-current {
+          border: 1px solid rgba(102, 190, 125, 0.48);
+          background: rgba(24, 69, 37, 0.45);
+          color: #9fe0af;
+        }
+
+        .direction-status-superseded {
+          border: 1px solid rgba(157, 148, 130, 0.4);
+          background: rgba(67, 62, 54, 0.45);
+          color: #c4baaa;
+        }
+
+        .direction-action-adoption-list article > p {
+          margin: 10px 0 0;
+          color: #bac4cd;
+          font-size: 12px;
+          line-height: 1.45;
+        }
+
+        .direction-action-adoption-list ul {
+          margin: 8px 0 0;
+          padding-left: 20px;
+          color: #dce5ec;
+          font-size: 12px;
+          line-height: 1.5;
         }
 
         .validation-heading,
