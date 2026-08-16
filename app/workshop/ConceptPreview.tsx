@@ -18,12 +18,14 @@ const PRELIMINARY_REAR_LINES = OUTLINE_LINES.slice(0, 6);
 const DEPTH_NODES = [1, 3, 5, 6, 7, 8] as const;
 
 export default function ConceptPreview({ preview, compact = false }: ConceptPreviewProps) {
-  const stageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
+  const discoveryStageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
+  const engineeringLevel = preview.engineeringAnswerCount;
+  const stageIndex = engineeringLevel > 0 ? 6 : discoveryStageIndex;
   const showCluster = stageIndex >= 2;
   const showOutline = stageIndex >= 3;
   const showStructure = stageIndex >= 4;
   const showWireframe = stageIndex >= 5;
-  const showSettledWireframe = preview.stage === "early-ready";
+  const showSettledWireframe = preview.stage === "early-ready" || engineeringLevel > 0;
 
   return (
     <section
@@ -31,6 +33,7 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
       aria-label={`Idea evolving: ${preview.title}`}
       data-concept-stage={preview.stage}
       data-discovery-input-count={preview.answerCount}
+      data-engineering-input-count={preview.engineeringAnswerCount}
     >
       <div className="concept-preview-heading">
         <span>IDEA EVOLVING</span>
@@ -44,6 +47,9 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
               <stop offset="0.45" stopColor="#69e5ef" />
               <stop offset="1" stopColor="#25849d" />
             </radialGradient>
+            <marker id={`flow-arrow-${compact ? "compact" : "hub"}`} viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+              <path d="M0 0 L6 3 L0 6 Z" fill="#8eeef0" />
+            </marker>
           </defs>
           {showOutline && OUTLINE_LINES.map(([from, to]) => (
             <line key={`o-${from}-${to}`} className="outline-line" x1={POINTS[from][0]} y1={POINTS[from][1]} x2={POINTS[to][0]} y2={POINTS[to][1]} />
@@ -69,11 +75,64 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
           {POINTS.map(([x, y], index) => (
             <circle key={`${x}-${y}`} className={`idea-point point-${index}`} cx={x} cy={y} r={stageIndex === 0 ? 0.65 : showStructure ? 2 : 1.45} />
           ))}
+          {engineeringLevel >= 1 && (
+            <g className="engineering-signals">
+              <line x1="39" y1="57" x2="72" y2="38" />
+              <line x1="44" y1="43" x2="67" y2="72" />
+              <circle cx="39" cy="57" r="3.4" />
+            </g>
+          )}
+          {engineeringLevel >= 2 && (
+            <g className="functional-zones">
+              <circle cx="40" cy="51" r="12" />
+              <circle cx="67" cy="51" r="13" />
+              <line x1="52" y1="51" x2="54" y2="51" />
+            </g>
+          )}
+          {engineeringLevel >= 3 && (
+            <g className="functional-elements">
+              {[2, 4, 7].map((index) => <circle key={`element-${index}`} cx={POINTS[index][0]} cy={POINTS[index][1]} r="4.3" />)}
+            </g>
+          )}
+          {engineeringLevel >= 4 && (
+            <g className="input-output-flow">
+              <line x1="5" y1="53" x2="18" y2="53" markerEnd={`url(#flow-arrow-${compact ? "compact" : "hub"})`} />
+              <line x1="84" y1="61" x2="96" y2="61" markerEnd={`url(#flow-arrow-${compact ? "compact" : "hub"})`} />
+            </g>
+          )}
+          {engineeringLevel >= 5 && (
+            <path className="functional-path" d="M18 53 C30 39, 42 65, 57 45 S74 43, 84 61" markerEnd={`url(#flow-arrow-${compact ? "compact" : "hub"})`} />
+          )}
+          {engineeringLevel >= 6 && (
+            <g className="interaction-node">
+              <circle cx="91" cy="20" r="4.5" />
+              <line x1="87" y1="22" x2="76" y2="23" markerEnd={`url(#flow-arrow-${compact ? "compact" : "hub"})`} />
+            </g>
+          )}
+          {engineeringLevel >= 7 && (
+            <g className="arrangement-frames">
+              <path d="M23 23 L55 14 L80 31" />
+              <path d="M21 72 L49 86 L77 76" />
+            </g>
+          )}
+          {engineeringLevel >= 8 && <rect className="constraint-boundary" x="8" y="9" width="84" height="79" rx="15" />}
+          {engineeringLevel >= 9 && (
+            <g className="definition-ready-core">
+              <circle cx="54" cy="51" r="7" />
+              <line x1="30" y1="27" x2="54" y2="51" />
+              <line x1="54" y1="51" x2="84" y2="61" />
+              <line x1="54" y1="51" x2="48" y2="79" />
+            </g>
+          )}
         </svg>
       </div>
       <div className="concept-preview-copy">
         <strong>{preview.title}</strong>
-        <span>{preview.answerCount} DISCOVERY INPUT{preview.answerCount === 1 ? "" : "S"} RECORDED</span>
+        <span>
+          {preview.engineeringAnswerCount > 0
+            ? `${preview.engineeringAnswerCount} ENGINEERING INPUT${preview.engineeringAnswerCount === 1 ? "" : "S"} RECORDED`
+            : `${preview.answerCount} DISCOVERY INPUT${preview.answerCount === 1 ? "" : "S"} RECORDED`}
+        </span>
         {!compact && <p>{preview.subtitle}</p>}
       </div>
       <small>CONCEPTUAL · UNVALIDATED · NOT PROJECT TRUTH</small>
@@ -106,6 +165,18 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
         .rear-structure-line { stroke: rgba(104, 202, 225, .48); stroke-width: .7; }
         .idea-point { fill: url(#idea-glow-hub); filter: drop-shadow(0 0 2px #66e5ee); opacity: .92; }
         .rear-point { fill: #72cfe0; opacity: .72; filter: drop-shadow(0 0 1.5px #48b7ce); }
+        .engineering-signals line { stroke: #c5ffff; stroke-width: 1.35; }
+        .engineering-signals circle { fill: rgba(123, 238, 240, .16); stroke: #b9ffff; stroke-width: 1.1; }
+        .functional-zones circle { fill: rgba(47, 163, 184, .08); stroke: rgba(104, 226, 232, .58); stroke-width: .8; stroke-dasharray: 2 1.5; }
+        .functional-zones line { stroke: rgba(151, 244, 242, .72); stroke-width: 1.1; }
+        .functional-elements circle { fill: rgba(8, 20, 24, .68); stroke: #a6f6f3; stroke-width: 1.35; }
+        .input-output-flow line, .interaction-node line { stroke: #8eeef0; stroke-width: 1.2; }
+        .functional-path { fill: none; stroke: rgba(155, 250, 246, .92); stroke-width: 1.45; stroke-dasharray: 3 1; }
+        .interaction-node circle { fill: rgba(65, 181, 199, .18); stroke: #8eeef0; stroke-width: 1.2; }
+        .arrangement-frames path { fill: none; stroke: rgba(111, 219, 230, .68); stroke-width: .9; }
+        .constraint-boundary { fill: none; stroke: rgba(221, 186, 112, .8); stroke-width: 1; stroke-dasharray: 3 2; }
+        .definition-ready-core circle { fill: rgba(176, 255, 248, .2); stroke: #e0fffb; stroke-width: 1.5; filter: drop-shadow(0 0 3px #6ce0e7); }
+        .definition-ready-core line { stroke: rgba(207, 255, 250, .9); stroke-width: 1.25; }
         .stage-dormant .idea-point { opacity: .13; filter: none; }
         .stage-spark .idea-point:nth-of-type(3n) { opacity: .38; }
         .stage-early-ready .idea-point { fill: #dfffff; }
