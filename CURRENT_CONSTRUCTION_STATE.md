@@ -1,9 +1,9 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.32 — Inventor / Knowledge Bench Discovery Input
-**Branch:** `sprint006-build24-32-knowledge-discovery-input`
-**Accepted HEAD:** `29135969e0202751de35ee71fb492c4a2618e9c2`
+**Construction checkpoint:** HP-24.33 — Cross-Bench Idea Evolving Viewer
+**Branch:** `sprint006-build24-33-idea-evolving-viewer`
+**Accepted HEAD:** `df5de03613c5dd048338d53cc0abcd0b653d06bb`
 **Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
@@ -725,5 +725,19 @@ Knowledge Interview remains separate. `/discovery/session` and `/interview` rema
 The accepted readiness walkthrough confirms cross-bench development through existing truth: fresh Engineering AVAILABLE with Prototype/Validation DORMANT; first realistic response advances readiness to UNDERSTANDING without forcing them; Discovery completion makes Engineering and Prototype READY, Patent / IP recommended/pulsing, Marketing and Manufacturing / Costing AVAILABLE, while Validation and Reality remain DORMANT. `workshopBrain` is unchanged.
 
 Future non-authoritative idea evolution is deferred. HP-24.33 — Cross-Bench Idea Evolving Preview is proposed but not started. HP-24.32 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.32-knowledge-discovery-input`; freeze blockers are NONE.
+
+## HP-24.33 Capability
+
+HP-24.33 adds a cross-bench IDEA EVOLVING presentation/reward layer. The frozen parent is `93bb077ee487fdf0a981bd83747e314db789c3d0`, tagged `v24.32-knowledge-discovery-input`. Accepted Build 1 is `1b988622d444f618029262ffeaccc197bc743858`; accepted Build 2 is `df5de03613c5dd048338d53cc0abcd0b653d06bb`; Build 3 implementation is not required.
+
+Distinct existing `discovery-answer-recorded` subjects drive deterministic stages: IDEA WAITING at zero, particle spark at one, clustering at two, outline at three, planar structure at four, depth wireframe at five and a stabilised EARLY CONCEPT READY wireframe at the existing checkpoint. Build 2 makes Stage 5 visibly distinct from Stage 4 and checkpoint visibly more settled than Stage 5.
+
+The larger viewer sits near Prototype on the neutral Workshop floor. The same compact derived stage appears on currently migrated StandardBenchShell benches: Inventor / Knowledge, Prototype and Patent / IP. Engineering, Validation, Marketing, Manufacturing / Costing and Reality remain on their existing presentation paths; their lack of compact coverage is accepted pending future shell migration.
+
+The viewer is read-only, abstract and invention-neutral. It does not automatically use the existing vehicle/trailer-like procedural Prototype geometry and creates no Engineering State, evidence, decision, assertion, conclusion, direction, action, Validation result, readiness, Project state, writer or storage. Neutral entry, Back to Workshop, disabled Ask REV, Discovery semantics, Prototype readiness and `workshopBrain` remain preserved.
+
+Browser acceptance and all static gates pass; freeze blockers are NONE. HP-24.33 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.33-idea-evolving-viewer`.
+
+The accepted engagement principle is answer → see progress → become curious → continue building the idea. HP-24.34 — Idea-Type-Aware Concept Evolution is proposed but not started. Future inspection should cover inventor-confirmed provisional idea classification, appropriate visual language for product, machine, process, software, system and other idea types, bounded non-authoritative generation, original-idea preservation and future concept history.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.

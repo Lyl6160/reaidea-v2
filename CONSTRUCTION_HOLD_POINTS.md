@@ -1752,3 +1752,44 @@ Non-authoritative visual idea evolution before validated truth is deferred. HP-2
 ### Freeze Decision
 
 HP-24.32 closes direct Discovery input at the Inventor / Knowledge bench without creating another question system or changing authority. Build 2 implementation is not required.
+
+## HP-24.33 — Cross-Bench Idea Evolving Viewer
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.32 at `93bb077ee487fdf0a981bd83747e314db789c3d0`, tag `v24.32-knowledge-discovery-input`
+
+**Accepted Build 1:** `1b988622d444f618029262ffeaccc197bc743858` — Sprint 006 Build 24.33.1: add cross-bench Idea Evolving viewer
+
+**Accepted Build 2:** `df5de03613c5dd048338d53cc0abcd0b653d06bb` — Sprint 006 Build 24.33.2: strengthen Idea Evolving wireframe progression
+
+**Build 3:** Implementation NOT REQUIRED
+
+### Accepted Contract
+
+Authoritative recorded Discovery answers now drive a deterministic, read-only IDEA EVOLVING reward layer. The accepted visual progression is dormant, spark, clustering, outline, planar structure, depth wireframe and stabilised early-ready wireframe. It is abstract and invention-neutral, does not use the existing procedural vehicle/trailer geometry automatically, and creates no Project truth.
+
+The hub viewer is associated with Prototype without changing Prototype readiness, selection, recommendation or pulse. The optional shared-shell slot supplies the identical compact stage to Inventor / Knowledge, Prototype and Patent / IP. Engineering, Validation, Marketing, Manufacturing / Costing and Reality will inherit the viewer through future shell migration and are not HP-24.33 blockers.
+
+### Authority Boundary
+
+No Engineering State, ProjectEvidence, ProjectDecision, Engineering Assertion, Conclusion, Direction, Action, Validation result, approved design, adopted concept, readiness, writer, store or persistence is created. Timeline source, stage thresholds, checkpoint trigger, navigation and `workshopBrain` remain unchanged.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.33-idea-evolving-viewer`
+- **Browser acceptance:** PASS
+- **Stage 4 → Stage 5 distinction:** PASS after accepted Build 2
+- **Checkpoint refinement:** PASS
+- **Hub and compact stage consistency:** PASS
+- **Project writes from preview:** NONE
+- **Project model, storage, writers and workshopBrain:** UNCHANGED
+- **Freeze blockers:** NONE
+
+### Engagement and Deferred Direction
+
+The accepted loop is answer → see progress → become curious → continue building the idea. HP-24.34 — Idea-Type-Aware Concept Evolution is proposed for future inspection of inventor-confirmed idea classification and appropriate visual modes for products, machines, processes, software, systems and other concept forms. It is not started by this freeze.
+
+### Freeze Decision
+
+HP-24.33 closes the abstract cross-bench concept reward layer. Build 3 implementation is not required.

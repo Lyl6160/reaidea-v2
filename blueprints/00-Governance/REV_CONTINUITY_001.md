@@ -1097,4 +1097,24 @@ REV and the inventor browser-accepted the shell structure and Build 2 presentati
 
 ---
 
+# 44. Current HP-24.33 REV Continuity
+
+HP-24.33 — Cross-Bench Idea Evolving Viewer is complete, verified, browser-accepted, tagged, pushed and frozen on branch `sprint006-build24-33-idea-evolving-viewer`. The final tag is `v24.33-idea-evolving-viewer`.
+
+The frozen parent is `93bb077ee487fdf0a981bd83747e314db789c3d0`, tagged `v24.32-knowledge-discovery-input`. Accepted Build 1 is `1b988622d444f618029262ffeaccc197bc743858`, Sprint 006 Build 24.33.1: add cross-bench Idea Evolving viewer. Accepted Build 2 is `df5de03613c5dd048338d53cc0abcd0b653d06bb`, Sprint 006 Build 24.33.2: strengthen Idea Evolving wireframe progression. Build 3 implementation is not required.
+
+The accepted engagement loop is meaningful Discovery answer → existing Project writer records it → IDEA EVOLVING advances → inventor sees progress. This is presentation and reward only; it creates no engineering truth. Distinct `discovery-answer-recorded` subjects drive the sequence: dormant at zero, spark at one, clustering at two, outline at three, planar structure at four, depth wireframe at five and a stabilised EARLY CONCEPT READY wireframe at the existing Discovery checkpoint. No keystroke, draft or Knowledge Interview input advances it.
+
+`ConceptPreview` renders deterministic abstract invention-neutral SVG geometry. The pure helper derives its stage without persistence or writer logic. The existing procedural vehicle/trailer-like Prototype SVG is not used automatically. Build 2 corrected the browser-found Stage 4 → Stage 5 weakness by adding an open offset rear plane and depth connectors; checkpoint completes and settles that structure.
+
+The neutral Workshop hub displays the larger preview near Prototype without altering Prototype readiness, selection, recommendation or pulse. The optional StandardBenchShell slot supplies the identical compact stage to Inventor / Knowledge, Prototype and Patent / IP. Engineering, Validation, Marketing, Manufacturing / Costing and Reality are not fully migrated to the shared shell; their current lack of compact preview is accepted and is not an HP-24.33 defect.
+
+No Engineering State, ProjectEvidence, ProjectDecision, Engineering Assertion, Conclusion, Direction, Action, Validation result, approved design, adopted concept, readiness, store, writer or Project model change exists. Neutral Workshop entry, Back to Workshop, disabled Ask REV, Discovery semantics, storage and `workshopBrain` remain preserved. Browser acceptance covers the complete progression, compact/hub consistency, record-only updates and readiness independence. TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
+
+Record as a Workshop design principle: every meaningful interaction should, where practical, produce a visible sense of progress. For invention development, the strongest visual reward is the evolving concept itself: answer → see progress → become curious → continue building the idea.
+
+HP-24.34 — Idea-Type-Aware Concept Evolution is proposed but not started. Future architecture inspection should cover inventor-confirmed provisional idea classification; visual modes appropriate to physical products, machines, processes, software, systems, chemical/material and environmental techniques; a bounded non-authoritative concept brief; a real generation-service boundary; preservation of the original idea; and future concept history.
+
+---
+
 **END OF REV-CONTINUITY-001**
