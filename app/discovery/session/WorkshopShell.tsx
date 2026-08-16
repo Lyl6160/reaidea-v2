@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import ProjectReviewView from "./ProjectReviewView";
 import ConceptPreview from "../../workshop/ConceptPreview";
@@ -15,6 +15,10 @@ import {
 } from "../../lib/core/project";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import { deriveSharedConceptPreview } from "../../lib/workshop/conceptPreview";
+import {
+  persistCurrentConceptCandidate,
+  restoreCurrentConceptCandidate,
+} from "../../lib/workshop/conceptCandidateStorage";
 import {
   assessDiscovery,
   recordDiscoveryAnswer,
@@ -418,6 +422,7 @@ export default function WorkshopShell({
   >({});
   const [specialistEvidenceError, setSpecialistEvidenceError] = useState("");
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
+
   const [conceptCreated, setConceptCreated] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -484,9 +489,29 @@ export default function WorkshopShell({
       return "";
     }
   });
-  const [conceptWorkflowIdentity] = useState(() =>
+  const [conceptWorkflowIdentity, setConceptWorkflowIdentity] = useState(() =>
     createConceptWorkflowIdentity(conceptFamilyId || undefined)
   );
+  useEffect(() => {
+    let active = true;
+    restoreCurrentConceptCandidate(project.id)
+      .then((candidate) => {
+        if (!active) return;
+        setGeneratedConceptCandidate(candidate);
+        if (candidate) {
+          setVisualModeOverride(candidate.visualMode);
+          setConfirmedVisualMode(candidate.visualMode);
+          setConceptFamilyId(candidate.conceptFamilyId);
+          setConceptWorkflowIdentity(createConceptWorkflowIdentity(candidate.conceptFamilyId));
+        }
+      })
+      .catch(() => {
+        // Workshop continuity remains optional if the browser cache is unavailable.
+      });
+    return () => {
+      active = false;
+    };
+  }, [project.id]);
   const [conceptReviewDecisionId, setConceptReviewDecisionId] = useState(() => {
     if (typeof window === "undefined") return "";
     try {
@@ -1051,6 +1076,9 @@ export default function WorkshopShell({
 
       setGeneratedConceptCandidate(candidate);
       setConceptGenerationState("idle");
+      void persistCurrentConceptCandidate(project.id, candidate).catch(() => {
+        // The generated model remains available for this session if persistence fails.
+      });
     } catch {
       setConceptGenerationState("failed");
       setConceptGenerationMessage("Concept generation could not complete.");
@@ -2875,8 +2903,9 @@ export default function WorkshopShell({
                 <p>{generatedConceptCandidate.disclaimer}</p>
                 <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs as an early engineering representation. This is what reAIdea currently understands you are describing; it does not prove feasibility or depict a finished product.</p>
                 {generatedConceptCandidateIsStale && <p className="generated-concept-update-note">NEW INFORMATION RECORDED · The current model is retained. Update only through an explicit future model action.</p>}
+                <small>Candidate <code>{generatedConceptCandidate.candidateId}</code> · family <code>{generatedConceptCandidate.conceptFamilyId}</code> · revision {generatedConceptCandidate.revision}</small>
                 <small>Prototype develops the same evolving idea into its large working model; the concept did not begin at this bench.</small>
-                <small>Transient session model. Refreshing this page removes it. It is not stored in the Project or local storage.</small>
+                <small>Workshop-local model cache. It can return after refresh, but remains outside the Project and may be cleared with browser site data.</small>
               </section>
             )}
 
