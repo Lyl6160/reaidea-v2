@@ -68,6 +68,14 @@ export default function ProjectReviewView({
   const currentEngineeringConclusions = engineeringTrace.currentEngineeringConclusions;
   const currentEngineeringDirections = engineeringTrace.currentEngineeringDirections;
   const projectEvidenceCoverage = engineeringTrace.projectEvidence;
+  const actionResultEvidenceCoverage = engineeringTrace.adoptedEngineeringActions.flatMap(
+    (engineeringAction) =>
+      engineeringAction.results.map((result) => ({
+        actionId: engineeringAction.id,
+        action: engineeringAction.action,
+        ...result,
+      }))
+  );
   const existingDirections = project.decisions.filter(
     (decision) => decision.category === "engineering-direction"
   );
@@ -846,6 +854,44 @@ export default function ProjectReviewView({
       )}
 
 
+      {actionResultEvidenceCoverage.length > 0 && (
+        <section
+          className="action-result-evidence-coverage"
+          aria-label="Engineering action result evidence adoption trace"
+        >
+          <p className="validation-label">Action Result Evidence Adoption Trace</p>
+          <p>
+            Read-only trace of whether each recorded engineering action result is the
+            exact recorded source of Project evidence. A result does not need to become
+            Project evidence, and this trace does not mark an action complete or judge
+            the result&apos;s importance.
+          </p>
+
+          <div className="action-result-evidence-coverage-list">
+            {actionResultEvidenceCoverage.map((result) => (
+              <article key={result.eventId}>
+                <div>
+                  <strong>{result.action}</strong>
+                  <small>{result.result ?? "Result detail unavailable."}</small>
+                </div>
+                <span
+                  className={
+                    result.adoptedEvidenceIds.length > 0
+                      ? "result-evidence-adopted"
+                      : "result-evidence-not-adopted"
+                  }
+                >
+                  {result.adoptedEvidenceIds.length > 0
+                    ? `Explicitly adopted as ${result.adoptedEvidenceIds.length} Project evidence item${result.adoptedEvidenceIds.length === 1 ? "" : "s"}.`
+                    : "Not explicitly adopted as Project evidence."}
+                </span>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+
       {adoptableActionResultEvents.length > 0 && (
         <section
           className="engineering-action-evidence"
@@ -1134,6 +1180,68 @@ export default function ProjectReviewView({
           background: #0a1821;
           color: #e1edf0;
           font: inherit;
+        }
+
+        .action-result-evidence-coverage {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(102, 145, 170, 0.42);
+          border-radius: 9px;
+          background: rgba(16, 36, 50, 0.3);
+        }
+
+        .action-result-evidence-coverage > p:not(.validation-label) {
+          margin: 0 0 14px;
+          color: #b4c5d0;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .action-result-evidence-coverage-list {
+          display: grid;
+          gap: 8px;
+        }
+
+        .action-result-evidence-coverage-list article {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 12px;
+          align-items: center;
+          padding: 10px;
+          border: 1px solid rgba(102, 145, 170, 0.24);
+          border-radius: 7px;
+          background: rgba(7, 17, 29, 0.5);
+        }
+
+        .action-result-evidence-coverage-list strong,
+        .action-result-evidence-coverage-list small {
+          display: block;
+        }
+
+        .action-result-evidence-coverage-list strong {
+          color: #e0ebf1;
+          font-size: 12px;
+        }
+
+        .action-result-evidence-coverage-list small {
+          margin-top: 3px;
+          color: #91a8b4;
+          font-size: 11px;
+        }
+
+        .action-result-evidence-coverage-list span {
+          max-width: 310px;
+          font-size: 11px;
+          line-height: 1.4;
+          text-align: right;
+        }
+
+        .result-evidence-adopted {
+          color: #8ed9c4;
+        }
+
+        .result-evidence-not-adopted {
+          color: #b7c1ce;
         }
 
         .engineering-action-evidence {
@@ -1533,11 +1641,13 @@ export default function ProjectReviewView({
         }
 
         @media (max-width: 640px) {
-          .evidence-review-coverage-list article {
+          .evidence-review-coverage-list article,
+          .action-result-evidence-coverage-list article {
             grid-template-columns: 1fr;
           }
 
-          .evidence-review-coverage-list span {
+          .evidence-review-coverage-list span,
+          .action-result-evidence-coverage-list span {
             max-width: none;
             text-align: left;
           }

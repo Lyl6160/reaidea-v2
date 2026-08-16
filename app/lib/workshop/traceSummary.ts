@@ -97,6 +97,7 @@ export type EngineeringActionResultTraceEntry = {
   eventId: string;
   result?: string;
   createdAt: string;
+  adoptedEvidenceIds: string[];
 };
 
 export type EngineeringActionTraceEntry = {
@@ -470,6 +471,13 @@ function resolveEngineeringActionResults(
         ? { result: event.response }
         : {}),
       createdAt: event.createdAt,
+      adoptedEvidenceIds: project.evidence
+        .filter(
+          (evidence) =>
+            evidence.sourceTimelineEventIds?.length === 1 &&
+            evidence.sourceTimelineEventIds[0] === event.id
+        )
+        .map((evidence) => evidence.id),
     }));
 }
 
