@@ -23,6 +23,14 @@ import {
   getEngineeringDefinitionInputs,
   recordEngineeringDefinitionAnswer,
 } from "../../lib/workshop/engineeringDefinition";
+import type { IdeaVisualMode } from "../../lib/ai/types";
+import {
+  IDEA_VISUAL_MODES,
+  buildConceptGenerationFoundation,
+  createConceptWorkflowIdentity,
+  suggestVisualMode,
+  visualModeLabel,
+} from "../../lib/workshop/conceptGeneration";
 import {
   getSpecialistContributions,
   recordSpecialistContribution,
@@ -383,6 +391,9 @@ export default function WorkshopShell({
   const [knowledgeAnswerError, setKnowledgeAnswerError] = useState("");
   const [engineeringAnswerDraft, setEngineeringAnswerDraft] = useState("");
   const [engineeringAnswerError, setEngineeringAnswerError] = useState("");
+  const [visualModeOverride, setVisualModeOverride] = useState<IdeaVisualMode | null>(null);
+  const [confirmedVisualMode, setConfirmedVisualMode] = useState<IdeaVisualMode | null>(null);
+  const [visualModeCorrectionOpen, setVisualModeCorrectionOpen] = useState(false);
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -458,6 +469,9 @@ export default function WorkshopShell({
       return "";
     }
   });
+  const [conceptWorkflowIdentity] = useState(() =>
+    createConceptWorkflowIdentity(conceptFamilyId || undefined)
+  );
   const [conceptReviewDecisionId, setConceptReviewDecisionId] = useState(() => {
     if (typeof window === "undefined") return "";
     try {
@@ -613,6 +627,16 @@ export default function WorkshopShell({
   const engineeringDefinitionAssessment = useMemo(
     () => assessEngineeringDefinition(project),
     [project]
+  );
+  const visualModeSuggestion = useMemo(() => suggestVisualMode(project), [project]);
+  const selectedVisualMode = visualModeOverride ?? visualModeSuggestion.mode;
+  const conceptGenerationFoundation = useMemo(
+    () => buildConceptGenerationFoundation(
+      project,
+      confirmedVisualMode,
+      conceptWorkflowIdentity
+    ),
+    [project, confirmedVisualMode, conceptWorkflowIdentity]
   );
 
   const conceptSheet = useMemo(() => {
@@ -947,6 +971,16 @@ export default function WorkshopShell({
 
     setSelectedId("prototype");
     setPrototypeBenchFocused(true);
+  }
+
+  function confirmVisualMode() {
+    setConfirmedVisualMode(selectedVisualMode);
+    setVisualModeCorrectionOpen(false);
+  }
+
+  function changeVisualMode(mode: IdeaVisualMode) {
+    setVisualModeOverride(mode);
+    setConfirmedVisualMode(null);
   }
 
   function visualiseConcept() {
@@ -2631,6 +2665,103 @@ export default function WorkshopShell({
               <b>CONCEPT SHEET</b>
             </div>
             <p className="concept-persistence-note">Workshop-local concept study · saved locally for this Project workshop. Project truth changes only through explicit recorded decisions.</p>
+
+            <section className="first-concept-foundation" aria-label="First recognisable concept foundation">
+              <div className="first-concept-mode-heading">
+                <div>
+                  <span>REV SUGGESTS</span>
+                  <strong>{visualModeLabel(selectedVisualMode).toUpperCase()}</strong>
+                </div>
+                <b>{confirmedVisualMode ? "MODE CONFIRMED" : `${visualModeSuggestion.confidence.toUpperCase()} CONFIDENCE`}</b>
+              </div>
+              <p className="first-concept-mode-reason">{visualModeSuggestion.reason}</p>
+              {visualModeSuggestion.supportingSignals.length > 0 && (
+                <p className="first-concept-signals">
+                  Supporting signals: {visualModeSuggestion.supportingSignals.join(" · ")}
+                </p>
+              )}
+              <div className="first-concept-mode-actions">
+                <button type="button" onClick={confirmVisualMode}>
+                  CONFIRM {selectedVisualMode.toUpperCase()}
+                </button>
+                <button
+                  type="button"
+                  className="first-concept-secondary-action"
+                  onClick={() => setVisualModeCorrectionOpen((open) => !open)}
+                >
+                  CHANGE TYPE
+                </button>
+              </div>
+              {visualModeCorrectionOpen && (
+                <label className="first-concept-mode-select">
+                  <span>Choose the visual language that best fits this idea</span>
+                  <select
+                    value={selectedVisualMode}
+                    onChange={(event) => changeVisualMode(event.target.value as IdeaVisualMode)}
+                  >
+                    {IDEA_VISUAL_MODES.map((mode) => (
+                      <option key={mode} value={mode}>{visualModeLabel(mode)}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
+
+              <div className="first-concept-brief-heading">
+                <div>
+                  <span>REV · FIRST CONCEPT BRIEF</span>
+                  <strong>Bounded input for Concept 01</strong>
+                </div>
+                <b>INVENTOR-DEFINED · UNVALIDATED · NOT PROJECT TRUTH</b>
+              </div>
+              <div className="first-concept-brief-grid">
+                <section><span>VISUAL MODE</span><p>{visualModeLabel(confirmedVisualMode ?? selectedVisualMode)}</p></section>
+                <section><span>ORIGINAL IDEA</span><p>{conceptGenerationFoundation.brief.originalIdea}</p></section>
+                <section><span>PROBLEM</span><p>{conceptGenerationFoundation.brief.problemContext}</p></section>
+                {conceptGenerationFoundation.brief.proposedSolution && <section><span>PROPOSED SOLUTION</span><p>{conceptGenerationFoundation.brief.proposedSolution}</p></section>}
+                {conceptGenerationFoundation.brief.operatingConcept && <section><span>HOW IT WORKS</span><p>{conceptGenerationFoundation.brief.operatingConcept}</p></section>}
+                {conceptGenerationFoundation.brief.functionalElements && <section><span>MAIN ELEMENTS</span><p>{conceptGenerationFoundation.brief.functionalElements}</p></section>}
+                {conceptGenerationFoundation.brief.inputsOutputs && <section><span>INPUTS / OUTPUTS</span><p>{conceptGenerationFoundation.brief.inputsOutputs}</p></section>}
+                {conceptGenerationFoundation.brief.relationshipsFlow && <section><span>RELATIONSHIPS</span><p>{conceptGenerationFoundation.brief.relationshipsFlow}</p></section>}
+                {conceptGenerationFoundation.brief.userInteraction && <section><span>INTERACTION</span><p>{conceptGenerationFoundation.brief.userInteraction}</p></section>}
+                {conceptGenerationFoundation.brief.arrangement && <section><span>ARRANGEMENT</span><p>{conceptGenerationFoundation.brief.arrangement}</p></section>}
+                {conceptGenerationFoundation.brief.constraints.length > 0 && (
+                  <section><span>CONSTRAINTS</span><ul>{conceptGenerationFoundation.brief.constraints.map((constraint) => <li key={constraint}>{constraint}</li>)}</ul></section>
+                )}
+                {conceptGenerationFoundation.brief.technicalUncertainty && <section><span>TECHNICAL UNCERTAINTY</span><p>{conceptGenerationFoundation.brief.technicalUncertainty}</p></section>}
+              </div>
+              <details className="first-concept-trace">
+                <summary>Exact source trace · {conceptGenerationFoundation.sourceEventIds.length} timeline event{conceptGenerationFoundation.sourceEventIds.length === 1 ? "" : "s"}</summary>
+                <ul>
+                  {conceptGenerationFoundation.sourceTrace.map((source) => (
+                    <li key={`${source.field}-${source.sourceKind}-${source.sourceId}`}>
+                      <strong>{source.field}</strong> · {source.sourceKind} · <code>{source.sourceId}</code>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+              <div className={`first-concept-readiness${conceptGenerationFoundation.generationReady ? " is-ready" : ""}`}>
+                <div>
+                  <span>REV · GENERATION READINESS</span>
+                  <strong>{conceptGenerationFoundation.generationReady ? "READY TO CREATE CONCEPT 01" : "MORE DEFINITION NEEDED"}</strong>
+                  <small>
+                    {conceptGenerationFoundation.generationReady
+                      ? "reAIdea has enough inventor-defined structure to prepare a first visual interpretation."
+                      : `Remaining: ${conceptGenerationFoundation.missingRequiredFields.join(", ")}.`}
+                  </small>
+                </div>
+                <button type="button" disabled>
+                  {conceptGenerationFoundation.generationReady
+                    ? "GENERATION SERVICE NOT CONNECTED YET"
+                    : "GENERATE CONCEPT 01"}
+                </button>
+              </div>
+              {conceptGenerationFoundation.request && (
+                <p className="first-concept-identity">
+                  Concept family <code>{conceptGenerationFoundation.request.conceptFamilyId}</code> · revision {conceptGenerationFoundation.request.revision} · output {conceptGenerationFoundation.request.outputType}
+                </p>
+              )}
+            </section>
+
             <div className="concept-visual-actions">
               <button type="button" className="concept-visualise-button" onClick={visualiseConcept}>
                 {conceptVisualised ? "VISUAL STUDY STARTED" : "BEGIN VISUAL STUDY"}
@@ -5566,6 +5697,36 @@ export default function WorkshopShell({
           line-height: 1.45;
         }
 
+        .first-concept-foundation { margin:0 0 18px; padding:16px; border:1px solid rgba(83,192,211,.38); border-radius:12px; background:linear-gradient(145deg,rgba(9,31,38,.94),rgba(10,20,27,.96)); box-shadow:inset 0 1px rgba(255,255,255,.035); }
+        .first-concept-mode-heading, .first-concept-brief-heading, .first-concept-readiness { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+        .first-concept-mode-heading span, .first-concept-brief-heading span, .first-concept-readiness span { display:block; color:#70cddd; font:800 9px/1.2 Arial,sans-serif; letter-spacing:1.4px; }
+        .first-concept-mode-heading strong, .first-concept-brief-heading strong, .first-concept-readiness strong { display:block; margin-top:6px; color:#f0f8fa; font:800 16px/1.2 Arial,sans-serif; }
+        .first-concept-mode-heading b, .first-concept-brief-heading b { padding:6px 8px; border:1px solid rgba(99,185,201,.45); border-radius:6px; color:#9bcbd3; font:800 8px/1 Arial,sans-serif; letter-spacing:1px; }
+        .first-concept-mode-reason { margin:12px 0 4px; color:#d7e4e7; font-size:13px; line-height:1.55; }
+        .first-concept-signals { margin:0; color:#7f9ca5; font-size:10px; line-height:1.5; }
+        .first-concept-mode-actions { display:flex; flex-wrap:wrap; gap:8px; margin:13px 0; }
+        .first-concept-mode-actions button, .first-concept-readiness button { border:1px solid rgba(87,201,220,.62); background:linear-gradient(180deg,#226071,#123c48); color:#e8fbff; padding:9px 12px; font:800 9px/1 Arial,sans-serif; letter-spacing:1px; cursor:pointer; }
+        .first-concept-mode-actions .first-concept-secondary-action { background:#111d25; border-color:#536773; color:#aebec5; }
+        .first-concept-mode-select { display:grid; gap:6px; margin:0 0 14px; color:#91aab2; font-size:10px; }
+        .first-concept-mode-select select { min-height:38px; border:1px solid #496975; border-radius:6px; background:#0d1a21; color:#e4f0f2; padding:0 10px; }
+        .first-concept-brief-heading { margin-top:16px; padding-top:14px; border-top:1px solid rgba(92,149,162,.3); }
+        .first-concept-brief-heading b { max-width:240px; color:#d7b879; border-color:rgba(193,151,75,.4); text-align:right; line-height:1.35; }
+        .first-concept-brief-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:12px 0; }
+        .first-concept-brief-grid section { min-width:0; padding:10px; border:1px solid rgba(72,120,133,.3); background:rgba(5,15,20,.5); }
+        .first-concept-brief-grid span { color:#6fb8c6; font:800 8px/1 Arial,sans-serif; letter-spacing:1px; }
+        .first-concept-brief-grid p, .first-concept-brief-grid ul { margin:6px 0 0; color:#cfdbdf; font-size:11px; line-height:1.5; }
+        .first-concept-brief-grid ul { padding-left:16px; }
+        .first-concept-trace { margin:10px 0; padding:8px 10px; border:1px solid rgba(76,113,124,.32); color:#8fa6ae; font-size:10px; }
+        .first-concept-trace summary { cursor:pointer; color:#9fc3cb; }
+        .first-concept-trace ul { margin:8px 0 0; padding-left:17px; }
+        .first-concept-trace li { margin:4px 0; overflow-wrap:anywhere; }
+        .first-concept-trace code, .first-concept-identity code { color:#81d0dc; }
+        .first-concept-readiness { margin-top:12px; padding:12px; border:1px solid rgba(151,121,67,.45); background:rgba(40,29,13,.42); }
+        .first-concept-readiness.is-ready { border-color:rgba(73,188,158,.5); background:rgba(15,48,41,.45); }
+        .first-concept-readiness small { display:block; max-width:600px; margin-top:6px; color:#9eb0b6; font-size:10px; line-height:1.45; }
+        .first-concept-readiness button:disabled { max-width:250px; border-color:#4a626b; background:#15242b; color:#789099; cursor:not-allowed; }
+        .first-concept-identity { margin:9px 0 0; color:#758e97; font-size:9px; overflow-wrap:anywhere; }
+
         .concept-sheet-grid {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5718,6 +5879,8 @@ export default function WorkshopShell({
           .concept-sheet-grid { grid-template-columns: 1fr; }
           .concept-sheet-wide { grid-column: auto; }
           .concept-sheet-heading { flex-direction: column; }
+          .first-concept-mode-heading, .first-concept-brief-heading, .first-concept-readiness { flex-direction:column; }
+          .first-concept-brief-grid { grid-template-columns:1fr; }
           .room { min-height: 1280px; }
           .wall-life {
           position: absolute;
