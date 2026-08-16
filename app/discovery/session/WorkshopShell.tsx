@@ -103,7 +103,7 @@ function createConceptRenderSvg(brief: {
   const nextMove = escapeSvgText(brief.nextMove.slice(0, 82));
   const conceptLabel = escapeSvgText(brief.conceptLabel ?? "CONCEPT 01");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Generated engineering concept render">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Procedural concept study">
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#071217"/>
@@ -121,7 +121,7 @@ function createConceptRenderSvg(brief: {
       <path d="M0 80H1000M0 160H1000M0 240H1000M0 320H1000M0 400H1000M0 480H1000"/>
       <path d="M80 0V560M160 0V560M240 0V560M320 0V560M400 0V560M480 0V560M560 0V560M640 0V560M720 0V560M800 0V560M880 0V560M960 0V560"/>
     </g>
-    <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · GENERATED CONCEPT STUDY</text>
+    <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · PROCEDURAL CONCEPT STUDY</text>
     <text x="28" y="54" fill="#718891" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.2">${conceptLabel} · PROCEDURAL ENGINEERING VISUAL · REVISION ${variant + 1}</text>
 
     <g transform="translate(165 190) skewX(${bodySkew})" filter="url(#glow)">
@@ -366,6 +366,7 @@ export default function WorkshopShell({
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
+  const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(() => {
     if (typeof window === "undefined") return workshop.recommendedBench;
     try {
@@ -734,6 +735,8 @@ export default function WorkshopShell({
       workshop.benches[0],
     [selectedId, workshop]
   );
+  const prototypeBenchIsFocused =
+    prototypeBenchFocused && selectedBench.id === "prototype";
   const selectedSpecialistBenchId = isSpecialistContributionBenchId(selectedBench.id)
     ? selectedBench.id
     : null;
@@ -763,6 +766,7 @@ export default function WorkshopShell({
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
     setPatentBenchFocused(id === "patent");
+    setPrototypeBenchFocused(id === "prototype");
     setSpecialistContributionError("");
     setSpecialistEvidenceError("");
     window.setTimeout(() => {
@@ -839,11 +843,11 @@ export default function WorkshopShell({
     }
 
     setSelectedId("prototype");
+    setPrototypeBenchFocused(true);
   }
 
   function visualiseConcept() {
-    if (!conceptCreated) return;
-
+    setConceptCreated(true);
     setConceptVisualised(true);
 
     try {
@@ -1460,7 +1464,12 @@ export default function WorkshopShell({
   }
 
   return (
-    <section className="living-workshop" aria-label="reAIdea living workshop">
+    <section
+      className={`living-workshop${prototypeBenchIsFocused ? " prototype-mode" : ""}`}
+      aria-label="reAIdea living workshop"
+    >
+      {!prototypeBenchIsFocused && (
+        <>
       <header className="workshop-heading">
         <div>
           <p className="workshop-kicker">reAIdea · Living Workshop</p>
@@ -1755,8 +1764,19 @@ export default function WorkshopShell({
           One project brain · every bench listens to the same evolving invention.
         </p>
       </div>
+        </>
+      )}
 
-      <div ref={workspaceRef} className={`bench-readout active-bench-workspace readout-${selectedBench.state}`}>
+      <div
+        ref={workspaceRef}
+        className={
+          prototypeBenchIsFocused
+            ? "prototype-focused-workspace"
+            : `bench-readout active-bench-workspace readout-${selectedBench.state}`
+        }
+      >
+        {!prototypeBenchIsFocused && (
+          <>
         <div className="readout-title">
           <div>
             <span className="readout-light" aria-hidden="true" />
@@ -1769,6 +1789,8 @@ export default function WorkshopShell({
           <span>REV · NEXT MOVE</span>
           <strong>{selectedBench.nextMove}</strong>
         </div>
+          </>
+        )}
         {selectedBench.id === "knowledge" && (
           <div className="station-summary">
             <p className="station-summary-label">Knowledge station</p>
@@ -2121,7 +2143,90 @@ export default function WorkshopShell({
             </button>
           </div>
         )}
-        {conceptCreated && selectedBench.id === "prototype" && (
+        {selectedBench.id === "prototype" && (
+          <StandardBenchShell
+            benchId={selectedBench.id}
+            benchTitle={selectedBench.label}
+            benchState={selectedBench.state}
+            reason={selectedBench.reason}
+            nextMove={selectedBench.nextMove}
+            onBackToWorkshop={() => setPrototypeBenchFocused(false)}
+            askRevState="unavailable"
+            thisBenchLedger={
+              <div className="prototype-ledger-view">
+                <p className="prototype-ledger-boundary">Workshop-local study state</p>
+                <dl>
+                  <div><dt>Concept study started</dt><dd>{conceptCreated ? "Yes" : "No"}</dd></div>
+                  <div><dt>Procedural Concept 01</dt><dd>{conceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div><dt>Procedural Concept 02</dt><dd>{refinedConceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div><dt>Procedural Concept 03</dt><dd>{thirdConceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div>
+                    <dt>Latest local study stage</dt>
+                    <dd>
+                      {thirdConceptGenerated
+                        ? "Concept 03 procedural study"
+                        : refinedConceptGenerated
+                          ? "Concept 02 procedural study"
+                          : conceptGenerated
+                            ? "Concept 01 procedural study"
+                            : conceptVisualised
+                              ? "Visual brief prepared"
+                              : conceptCreated
+                                ? "Concept Sheet prepared"
+                                : "Not started"}
+                    </dd>
+                  </div>
+                </dl>
+                <p className="prototype-ledger-boundary">Project-recorded decisions</p>
+                <section>
+                  <strong>Active concept review</strong>
+                  <p>{workshop.trace.activeConceptReview?.outcome ?? "No Project-recorded concept review."}</p>
+                  {workshop.trace.activeConceptReview && (
+                    <small>
+                      {workshop.trace.activeConceptReview.supportingEvidence.length > 0
+                        ? `${workshop.trace.activeConceptReview.supportingEvidence.length} supporting evidence item${workshop.trace.activeConceptReview.supportingEvidence.length === 1 ? "" : "s"} explicitly selected.`
+                        : "No supporting evidence explicitly selected."}
+                    </small>
+                  )}
+                </section>
+                <section>
+                  <strong>Active concept direction</strong>
+                  <p>{workshop.trace.activeConceptDirection?.outcome ?? "No Project-recorded concept direction."}</p>
+                  {workshop.trace.activeConceptDirection && (
+                    <small>
+                      {workshop.trace.activeConceptDirection.supportingEvidence.length > 0
+                        ? `${workshop.trace.activeConceptDirection.supportingEvidence.length} supporting evidence item${workshop.trace.activeConceptDirection.supportingEvidence.length === 1 ? "" : "s"} explicitly selected.`
+                        : "No supporting evidence explicitly selected."}
+                    </small>
+                  )}
+                </section>
+              </div>
+            }
+            projectLedger={
+              <div className="prototype-ledger-view">
+                <strong className="prototype-ledger-project-name">{project.projectName}</strong>
+                <section>
+                  <strong>Current Understanding</strong>
+                  <p>{project.engineeringState.currentUnderstanding || "No current Project understanding recorded."}</p>
+                </section>
+                <section>
+                  <strong>Greatest Remaining Uncertainty</strong>
+                  <p>{project.engineeringState.greatestRemainingUncertainty || "No greatest remaining uncertainty recorded."}</p>
+                </section>
+                <dl className="prototype-ledger-counts">
+                  <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+                  <div><dt>Project Evidence</dt><dd>{workshop.trace.projectEvidence.length}</dd></div>
+                  <div><dt>Current Conclusions</dt><dd>{workshop.trace.currentEngineeringConclusions.length}</dd></div>
+                  <div><dt>Current Directions</dt><dd>{workshop.trace.currentEngineeringDirections.length}</dd></div>
+                  <div><dt>Adopted Actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
+                </dl>
+                <section>
+                  <strong>Formal Validation</strong>
+                  <p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p>
+                </section>
+              </div>
+            }
+          >
           <div className="concept-readout">
             <div className="concept-sheet-heading">
               <div>
@@ -2130,17 +2235,17 @@ export default function WorkshopShell({
               </div>
               <b>CONCEPT SHEET</b>
             </div>
-            <p className="concept-persistence-note">Saved with this Project workshop · safe to refresh or return later.</p>
+            <p className="concept-persistence-note">Workshop-local concept study · saved locally for this Project workshop. Project truth changes only through explicit recorded decisions.</p>
             <div className="concept-visual-actions">
               <button type="button" className="concept-visualise-button" onClick={visualiseConcept}>
-                {conceptVisualised ? "CONCEPT VISUALISED" : "VISUALISE CONCEPT"}
+                {conceptVisualised ? "VISUAL STUDY STARTED" : "BEGIN VISUAL STUDY"}
               </button>
-              <span>{conceptVisualised ? "First visual study generated from the current engineering understanding." : "Turn the Concept Sheet into a first visual study."}</span>
+              <span>{conceptVisualised ? "Procedural study prepared from the current Project definition." : "Creates a procedural visual study from the current Project definition. This is not CAD, validation, or an adopted design."}</span>
             </div>
             {conceptVisualised && (
               <div className="concept-visual-board" aria-label="Concept 01 visual study">
                 <div className="visual-board-grid" aria-hidden="true" />
-                <div className="visual-board-label">CONCEPT 01 · ENGINEERING STUDY</div>
+                <div className="visual-board-label">CONCEPT 01 · PROCEDURAL CONCEPT STUDY</div>
                 <div className="visual-object">
                   <i className="visual-object-top" />
                   <i className="visual-object-core" />
@@ -2150,7 +2255,7 @@ export default function WorkshopShell({
                   <span className="visual-callout visual-callout-constraint">CONSTRAINT</span>
                   <span className="visual-callout visual-callout-unknown">UNKNOWN</span>
                 </div>
-                <div className="visual-board-footer">REV · FIRST-PASS VISUAL ONLY · NOT A CAD MODEL</div>
+                <div className="visual-board-footer">WORKING REPRESENTATION ONLY · NOT CAD · NOT PROJECT TRUTH · NOT VALIDATED</div>
               </div>
             )}
 
@@ -2220,24 +2325,24 @@ export default function WorkshopShell({
                 <div className="concept-generation-action">
                   <div>
                     <span>REV · CONCEPT GENERATION</span>
-                    <strong>{conceptGenerated ? "CONCEPT STUDY GENERATED" : "Generate the first concept render from this brief."}</strong>
-                    <small>{conceptGenerated ? "Saved with this Project workshop. The render remains a first-pass engineering study." : "This stage turns the approved visual brief into a visual concept study."}</small>
+                    <strong>{conceptGenerated ? "PROCEDURAL CONCEPT STUDY AVAILABLE" : "Create the first procedural concept study from this brief."}</strong>
+                    <small>{conceptGenerated ? "Saved locally with this Project workshop. This working representation is not Project truth or validation." : "Creates a procedural visual study only. It is not CAD, validation, or an adopted design."}</small>
                   </div>
                   <button type="button" onClick={generateConcept}>
-                    {conceptGenerated ? "CONCEPT GENERATED" : "GENERATE CONCEPT"}
+                    {conceptGenerated ? "PROCEDURAL STUDY AVAILABLE" : "CREATE PROCEDURAL CONCEPT STUDY"}
                   </button>
                 </div>
 
                 {conceptGenerated && generatedConceptDataUri && (
-                  <div className="generated-concept-board generated-concept-board-real" aria-label="Generated Concept 01 study">
+                  <div className="generated-concept-board generated-concept-board-real" aria-label="Procedural Concept 01 study">
                     <img
                       className="generated-concept-image"
                       src={generatedConceptDataUri}
-                      alt={`Generated engineering concept for ${projectName}`}
+                      alt={`Procedural concept study for ${projectName}`}
                     />
                     <div className="generated-concept-meta">
-                      <span>GENERATED FROM APPROVED VISUAL BRIEF</span>
-                      <b>PROCEDURAL ENGINEERING RENDER</b>
+                      <span>CREATED FROM CURRENT VISUAL BRIEF</span>
+                      <b>PROCEDURAL CONCEPT STUDY · NOT CAD · NOT VALIDATED</b>
                     </div>
                   </div>
                 )}
@@ -2306,20 +2411,20 @@ export default function WorkshopShell({
                           </div>
 
                           <button type="button" className="concept-refinement-button" onClick={generateRefinedConcept}>
-                            {refinedConceptGenerated ? "CONCEPT 02 GENERATED" : "GENERATE CONCEPT 02"}
+                            {refinedConceptGenerated ? "CONCEPT 02 STUDY AVAILABLE" : "CREATE CONCEPT 02 PROCEDURAL STUDY"}
                           </button>
                         </div>
 
                         {refinedConceptGenerated && refinedConceptDataUri && (
-                          <div className="generated-concept-board generated-concept-board-real concept-two-board" aria-label="Generated Concept 02 refinement study">
+                          <div className="generated-concept-board generated-concept-board-real concept-two-board" aria-label="Procedural Concept 02 refinement study">
                             <img
                               className="generated-concept-image"
                               src={refinedConceptDataUri}
-                              alt={`Refined engineering concept for ${projectName}`}
+                              alt={`Procedural Concept 02 study for ${projectName}`}
                             />
                             <div className="generated-concept-meta">
-                              <span>GENERATED FROM REVIEW-DRIVEN REFINEMENT</span>
-                              <b>CONCEPT 02 · SECOND-PASS STUDY</b>
+                              <span>CREATED FROM REVIEW-DRIVEN REFINEMENT</span>
+                              <b>CONCEPT 02 · PROCEDURAL STUDY · NOT VALIDATED</b>
                             </div>
                           </div>
                         )}
@@ -2360,7 +2465,7 @@ export default function WorkshopShell({
 
                             {conceptDecision === "refine" && (
                               <button type="button" className="concept-refinement-button" onClick={generateThirdConcept}>
-                                {thirdConceptGenerated ? "CONCEPT 03 GENERATED" : "GENERATE CONCEPT 03"}
+                                {thirdConceptGenerated ? "CONCEPT 03 STUDY AVAILABLE" : "CREATE CONCEPT 03 PROCEDURAL STUDY"}
                               </button>
                             )}
 
@@ -2379,15 +2484,15 @@ export default function WorkshopShell({
                             )}
 
                             {thirdConceptGenerated && thirdConceptDataUri && (
-                              <div className="generated-concept-board generated-concept-board-real concept-three-board" aria-label="Generated Concept 03 refinement study">
+                              <div className="generated-concept-board generated-concept-board-real concept-three-board" aria-label="Procedural Concept 03 refinement study">
                                 <img
                                   className="generated-concept-image"
                                   src={thirdConceptDataUri}
-                                  alt={`Third-pass engineering concept for ${projectName}`}
+                                  alt={`Procedural Concept 03 study for ${projectName}`}
                                 />
                                 <div className="generated-concept-meta">
-                                  <span>GENERATED FROM SECOND DECISION GATE</span>
-                                  <b>CONCEPT 03 · THIRD-PASS STUDY</b>
+                                  <span>CREATED FROM SECOND DECISION GATE</span>
+                                  <b>CONCEPT 03 · PROCEDURAL STUDY · NOT VALIDATED</b>
                                 </div>
                               </div>
                             )}
@@ -2430,6 +2535,7 @@ export default function WorkshopShell({
               </div>
             )}
           </div>
+          </StandardBenchShell>
         )}
       </div>
 
@@ -3524,6 +3630,7 @@ export default function WorkshopShell({
           display: flex;
           gap: 12px;
           align-items: flex-end;
+          pointer-events: none;
           z-index: 7;
         }
 
@@ -3692,6 +3799,90 @@ export default function WorkshopShell({
 
         .active-bench-workspace {
           scroll-margin-top: 20px;
+        }
+
+        .living-workshop.prototype-mode {
+          width: 100%;
+          max-width: none;
+          margin-top: 0;
+          padding: 0;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .prototype-focused-workspace {
+          min-width: 0;
+        }
+
+        .prototype-ledger-view {
+          display: grid;
+          gap: 16px;
+          color: #d8dcda;
+        }
+
+        .prototype-ledger-view p,
+        .prototype-ledger-view dl {
+          margin: 0;
+        }
+
+        .prototype-ledger-boundary {
+          padding: 8px 10px;
+          border-left: 3px solid #d2ad73;
+          background: rgba(117, 96, 61, 0.18);
+          color: #d4c5a6;
+          font-size: 11px;
+          font-weight: 850;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .prototype-ledger-view dl {
+          display: grid;
+          gap: 8px;
+        }
+
+        .prototype-ledger-view dl div,
+        .prototype-ledger-view section {
+          padding: 11px;
+          border: 1px solid #454d4e;
+          border-radius: 8px;
+          background: rgba(8, 12, 13, 0.38);
+        }
+
+        .prototype-ledger-view dt,
+        .prototype-ledger-view section strong {
+          color: #c5b999;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+
+        .prototype-ledger-view dd,
+        .prototype-ledger-view section p {
+          margin: 6px 0 0;
+          color: #eef0ec;
+          font-size: 13px;
+          line-height: 1.5;
+          overflow-wrap: anywhere;
+        }
+
+        .prototype-ledger-view section small {
+          display: block;
+          margin-top: 6px;
+          color: #969f9d;
+          line-height: 1.45;
+        }
+
+        .prototype-ledger-project-name {
+          color: #f4efe6;
+          font-size: 19px;
+        }
+
+        .prototype-ledger-counts {
+          grid-template-columns: 1fr 1fr;
         }
 
         .station-summary {
