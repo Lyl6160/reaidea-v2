@@ -886,6 +886,77 @@ Coverage is descriptive only. It is not a recommendation, score, evidence status
 
 Build 1 fully closes HP-24.20. The required capability is a pure trace projection plus a shared read-only display; the existing writers and shared Engineering Review already provide the complete authority path. Additional Build 2 production implementation is not required.
 
+## HP-24.21 Consolidated Acceptance Record
+
+**Hold point:** HP-24.21 — Historical Evidence Consideration Trace
+**Branch:** `sprint006-build24-21-historical-evidence-trace`
+**Accepted implementation HEAD:** `a24f950`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.21-historical-evidence-trace`
+
+### Build Chain
+
+- Build 1 — `a24f950` — Expose historical evidence conclusion trace.
+- Build 2 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- HP-24.20 current conclusion coverage remains unchanged and authoritative.
+- `ProjectEvidenceTraceEntry.supersededConclusionIds` records exact IDs of superseded Engineering Conclusions that explicitly selected that evidence through `supportingEvidenceIds`.
+- Current and superseded conclusion coverage are derived only from the existing current/superseded Engineering Conclusion trace sets.
+- Exact evidence IDs are the only linkage mechanism; no text, source, Validation or action-result inference is introduced.
+- Evidence may now be represented as current-only, historical-only, current-plus-historical, or never explicitly selected.
+- "Never explicitly selected" means only that no recorded Engineering Conclusion has the evidence ID in `supportingEvidenceIds`; it does not prove the evidence was unread, unreviewed, unimportant or irrelevant.
+- Superseded conclusion IDs preserve the existing superseded-conclusion trace order.
+- Missing/unavailable evidence references do not falsely link another Project evidence item.
+- The shared `ProjectReviewView` extends the existing Project Evidence Review Coverage rather than creating another review surface.
+- Discovery and the Living Workshop Engineering bench show the same historical selection trace.
+- Formal Validation remains hidden on the Workshop Engineering mount and remains available through the existing Discovery path.
+- Existing Project model, storage, writers, recommendation precedence and REV read-only authority remain unchanged.
+
+### Acceptance Results
+
+- Current conclusion coverage from HP-24.20 remains preserved: **PASS**.
+- Exact superseded-conclusion ID linkage: **PASS**.
+- Historical-only evidence state: **PASS**.
+- Current-plus-historical evidence state: **PASS**.
+- Never-explicitly-selected evidence state: **PASS**.
+- Multi-step superseded conclusion chain order: **PASS**.
+- Missing evidence linkage safety: **PASS**.
+- Read-model purity / no Project mutation: **PASS**.
+- Shared coverage UI: **PASS**.
+- Semantic wording states recorded selection only and does not overclaim review/importance: **PASS**.
+- Discovery historical trace: **PASS**.
+- Living Workshop Engineering historical trace: **PASS**.
+- Workshop non-Engineering benches remain unchanged: **PASS**.
+- Workshop Engineering formal Validation boundary remains unchanged: **PASS**.
+- Evidence preselection: **NONE**.
+- Automatic Project writes: **NONE**.
+- Project model, storage, domain writers, recommendation precedence and HP-24.20 remain unchanged: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+HP-24.21 extends observability only:
+
+```text
+ProjectEvidence.id
+→ exact supportingEvidenceIds
+→ current Engineering Conclusions
+→ superseded Engineering Conclusions
+→ read-only current + historical selection trace
+```
+
+Historical selection is engineering history, not current authority. The trace does not rank evidence, infer attention, require a new conclusion, trigger a recommendation, or create a Project write.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.21. The existing conclusion supersession model already contains the historical relationship; Build 1 exposes it exactly in the read model and shared review without adding persistence or authority. Additional Build 2 production implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

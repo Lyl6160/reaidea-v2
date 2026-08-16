@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.20 — Project Evidence Review Coverage
-**Branch:** `sprint006-build24-20-evidence-review-coverage`
-**Accepted HEAD:** `46a8413`
+**Construction checkpoint:** HP-24.21 — Historical Evidence Consideration Trace
+**Branch:** `sprint006-build24-21-historical-evidence-trace`
+**Accepted HEAD:** `a24f950`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.20 — Project Evidence Review Coverage**
+**HP-24.21 — Historical Evidence Consideration Trace**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.20-evidence-review-coverage`
+Final freeze tag: `v24.21-historical-evidence-trace`
 
 Accepted HP-24.9 construction chain:
 
@@ -135,6 +135,16 @@ Protected HP-24.19 foundation:
 Accepted HP-24.20 construction chain:
 
 - Build 1 — `46a8413` — Expose Project evidence conclusion coverage
+- Build 2 — Readiness audit only; implementation not required
+
+Protected HP-24.20 foundation:
+
+- `5939568`
+- `v24.20-evidence-review-coverage`
+
+Accepted HP-24.21 construction chain:
+
+- Build 1 — `a24f950` — Expose historical evidence conclusion trace
 - Build 2 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -524,3 +534,27 @@ Superseded conclusions do not count toward current coverage. Missing evidence re
 The shared `ProjectReviewView` displays the same coverage in Discovery and on the Living Workshop Engineering bench. Coverage remains read-only and does not rank evidence, infer importance or contradiction, preselect evidence, require another conclusion, create records, alter recommendation precedence, or persist new Project state.
 
 Build 2 implementation is not required. HP-24.19 remains protected at `39bd653` / `v24.19-shared-engineering-review`.
+
+## HP-24.21 Capability
+
+HP-24.21 extends the HP-24.20 evidence review coverage read model with explicit historical selection through superseded Engineering Conclusions.
+
+For every recorded Project evidence item:
+
+```text
+ProjectEvidence.id
+→ current Engineering Conclusion supportingEvidenceIds
+→ exact currentConclusionIds
+
+ProjectEvidence.id
+→ superseded Engineering Conclusion supportingEvidenceIds
+→ exact supersededConclusionIds
+```
+
+The existing HP-24.20 `conclusionCoverageState` and `currentConclusionIds` remain unchanged. `supersededConclusionIds` is derived only from the existing superseded Engineering Conclusion trace and preserves that trace order.
+
+The shared `ProjectReviewView` now distinguishes current selection, historical-only selection, current-plus-historical selection and no recorded Engineering Conclusion selection. The wording deliberately avoids claiming that unselected evidence was unread or unreviewed.
+
+This capability is read-only. It does not add Project persistence, evidence lifecycle, ranking, semantic importance, automatic prompts, recommendation changes, new writers or REV Project-write authority.
+
+Build 2 implementation is not required. HP-24.20 remains protected at `5939568` / `v24.20-evidence-review-coverage`.

@@ -1150,3 +1150,67 @@ The coverage projection describes which evidence has or has not been explicitly 
 ### Freeze Decision
 
 HP-24.20 closes the read-only evidence-review coverage seam. The existing Project truth and conclusion writer already contain the authoritative relationship; Build 1 exposes it exactly without introducing new authority or persistence. Build 2 implementation is not required.
+
+## HP-24.21 — Historical Evidence Consideration Trace
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.20 at `5939568`, tag `v24.20-evidence-review-coverage`
+
+**Construction branch:** `sprint006-build24-21-historical-evidence-trace`
+
+### Build 1 — Historical Engineering Conclusion Selection Trace
+
+**Commit:** `a24f950`
+
+Extended the HP-24.20 Project evidence coverage read model with exact `supersededConclusionIds`. For each Project evidence item, the trace now distinguishes exact current Engineering Conclusion selection from exact superseded Engineering Conclusion selection.
+
+The existing `conclusionCoverageState` and `currentConclusionIds` remain unchanged. `supersededConclusionIds` contains only IDs from the existing superseded Engineering Conclusion trace whose explicit `supportingEvidenceIds` contain the evidence ID.
+
+The shared `ProjectReviewView` extends the existing Project Evidence Review Coverage so evidence can show current selection, historical selection, both, or no recorded Engineering Conclusion selection. The UI explicitly states that recorded selection does not prove whether unselected evidence was read or reviewed and does not rank or judge evidence.
+
+### Build 2 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed exact current/superseded ID fixtures, supersession-chain ordering, missing-reference safety, read-model purity, shared Discovery/Workshop browser checks, semantic wording checks, formal Validation boundary checks, no-automatic-write checks and all static gates. No additional production machinery is required.
+
+### Final Outcome
+
+- **HP-24.21 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.21-historical-evidence-trace`
+- **Freeze blockers:** NONE
+- **Current conclusion coverage:** PRESERVED
+- **Superseded conclusion linkage:** EXACT ID ONLY
+- **Historical evidence trace:** READ ONLY
+- **Historical selection as current authority:** NOT INTRODUCED
+- **Evidence ranking/scoring/status/lifecycle:** NOT INTRODUCED
+- **New Project/domain writer:** NOT INTRODUCED
+- **Automatic Project writes:** NOT INTRODUCED
+- **Project schema/storage mutation:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **Formal Validation boundary:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.21 preserves the distinction between current engineering truth and engineering history:
+
+```text
+Project evidence
+→ exact current conclusion selection
+→ exact superseded conclusion selection
+→ read-only current + historical trace
+```
+
+A superseded conclusion may prove that evidence was explicitly selected in recorded engineering history. It does not make that superseded conclusion current, and absence of explicit selection does not prove the evidence was never read or mentally considered.
+
+### Deferred Capabilities
+
+- Semantic claims about whether evidence was actually read, considered, important, contradictory, stale or actionable.
+- Automatic prompts, reminders, recommendations, conclusions, supersession or evidence selection based on historical coverage.
+- Evidence lifecycle/status/ranking, action lifecycle/task management, generic dependency graphs, specialist benches or REV Project-write authority.
+
+### Freeze Decision
+
+HP-24.21 closes the historical evidence-selection trace seam. The existing Engineering Conclusion supersession history already provides the authoritative record; Build 1 exposes that record exactly without introducing a second history store, new persistence or new authority. Build 2 implementation is not required.

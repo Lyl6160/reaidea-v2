@@ -658,6 +658,38 @@ Build 1 (`46a8413`) fully closes HP-24.20. Additional Build 2 production impleme
 
 ---
 
+# 32. Current HP-24.21 REV Continuity
+
+HP-24.21 — Historical Evidence Consideration Trace is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-21-historical-evidence-trace`. The final tag is `v24.21-historical-evidence-trace`.
+
+HP-24.21 preserves HP-24.20 current coverage and adds exact historical selection through superseded Engineering Conclusions.
+
+The read-only trace contract is:
+
+```text
+Project.evidence
+→ exact evidence ID
+→ current Engineering Conclusion supportingEvidenceIds
+→ currentConclusionIds
+
+Project.evidence
+→ exact evidence ID
+→ superseded Engineering Conclusion supportingEvidenceIds
+→ supersededConclusionIds
+```
+
+Only exact stored evidence IDs count. The current/superseded conclusion sets are the existing trace authority. Missing evidence references do not falsely resolve to another evidence item, and multi-step supersession history preserves the existing superseded-conclusion trace order.
+
+The shared `ProjectReviewView` extends the existing Project Evidence Review Coverage rather than creating a second review surface. Discovery and the Living Workshop Engineering bench show the same current and historical selection trace. Workshop Engineering continues to suppress formal Validation through the existing `showValidationPlan=false` seam.
+
+The semantic boundary is important: "never explicitly selected by an Engineering Conclusion" means no recorded conclusion contains that evidence ID in `supportingEvidenceIds`. It does not prove the evidence was unread, mentally unconsidered, unimportant, incorrect, stale or in need of another conclusion.
+
+Historical selection is engineering history only. It does not restore a superseded conclusion to current authority, rank evidence, change recommendation precedence, persist new Project state, trigger automatic prompts/writes, or give REV Project-write authority.
+
+Build 1 (`a24f950`) fully closes HP-24.21. Additional Build 2 production implementation is not required.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count
