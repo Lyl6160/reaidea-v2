@@ -1595,3 +1595,46 @@ Entry / Home
 ### Freeze Decision
 
 HP-24.28 closes the Workshop-first routing foundation without migrating work components, duplicating readiness logic or changing Project authority. Build 2 implementation is not required.
+
+## HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.28 at `d8fb230ee0636e6fc12d19aef92b20c834cdcf96`, tag `v24.28-workshop-first-routing`
+
+**Construction branch:** `sprint006-build24-29-standard-bench-shell`
+
+### Accepted Build Chain
+
+- Build 1 — `f6996b719d3d0eca1b20e78747a7c91fbb4fbc33` — Prove the reusable Standard Bench Shell with a Patent/IP Ledger.
+- Build 2 — `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a` — Refine the Standard Bench Shell presentation.
+- Build 3 — NOT REQUIRED.
+
+### Accepted Contract
+
+The Standard Bench Shell is presentation-only and establishes the locked anatomy:
+
+```text
+LEFT: REV / bench context
+CENTER: bench work area
+RIGHT: read-only Project Ledger
+BOTTOM: Back to Workshop / current bench identity / Ask REV — Coming later
+```
+
+Patent / IP is the proof bench only. Its Specialist Inquiry, legal boundary, Specialist Contribution and explicit evidence-adoption behavior remain unchanged. THIS BENCH displays existing contribution and exact evidence-adoption truth. PROJECT displays concise existing Project/read-model truth. No raw IDs, persisted ledger state, new Project store, writer or Project semantics exist.
+
+Other benches remain on their existing presentation paths. `workshopBrain` remains the sole authority for bench state, reason, `nextMove`, recommendation and recommendation precedence. Back to Workshop is an in-app action; browser Back is not required. Ask REV is disabled and no fake interaction or runtime model integration exists.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.29-standard-bench-shell`
+- **Browser acceptance:** PASS
+- **Oversized Patent Project Context:** REMOVED FROM CENTER
+- **Ledger persisted state:** NONE
+- **Automatic Project writes:** NONE
+- **Project, storage and writers:** UNCHANGED
+- **Freeze blockers:** NONE
+
+### Freeze Decision
+
+HP-24.29 closes the first reusable Standard Bench Shell and Patent/IP Ledger proof without migrating other benches or changing Project authority. Richer bench atmosphere, bench-specific artwork, empty-ledger height, internal scrolling and final typography/Hub polish remain deferred and are not blockers.

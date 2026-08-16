@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.28 — Workshop-First Routing Foundation
-**Branch:** `sprint006-build24-28-workshop-first-routing`
-**Accepted HEAD:** `ee874dc68ff4012834a30ea579dc3abcbe721ccc`
-**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Construction checkpoint:** HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof
+**Branch:** `sprint006-build24-29-standard-bench-shell`
+**Accepted HEAD:** `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a`
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.28 — Workshop-First Routing Foundation**
+**HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.28-workshop-first-routing`
+Final freeze tag: `v24.29-standard-bench-shell`
 
 Accepted HP-24.9 construction chain:
 
@@ -677,6 +677,14 @@ HP-24.28 establishes the Living Workshop as the canonical application hub. The f
 The accepted normal journey is Entry / Home → Workshop Hub → existing work area → Back to Workshop. Fresh Project creation routes to `/workshop` through the “Enter Workshop” action. Knowledge exposes clear Discovery and Interview actions; both external work routes return explicitly to Workshop, including Discovery checkpoint and Interview completion. `/dashboard` remains only as a compatibility redirect to `/workshop`.
 
 The canonical eight benches and existing `workshopBrain` readiness/recommendation authority are unchanged. Routing introduces no Project state, writer, readiness engine, recommendation change, Discovery/Interview/Validation semantic change, specialist workflow change or automatic Project write. HP-24.28 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.28-workshop-first-routing`; freeze blockers are NONE.
+
+## HP-24.29 Capability
+
+HP-24.29 establishes the first reusable reAIdea Standard Bench Shell, proven on Patent / IP only. The frozen parent is `d8fb230ee0636e6fc12d19aef92b20c834cdcf96`, tagged `v24.28-workshop-first-routing`. Accepted Build 1 is `f6996b719d3d0eca1b20e78747a7c91fbb4fbc33`; accepted Build 2 is `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a`; Build 3 is not required.
+
+The locked anatomy is LEFT — REV / bench context; CENTER — bench work area; RIGHT — read-only Project Ledger; BOTTOM — Back to Workshop, current bench identity and disabled Ask REV marked Coming later. Ledger tabs are THIS BENCH and PROJECT. Patent contribution and exact evidence-adoption truth populate THIS BENCH; existing Project/read-model truth populates PROJECT. No raw IDs are displayed and no ledger state is persisted.
+
+Patent Specialist Inquiry, legal boundary, Specialist Contribution and explicit evidence adoption remain semantically unchanged. The oversized Patent Project Context panel is removed from the center because concise context is available through the Ledger. Other benches remain on their existing presentation paths. `workshopBrain` remains sole authority for bench state, reason, `nextMove`, recommendation and precedence. No new Project state, store, writer, runtime model integration or automatic Project write exists. HP-24.29 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.29-standard-bench-shell`; freeze blockers are NONE.
 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 

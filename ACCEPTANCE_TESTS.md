@@ -1358,6 +1358,65 @@ Build 1 fully closes HP-24.27. Transparent fixed inquiry frameworks add discipli
 
 Build 1 fully closes HP-24.28. The Workshop is now the unambiguous routing home while existing work routes, domain semantics and recommendation authority remain intact. Build 2 implementation is not required.
 
+## HP-24.29 Consolidated Acceptance Record
+
+**Hold point:** HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof
+**Branch:** `sprint006-build24-29-standard-bench-shell`
+**Frozen parent:** `d8fb230ee0636e6fc12d19aef92b20c834cdcf96`, `v24.28-workshop-first-routing`
+**Accepted Build 1:** `f6996b719d3d0eca1b20e78747a7c91fbb4fbc33`
+**Accepted Build 2:** `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a`
+**Build 3:** NOT REQUIRED
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.29-standard-bench-shell`
+
+### Accepted Contract
+
+- Reusable presentation-only Standard Bench Shell with LEFT REV context, CENTER work area, RIGHT Project Ledger and BOTTOM navigation.
+- Patent / IP is the only migrated proof bench.
+- Ledger tabs remain THIS BENCH and PROJECT and use existing read-model truth only.
+- Patent contribution count, latest contribution and exact ProjectEvidence adoption state are shown without raw IDs or invented Patent status.
+- PROJECT is a concise projection of existing specialist Project Context.
+- Oversized Patent Project Context is removed from the center work area.
+- Existing Patent Inquiry, legal boundary, contribution writer and evidence-adoption writer semantics are unchanged.
+- Back to Workshop requires no browser Back.
+- Ask REV is disabled, marked Coming later and performs no interaction.
+- Other benches and `workshopBrain` authority remain unchanged.
+
+### Browser Acceptance
+
+- REV left zone identifiable: **PASS**.
+- Center work area visually dominant and readable: **PASS**.
+- Project Ledger distinct and secondary: **PASS**.
+- Empty and populated THIS BENCH states: **PASS**.
+- Contribution and explicit evidence adoption update exact ledger truth: **PASS**.
+- PROJECT tab concise and free of raw IDs: **PASS**.
+- Back to Workshop and Patent re-entry preserve Project state: **PASS**.
+- Ask REV visibly unavailable: **PASS**.
+- Other specialist presentation path checked unchanged: **PASS**.
+
+### Technical Acceptance
+
+- Project model, storage, Engineering State and timeline semantics: **UNCHANGED**.
+- ProjectEvidence, decisions, assertions, actions and Validation: **UNCHANGED**.
+- Specialist read models and writers: **UNCHANGED**.
+- Engineering/Validation writers: **UNCHANGED**.
+- Recommendation precedence: **UNCHANGED**.
+- Runtime AI/model integration: **NOT INTRODUCED**.
+- Automatic shell/ledger Project writes: **NONE**.
+- TypeScript: **PASS**.
+- ESLint: **PASS**.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Visual Refinements
+
+Richer physical-workbench atmosphere, bench-specific artwork/theme, empty-ledger height refinement, internal scrolling refinement, final typography/polish and final Workshop Hub visual redesign are deferred and are not HP-24.29 blockers.
+
+### Freeze Decision
+
+Accepted Builds 1 and 2 fully close HP-24.29. The reusable shell anatomy and Patent/IP Ledger proof are browser-accepted without changing domain behavior or Project authority. Build 3 is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

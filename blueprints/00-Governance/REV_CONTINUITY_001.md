@@ -1027,4 +1027,20 @@ No browser Back action is required for the normal journey. No new Project state,
 
 ---
 
+# 40. Current HP-24.29 REV Continuity
+
+HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof is complete, verified, browser-accepted, tagged, pushed, and frozen on branch `sprint006-build24-29-standard-bench-shell`. The final tag is `v24.29-standard-bench-shell`.
+
+The frozen parent is `d8fb230ee0636e6fc12d19aef92b20c834cdcf96`, tagged `v24.28-workshop-first-routing`. Accepted Build 1 is `f6996b719d3d0eca1b20e78747a7c91fbb4fbc33`; accepted Build 2 is `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a`; Build 3 is not required.
+
+The first reusable Standard Bench Shell is presentation-only. Its locked anatomy is LEFT — REV / bench context; CENTER — bench work area; RIGHT — Project Ledger; BOTTOM — Back to Workshop, current bench identity and disabled Ask REV marked Coming later. Patent / IP is the proof bench only; other benches retain their existing presentation paths until deliberately migrated.
+
+The Project Ledger is read-only, transient UI with THIS BENCH and PROJECT tabs. Patent THIS BENCH uses existing specialist contribution and exact ProjectEvidence-adoption truth. PROJECT uses existing Project and specialist Project Context truth. No raw IDs are displayed, no ledger state is persisted, and no new store, timeline, evidence collection, notes system, writer or Project semantics exist.
+
+Patent Specialist Inquiry, legal boundary, contribution capture and explicit evidence adoption remain semantically unchanged. Project context moved from the oversized Patent center panel into the concise Ledger. `workshopBrain` remains sole authority for bench state, reason, `nextMove`, recommendation and precedence. Back to Workshop is an in-app UI action; no browser Back is required. Ask REV remains disabled and no fake REV interaction or runtime model integration was introduced.
+
+REV and the inventor browser-accepted the shell structure and Build 2 presentation. Richer workbench atmosphere, bench-specific artwork/theme, empty-ledger height, internal scrolling, final typography and final Workshop Hub visual redesign remain deferred and are not blockers.
+
+---
+
 **END OF REV-CONTINUITY-001**
