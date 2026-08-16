@@ -1035,6 +1035,24 @@ The frozen parent is `d8fb230ee0636e6fc12d19aef92b20c834cdcf96`, tagged `v24.28-
 
 The first reusable Standard Bench Shell is presentation-only. Its locked anatomy is LEFT — REV / bench context; CENTER — bench work area; RIGHT — Project Ledger; BOTTOM — Back to Workshop, current bench identity and disabled Ask REV marked Coming later. Patent / IP is the proof bench only; other benches retain their existing presentation paths until deliberately migrated.
 
+---
+
+# 41. Current HP-24.30 REV Continuity
+
+HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study is complete, verified, browser-accepted, tagged, pushed, and frozen on branch `sprint006-build24-30-prototype-study`. The final tag is `v24.30-prototype-study`.
+
+The frozen parent is `de7361f900f5bb2bc26f8dd9c6f9ee4be65765b6`, tagged `v24.29-standard-bench-shell`. Accepted Build 1 is `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7`, Sprint 006 Build 24.30.1: repair Prototype entry and procedural concept study. Build 2 implementation is not required.
+
+The accepted user flow is Workshop → Prototype → StandardBenchShell → Project-derived Concept Sheet → Begin Visual Study → Visual Concept Brief → Create Procedural Concept Study → inventor review/refinement/direction → Back to Workshop. Direct Prototype entry no longer appears empty, and Engineering is no longer a hidden UI prerequisite merely to unlock Prototype. Engineering remains responsible for technical definition; Prototype creates a tangible working representation for inspection and iteration.
+
+The current visual output is explicitly a procedural concept study. Generated SVG content remains workshop-local and is not CAD, runtime AI image generation, validation, Project truth, ProjectEvidence, Engineering State, an adopted concept, a Project artifact or proof of feasibility. Existing `recordConceptDecision()` semantics remain unchanged; only deliberate inventor review/direction decisions cross into canonical Project truth.
+
+Prototype localStorage behavior is unchanged. THIS BENCH clearly separates workshop-local study state from Project-recorded decisions, while PROJECT reads existing Project truth. No new Project artifact state, ledger store, storage architecture, writer, recommendation precedence or automatic Project write exists. Back to Workshop remains available and Ask REV remains disabled as Coming later.
+
+Browser acceptance passes direct selection, immediate Concept Sheet, visual-study initiation, procedural generation, visible authority boundaries, ledger updates and return/re-entry. The generic procedural SVG placeholder is accepted for HP-24.30 and does not constitute invention-specific visual design.
+
+Genuine invention-specific visual concept generation is deferred. Future work may consider Project engineering truth → bounded visual brief → real generated visual candidate → inventor review → explicit adoption/decision, while preserving the accepted authority boundary. This deferral is not a freeze blocker.
+
 The Project Ledger is read-only, transient UI with THIS BENCH and PROJECT tabs. Patent THIS BENCH uses existing specialist contribution and exact ProjectEvidence-adoption truth. PROJECT uses existing Project and specialist Project Context truth. No raw IDs are displayed, no ledger state is persisted, and no new store, timeline, evidence collection, notes system, writer or Project semantics exist.
 
 Patent Specialist Inquiry, legal boundary, contribution capture and explicit evidence adoption remain semantically unchanged. Project context moved from the oversized Patent center panel into the concise Ledger. `workshopBrain` remains sole authority for bench state, reason, `nextMove`, recommendation and precedence. Back to Workshop is an in-app UI action; no browser Back is required. Ask REV remains disabled and no fake REV interaction or runtime model integration was introduced.

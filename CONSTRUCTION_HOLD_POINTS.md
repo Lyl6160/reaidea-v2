@@ -1638,3 +1638,41 @@ Other benches remain on their existing presentation paths. `workshopBrain` remai
 ### Freeze Decision
 
 HP-24.29 closes the first reusable Standard Bench Shell and Patent/IP Ledger proof without migrating other benches or changing Project authority. Richer bench atmosphere, bench-specific artwork, empty-ledger height, internal scrolling and final typography/Hub polish remain deferred and are not blockers.
+
+## HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.29 at `de7361f900f5bb2bc26f8dd9c6f9ee4be65765b6`, tag `v24.29-standard-bench-shell`
+
+**Accepted Build 1:** `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7` — Sprint 006 Build 24.30.1: repair Prototype entry and procedural concept study
+
+**Build 2:** Implementation NOT REQUIRED
+
+### Accepted Contract
+
+Prototype now enters directly through the existing Standard Bench Shell and exposes the Project-derived Concept Sheet, Visual Concept Brief, visual-study action, procedural concept study, existing inventor review/refinement/direction flow and Back to Workshop. Engineering is not a hidden UI prerequisite for unlocking Prototype, while remaining authoritative for technical definition.
+
+The generated SVG is workshop-local and explicitly a procedural concept study. It is not CAD, runtime AI image generation, validation, Project truth, ProjectEvidence, Engineering State, an adopted concept, a Project artifact or feasibility proof. Only an explicit decision through unchanged `recordConceptDecision()` semantics crosses into canonical Project truth.
+
+THIS BENCH separates workshop-local study state from Project-recorded decisions. PROJECT reads existing Project truth. No new Project model, artifact state, storage architecture, ledger store, writer, recommendation precedence or automatic Project write exists. Ask REV remains disabled.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.30-prototype-study`
+- **Browser acceptance:** PASS
+- **Direct Prototype entry:** PASS
+- **Procedural visual boundary:** PASS
+- **Prototype localStorage:** UNCHANGED
+- **Automatic Project writes:** NONE
+- **Project, storage and writers:** UNCHANGED
+- **Runtime AI/image model:** NOT INTRODUCED
+- **Freeze blockers:** NONE
+
+### Deferred Prototype Capability
+
+Genuine invention-specific visual concept generation is not yet implemented. A future bounded generated-visual workflow must preserve the current inventor-controlled authority chain. This limitation is accepted and is not an HP-24.30 blocker.
+
+### Freeze Decision
+
+HP-24.30 closes the Prototype workflow-entry repair and honest procedural concept-study presentation. Build 2 implementation is not required.

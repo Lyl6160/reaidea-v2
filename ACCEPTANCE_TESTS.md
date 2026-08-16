@@ -1417,6 +1417,50 @@ Richer physical-workbench atmosphere, bench-specific artwork/theme, empty-ledger
 
 Accepted Builds 1 and 2 fully close HP-24.29. The reusable shell anatomy and Patent/IP Ledger proof are browser-accepted without changing domain behavior or Project authority. Build 3 is not required.
 
+## HP-24.30 Consolidated Acceptance Record
+
+**Hold point:** HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study
+**Branch:** `sprint006-build24-30-prototype-study`
+**Frozen parent:** `de7361f900f5bb2bc26f8dd9c6f9ee4be65765b6`, `v24.29-standard-bench-shell`
+**Accepted Build 1:** `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7` — Sprint 006 Build 24.30.1: repair Prototype entry and procedural concept study
+**Build 2:** Implementation NOT REQUIRED
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.30-prototype-study`
+
+### Accepted Contract
+
+- Workshop → Prototype now opens the existing `StandardBenchShell` directly with the Project-derived Concept Sheet, Visual Concept Brief, visual-study action, procedural concept study and existing inventor-controlled review/refinement/direction flow.
+- Direct Prototype entry no longer appears empty and Engineering is no longer a hidden UI prerequisite merely to unlock Prototype presentation.
+- Engineering remains responsible for technical definition. Prototype produces a tangible working representation for inspection and iteration without creating Engineering State.
+- The current output is explicitly a procedural concept study: a workshop-local working representation that is not CAD, runtime AI image generation, a validated design, Project truth, ProjectEvidence, Engineering State, an adopted concept, a Project artifact or proof of feasibility.
+- Existing `recordConceptDecision()` behavior remains the only deliberate crossing from the local study into canonical Project decision truth. Generated SVG content is never automatically adopted.
+- THIS BENCH distinguishes workshop-local study state from Project-recorded decisions. PROJECT uses existing Project/read-model truth only; no ledger store was added.
+- Back to Workshop preserves Project truth and local Prototype state. Ask REV remains disabled and marked Coming later.
+
+### Browser Acceptance
+
+**PASS:** direct Prototype selection; populated StandardBenchShell; immediate Concept Sheet; Begin Visual Study; Visual Concept Brief; procedural concept generation; visible non-CAD and non-Project-truth boundaries; local ledger updates; Back to Workshop; disabled Ask REV; and no automatic Project write from visual generation.
+
+The current procedural SVG is accepted as a generic placeholder/study for this hold point and does not constitute meaningful invention-specific visual design.
+
+### Accepted Technical Results
+
+- Direct entry, Concept Sheet, visual-study action, procedural output, ledgers and Back to Workshop: **PASS**.
+- Prototype localStorage, concept review writer and concept direction writer: **UNCHANGED**.
+- Generated SVG adopted automatically: **NO**. Automatic Project writes: **NONE**.
+- Project model, storage, `workshopBrain`, recommendation precedence and other benches: **UNCHANGED**.
+- Runtime AI/image model: **NOT INTRODUCED**.
+- TypeScript, ESLint, production build and `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Prototype Capability
+
+Genuine invention-specific visual concept generation is not yet implemented. Future work may consider Project engineering truth → bounded visual brief → real generated visual candidate → inventor review → explicit adoption/decision. Any runtime image/model integration must preserve the accepted authority boundary. This deferral is not an HP-24.30 blocker.
+
+### Freeze Decision
+
+Accepted Build 1 fully closes HP-24.30. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

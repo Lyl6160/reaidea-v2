@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof
-**Branch:** `sprint006-build24-29-standard-bench-shell`
-**Accepted HEAD:** `1b1f7f995685bce1a6bd5a7d0b79e3ae6884445a`
+**Construction checkpoint:** HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study
+**Branch:** `sprint006-build24-30-prototype-study`
+**Accepted HEAD:** `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7`
 **Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.29 — Standard Bench Shell + Patent/IP Ledger Proof**
+**HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.29-standard-bench-shell`
+Final freeze tag: `v24.30-prototype-study`
 
 Accepted HP-24.9 construction chain:
 
@@ -689,5 +689,17 @@ Patent Specialist Inquiry, legal boundary, Specialist Contribution and explicit 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 
 Knowledge, Engineering, Prototype and Validation remain excluded because they retain their existing distinct semantics and workflows. Recommendation precedence is unchanged and no Project write occurs before explicit inventor submission.
+
+## HP-24.30 Capability
+
+HP-24.30 repairs direct Prototype entry and migrates Prototype presentation into the existing Standard Bench Shell. The frozen parent is `de7361f900f5bb2bc26f8dd9c6f9ee4be65765b6`, tagged `v24.29-standard-bench-shell`. Accepted Build 1 is `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7`; Build 2 implementation is not required.
+
+The accepted flow is Workshop → Prototype → StandardBenchShell → Project-derived Concept Sheet → Begin Visual Study → Visual Concept Brief → Create Procedural Concept Study → inventor review/refinement/direction → Back to Workshop. Direct Prototype entry is populated without making Engineering a hidden UI prerequisite. Engineering retains technical-definition authority; Prototype supplies a tangible working representation for inspection and iteration.
+
+The generated SVG remains workshop-local and is explicitly not CAD, runtime AI image generation, a validated design, Project truth, ProjectEvidence, Engineering State, an adopted concept, a Project artifact or proof of feasibility. Existing `recordConceptDecision()` semantics are unchanged and remain the only deliberate crossing into canonical Project decision truth. Prototype localStorage behavior is unchanged; no new Project artifact state, storage, writer, ledger store, recommendation change or automatic Project write exists.
+
+Prototype THIS BENCH distinguishes workshop-local study state from Project-recorded decisions; PROJECT uses existing read-model truth. Back to Workshop preserves state and Ask REV remains disabled. Browser acceptance, TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
+
+Genuine invention-specific visual concept generation is deferred. Any future runtime model/image integration must preserve the current authority boundary. HP-24.30 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.30-prototype-study`.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.
