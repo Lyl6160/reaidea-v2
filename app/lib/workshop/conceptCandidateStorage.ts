@@ -6,23 +6,52 @@ const STORE_NAME = "current-candidates";
 const MAX_PERSISTED_IMAGE_BYTES = 8_000_000;
 
 type StoredConceptCandidate = {
-  version: 1;
+  version: 1 | 2;
   projectId: string;
-  candidate: ConceptCandidate;
+  candidate?: ConceptCandidate;
+  candidates?: ConceptCandidate[];
 };
 
-export async function restoreCurrentConceptCandidate(
-  projectId: string
-): Promise<ConceptCandidate | null> {
-  if (!projectId.trim() || typeof indexedDB === "undefined") return null;
+export async function restoreConceptCandidateHistory(projectId: string): Promise<ConceptCandidate[]> {
+  if (!projectId.trim() || typeof indexedDB === "undefined") return [];
   const database = await openDatabase();
   try {
     const stored = await requestResult<StoredConceptCandidate | undefined>(
       database.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(projectId)
     );
-    return stored?.projectId === projectId && isPersistableCandidate(stored.candidate)
-      ? stored.candidate
-      : null;
+    if (stored?.projectId !== projectId) return [];
+    const candidates = stored.candidates ?? (stored.candidate ? [stored.candidate] : []);
+    return candidates.filter(isPersistableCandidate).sort((left, right) => left.revision - right.revision);
+  } finally {
+    database.close();
+  }
+}
+
+export async function restoreCurrentConceptCandidate(
+  projectId: string
+): Promise<ConceptCandidate | null> {
+  const history = await restoreConceptCandidateHistory(projectId);
+  return history.at(-1) ?? null;
+}
+
+export async function persistConceptCandidateHistory(
+  projectId: string,
+  candidates: ConceptCandidate[]
+): Promise<boolean> {
+  if (
+    !projectId.trim() || typeof indexedDB === "undefined" || candidates.length === 0 ||
+    candidates.length > 12 || !candidates.every(isPersistableCandidate)
+  ) return false;
+  const familyId = candidates[0].conceptFamilyId;
+  if (candidates.some((candidate, index) => candidate.conceptFamilyId !== familyId || candidate.revision !== index + 1)) {
+    return false;
+  }
+  const database = await openDatabase();
+  try {
+    const transaction = database.transaction(STORE_NAME, "readwrite");
+    transaction.objectStore(STORE_NAME).put({ version: 2, projectId, candidates } satisfies StoredConceptCandidate);
+    await transactionComplete(transaction);
+    return true;
   } finally {
     database.close();
   }
@@ -32,18 +61,7 @@ export async function persistCurrentConceptCandidate(
   projectId: string,
   candidate: ConceptCandidate
 ): Promise<boolean> {
-  if (!projectId.trim() || typeof indexedDB === "undefined" || !isPersistableCandidate(candidate)) {
-    return false;
-  }
-  const database = await openDatabase();
-  try {
-    const transaction = database.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).put({ version: 1, projectId, candidate } satisfies StoredConceptCandidate);
-    await transactionComplete(transaction);
-    return true;
-  } finally {
-    database.close();
-  }
+  return persistConceptCandidateHistory(projectId, [candidate]);
 }
 
 function isPersistableCandidate(value: unknown): value is ConceptCandidate {
@@ -73,6 +91,10 @@ function isPersistableCandidate(value: unknown): value is ConceptCandidate {
   ) {
     return false;
   }
+  if (
+    (value.sourceCandidateId !== undefined && !nonEmptyString(value.sourceCandidateId)) ||
+    (value.inventorRefinement !== undefined && !nonEmptyString(value.inventorRefinement))
+  ) return false;
   const imageMatch = value.output.dataUrl.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/]+={0,2})$/);
   if (!imageMatch) return false;
   const estimatedBytes = Math.floor((imageMatch[2].length * 3) / 4);

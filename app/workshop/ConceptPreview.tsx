@@ -35,14 +35,14 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
   return (
     <section
       className={`concept-preview${compact ? " is-compact" : ""} stage-${preview.stage}`}
-      aria-label={candidate ? `Concept 01: ${candidate.title}` : `Idea evolving: ${preview.title}`}
+      aria-label={candidate ? `Concept ${String(candidate.revision).padStart(2, "0")}: ${candidate.title}` : `Idea evolving: ${preview.title}`}
       data-concept-stage={preview.stage}
       data-discovery-input-count={preview.answerCount}
       data-engineering-input-count={preview.engineeringAnswerCount}
       data-visual-journey-stage={preview.visualStage}
     >
       <div className="concept-preview-heading">
-        <span>{candidate ? "CONCEPT 01" : "IDEA EVOLVING"}</span>
+        <span>{candidate ? `CONCEPT ${String(candidate.revision).padStart(2, "0")}` : "IDEA EVOLVING"}</span>
         {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : preview.visualStage.replaceAll("-", " ")}</b>}
       </div>
       {candidate?.output.type === "image" && candidate.output.dataUrl ? (
@@ -145,7 +145,7 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
         </svg>
       </div>}
       <div className="concept-preview-copy">
-        <strong>{candidate ? "CONCEPT 01" : preview.title}</strong>
+        <strong>{candidate ? `CONCEPT ${String(candidate.revision).padStart(2, "0")}` : preview.title}</strong>
         <span>
           {candidate
             ? candidateStale

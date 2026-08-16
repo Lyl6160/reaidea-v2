@@ -95,6 +95,27 @@ export type ConceptGenerationRequest = {
   briefVersion: 1;
 };
 
+export type ConceptRefinementRequest = {
+  requestId: string;
+  conceptFamilyId: string;
+  sourceCandidateId: string;
+  sourceRevision: number;
+  nextRevision: number;
+  title: string;
+  visualMode: IdeaVisualMode;
+  representationStyle: ConceptRepresentationStyle;
+  outputType: "image";
+  brief: ConceptBrief;
+  sourceEventIds: string[];
+  sourceTrace: ConceptBriefSource[];
+  briefVersion: 1;
+  inventorRefinement: string;
+  sourceImage: {
+    mediaType: "image/png" | "image/jpeg" | "image/webp";
+    dataUrl: string;
+  };
+};
+
 export type ConceptCandidate = {
   candidateId: string;
   conceptFamilyId: string;
@@ -108,6 +129,8 @@ export type ConceptCandidate = {
   sourceBriefVersion: number;
   sourceBriefHash: string;
   sourceEventIds: string[];
+  sourceCandidateId?: string;
+  inventorRefinement?: string;
   disclaimer: string;
 };
 
@@ -127,6 +150,9 @@ export type ConceptGenerationApiResponse =
       };
     };
 
+export type ConceptRefinementApiResponse = ConceptGenerationApiResponse;
+
 export interface ConceptGenerationProvider {
   generateConcept(request: ConceptGenerationRequest): Promise<ConceptCandidate>;
+  refineConcept(request: ConceptRefinementRequest): Promise<ConceptCandidate>;
 }
