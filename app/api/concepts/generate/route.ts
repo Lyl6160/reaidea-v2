@@ -65,6 +65,7 @@ function isConceptGenerationRequest(value: unknown): value is ConceptGenerationR
     value.revision !== 1 ||
     !boundedText(value.title, MAX_SHORT_TEXT) ||
     !isVisualMode(value.visualMode) ||
+    !isRepresentationStyle(value.representationStyle) ||
     !isOutputType(value.outputType) ||
     value.briefVersion !== 1 ||
     !isConceptBrief(value.brief) ||
@@ -130,6 +131,12 @@ function isVisualMode(value: unknown): value is ConceptGenerationRequest["visual
 
 function isOutputType(value: unknown): value is ConceptGenerationRequest["outputType"] {
   return ["image", "diagram", "ui-mockup", "graph", "hybrid"].includes(String(value));
+}
+
+function isRepresentationStyle(
+  value: unknown
+): value is ConceptGenerationRequest["representationStyle"] {
+  return ["engineering-outline", "wireframe", "solid-concept"].includes(String(value));
 }
 
 function optionalText(value: unknown): boolean {

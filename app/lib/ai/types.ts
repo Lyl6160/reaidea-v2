@@ -15,6 +15,11 @@ export type ConceptOutputType =
   | "graph"
   | "hybrid";
 
+export type ConceptRepresentationStyle =
+  | "engineering-outline"
+  | "wireframe"
+  | "solid-concept";
+
 export type ConceptBrief = {
   originalIdea: string;
   problemContext: string;
@@ -82,6 +87,7 @@ export type ConceptGenerationRequest = {
   revision: number;
   title: string;
   visualMode: IdeaVisualMode;
+  representationStyle: ConceptRepresentationStyle;
   outputType: ConceptOutputType;
   brief: ConceptBrief;
   sourceEventIds: string[];
@@ -95,6 +101,7 @@ export type ConceptCandidate = {
   revision: number;
   title: string;
   visualMode: IdeaVisualMode;
+  representationStyle: ConceptRepresentationStyle;
   status: "generated";
   output: ConceptOutput;
   createdAt: string;

@@ -2808,7 +2808,7 @@ export default function WorkshopShell({
                   <strong>{conceptGenerationFoundation.generationReady ? "READY TO CREATE CONCEPT 01" : "MORE DEFINITION NEEDED"}</strong>
                   <small>
                     {conceptGenerationFoundation.generationReady
-                      ? "reAIdea has enough inventor-defined structure to prepare a first visual interpretation."
+                      ? "reAIdea has enough inventor-defined structure to prepare a first engineering representation."
                       : `Remaining: ${conceptGenerationFoundation.missingRequiredFields.join(", ")}.`}
                   </small>
                 </div>
@@ -2842,10 +2842,10 @@ export default function WorkshopShell({
             </section>
 
             {generatedConceptCandidate?.output.type === "image" && generatedConceptCandidate.output.dataUrl && (
-              <section className="generated-concept-candidate" aria-label="Generated Concept 01">
+              <section className="generated-concept-candidate" aria-label="Engineering Concept Model 01">
                 <div className="generated-concept-candidate-heading">
-                  <div><span>REV · FIRST RECOGNISABLE CONCEPT</span><strong>CONCEPT 01</strong></div>
-                  <b>PHYSICAL PRODUCT</b>
+                  <div><span>REV · ENGINEERING CONCEPT MODEL</span><strong>CONCEPT 01</strong></div>
+                  <b>{generatedConceptCandidate.representationStyle.replaceAll("-", " ")}</b>
                 </div>
                 <Image
                   src={generatedConceptCandidate.output.dataUrl}
@@ -2855,8 +2855,8 @@ export default function WorkshopShell({
                   unoptimized
                 />
                 <p>{generatedConceptCandidate.disclaimer}</p>
-                <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs. The image is a visual interpretation and does not prove feasibility.</p>
-                <small>Transient session result. Refreshing this page removes the generated image. It is not stored in the Project or local storage.</small>
+                <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs as an early engineering representation. This is what reAIdea currently understands you are describing; it does not prove feasibility or depict a finished product.</p>
+                <small>Transient session model. Refreshing this page removes it. It is not stored in the Project or local storage.</small>
               </section>
             )}
 

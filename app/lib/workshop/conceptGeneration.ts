@@ -4,6 +4,7 @@ import type {
   ConceptBriefSource,
   ConceptGenerationRequest,
   ConceptOutputType,
+  ConceptRepresentationStyle,
   IdeaVisualMode,
 } from "../ai/types";
 import {
@@ -197,6 +198,18 @@ export function outputTypeForVisualMode(mode: IdeaVisualMode): ConceptOutputType
   }
 }
 
+export function representationStyleForVisualMode(
+  mode: IdeaVisualMode
+): ConceptRepresentationStyle {
+  switch (mode) {
+    case "product":
+    case "machine":
+      return "engineering-outline";
+    default:
+      return "wireframe";
+  }
+}
+
 export function createConceptWorkflowIdentity(
   existingConceptFamilyId?: string
 ): ConceptWorkflowIdentity {
@@ -288,6 +301,7 @@ export function buildConceptGenerationFoundation(
           revision: identity.revision,
           title: `CONCEPT 01 · ${project.projectName}`,
           visualMode: confirmedVisualMode,
+          representationStyle: representationStyleForVisualMode(confirmedVisualMode),
           outputType,
           brief,
           sourceEventIds,

@@ -41,7 +41,7 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
     >
       <div className="concept-preview-heading">
         <span>{candidate ? "CONCEPT 01" : "IDEA EVOLVING"}</span>
-        {!compact && <b>DISCOVERY-DRIVEN PREVIEW</b>}
+        {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : "DISCOVERY-DRIVEN PREVIEW"}</b>}
       </div>
       {candidate?.output.type === "image" && candidate.output.dataUrl ? (
         <div className="concept-candidate-preview">
@@ -144,7 +144,7 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
         <strong>{candidate ? "CONCEPT 01" : preview.title}</strong>
         <span>
           {candidate
-            ? "EARLY VISUAL CONCEPT · PHYSICAL PRODUCT"
+            ? "ENGINEERING CONCEPT MODEL · EARLY ENGINEERING CONCEPT"
             : preview.engineeringAnswerCount > 0
             ? `${preview.engineeringAnswerCount} ENGINEERING INPUT${preview.engineeringAnswerCount === 1 ? "" : "S"} RECORDED`
             : `${preview.answerCount} DISCOVERY INPUT${preview.answerCount === 1 ? "" : "S"} RECORDED`}
