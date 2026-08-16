@@ -1025,6 +1025,68 @@ The trace only reports whether that exact boundary was crossed in recorded Proje
 
 Build 1 fully closes HP-24.22. The existing Project evidence provenance contract already contains the authoritative action-result adoption relationship; Build 1 exposes it exactly without modifying the writer or adding lifecycle, persistence or authority. Additional Build 2 production implementation is not required.
 
+## HP-24.23 Consolidated Acceptance Record
+
+**Hold point:** HP-24.23 — Engineering Direction Action Adoption Trace
+**Branch:** `sprint006-build24-23-direction-action-trace`
+**Protected foundation:** `03deb9b14835d5d8e6310797f634cbe7674643bb`, `v24.22-action-result-evidence-trace`
+**Accepted implementation HEAD:** `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.23-direction-action-trace`
+
+### Build Chain
+
+- Build 1 — `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78` — Expose direction action adoption trace.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- `EngineeringDirectionTraceEntry.adoptedActionIds` is a read-only reverse projection through exact stored `basisDirectionIds`.
+- Both current and superseded Engineering Directions are represented.
+- Adopted actions remain in `Project.engineeringActions` order.
+- Multi-basis actions appear under each exact stored basis direction.
+- Superseded-direction adoption remains historical and does not restore current authority.
+- Missing or unresolved direction IDs do not falsely attach elsewhere.
+- Zero linked actions is neutral recorded absence, not rejection, priority, failure, incompleteness or a requirement.
+- `recordEngineeringAction()` remains unchanged and requires current directions at write time.
+
+### Accepted Results
+
+- Zero-action direction trace: **PASS**.
+- Exact direction → action ID linkage: **PASS**.
+- Multiple-action ordering: **PASS**.
+- Cross-direction isolation: **PASS**.
+- Superseded direction historical actions: **PASS**.
+- Current + superseded independent trace: **PASS**.
+- Multi-basis action trace: **PASS**.
+- Missing direction linkage safe: **PASS**.
+- Read-model mutation: **NONE**.
+- `engineeringActions` writer: **UNCHANGED**.
+- Writer current-direction eligibility: **PASS**.
+- Read-only direction-action UI: **PASS**.
+- Current direction UI: **PASS**.
+- Superseded direction UI: **PASS**.
+- Action identity/text visibility: **PASS**.
+- Discovery trace: **PASS**.
+- Workshop Engineering trace: **PASS**.
+- Workshop other benches: **UNCHANGED**.
+- Formal Validation boundary: **UNCHANGED**.
+- Automatic Project writes: **NONE**.
+- Action lifecycle: **NOT INTRODUCED**.
+- Project model: **UNCHANGED**.
+- Storage: **UNCHANGED**.
+- Recommendation precedence: **UNCHANGED**.
+- HP-24.22: **UNCHANGED**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with exactly 3 known WorkshopShell image warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.23. The existing exact `basisDirectionIds` relationship already contains the authoritative direction-to-adopted-action history; Build 1 exposes it without new persistence, writers, lifecycle or authority. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

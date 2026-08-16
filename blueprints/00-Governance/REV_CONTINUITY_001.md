@@ -897,4 +897,26 @@ Where conflicts arise:
 
 ---
 
+# 34. Current HP-24.23 REV Continuity
+
+HP-24.23 — Engineering Direction Action Adoption Trace is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-23-direction-action-trace`. The final tag is `v24.23-direction-action-trace`.
+
+The protected foundation is `03deb9b14835d5d8e6310797f634cbe7674643bb`, tagged `v24.22-action-result-evidence-trace`. Accepted Build 1 is `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78` (`Sprint 006 Build 24.23.1: expose direction action adoption trace`). Build 2 implementation is not required.
+
+The accepted read-only contract is:
+
+```text
+Engineering Direction.id
+→ exact EngineeringAction.basisDirectionIds
+→ adopted Engineering Action IDs
+```
+
+Both current and superseded directions are represented. Adopted actions retain Project order; one multi-basis action may appear under multiple exact directions. Superseded-direction adoption remains historical and does not restore current authority. Missing IDs never resolve by text, reason, chronology or recommendation inference.
+
+No linked action means only: “No adopted Engineering Action explicitly references this direction.” It does not mean ignored, rejected, abandoned, failed, low priority, incomplete or requiring an action.
+
+`recordEngineeringAction()` remains unchanged and still requires current Engineering Directions at write time. HP-24.23 adds no lifecycle, completion, ranking, priority, recommendation change, automatic action creation, automatic prompt, Project schema/storage change, new writer or REV Project-write authority.
+
+---
+
 **END OF REV-CONTINUITY-001**

@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.22 — Engineering Action Result Evidence Adoption Trace
-**Branch:** `sprint006-build24-22-action-result-evidence-trace`
-**Accepted HEAD:** `2ea111a`
+**Construction checkpoint:** HP-24.23 — Engineering Direction Action Adoption Trace
+**Branch:** `sprint006-build24-23-direction-action-trace`
+**Accepted HEAD:** `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.22 — Engineering Action Result Evidence Adoption Trace**
+**HP-24.23 — Engineering Direction Action Adoption Trace**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.22-action-result-evidence-trace`
+Final freeze tag: `v24.23-direction-action-trace`
 
 Accepted HP-24.9 construction chain:
 
@@ -156,6 +156,16 @@ Accepted HP-24.22 construction chain:
 
 - Build 1 — `2ea111a` — Expose action result evidence adoption trace
 - Build 2 — Readiness audit only; implementation not required
+
+Protected HP-24.23 foundation:
+
+- `03deb9b14835d5d8e6310797f634cbe7674643bb`
+- `v24.22-action-result-evidence-trace`
+
+Accepted HP-24.23 construction chain:
+
+- Build 1 — `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78` — Expose direction action adoption trace
+- Build 2 — Implementation not required
 
 ## HP-24.8 Capability
 
@@ -588,3 +598,23 @@ The shared `ProjectReviewView` displays Action Result Evidence Adoption Trace in
 This capability is read-only. It does not add action completion, action status, evidence status/lifecycle, automatic evidence adoption, new writers, Project persistence, recommendation changes or REV Project-write authority.
 
 Build 2 implementation is not required. HP-24.21 remains protected at `811f222` / `v24.21-historical-evidence-trace`.
+
+## HP-24.23 Capability
+
+HP-24.23 adds neutral read-only reverse observability from every current and superseded Engineering Direction to the adopted Engineering Actions that explicitly record that direction as basis.
+
+```text
+Engineering Direction.id
+→ exact EngineeringAction.basisDirectionIds
+→ adopted Engineering Action IDs
+```
+
+Linkage is by exact stored direction ID only. Adopted actions remain in `Project.engineeringActions` order. A multi-basis action legitimately appears beneath every direction whose exact ID it stores. Superseded directions retain historical adoption trace without regaining current authority, and missing direction IDs never attach to another direction.
+
+A zero-action direction means only: “No adopted Engineering Action explicitly references this direction.” It does not mean ignored, rejected, abandoned, failed, low priority, incomplete or requiring an action.
+
+The shared `ProjectReviewView` displays the trace in Discovery and on the Living Workshop Engineering bench. `recordEngineeringAction()` remains unchanged and continues to require current Engineering Directions at write time.
+
+No action lifecycle, completion, ranking, priority, recommendation change, automatic action creation, automatic prompt, Project schema/storage change, new writer or REV Project-write authority was introduced.
+
+Build 2 implementation is not required. HP-24.22 remains protected at `03deb9b14835d5d8e6310797f634cbe7674643bb` / `v24.22-action-result-evidence-trace`.

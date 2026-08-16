@@ -1281,3 +1281,61 @@ An unadopted result remains valid engineering history. The trace does not say th
 ### Freeze Decision
 
 HP-24.22 closes the explicit action-result evidence-adoption trace seam. The existing provenance record is already authoritative; Build 1 exposes it exactly without changing the writer, persistence model or engineering authority. Build 2 implementation is not required.
+
+## HP-24.23 — Engineering Direction Action Adoption Trace
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.22 at `03deb9b14835d5d8e6310797f634cbe7674643bb`, tag `v24.22-action-result-evidence-trace`
+
+**Construction branch:** `sprint006-build24-23-direction-action-trace`
+
+### Build 1 — Direction Action Adoption Trace
+
+**Commit:** `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78`
+
+Extended every current and superseded Engineering Direction trace entry with read-only `adoptedActionIds`. Each direction resolves only Engineering Actions whose stored `basisDirectionIds` contains that exact direction ID, preserving `Project.engineeringActions` order.
+
+Multi-basis actions legitimately appear beneath multiple exact directions. Superseded directions preserve historical action adoption without regaining current authority. Missing or unresolved direction IDs do not attach falsely.
+
+The shared `ProjectReviewView` adds one Engineering Direction Action Adoption Trace section for Discovery and the Living Workshop Engineering bench. It shows direction status and linked action identity/text while preserving the formal Validation boundary.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed zero-action, exact-linkage, ordering, isolation, supersession, independent current/historical, multi-basis, missing-ID, purity, writer-regression, shared UI and static acceptance gates. No additional production implementation is required.
+
+### Final Outcome
+
+- **HP-24.23 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.23-direction-action-trace`
+- **Freeze blockers:** NONE
+- **Direction → adopted-action linkage:** EXACT STORED DIRECTION ID
+- **Current + superseded directions:** REPRESENTED
+- **Adopted-action ordering:** PROJECT ORDER PRESERVED
+- **Multi-basis action:** MAY APPEAR UNDER EACH EXACT BASIS DIRECTION
+- **Missing direction linkage:** SAFE
+- **Existing action writer:** UNCHANGED
+- **Writer current-direction eligibility:** PRESERVED
+- **Action lifecycle/completion:** NOT INTRODUCED
+- **Automatic action creation/prompts:** NOT INTRODUCED
+- **Project schema/storage mutation:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **Formal Validation boundary:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+```text
+Engineering Direction.id
+→ exact EngineeringAction.basisDirectionIds
+→ adoptedActionIds
+→ read-only adoption trace
+```
+
+A direction with no adopted action means only: “No adopted Engineering Action explicitly references this direction.” It does not mean ignored, rejected, abandoned, failed, low priority, incomplete or requiring an action.
+
+### Freeze Decision
+
+HP-24.23 closes the reverse direction-to-adopted-action observability seam. Existing stored basis IDs are already authoritative; Build 1 exposes them without changing the writer, persistence model, recommendation precedence or engineering authority. Build 2 implementation is not required.
