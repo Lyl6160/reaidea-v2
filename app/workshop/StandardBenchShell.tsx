@@ -13,6 +13,7 @@ type StandardBenchShellProps = {
   benchState: WorkshopBenchState;
   reason: string;
   nextMove: string;
+  conceptPreview?: ReactNode;
   children: ReactNode;
   thisBenchLedger: ReactNode;
   projectLedger: ReactNode;
@@ -26,6 +27,7 @@ export default function StandardBenchShell({
   benchState,
   reason,
   nextMove,
+  conceptPreview,
   children,
   thisBenchLedger,
   projectLedger,
@@ -56,6 +58,7 @@ export default function StandardBenchShell({
           <h2>Next move</h2>
           <p>{nextMove}</p>
         </section>
+        {conceptPreview}
       </aside>
 
       <main className="bench-work-area">

@@ -1,0 +1,109 @@
+import type { SharedConceptPreview } from "../lib/workshop/conceptPreview";
+
+type ConceptPreviewProps = {
+  preview: SharedConceptPreview;
+  compact?: boolean;
+};
+
+const POINTS = [
+  [18, 53], [30, 27], [44, 43], [57, 20], [72, 38], [84, 61],
+  [67, 72], [48, 79], [28, 69], [39, 57], [60, 53], [76, 23],
+] as const;
+
+const CLUSTER_LINES = [[2, 9], [9, 10], [10, 4], [4, 6]] as const;
+const OUTLINE_LINES = [[1, 3], [3, 11], [11, 5], [5, 6], [6, 7], [7, 8], [8, 0], [0, 1]] as const;
+const STRUCTURE_LINES = [[1, 9], [3, 4], [9, 3], [9, 7], [10, 5], [10, 7], [8, 9], [4, 10]] as const;
+
+export default function ConceptPreview({ preview, compact = false }: ConceptPreviewProps) {
+  const stageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
+  const showCluster = stageIndex >= 2;
+  const showOutline = stageIndex >= 3;
+  const showStructure = stageIndex >= 4;
+
+  return (
+    <section
+      className={`concept-preview${compact ? " is-compact" : ""} stage-${preview.stage}`}
+      aria-label={`Idea evolving: ${preview.title}`}
+      data-concept-stage={preview.stage}
+      data-discovery-input-count={preview.answerCount}
+    >
+      <div className="concept-preview-heading">
+        <span>IDEA EVOLVING</span>
+        {!compact && <b>DISCOVERY-DRIVEN PREVIEW</b>}
+      </div>
+      <div className="concept-field" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="presentation">
+          <defs>
+            <radialGradient id={`idea-glow-${compact ? "compact" : "hub"}`}>
+              <stop offset="0" stopColor="#dfffff" />
+              <stop offset="0.45" stopColor="#69e5ef" />
+              <stop offset="1" stopColor="#25849d" />
+            </radialGradient>
+          </defs>
+          {showOutline && OUTLINE_LINES.map(([from, to]) => (
+            <line key={`o-${from}-${to}`} className="outline-line" x1={POINTS[from][0]} y1={POINTS[from][1]} x2={POINTS[to][0]} y2={POINTS[to][1]} />
+          ))}
+          {showCluster && CLUSTER_LINES.map(([from, to]) => (
+            <line key={`c-${from}-${to}`} className="cluster-line" x1={POINTS[from][0]} y1={POINTS[from][1]} x2={POINTS[to][0]} y2={POINTS[to][1]} />
+          ))}
+          {showStructure && STRUCTURE_LINES.map(([from, to]) => (
+            <line key={`s-${from}-${to}`} className="structure-line" x1={POINTS[from][0]} y1={POINTS[from][1]} x2={POINTS[to][0]} y2={POINTS[to][1]} />
+          ))}
+          {POINTS.map(([x, y], index) => (
+            <circle key={`${x}-${y}`} className={`idea-point point-${index}`} cx={x} cy={y} r={stageIndex === 0 ? 0.65 : showStructure ? 2 : 1.45} />
+          ))}
+        </svg>
+      </div>
+      <div className="concept-preview-copy">
+        <strong>{preview.title}</strong>
+        <span>{preview.answerCount} DISCOVERY INPUT{preview.answerCount === 1 ? "" : "S"} RECORDED</span>
+        {!compact && <p>{preview.subtitle}</p>}
+      </div>
+      <small>CONCEPTUAL · UNVALIDATED · NOT PROJECT TRUTH</small>
+
+      <style jsx>{`
+        .concept-preview {
+          box-sizing: border-box;
+          width: min(420px, 100%);
+          padding: 15px;
+          border: 1px solid rgba(105, 229, 239, 0.42);
+          border-radius: 14px;
+          background: radial-gradient(circle at 50% 38%, rgba(39, 131, 151, 0.2), transparent 52%), #071014;
+          color: #eaffff;
+          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42), 0 0 26px rgba(64, 206, 224, 0.09) inset;
+        }
+        .concept-preview-heading { display: flex; justify-content: space-between; gap: 12px; }
+        .concept-preview-heading span, .concept-preview-heading b, .concept-preview-copy span, small {
+          font-size: 9px; font-weight: 850; letter-spacing: .11em; text-transform: uppercase;
+        }
+        .concept-preview-heading span { color: #8bf2f4; }
+        .concept-preview-heading b { color: #779096; }
+        .concept-field { height: 150px; margin: 8px 0; border: 1px solid rgba(102, 210, 224, .16); border-radius: 10px; overflow: hidden; background: radial-gradient(circle, rgba(53, 186, 204, .1), transparent 62%); }
+        svg { width: 100%; height: 100%; }
+        line { vector-effect: non-scaling-stroke; }
+        .cluster-line { stroke: rgba(92, 214, 226, .32); stroke-width: .7; }
+        .outline-line { stroke: rgba(120, 235, 239, .58); stroke-width: .9; stroke-dasharray: 2 1.4; }
+        .structure-line { stroke: rgba(159, 246, 239, .78); stroke-width: 1.05; }
+        .idea-point { fill: url(#idea-glow-hub); filter: drop-shadow(0 0 2px #66e5ee); opacity: .92; }
+        .stage-dormant .idea-point { opacity: .13; filter: none; }
+        .stage-spark .idea-point:nth-of-type(3n) { opacity: .38; }
+        .stage-early-ready .idea-point { fill: #dfffff; }
+        .stage-early-ready .concept-field { box-shadow: 0 0 32px rgba(76, 224, 226, .2) inset; }
+        .concept-preview-copy { display: grid; gap: 4px; }
+        .concept-preview-copy strong { font-size: 17px; letter-spacing: .035em; }
+        .concept-preview-copy span { color: #8eb3b8; }
+        .concept-preview-copy p { margin: 4px 0 0; color: #b9cacc; font-size: 12px; line-height: 1.45; }
+        small { display: block; margin-top: 10px; color: #71898d; }
+        .is-compact { margin-top: 24px; padding: 11px; border-radius: 10px; }
+        .is-compact .concept-field { height: 86px; margin: 7px 0; }
+        .is-compact .concept-preview-copy strong { font-size: 13px; }
+        .is-compact small { font-size: 7px; line-height: 1.4; }
+        .is-compact .idea-point { fill: url(#idea-glow-compact); }
+        @media (prefers-reduced-motion: no-preference) {
+          .stage-spark .idea-point, .stage-clustering .idea-point { animation: idea-pulse 3.6s ease-in-out infinite alternate; }
+        }
+        @keyframes idea-pulse { from { opacity: .62; } to { opacity: 1; } }
+      `}</style>
+    </section>
+  );
+}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
 import ProjectReviewView from "./ProjectReviewView";
+import ConceptPreview from "../../workshop/ConceptPreview";
 import StandardBenchShell from "../../workshop/StandardBenchShell";
 
 import {
@@ -12,6 +13,7 @@ import {
   type SpecialistContributionBenchId,
 } from "../../lib/core/project";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
+import { deriveSharedConceptPreview } from "../../lib/workshop/conceptPreview";
 import {
   assessDiscovery,
   recordDiscoveryAnswer,
@@ -727,6 +729,13 @@ export default function WorkshopShell({
     [selectedId, workshop]
   );
   const discoveryAssessment = useMemo(() => assessDiscovery(project), [project]);
+  const sharedConceptPreview = useMemo(
+    () => deriveSharedConceptPreview(project),
+    [project]
+  );
+  const compactConceptPreview = (
+    <ConceptPreview preview={sharedConceptPreview} compact />
+  );
   const recentDiscoveryResponses = useMemo(
     () =>
       project.timeline
@@ -1375,6 +1384,7 @@ export default function WorkshopShell({
         benchState={selectedBench.state}
         reason={selectedBench.reason}
         nextMove={selectedBench.nextMove}
+        conceptPreview={compactConceptPreview}
         onBackToWorkshop={returnToWorkshop}
         askRevState="unavailable"
         thisBenchLedger={
@@ -1513,6 +1523,7 @@ export default function WorkshopShell({
         benchState={selectedBench.state}
         reason={selectedBench.reason}
         nextMove={selectedBench.nextMove}
+        conceptPreview={compactConceptPreview}
         onBackToWorkshop={returnToWorkshop}
         askRevState="unavailable"
         thisBenchLedger={
@@ -1858,6 +1869,11 @@ export default function WorkshopShell({
             <div className="rev-leg rev-leg-left" />
             <div className="rev-leg rev-leg-right" />
           </div>
+        </div>
+
+        <div className="hub-concept-preview">
+          <ConceptPreview preview={sharedConceptPreview} />
+          <span className="hub-concept-pointer" aria-hidden="true">↓</span>
         </div>
 
         {CANONICAL_WORKSHOP_BENCHES.map(({ id, shortLabel, positionClass }) => {
@@ -2329,6 +2345,7 @@ export default function WorkshopShell({
             benchState={selectedBench.state}
             reason={selectedBench.reason}
             nextMove={selectedBench.nextMove}
+            conceptPreview={compactConceptPreview}
             onBackToWorkshop={returnToWorkshop}
             askRevState="unavailable"
             thisBenchLedger={
@@ -3078,7 +3095,7 @@ export default function WorkshopShell({
 
         .room {
           position: relative;
-          min-height: 610px;
+          min-height: 870px;
           overflow: hidden;
           border: 1px solid #546375;
           border-radius: 17px;
@@ -3820,10 +3837,28 @@ export default function WorkshopShell({
 
         .slot-prototype {
           left: 39%;
-          top: 448px;
+          top: 680px;
           width: 22%;
           height: 194px;
           z-index: 5;
+        }
+
+        .hub-concept-preview {
+          position: absolute;
+          left: 37%;
+          top: 408px;
+          z-index: 6;
+          width: 26%;
+          display: grid;
+          justify-items: center;
+          pointer-events: none;
+        }
+
+        .hub-concept-pointer {
+          color: #84e7ec;
+          font-size: 25px;
+          line-height: 1;
+          text-shadow: 0 0 12px rgba(80, 223, 234, .75);
         }
 
         .slot-prototype .bench-sign { bottom: 149px; }
@@ -3839,8 +3874,8 @@ export default function WorkshopShell({
 
         .rev-station {
           position: absolute;
-          left: 22.5%;
-          top: 430px;
+          left: 7%;
+          top: 625px;
           display: flex;
           gap: 12px;
           align-items: flex-end;
@@ -5315,7 +5350,7 @@ export default function WorkshopShell({
           .workshop-brief { grid-template-columns: 1fr; }
           .workshop-brief-action { padding: 14px 0 0; border-top: 1px solid #315463; border-left: 0; }
           .bench-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .room { min-height: 760px; }
+          .room { min-height: 990px; }
           .wall-life {
           position: absolute;
           inset: 0;
@@ -5408,8 +5443,9 @@ export default function WorkshopShell({
           .slot-marketing { left: 37%; top: 412px; right: auto; }
           .slot-manufacturing { left: 70%; top: 412px; right: auto; }
           .slot-reality { right: 4%; top: 594px; width: 26%; }
-          .slot-prototype { left: 37%; top: 594px; width: 26%; }
-          .rev-station { left: 4%; top: 575px; }
+          .slot-prototype { left: 37%; top: 800px; width: 26%; }
+          .hub-concept-preview { left: 35%; top: 565px; width: 30%; }
+          .rev-station { left: 3%; top: 790px; }
           .rev-bubble { display: none; }
           .workshop-plaque { top: 142px; }
           .bench-readout { grid-template-columns: 1fr; }
@@ -5422,7 +5458,7 @@ export default function WorkshopShell({
           .concept-sheet-grid { grid-template-columns: 1fr; }
           .concept-sheet-wide { grid-column: auto; }
           .concept-sheet-heading { flex-direction: column; }
-          .room { min-height: 1040px; }
+          .room { min-height: 1280px; }
           .wall-life {
           position: absolute;
           inset: 0;
@@ -5515,7 +5551,8 @@ export default function WorkshopShell({
           .slot-marketing { left: 5%; top: 615px; }
           .slot-manufacturing { left: 53%; top: 615px; }
           .slot-reality { left: 5%; right: auto; top: 810px; width: 42%; }
-          .slot-prototype { left: 53%; top: 810px; width: 42%; }
+          .slot-prototype { left: 53%; top: 1050px; width: 42%; }
+          .hub-concept-preview { left: 51%; top: 815px; width: 46%; }
           .rev-station { display: none; }
           .room-caption { max-width: 85%; }
         }
