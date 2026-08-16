@@ -367,19 +367,7 @@ export default function WorkshopShell({
   const workspaceRef = useRef<HTMLDivElement>(null);
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
-  const [selectedId, setSelectedId] = useState<WorkshopBenchId>(() => {
-    if (typeof window === "undefined") return workshop.recommendedBench;
-    try {
-      const saved = window.localStorage.getItem(conceptKey(project));
-      if (!saved) return workshop.recommendedBench;
-      const parsed = JSON.parse(saved) as { conceptDecision?: ConceptDecision };
-      if (parsed.conceptDecision === "accept") return "validation";
-      if (parsed.conceptDecision === "rethink") return "engineering";
-    } catch {
-      // Fall back to the workshop's recommended bench.
-    }
-    return workshop.recommendedBench;
-  });
+  const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -729,15 +717,12 @@ export default function WorkshopShell({
   }, [generatedConceptRender]);
 
   const selectedBench = useMemo(
-    () =>
-      getBench(workshop, selectedId) ??
-      getBench(workshop, workshop.recommendedBench) ??
-      workshop.benches[0],
+    () => (selectedId ? getBench(workshop, selectedId) ?? null : null),
     [selectedId, workshop]
   );
   const prototypeBenchIsFocused =
-    prototypeBenchFocused && selectedBench.id === "prototype";
-  const selectedSpecialistBenchId = isSpecialistContributionBenchId(selectedBench.id)
+    prototypeBenchFocused && selectedBench?.id === "prototype";
+  const selectedSpecialistBenchId = selectedBench && isSpecialistContributionBenchId(selectedBench.id)
     ? selectedBench.id
     : null;
   const selectedSpecialistContributions = selectedSpecialistBenchId
@@ -758,7 +743,7 @@ export default function WorkshopShell({
         specialistProjectContext
       )
     : null;
-  const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? selectedBench;
+  const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? workshop.benches[0];
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
   );
@@ -772,6 +757,12 @@ export default function WorkshopShell({
     window.setTimeout(() => {
       workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
+  }
+
+  function returnToWorkshop() {
+    setSelectedId(null);
+    setPatentBenchFocused(false);
+    setPrototypeBenchFocused(false);
   }
 
   function submitSpecialistContribution() {
@@ -1341,7 +1332,7 @@ export default function WorkshopShell({
     </>
   );
 
-  if (patentBenchFocused && selectedBench.id === "patent") {
+  if (patentBenchFocused && selectedBench?.id === "patent") {
     const latestContribution = selectedSpecialistContributionTrace.at(-1);
     const adoptedEvidenceCount = latestContribution?.adoptedEvidenceIds.length ?? 0;
 
@@ -1352,7 +1343,7 @@ export default function WorkshopShell({
         benchState={selectedBench.state}
         reason={selectedBench.reason}
         nextMove={selectedBench.nextMove}
-        onBackToWorkshop={() => setPatentBenchFocused(false)}
+        onBackToWorkshop={returnToWorkshop}
         askRevState="unavailable"
         thisBenchLedger={
           <div className="patent-ledger-view">
@@ -1606,7 +1597,7 @@ export default function WorkshopShell({
           <button type="button" onClick={() => selectBench(recommendedBench.id)}>
             GO TO {recommendedBench.label.toUpperCase()} BENCH
           </button>
-          {selectedBench.id !== recommendedBench.id && (
+          {selectedBench && selectedBench.id !== recommendedBench.id && (
             <small>Working at: {selectedBench.label}. You remain free to choose another bench.</small>
           )}
         </div>
@@ -1682,7 +1673,7 @@ export default function WorkshopShell({
         <div className="rev-station" aria-label="REV, your AI design engineer">
           <div className="rev-bubble">
             <strong>REV</strong>
-            <span>{selectedBench.reason}</span>
+            <span>{selectedBench?.reason ?? recommendedBench.reason}</span>
           </div>
           <div className="rev-figure" aria-hidden="true">
             <div className="rev-hair" />
@@ -1703,7 +1694,8 @@ export default function WorkshopShell({
           const bench = getBench(workshop, id);
           if (!bench) return null;
 
-          const isSelected = selectedBench.id === id;
+          const isSelected = selectedBench?.id === id;
+          const isRecommended = recommendedBench.id === id;
 
           return (
             <button
@@ -1711,7 +1703,7 @@ export default function WorkshopShell({
               type="button"
               className={`room-bench ${positionClass} state-${bench.state} ${
                 isSelected ? "is-selected" : ""
-              }`}
+              } ${isRecommended ? "is-recommended" : ""}`}
               onClick={() => selectBench(id)}
               aria-pressed={isSelected}
               aria-label={`${bench.label}: ${stateLabel(bench.state)}`}
@@ -1756,6 +1748,7 @@ export default function WorkshopShell({
               <span className="bench-stool" aria-hidden="true"><i /><b /></span>
               <span className="bench-shadow" aria-hidden="true" />
               <span className="bench-status">{stateLabel(bench.state)}</span>
+              {isRecommended && <span className="bench-recommendation">REV RECOMMENDS</span>}
             </button>
           );
         })}
@@ -1772,10 +1765,36 @@ export default function WorkshopShell({
         className={
           prototypeBenchIsFocused
             ? "prototype-focused-workspace"
-            : `bench-readout active-bench-workspace readout-${selectedBench.state}`
+            : selectedBench
+              ? `bench-readout active-bench-workspace readout-${selectedBench.state}`
+              : "bench-readout workshop-floor-guidance"
         }
       >
-        {!prototypeBenchIsFocused && (
+        {!selectedBench && (
+          <>
+            <div className="readout-title">
+              <div>
+                <span className="readout-light" aria-hidden="true" />
+                <strong>WORKSHOP FLOOR</strong>
+              </div>
+              <span>NO BENCH SELECTED</span>
+            </div>
+            <p>Choose a bench when you are ready. REV recommends {recommendedBench.label}, but the Workshop remains yours to navigate.</p>
+            <div className="next-move">
+              <span>REV · RECOMMENDED NEXT MOVE</span>
+              <strong>{recommendedBench.nextMove}</strong>
+            </div>
+            <div className="workshop-floor-actions">
+              <button type="button" onClick={() => selectBench(recommendedBench.id)}>
+                GO TO {recommendedBench.label.toUpperCase()} BENCH
+              </button>
+              <button type="button" disabled>
+                ASK REV · COMING LATER
+              </button>
+            </div>
+          </>
+        )}
+        {selectedBench && !prototypeBenchIsFocused && (
           <>
         <div className="readout-title">
           <div>
@@ -1791,7 +1810,7 @@ export default function WorkshopShell({
         </div>
           </>
         )}
-        {selectedBench.id === "knowledge" && (
+        {selectedBench?.id === "knowledge" && (
           <div className="station-summary">
             <p className="station-summary-label">Knowledge station</p>
             <p>Structured inventor knowledge is managed through the existing Interview capability and Project timeline.</p>
@@ -1801,7 +1820,7 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {selectedBench.id === "engineering" && (
+        {selectedBench?.id === "engineering" && (
           <div className="station-summary engineering-summary">
             <p className="station-summary-label">Engineering State</p>
             <p><strong>Understanding:</strong> {summarizeUnderstanding(project.engineeringState.currentUnderstanding)}</p>
@@ -1810,12 +1829,12 @@ export default function WorkshopShell({
             <p><strong>Remaining uncertainty:</strong> {project.engineeringState.greatestRemainingUncertainty}</p>
           </div>
         )}
-        {selectedBench.id === "engineering" && (
+        {selectedBench?.id === "engineering" && (
           <div style={{ gridColumn: "1 / -1" }}>
             <ProjectReviewView project={project} showValidationPlan={false} />
           </div>
         )}
-        {selectedBench.id === "validation" && (
+        {selectedBench?.id === "validation" && (
           <div className="station-summary validation-summary">
             <p className="station-summary-label">Project Validation Status · Read only</p>
             <p>Planned validation execution remains managed through Discovery.</p>
@@ -2090,7 +2109,7 @@ export default function WorkshopShell({
             )}
           </div>
         )}
-        {selectedBench.id === "validation" && (
+        {selectedBench?.id === "validation" && (
           <div className="concept-decision-panel">
             <div className="concept-decision-heading">
               <div>
@@ -2129,7 +2148,7 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {selectedBench.id === "engineering" && (
+        {selectedBench?.id === "engineering" && (
           <div className="engineering-action">
             <div>
               <span>ENGINEERING BENCH</span>
@@ -2143,14 +2162,14 @@ export default function WorkshopShell({
             </button>
           </div>
         )}
-        {selectedBench.id === "prototype" && (
+        {selectedBench?.id === "prototype" && (
           <StandardBenchShell
             benchId={selectedBench.id}
             benchTitle={selectedBench.label}
             benchState={selectedBench.state}
             reason={selectedBench.reason}
             nextMove={selectedBench.nextMove}
-            onBackToWorkshop={() => setPrototypeBenchFocused(false)}
+            onBackToWorkshop={returnToWorkshop}
             askRevState="unavailable"
             thisBenchLedger={
               <div className="prototype-ledger-view">
@@ -2536,6 +2555,13 @@ export default function WorkshopShell({
             )}
           </div>
           </StandardBenchShell>
+        )}
+        {selectedBench && selectedBench.id !== "prototype" && (
+          <div className="active-workspace-navigation">
+            <button type="button" onClick={returnToWorkshop}>← Back to Workshop</button>
+            <span>{selectedBench.label} · Selected bench</span>
+            <button type="button" disabled>ASK REV · COMING LATER</button>
+          </div>
         )}
       </div>
 
@@ -3596,6 +3622,34 @@ export default function WorkshopShell({
         .is-selected .bench-top { border-color: #90aab3; }
         .is-selected .bench-status { color: #8ce7f7; }
 
+        .room-bench.is-recommended .bench-sign {
+          border-color: #e0c27d;
+          color: #fff8dc;
+          box-shadow: 0 0 0 2px rgba(224, 194, 125, 0.18), 0 0 18px rgba(224, 194, 125, 0.32);
+        }
+
+        .room-bench.is-recommended .room-light,
+        .room-bench.is-recommended .light-pool {
+          opacity: 0.9;
+        }
+
+        .bench-recommendation {
+          position: absolute;
+          left: 50%;
+          bottom: -39px;
+          transform: translateX(-50%);
+          width: max-content;
+          padding: 3px 6px;
+          border: 1px solid rgba(224, 194, 125, 0.55);
+          border-radius: 999px;
+          background: rgba(28, 25, 18, 0.92);
+          color: #ead394;
+          font-size: 8px;
+          font-weight: 850;
+          letter-spacing: 0.08em;
+          line-height: 1.2;
+        }
+
         .slot-discovery { left: 3.2%; top: 257px; }
         .slot-engineering { left: 17.8%; top: 228px; }
         .slot-validation { left: 32.4%; top: 212px; }
@@ -3799,6 +3853,49 @@ export default function WorkshopShell({
 
         .active-bench-workspace {
           scroll-margin-top: 20px;
+        }
+
+        .workshop-floor-guidance {
+          scroll-margin-top: 20px;
+        }
+
+        .workshop-floor-actions,
+        .active-workspace-navigation {
+          grid-column: 1 / -1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding-top: 14px;
+          border-top: 1px solid #34465a;
+        }
+
+        .workshop-floor-actions button,
+        .active-workspace-navigation button {
+          padding: 10px 13px;
+          border: 1px solid #486070;
+          border-radius: 8px;
+          background: #132633;
+          color: #d8edf3;
+          font: inherit;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          cursor: pointer;
+        }
+
+        .workshop-floor-actions button:disabled,
+        .active-workspace-navigation button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .active-workspace-navigation span {
+          color: #9cb0bc;
+          font-size: 11px;
+          font-weight: 750;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
         }
 
         .living-workshop.prototype-mode {
