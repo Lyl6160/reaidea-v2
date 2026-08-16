@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
 import ProjectReviewView from "./ProjectReviewView";
+import StandardBenchShell from "../../workshop/StandardBenchShell";
 
 import {
   isSpecialistContributionBenchId,
@@ -364,6 +365,7 @@ export default function WorkshopShell({
 }: WorkshopShellProps) {
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
+  const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId>(() => {
     if (typeof window === "undefined") return workshop.recommendedBench;
     try {
@@ -760,6 +762,7 @@ export default function WorkshopShell({
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
+    setPatentBenchFocused(id === "patent");
     setSpecialistContributionError("");
     setSpecialistEvidenceError("");
     window.setTimeout(() => {
@@ -1173,6 +1176,289 @@ export default function WorkshopShell({
     }
   }
 
+  const specialistWorkArea = selectedSpecialistBenchId && (
+    <>
+      {specialistBenchGuidance && (
+        <section className="specialist-inquiry" aria-label="Specialist Inquiry">
+          <div className="specialist-inquiry-heading">
+            <div>
+              <p className="station-summary-label">Specialist Inquiry</p>
+              <strong>{specialistBenchGuidance.title}</strong>
+            </div>
+            <span>Read only</span>
+          </div>
+          <p className="specialist-inquiry-lens">
+            <strong>Lens:</strong> {specialistBenchGuidance.lens}
+          </p>
+          <p>{specialistBenchGuidance.explanation}</p>
+          <p className="specialist-inquiry-boundary">
+            These are prompts for consideration. They are not recorded Project truth.
+          </p>
+          {specialistBenchGuidance.disclaimer && (
+            <p className="specialist-inquiry-disclaimer">
+              {specialistBenchGuidance.disclaimer}
+            </p>
+          )}
+          <ol>
+            {specialistBenchGuidance.prompts.map((prompt) => (
+              <li key={prompt}>{prompt}</li>
+            ))}
+          </ol>
+          <div className="specialist-inquiry-notes">
+            <strong>Recorded structure</strong>
+            <ul>
+              {specialistBenchGuidance.structuralNotes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+      <div className="specialist-contribution-panel">
+        <p className="station-summary-label">Specialist Contribution</p>
+        <p>
+          Record an inventor-controlled contribution into Project history. It does not
+          automatically become Project evidence or an engineering decision.
+        </p>
+        <textarea
+          value={specialistContributionDrafts[selectedSpecialistBenchId] ?? ""}
+          onChange={(event) => {
+            setSpecialistContributionDrafts((drafts) => ({
+              ...drafts,
+              [selectedSpecialistBenchId]: event.target.value,
+            }));
+            if (specialistContributionError) setSpecialistContributionError("");
+          }}
+          placeholder="Record the specialist contribution in your own words."
+          rows={4}
+        />
+        {specialistContributionError && (
+          <p className="specialist-contribution-error" role="alert">
+            {specialistContributionError}
+          </p>
+        )}
+        <button type="button" onClick={submitSpecialistContribution}>
+          Record contribution
+        </button>
+
+        {selectedSpecialistContributions.length > 0 && (
+          <div className="specialist-contribution-history">
+            <strong>Recorded Project history</strong>
+            {selectedSpecialistContributions.map((event) => (
+              <article key={event.id}>
+                <p>{event.description}</p>
+                <time dateTime={event.createdAt}>{event.createdAt}</time>
+                <span>
+                  {(() => {
+                    const adoption = selectedSpecialistContributionTrace.find(
+                      (candidate) => candidate.eventId === event.id
+                    );
+                    const count = adoption?.adoptedEvidenceIds.length ?? 0;
+                    return count > 0
+                      ? `Explicitly adopted as ${count} Project evidence item${count === 1 ? "" : "s"}.`
+                      : "Not explicitly adopted as Project evidence.";
+                  })()}
+                </span>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {selectedSpecialistContributions.length > 0 && (
+          <div className="specialist-evidence-adoption">
+            <strong>Adopt specialist contribution as Project evidence</strong>
+            <p>
+              A contribution is Project history only until you explicitly adopt it.
+              Adoption creates Project evidence, not an Engineering Conclusion or Decision.
+            </p>
+            <select
+              value={specialistEvidenceInputs[selectedSpecialistBenchId]?.eventId ?? ""}
+              onChange={(event) => {
+                setSpecialistEvidenceInputs((inputs) => ({
+                  ...inputs,
+                  [selectedSpecialistBenchId]: {
+                    eventId: event.target.value,
+                    summary: inputs[selectedSpecialistBenchId]?.summary ?? "",
+                    source: inputs[selectedSpecialistBenchId]?.source ?? "",
+                  },
+                }));
+                if (specialistEvidenceError) setSpecialistEvidenceError("");
+              }}
+            >
+              <option value="">Select a recorded specialist contribution</option>
+              {selectedSpecialistContributions.map((event) => (
+                <option key={event.id} value={event.id}>
+                  {event.description}
+                </option>
+              ))}
+            </select>
+            <textarea
+              value={specialistEvidenceInputs[selectedSpecialistBenchId]?.summary ?? ""}
+              onChange={(event) => {
+                setSpecialistEvidenceInputs((inputs) => ({
+                  ...inputs,
+                  [selectedSpecialistBenchId]: {
+                    eventId: inputs[selectedSpecialistBenchId]?.eventId ?? "",
+                    summary: event.target.value,
+                    source: inputs[selectedSpecialistBenchId]?.source ?? "",
+                  },
+                }));
+                if (specialistEvidenceError) setSpecialistEvidenceError("");
+              }}
+              placeholder="Evidence summary"
+              rows={3}
+            />
+            <input
+              value={specialistEvidenceInputs[selectedSpecialistBenchId]?.source ?? ""}
+              onChange={(event) => {
+                setSpecialistEvidenceInputs((inputs) => ({
+                  ...inputs,
+                  [selectedSpecialistBenchId]: {
+                    eventId: inputs[selectedSpecialistBenchId]?.eventId ?? "",
+                    summary: inputs[selectedSpecialistBenchId]?.summary ?? "",
+                    source: event.target.value,
+                  },
+                }));
+                if (specialistEvidenceError) setSpecialistEvidenceError("");
+              }}
+              placeholder="Evidence source / reference"
+            />
+            {specialistEvidenceError && (
+              <p className="specialist-contribution-error" role="alert">
+                {specialistEvidenceError}
+              </p>
+            )}
+            <button type="button" onClick={submitSpecialistEvidence}>
+              Adopt as Project evidence
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  if (patentBenchFocused && selectedBench.id === "patent") {
+    const latestContribution = selectedSpecialistContributionTrace.at(-1);
+    const adoptedEvidenceCount = latestContribution?.adoptedEvidenceIds.length ?? 0;
+
+    return (
+      <StandardBenchShell
+        benchId={selectedBench.id}
+        benchTitle={selectedBench.label}
+        benchState={selectedBench.state}
+        reason={selectedBench.reason}
+        nextMove={selectedBench.nextMove}
+        onBackToWorkshop={() => setPatentBenchFocused(false)}
+        askRevState="unavailable"
+        thisBenchLedger={
+          <div className="patent-ledger-view">
+            <dl>
+              <div>
+                <dt>Recorded Contributions</dt>
+                <dd>{selectedSpecialistContributionTrace.length}</dd>
+              </div>
+            </dl>
+            {latestContribution ? (
+              <>
+                <section>
+                  <strong>Latest Contribution</strong>
+                  <p>{latestContribution.contribution}</p>
+                </section>
+                <section>
+                  <strong>Evidence Adoption</strong>
+                  <p>
+                    {adoptedEvidenceCount > 0
+                      ? `Explicitly adopted as ${adoptedEvidenceCount} Project evidence item${adoptedEvidenceCount === 1 ? "" : "s"}.`
+                      : "Not explicitly adopted as Project evidence."}
+                  </p>
+                </section>
+              </>
+            ) : (
+              <p>No Patent / IP contribution has been recorded yet.</p>
+            )}
+          </div>
+        }
+        projectLedger={
+          <div className="patent-ledger-view project-ledger-view">
+            <strong className="ledger-project-name">{specialistProjectContext.projectName}</strong>
+            <section>
+              <strong>Current Understanding</strong>
+              <p>{specialistProjectContext.currentUnderstanding || "No current Project understanding recorded."}</p>
+            </section>
+            <section>
+              <strong>Greatest Remaining Uncertainty</strong>
+              <p>{specialistProjectContext.greatestRemainingUncertainty || "No greatest remaining uncertainty recorded."}</p>
+            </section>
+            <dl className="ledger-counts">
+              <div><dt>Constraints</dt><dd>{specialistProjectContext.constraints.total}</dd></div>
+              <div><dt>Project Evidence</dt><dd>{specialistProjectContext.evidence.total}</dd></div>
+              <div><dt>Current Conclusions</dt><dd>{specialistProjectContext.conclusions.total}</dd></div>
+              <div><dt>Current Directions</dt><dd>{specialistProjectContext.directions.total}</dd></div>
+              <div><dt>Adopted Actions</dt><dd>{specialistProjectContext.actions.total}</dd></div>
+            </dl>
+            <small>Concise Project snapshot. Recorded collections are represented by counts rather than full lists.</small>
+          </div>
+        }
+      >
+        {specialistWorkArea}
+        <style jsx>{`
+          .patent-ledger-view {
+            display: grid;
+            gap: 18px;
+          }
+          .patent-ledger-view dl,
+          .patent-ledger-view p {
+            margin: 0;
+          }
+          .patent-ledger-view dl div,
+          .patent-ledger-view section {
+            padding: 13px 0;
+            border-bottom: 1px solid #35475a;
+          }
+          .patent-ledger-view dt,
+          .patent-ledger-view section strong {
+            color: #91a4b2;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+          }
+          .patent-ledger-view dd {
+            margin: 5px 0 0;
+            color: #f2f6f8;
+            font-size: 26px;
+            font-weight: 850;
+          }
+          .patent-ledger-view section p {
+            margin-top: 7px;
+            color: #d1dbe2;
+            font-size: 13px;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+          }
+          .ledger-project-name {
+            color: #f2f6f8;
+            font-size: 18px;
+          }
+          .ledger-counts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+          }
+          .ledger-counts div {
+            padding: 10px;
+            border: 1px solid #35475a;
+            border-radius: 8px;
+          }
+          .project-ledger-view > small {
+            color: #8295a4;
+            line-height: 1.45;
+          }
+        `}</style>
+      </StandardBenchShell>
+    );
+  }
+
   return (
     <section className="living-workshop" aria-label="reAIdea living workshop">
       <header className="workshop-heading">
@@ -1519,7 +1805,7 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {selectedSpecialistBenchId && (
+        {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
           <section className="specialist-project-context" aria-label="Project Context">
             <div className="specialist-project-context-heading">
               <p className="station-summary-label">Project Context</p>
@@ -1624,7 +1910,7 @@ export default function WorkshopShell({
             </div>
           </section>
         )}
-        {specialistBenchGuidance && (
+        {selectedSpecialistBenchId !== "patent" && specialistBenchGuidance && (
           <section className="specialist-inquiry" aria-label="Specialist Inquiry">
             <div className="specialist-inquiry-heading">
               <div>
@@ -1660,7 +1946,7 @@ export default function WorkshopShell({
             </div>
           </section>
         )}
-        {selectedSpecialistBenchId && (
+        {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
           <div className="specialist-contribution-panel">
             <p className="station-summary-label">Specialist Contribution</p>
             <p>
