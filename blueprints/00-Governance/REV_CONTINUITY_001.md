@@ -985,4 +985,25 @@ Existing bench-specific reason and `nextMove` guidance remains unchanged. `works
 
 ---
 
+# 38. Current HP-24.27 REV Continuity
+
+HP-24.27 — Read-Only Specialist Inquiry Prompts is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-27-specialist-inquiry-prompts`. The final tag is `v24.27-specialist-inquiry-prompts`.
+
+The frozen parent is `bdb1d9723083875f4fa0ddb980b729011afa6c92`, tagged `v24.26-specialist-project-context`. Accepted Build 1 is `4f0a80cf92fb437d0e9d69f9469a1e08d2305361` (`Sprint 006 Build 24.27.1: add read-only specialist inquiry prompts`). Build 2 implementation is not required.
+
+Exactly Patent / IP, Marketing, Manufacturing / Costing and Reality receive deterministic read-only inquiry prompts. Each has a transparent fixed discipline lens, at most four prompts and neutral structural notes about whether recorded Project context categories exist.
+
+```text
+selected specialist bench + existing SpecialistProjectContext structure
+→ pure fixed inquiry framework
+→ transient read-only Specialist Inquiry panel
+→ no Project or localStorage write
+```
+
+The helper performs no free-text semantic interpretation and introduces no runtime AI/model analysis. Prompts are explicitly for consideration and are not recorded Project truth, specialist findings, evidence, decisions, engineering objects, Validation or recommendations. Patent / IP includes a non-legal-advice boundary.
+
+No new persisted state, writer, storage, runtime model/API integration, recommendation logic or Project schema exists. `workshopBrain`, recommended bench, reason/`nextMove`, Specialist Project Context, both specialist workflows, the global REV Workshop Brief and REV authority remain unchanged.
+
+---
+
 **END OF REV-CONTINUITY-001**

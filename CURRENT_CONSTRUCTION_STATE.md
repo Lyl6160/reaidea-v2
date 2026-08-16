@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.26 — Shared Specialist Project Context
-**Branch:** `sprint006-build24-26-specialist-project-context`
-**Accepted HEAD:** `5cb1f76be203066638f6eb0831090c4ece04ba65`
+**Construction checkpoint:** HP-24.27 — Read-Only Specialist Inquiry Prompts
+**Branch:** `sprint006-build24-27-specialist-inquiry-prompts`
+**Accepted HEAD:** `4f0a80cf92fb437d0e9d69f9469a1e08d2305361`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.26 — Shared Specialist Project Context**
+**HP-24.27 — Read-Only Specialist Inquiry Prompts**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.26-specialist-project-context`
+Final freeze tag: `v24.27-specialist-inquiry-prompts`
 
 Accepted HP-24.9 construction chain:
 
@@ -661,6 +661,14 @@ HP-24.26 gives exactly Patent / IP, Marketing, Manufacturing / Costing and Reali
 Where recorded, the shared context shows current understanding, current constraints, greatest remaining uncertainty, Project evidence summaries and source/reference, current Engineering Conclusions, current Engineering Directions and adopted Engineering Actions. It excludes raw timeline history, superseded conclusions and directions, detailed Validation history, specialist-specific relevance filtering and specialist-generated interpretation.
 
 The panel is display-only. Presentation limits preserve authoritative order and do not rank Project truth. Viewing it creates no Project or localStorage writes. `workshopBrain`, recommendation precedence, the global REV Workshop Brief, both specialist workflows, the Project model and storage remain unchanged. HP-24.26 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.26-specialist-project-context`; freeze blockers are NONE.
+
+## HP-24.27 Capability
+
+HP-24.27 gives exactly Patent / IP, Marketing, Manufacturing / Costing and Reality a deterministic read-only Specialist Inquiry panel. The frozen parent is `bdb1d9723083875f4fa0ddb980b729011afa6c92`, tagged `v24.26-specialist-project-context`. Accepted Build 1 is `4f0a80cf92fb437d0e9d69f9469a1e08d2305361` (`Sprint 006 Build 24.27.1: add read-only specialist inquiry prompts`). Build 2 implementation is not required.
+
+Each bench receives a transparent fixed discipline lens, at most four inquiry prompts and neutral presence/absence notes derived only from structural Project context. No free-text semantic interpretation or runtime AI/model analysis exists. The prompts are explicitly for consideration and are not recorded Project truth; Patent / IP also carries a non-legal-advice boundary.
+
+The helper and panel are transient and read-only. They create no Project, contribution, evidence or localStorage writes and introduce no persisted state, writer, storage, model/API integration, recommendation logic or schema change. `workshopBrain`, recommendation precedence, bench reason/`nextMove`, Project Context, both specialist workflows and the global REV Workshop Brief remain unchanged. HP-24.27 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.27-specialist-inquiry-prompts`; freeze blockers are NONE.
 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 

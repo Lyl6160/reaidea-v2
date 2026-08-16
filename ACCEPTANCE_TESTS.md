@@ -1254,6 +1254,58 @@ Build 1 fully closes HP-24.25. Explicit inventor adoption creates ordinary Proje
 
 Build 1 fully closes HP-24.26. The four specialist benches now share concise recorded Project truth at the point of work without specialist filtering, interpretation, persistence, writes or recommendation changes. Build 2 implementation is not required.
 
+## HP-24.27 Consolidated Acceptance Record
+
+**Hold point:** HP-24.27 — Read-Only Specialist Inquiry Prompts
+**Branch:** `sprint006-build24-27-specialist-inquiry-prompts`
+**Frozen parent:** `bdb1d9723083875f4fa0ddb980b729011afa6c92`, `v24.26-specialist-project-context`
+**Accepted implementation HEAD:** `4f0a80cf92fb437d0e9d69f9469a1e08d2305361`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.27-specialist-inquiry-prompts`
+
+### Build Chain
+
+- Build 1 — `4f0a80cf92fb437d0e9d69f9469a1e08d2305361` — Add read-only specialist inquiry prompts.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- Patent, Marketing, Manufacturing and Reality receive deterministic read-only Specialist Inquiry prompts.
+- Each bench receives a transparent fixed discipline lens, at most four prompts and limited structural presence/absence notes.
+- This is not runtime AI/model analysis and performs no free-text semantic interpretation.
+- Prompts are for consideration and are not Project truth, findings, evidence, decisions, engineering objects, Validation or recommendations.
+- Patent / IP includes an explicit non-legal-advice boundary.
+- Structural awareness records only whether context categories exist; it does not interpret their meaning.
+- No new writer, persisted state, storage, runtime model/API integration, recommendation logic or Project schema exists.
+- `workshopBrain`, recommended bench, reason/`nextMove`, Project Context, both specialist workflows and global REV Workshop Brief remain unchanged.
+
+### Accepted Results
+
+- Pure deterministic guidance helper: **PASS**.
+- Patent, Marketing, Manufacturing and Reality inquiry: **PASS**.
+- Patent legal boundary and disclaimer: **PASS**.
+- Maximum four prompts: **PASS**.
+- Structural awareness only: **PASS**.
+- Free-text semantic inference: **NONE**.
+- Deterministic output: **PASS**.
+- Read-model mutation: **NONE**.
+- Specialist Inquiry UI: **PASS**.
+- Knowledge, Engineering, Prototype and Validation excluded: **PASS**.
+- Automatic Project writes, contribution creation and evidence creation: **NONE**.
+- `workshopBrain`, recommendation precedence and bench reason/`nextMove`: **UNCHANGED**.
+- Specialist Project Context, Contribution and Evidence Adoption: **UNCHANGED**.
+- Project model and storage: **UNCHANGED**.
+- Runtime AI/model integration: **NOT INTRODUCED**.
+- TypeScript: **PASS**.
+- ESLint: **PASS**.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.27. Transparent fixed inquiry frameworks add discipline-oriented questions without pretending to perform model analysis or turning prompts into Project authority. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

@@ -1495,3 +1495,53 @@ Presentation limits preserve recorded order and do not imply importance. Existin
 ### Freeze Decision
 
 HP-24.26 closes the shared specialist Project-context seam without creating specialist filtering, interpretation, a second Workshop Brief, a second Engineering State or new authority. Build 2 implementation is not required.
+
+## HP-24.27 — Read-Only Specialist Inquiry Prompts
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.26 at `bdb1d9723083875f4fa0ddb980b729011afa6c92`, tag `v24.26-specialist-project-context`
+
+**Construction branch:** `sprint006-build24-27-specialist-inquiry-prompts`
+
+### Build 1 — Read-Only Specialist Inquiry Prompts
+
+**Commit:** `4f0a80cf92fb437d0e9d69f9469a1e08d2305361`
+
+Added one pure deterministic helper and one shared read-only Specialist Inquiry panel for exactly Patent / IP, Marketing, Manufacturing / Costing and Reality. Each bench receives a fixed transparent lens, at most four prompts and neutral structural presence/absence notes.
+
+The helper does not parse or interpret Project free text and introduces no runtime AI/model integration. Prompts are explicitly not recorded Project truth or specialist findings. Patent / IP carries a clear non-legal-advice boundary.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed four-lens, prompt-cap, structural-only, determinism, purity, excluded-bench, no-write, workflow non-regression, refresh and static gates.
+
+### Final Outcome
+
+- **HP-24.27 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.27-specialist-inquiry-prompts`
+- **Freeze blockers:** NONE
+- **Allowed benches:** PATENT / MARKETING / MANUFACTURING / REALITY ONLY
+- **Prompt authority:** CONSIDERATION ONLY / NOT PROJECT TRUTH
+- **Structural awareness:** PRESENCE / ABSENCE ONLY
+- **Free-text semantic inference:** NONE
+- **Runtime AI/model integration:** NOT INTRODUCED
+- **Project writes and persisted state:** NONE
+- **workshopBrain, recommendation and reason/nextMove:** UNCHANGED
+- **Project Context and specialist workflows:** UNCHANGED
+- **Project model and storage:** UNCHANGED
+
+### Authority Boundary
+
+```text
+selected specialist bench + existing SpecialistProjectContext structure
+→ pure fixed inquiry framework
+→ transient read-only Specialist Inquiry panel
+→ no Project or localStorage write
+```
+
+### Freeze Decision
+
+HP-24.27 closes the specialist inquiry-prompt seam without simulating model analysis, interpreting free text, creating findings or changing Project authority. Build 2 implementation is not required.
