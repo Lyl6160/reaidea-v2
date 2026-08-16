@@ -1339,3 +1339,57 @@ A direction with no adopted action means only: “No adopted Engineering Action 
 ### Freeze Decision
 
 HP-24.23 closes the reverse direction-to-adopted-action observability seam. Existing stored basis IDs are already authoritative; Build 1 exposes them without changing the writer, persistence model, recommendation precedence or engineering authority. Build 2 implementation is not required.
+
+## HP-24.24 — Informational Specialist Bench Contribution Capture
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.23 at `efa30b98927b8247c1bef74f8e5b43119bdf91e6`, tag `v24.23-direction-action-trace`
+
+**Construction branch:** `sprint006-build24-24-specialist-contributions`
+
+### Build 1 — Specialist Bench Contribution Capture
+
+**Commit:** `e3a1813559e6b1a87b4eda1678106c87837929bf`
+
+Added one explicit inventor-controlled Project-history capture path for exactly `patent`, `marketing`, `manufacturing` and `reality`. `recordSpecialistContribution()` appends one neutral `specialist-contribution-recorded` event with exact `specialistBenchId` provenance and updates `Project.updatedAt`.
+
+The Workshop shows a shared Specialist Contribution panel only on those four informational benches. Prior contributions read back only beneath their exact recorded bench and survive existing Project persistence normalization.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed all four allowed-bench captures, blank and excluded-bench rejection, exact cross-bench isolation, one-event semantics, explicit provenance, normalization safety, Project-object isolation, shared UI, refresh persistence, no-automatic-write and static gates.
+
+### Final Outcome
+
+- **HP-24.24 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.24-specialist-contributions`
+- **Freeze blockers:** NONE
+- **Allowed benches:** PATENT / MARKETING / MANUFACTURING / REALITY ONLY
+- **Authoritative record:** PROJECT TIMELINE
+- **Contribution provenance:** EXACT SPECIALIST BENCH ID
+- **Cross-bench isolation:** PRESERVED
+- **Invalid metadata:** REMOVED WITHOUT FABRICATION
+- **Automatic Project writes:** NONE
+- **Top-level specialist store:** NOT INTRODUCED
+- **Engineering objects and Validation:** UNCHANGED
+- **Recommendation precedence:** UNCHANGED
+- **REV authority:** Unchanged; inventor explicitly controls the write
+
+### Authority Boundary
+
+```text
+Inventor explicit submit
+→ recordSpecialistContribution()
+→ one specialist-contribution-recorded Project.timeline event
+→ exact specialistBenchId
+→ existing Project persistence
+```
+
+The contribution is neutral history. It is not automatically evidence, Engineering State, an assertion, conclusion, direction, action, decision, Validation, recommendation, requirement, proof or task state.
+
+### Freeze Decision
+
+HP-24.24 closes the narrow contribution-capture seam for the four informational specialist benches without creating parallel Project state or broadening existing bench semantics. Build 2 implementation is not required.

@@ -1087,6 +1087,66 @@ Build 1 fully closes HP-24.22. The existing Project evidence provenance contract
 
 Build 1 fully closes HP-24.23. The existing exact `basisDirectionIds` relationship already contains the authoritative direction-to-adopted-action history; Build 1 exposes it without new persistence, writers, lifecycle or authority. Build 2 implementation is not required.
 
+## HP-24.24 Consolidated Acceptance Record
+
+**Hold point:** HP-24.24 — Informational Specialist Bench Contribution Capture
+**Branch:** `sprint006-build24-24-specialist-contributions`
+**Frozen parent:** `efa30b98927b8247c1bef74f8e5b43119bdf91e6`, `v24.23-direction-action-trace`
+**Accepted implementation HEAD:** `e3a1813559e6b1a87b4eda1678106c87837929bf`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.24-specialist-contributions`
+
+### Build Chain
+
+- Build 1 — `e3a1813559e6b1a87b4eda1678106c87837929bf` — Add specialist bench contribution capture.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- Allowed specialist benches are exactly `patent`, `marketing`, `manufacturing` and `reality`.
+- An explicit inventor submit invokes `recordSpecialistContribution()` and appends exactly one neutral `specialist-contribution-recorded` event to `Project.timeline`.
+- Every event carries exact `specialistBenchId` provenance and the trimmed inventor text without stronger reinterpretation.
+- Valid provenance survives existing storage normalization; unknown values become absent.
+- Read-back is isolated by exact event type and exact specialist bench identity.
+- No top-level specialist contribution store exists.
+- Knowledge, Engineering, Prototype and Validation remain excluded.
+
+### Accepted Results
+
+- Allowed specialist bench type: **PASS**.
+- Patent capture: **PASS**.
+- Marketing capture: **PASS**.
+- Manufacturing capture: **PASS**.
+- Reality capture: **PASS**.
+- Blank contribution rejected: **PASS**.
+- Excluded bench rejected: **PASS**.
+- Cross-bench isolation: **PASS**.
+- One timeline event per submit: **PASS**.
+- Explicit bench provenance: **PASS**.
+- Storage normalization: **PASS**.
+- Legacy/invalid metadata safe: **PASS**.
+- EngineeringState: **UNCHANGED**.
+- Project evidence: **UNCHANGED**.
+- Project decisions: **UNCHANGED**.
+- Engineering assertions: **UNCHANGED**.
+- Engineering actions: **UNCHANGED**.
+- Validation: **UNCHANGED**.
+- Recommendation precedence: **UNCHANGED**.
+- Workshop allowed-bench UI: **PASS**.
+- Workshop excluded benches: **UNCHANGED**.
+- Refresh persistence: **PASS**.
+- Automatic Project writes: **NONE**.
+- New top-level Project store: **NOT INTRODUCED**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with exactly 3 known WorkshopShell image warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.24. The existing Project timeline and persistence seam now carry explicit, bench-provenanced neutral contribution history without creating another truth store or promoting contributions into engineering objects. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

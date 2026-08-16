@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.23 — Engineering Direction Action Adoption Trace
-**Branch:** `sprint006-build24-23-direction-action-trace`
-**Accepted HEAD:** `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78`
+**Construction checkpoint:** HP-24.24 — Informational Specialist Bench Contribution Capture
+**Branch:** `sprint006-build24-24-specialist-contributions`
+**Accepted HEAD:** `e3a1813559e6b1a87b4eda1678106c87837929bf`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.23 — Engineering Direction Action Adoption Trace**
+**HP-24.24 — Informational Specialist Bench Contribution Capture**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.23-direction-action-trace`
+Final freeze tag: `v24.24-specialist-contributions`
 
 Accepted HP-24.9 construction chain:
 
@@ -165,6 +165,16 @@ Protected HP-24.23 foundation:
 Accepted HP-24.23 construction chain:
 
 - Build 1 — `f8d82979e96a4c7fc9a181c3d2dd69ba682bdf78` — Expose direction action adoption trace
+- Build 2 — Implementation not required
+
+Protected HP-24.24 foundation:
+
+- `efa30b98927b8247c1bef74f8e5b43119bdf91e6`
+- `v24.23-direction-action-trace`
+
+Accepted HP-24.24 construction chain:
+
+- Build 1 — `e3a1813559e6b1a87b4eda1678106c87837929bf` — Add specialist bench contribution capture
 - Build 2 — Implementation not required
 
 ## HP-24.8 Capability
@@ -618,3 +628,24 @@ The shared `ProjectReviewView` displays the trace in Discovery and on the Living
 No action lifecycle, completion, ranking, priority, recommendation change, automatic action creation, automatic prompt, Project schema/storage change, new writer or REV Project-write authority was introduced.
 
 Build 2 implementation is not required. HP-24.22 remains protected at `03deb9b14835d5d8e6310797f634cbe7674643bb` / `v24.22-action-result-evidence-trace`.
+
+## HP-24.24 Capability
+
+HP-24.24 gives exactly four informational specialist benches—Patent / IP, Marketing, Manufacturing / Costing and Reality—an explicit inventor-controlled contribution capability.
+
+```text
+Inventor explicit submit
+→ recordSpecialistContribution()
+→ one specialist-contribution-recorded Project.timeline event
+→ exact specialistBenchId provenance
+→ Project.updatedAt
+→ existing onProjectChange/saveProject persistence
+```
+
+The authoritative record is `Project.timeline`; no top-level specialist contribution collection exists. Read-back is isolated by exact `specialistBenchId`, valid identity survives normalization, and invalid identity is removed without fabrication.
+
+The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
+
+Knowledge, Engineering, Prototype and Validation remain excluded because they retain their existing distinct semantics and workflows. Recommendation precedence is unchanged and no Project write occurs before explicit inventor submission.
+
+Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.

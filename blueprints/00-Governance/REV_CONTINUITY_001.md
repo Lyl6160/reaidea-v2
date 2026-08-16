@@ -919,4 +919,27 @@ No linked action means only: “No adopted Engineering Action explicitly referen
 
 ---
 
+# 35. Current HP-24.24 REV Continuity
+
+HP-24.24 — Informational Specialist Bench Contribution Capture is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-24-specialist-contributions`. The final tag is `v24.24-specialist-contributions`.
+
+The frozen parent is `efa30b98927b8247c1bef74f8e5b43119bdf91e6`, tagged `v24.23-direction-action-trace`. Accepted Build 1 is `e3a1813559e6b1a87b4eda1678106c87837929bf` (`Sprint 006 Build 24.24.1: add specialist bench contribution capture`). Build 2 implementation is not required.
+
+Exactly four informational specialist benches can record contributions: Patent / IP, Marketing, Manufacturing / Costing and Reality. Knowledge, Engineering, Prototype and Validation remain excluded because they retain distinct existing semantics.
+
+```text
+Inventor explicit submit
+→ recordSpecialistContribution()
+→ one specialist-contribution-recorded Project.timeline event
+→ exact specialistBenchId provenance
+→ Project.updatedAt
+→ existing onProjectChange/saveProject persistence
+```
+
+`Project.timeline` is authoritative. There is no new top-level specialist store. Read-back uses exact bench provenance; valid identity survives normalization and invalid identity is not fabricated.
+
+The contribution is neutral Project history only. It is not automatically evidence, Engineering State, an assertion, conclusion, direction, action, decision, Validation, recommendation, requirement, proof or task state. Recommendation precedence and REV authority remain unchanged, and no Project write occurs before explicit inventor submission.
+
+---
+
 **END OF REV-CONTINUITY-001**
