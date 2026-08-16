@@ -156,6 +156,7 @@ export type ProjectTimelineEventType =
   | "project-created"
   | "discovery-understanding-added"
   | "discovery-answer-recorded"
+  | "engineering-definition-input-recorded"
   | "validation-plan-created"
   | "validation-item-started"
   | "validation-result-recorded"

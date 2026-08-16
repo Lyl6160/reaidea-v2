@@ -19,6 +19,11 @@ import {
   recordDiscoveryAnswer,
 } from "../../lib/workshop/discoveryReasoning";
 import {
+  assessEngineeringDefinition,
+  getEngineeringDefinitionInputs,
+  recordEngineeringDefinitionAnswer,
+} from "../../lib/workshop/engineeringDefinition";
+import {
   getSpecialistContributions,
   recordSpecialistContribution,
 } from "../../lib/workshop/specialistContributions";
@@ -376,6 +381,8 @@ export default function WorkshopShell({
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
   const [knowledgeAnswerDraft, setKnowledgeAnswerDraft] = useState("");
   const [knowledgeAnswerError, setKnowledgeAnswerError] = useState("");
+  const [engineeringAnswerDraft, setEngineeringAnswerDraft] = useState("");
+  const [engineeringAnswerError, setEngineeringAnswerError] = useState("");
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -729,6 +736,14 @@ export default function WorkshopShell({
     [selectedId, workshop]
   );
   const discoveryAssessment = useMemo(() => assessDiscovery(project), [project]);
+  const engineeringDefinitionAssessment = useMemo(
+    () => assessEngineeringDefinition(project),
+    [project]
+  );
+  const recentEngineeringDefinitionInputs = useMemo(
+    () => getEngineeringDefinitionInputs(project).slice(-5).reverse(),
+    [project]
+  );
   const sharedConceptPreview = useMemo(
     () => deriveSharedConceptPreview(project),
     [project]
@@ -789,6 +804,8 @@ export default function WorkshopShell({
     setPrototypeBenchFocused(false);
     setKnowledgeAnswerDraft("");
     setKnowledgeAnswerError("");
+    setEngineeringAnswerDraft("");
+    setEngineeringAnswerError("");
   }
 
   function submitDiscoveryAnswer() {
@@ -805,6 +822,26 @@ export default function WorkshopShell({
     onProjectChange(recordDiscoveryAnswer(project, currentQuestion, cleanedAnswer));
     setKnowledgeAnswerDraft("");
     setKnowledgeAnswerError("");
+  }
+
+  function submitEngineeringDefinitionAnswer() {
+    const currentQuestion = engineeringDefinitionAssessment.nextQuestion;
+    if (!currentQuestion) return;
+
+    const result = recordEngineeringDefinitionAnswer(
+      project,
+      currentQuestion,
+      engineeringAnswerDraft
+    );
+
+    if (result.status === "invalid") {
+      setEngineeringAnswerError(result.reason);
+      return;
+    }
+
+    onProjectChange(result.project);
+    setEngineeringAnswerDraft("");
+    setEngineeringAnswerError("");
   }
 
   function submitSpecialistContribution() {
@@ -1373,6 +1410,163 @@ export default function WorkshopShell({
       </div>
     </>
   );
+
+  if (selectedBench?.id === "engineering") {
+    const currentQuestion = engineeringDefinitionAssessment.nextQuestion;
+    const totalAreas =
+      engineeringDefinitionAssessment.addressedAreas.length +
+      engineeringDefinitionAssessment.remainingAreas.length;
+
+    return (
+      <StandardBenchShell
+        benchId={selectedBench.id}
+        benchTitle={selectedBench.label}
+        benchState={selectedBench.state}
+        reason={selectedBench.reason}
+        nextMove={selectedBench.nextMove}
+        conceptPreview={compactConceptPreview}
+        onBackToWorkshop={returnToWorkshop}
+        askRevState="unavailable"
+        thisBenchLedger={
+          <div className="engineering-definition-ledger">
+            <p className="engineering-definition-ledger-label">Solution definition</p>
+            <dl>
+              <div><dt>Current focus</dt><dd>{currentQuestion?.label ?? "Ready for summary"}</dd></div>
+              <div><dt>Areas addressed</dt><dd>{engineeringDefinitionAssessment.addressedAreas.length}</dd></div>
+              <div><dt>Areas remaining</dt><dd>{engineeringDefinitionAssessment.remainingAreas.length}</dd></div>
+              <div><dt>Definition status</dt><dd>{engineeringDefinitionAssessment.status.replaceAll("-", " ")}</dd></div>
+            </dl>
+            <p className="engineering-definition-ledger-label">Recorded Engineering inputs</p>
+            {recentEngineeringDefinitionInputs.length > 0 ? (
+              <div className="engineering-definition-input-list">
+                {recentEngineeringDefinitionInputs.map((input) => (
+                  <section key={input.eventId}>
+                    <strong>{input.label}</strong>
+                    <p>{input.answer}</p>
+                    <small>{new Date(input.createdAt).toLocaleString()}</small>
+                  </section>
+                ))}
+              </div>
+            ) : (
+              <p className="engineering-definition-empty">No inventor Engineering inputs recorded yet.</p>
+            )}
+          </div>
+        }
+        projectLedger={
+          <div className="engineering-definition-ledger">
+            <strong className="engineering-definition-project-name">{project.projectName}</strong>
+            <section><strong>Original observation</strong><p>{project.originalObservation}</p></section>
+            <section><strong>Current understanding</strong><p>{project.engineeringState.currentUnderstanding}</p></section>
+            <section><strong>Greatest remaining uncertainty</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
+            <section><strong>Next engineering step</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
+            <dl>
+              <div><dt>Readiness</dt><dd>{project.readiness}</dd></div>
+              <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+              <div><dt>Assumptions</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
+              <div><dt>ProjectEvidence</dt><dd>{project.evidence.length}</dd></div>
+              <div><dt>Formal conclusions</dt><dd>{workshop.trace.currentEngineeringConclusions.length}</dd></div>
+              <div><dt>Formal directions</dt><dd>{workshop.trace.currentEngineeringDirections.length}</dd></div>
+              <div><dt>Adopted actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
+            </dl>
+            <section><strong>Validation</strong><p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p></section>
+          </div>
+        }
+      >
+        <div className="engineering-definition-work-area">
+          <section className="engineering-definition-intro">
+            <span>REV · ENGINEERING DEFINITION</span>
+            <h2>Now I understand the problem. Let&apos;s work out how your idea works.</h2>
+            <p>Explain the idea one step at a time. These notes are inventor input—not conclusions, evidence, or an approved design.</p>
+          </section>
+
+          {currentQuestion ? (
+            <>
+              <div className="engineering-definition-progress" aria-label="Engineering definition progress">
+                <span>{engineeringDefinitionAssessment.addressedAreas.length} OF {totalAreas} AREAS</span>
+                <i><b style={{ width: `${(engineeringDefinitionAssessment.addressedAreas.length / totalAreas) * 100}%` }} /></i>
+              </div>
+              <section className="engineering-definition-question">
+                <span>REV · {currentQuestion.label}</span>
+                <h2>{currentQuestion.prompt}</h2>
+                <p>{currentQuestion.purpose}</p>
+                <small>{currentQuestion.guidance}</small>
+              </section>
+              <label className="engineering-definition-answer">
+                <span>Your explanation</span>
+                <textarea
+                  value={engineeringAnswerDraft}
+                  onChange={(event) => {
+                    setEngineeringAnswerDraft(event.target.value);
+                    if (engineeringAnswerError) setEngineeringAnswerError("");
+                  }}
+                  placeholder="Explain it in your own words..."
+                  rows={7}
+                />
+              </label>
+              {engineeringAnswerError && <p className="engineering-definition-error" role="alert">{engineeringAnswerError}</p>}
+              <button type="button" className="engineering-definition-record" onClick={submitEngineeringDefinitionAnswer}>RECORD &amp; CONTINUE</button>
+            </>
+          ) : (
+            <section className="engineering-definition-ready">
+              <span>SOLUTION DEFINITION · READY FOR SUMMARY</span>
+              <h2>Your explanation now covers the universal Engineering definition areas.</h2>
+              <p>This is inventor-defined solution understanding. It is not validated, approved, or automatically adopted as formal Engineering truth.</p>
+            </section>
+          )}
+
+          {engineeringDefinitionAssessment.solutionDefinitionSummary && (
+            <section className="engineering-definition-summary">
+              <span>CURRENT SOLUTION-DEFINITION SUMMARY</span>
+              <p>{engineeringDefinitionAssessment.solutionDefinitionSummary}</p>
+            </section>
+          )}
+
+          <section className="engineering-definition-legacy">
+            <div>
+              <span>EXISTING PROTOTYPE HANDOFF</span>
+              <strong>{conceptCreated ? "Concept 01 study is available." : "Create the existing local procedural study when useful."}</strong>
+              <small>This compatibility control is not the primary Engineering workflow and does not create Project truth.</small>
+            </div>
+            <button type="button" onClick={createConcept} disabled={!canCreateConcept}>
+              {conceptCreated ? "OPEN CONCEPT 01" : "CREATE CONCEPT"}
+            </button>
+          </section>
+
+          <ProjectReviewView project={project} showValidationPlan={false} />
+        </div>
+
+        <style jsx>{`
+          .engineering-definition-work-area { display: grid; gap: 19px; }
+          .engineering-definition-intro, .engineering-definition-question, .engineering-definition-ready, .engineering-definition-summary, .engineering-definition-legacy { padding: 19px; border: 1px solid #435256; border-radius: 11px; background: rgba(8, 14, 16, .58); }
+          .engineering-definition-intro span, .engineering-definition-question > span, .engineering-definition-ready > span, .engineering-definition-summary > span, .engineering-definition-legacy span, .engineering-definition-answer > span, .engineering-definition-ledger-label { color: #69d9e9; font-size: 10px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+          .engineering-definition-intro h2, .engineering-definition-question h2, .engineering-definition-ready h2 { margin: 8px 0; color: #f3f5f1; font-size: 23px; line-height: 1.25; }
+          .engineering-definition-intro p, .engineering-definition-question p, .engineering-definition-ready p { margin: 0; color: #b9c3c1; line-height: 1.6; }
+          .engineering-definition-question small { display: block; margin-top: 13px; color: #8fa7a8; line-height: 1.55; }
+          .engineering-definition-progress { display: flex; align-items: center; gap: 13px; color: #b8c6c4; font-size: 10px; font-weight: 850; letter-spacing: .08em; }
+          .engineering-definition-progress i { height: 7px; flex: 1; overflow: hidden; border-radius: 999px; background: #172326; }
+          .engineering-definition-progress b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #318f9d, #77e5e8); }
+          .engineering-definition-answer { display: grid; gap: 8px; }
+          .engineering-definition-error { margin: -9px 0 0; color: #ffb6a9; font-size: 12px; }
+          .engineering-definition-record { justify-self: start; }
+          .engineering-definition-summary p { margin: 11px 0 0; color: #d5ddda; white-space: pre-line; line-height: 1.65; }
+          .engineering-definition-legacy { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-color: #5d5548; }
+          .engineering-definition-legacy div { display: grid; gap: 6px; }
+          .engineering-definition-legacy strong { color: #e7e0d4; }
+          .engineering-definition-legacy small { color: #948f86; line-height: 1.45; }
+          .engineering-definition-ledger { display: grid; gap: 13px; }
+          .engineering-definition-ledger dl { display: grid; gap: 7px; margin: 0; }
+          .engineering-definition-ledger dl div, .engineering-definition-ledger section { padding: 10px; border: 1px solid #454d4e; border-radius: 8px; background: rgba(8, 12, 13, .38); }
+          .engineering-definition-ledger dt, .engineering-definition-ledger section strong { color: #c5b999; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+          .engineering-definition-ledger dd, .engineering-definition-ledger section p { margin: 5px 0 0; color: #eef0ec; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-line; }
+          .engineering-definition-input-list { display: grid; gap: 8px; }
+          .engineering-definition-input-list section small { display: block; margin-top: 6px; color: #8d9997; font-size: 10px; }
+          .engineering-definition-empty { margin: 0; color: #929d9b; font-size: 12px; line-height: 1.5; }
+          .engineering-definition-project-name { color: #f4efe6; font-size: 18px; }
+          @media (max-width: 700px) { .engineering-definition-legacy { align-items: stretch; flex-direction: column; } }
+        `}</style>
+      </StandardBenchShell>
+    );
+  }
 
   if (selectedBench?.id === "knowledge") {
     const currentQuestion = discoveryAssessment.nextQuestion;
@@ -1996,20 +2190,6 @@ export default function WorkshopShell({
         </div>
           </>
         )}
-        {selectedBench?.id === "engineering" && (
-          <div className="station-summary engineering-summary">
-            <p className="station-summary-label">Engineering State</p>
-            <p><strong>Understanding:</strong> {summarizeUnderstanding(project.engineeringState.currentUnderstanding)}</p>
-            <p><strong>Constraints:</strong> {project.engineeringState.currentConstraints.length}</p>
-            <p><strong>Assumptions:</strong> {project.engineeringState.currentAssumptions.length}</p>
-            <p><strong>Remaining uncertainty:</strong> {project.engineeringState.greatestRemainingUncertainty}</p>
-          </div>
-        )}
-        {selectedBench?.id === "engineering" && (
-          <div style={{ gridColumn: "1 / -1" }}>
-            <ProjectReviewView project={project} showValidationPlan={false} />
-          </div>
-        )}
         {selectedBench?.id === "validation" && (
           <div className="station-summary validation-summary">
             <p className="station-summary-label">Project Validation Status · Read only</p>
@@ -2322,20 +2502,6 @@ export default function WorkshopShell({
               {validationEvidence.outcome === "inconclusive" && "The evidence is insufficient to decide. Define the next test or observation."}
               {validationEvidence.outcome === "not-supported" && "The evidence does not support the proposition. Feed the finding back into Engineering."}
             </div>
-          </div>
-        )}
-        {selectedBench?.id === "engineering" && (
-          <div className="engineering-action">
-            <div>
-              <span>ENGINEERING BENCH</span>
-              <strong>Turn what we know into the first visible concept.</strong>
-              {!canCreateConcept && (
-                <small>REV needs more Engineering definition before this control can be used.</small>
-              )}
-            </div>
-            <button type="button" onClick={createConcept} disabled={!canCreateConcept}>
-              {conceptCreated ? "OPEN CONCEPT 01" : "CREATE CONCEPT"}
-            </button>
           </div>
         )}
         {selectedBench?.id === "prototype" && (
