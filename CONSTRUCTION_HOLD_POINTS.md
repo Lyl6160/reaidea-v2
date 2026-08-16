@@ -1712,3 +1712,43 @@ Warmer lamp illumination, subtle slow pulse, stronger physical bench glow and en
 ### Freeze Decision
 
 HP-24.31 closes the separation of Workshop recommendation from deliberate bench selection. Build 2 implementation is not required.
+
+## HP-24.32 — Inventor / Knowledge Bench Discovery Input
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.31 at `915214121c6a563f6ed487d016ddb5ee432c0d24`, tag `v24.31-neutral-workshop-entry`
+
+**Accepted Build 1:** `29135969e0202751de35ee71fb492c4a2618e9c2` — Sprint 006 Build 24.32.1: add Discovery input to Inventor Knowledge bench
+
+**Build 2:** Implementation NOT REQUIRED
+
+### Accepted Contract
+
+Inventor / Knowledge is now a genuine working StandardBenchShell. The current question comes exclusively from unchanged `assessDiscovery(project)`. A valid answer follows unchanged `recordDiscoveryAnswer()` and existing persistence, then reassesses in place. Discovery checkpoint state remains derived, and the full Discovery and Knowledge Interview routes remain separate and available.
+
+THIS BENCH reads existing Discovery progress and timeline responses; PROJECT reads existing Project truth. The response may change Engineering State through the existing writer but does not automatically create ProjectEvidence, a ProjectDecision, a Knowledge Interview entry or any duplicate timeline event. Neutral Workshop entry, Back to Workshop and disabled Ask REV remain preserved.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.32-knowledge-discovery-input`
+- **Browser acceptance:** PASS
+- **In-bench Discovery answering:** PASS
+- **Derived checkpoint:** PASS
+- **Compatibility routes:** PRESERVED
+- **Duplicate write:** NO
+- **Automatic ProjectEvidence:** NO
+- **Project, storage, writers and workshopBrain:** UNCHANGED
+- **Freeze blockers:** NONE
+
+### Readiness Walkthrough
+
+Fresh state leaves Engineering AVAILABLE and Prototype/Validation DORMANT. A first realistic response advances Project readiness to UNDERSTANDING without forcing those benches. At Discovery completion, existing logic makes Engineering and Prototype READY, Patent / IP recommended/pulsing, and Marketing plus Manufacturing / Costing AVAILABLE, while Validation and Reality remain DORMANT.
+
+### Deferred Product Direction
+
+Non-authoritative visual idea evolution before validated truth is deferred. HP-24.33 — Cross-Bench Idea Evolving Preview is the next proposed hold point and is not implemented here.
+
+### Freeze Decision
+
+HP-24.32 closes direct Discovery input at the Inventor / Knowledge bench without creating another question system or changing authority. Build 2 implementation is not required.

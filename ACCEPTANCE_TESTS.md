@@ -1501,6 +1501,55 @@ More atmospheric recommendation attention—such as warmer lamp illumination, a 
 
 Accepted Build 1 fully closes HP-24.31. Build 2 implementation is not required.
 
+## HP-24.32 Consolidated Acceptance Record
+
+**Hold point:** HP-24.32 — Inventor / Knowledge Bench Discovery Input
+**Branch:** `sprint006-build24-32-knowledge-discovery-input`
+**Frozen parent:** `915214121c6a563f6ed487d016ddb5ee432c0d24`, `v24.31-neutral-workshop-entry`
+**Accepted Build 1:** `29135969e0202751de35ee71fb492c4a2618e9c2` — Sprint 006 Build 24.32.1: add Discovery input to Inventor Knowledge bench
+**Build 2:** Implementation NOT REQUIRED
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.32-knowledge-discovery-input`
+
+### Accepted Contract
+
+- Deliberate Inventor / Knowledge selection opens the existing StandardBenchShell with the current question from unchanged `assessDiscovery(project)`.
+- One ephemeral answer draft submits through unchanged `recordDiscoveryAnswer(project, question, answer)` and the existing Project persistence path.
+- Normal answering stays at the bench, reassesses the next existing question, and stops at the derived Discovery checkpoint without duplicate completion state.
+- THIS BENCH shows current focus, addressed/remaining areas, checkpoint, evidence position and recent authoritative Discovery responses. PROJECT shows existing Project/read-model truth only.
+- No `recordKnowledgeEntry()`, duplicate timeline event, ProjectEvidence, ProjectDecision or additional mutation is created by HP-24.32.
+- `/discovery/session` and `/interview` remain separate compatibility routes. Knowledge Interview answers are not counted as Discovery answers.
+- Neutral Workshop entry and Back to Workshop behavior remain preserved. Ask REV remains disabled.
+
+### Browser Acceptance
+
+**PASS:** current question, textarea, Record & Continue, in-bench reassessment, recorded-response ledger, progress updates, six-area checkpoint, Back to neutral Workshop, visible cross-bench readiness changes, no duplicate Interview write and no automatic ProjectEvidence.
+
+### Readiness Walkthrough
+
+- Fresh Project: Inventor / Knowledge recommended; Engineering AVAILABLE; Prototype DORMANT; Validation DORMANT.
+- After first realistic Discovery response: Project readiness UNDERSTANDING; Inventor / Knowledge still recommended; Engineering AVAILABLE; Prototype DORMANT.
+- After Discovery completion: Inventor / Knowledge AVAILABLE; Engineering READY; Prototype READY; Patent / IP recommended/pulsing; Marketing AVAILABLE; Manufacturing / Costing AVAILABLE; Validation DORMANT; Reality DORMANT.
+
+This confirms recorded work at one bench can develop Project truth and naturally change other bench readiness through unchanged `workshopBrain` logic.
+
+### Accepted Technical Results
+
+- StandardBenchShell, question source, textarea, Record & Continue, reassessment, ledgers and checkpoint: **PASS**.
+- `recordDiscoveryAnswer()`: **REUSED UNCHANGED**. `recordKnowledgeEntry()`: **NOT INVOKED**.
+- Duplicate write: **NO**. Automatic ProjectEvidence: **NO**.
+- Project model, storage, writers and `workshopBrain`: **UNCHANGED**.
+- TypeScript, ESLint, production build and `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Product Direction
+
+Future Workshop work should visibly reward recorded progress with non-authoritative concept evolution before validated truth exists. The accepted direction is Original Idea → early recorded inventor input → non-authoritative concept evolution → visible preview → continued Workshop refinement → later engineering/validation challenge. HP-24.33 — Cross-Bench Idea Evolving Preview is proposed next but is not started by this freeze.
+
+### Freeze Decision
+
+Accepted Build 1 fully closes HP-24.32. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

@@ -1071,6 +1071,24 @@ Ask REV remains disabled as Coming later. Prototype HP-24.30 and Patent Standard
 
 More atmospheric recommended-bench illumination, pulse, physical glow and environmental light response are deferred. Any future presentation enhancement must continue consuming existing `workshopBrain` truth and must not introduce new readiness semantics.
 
+---
+
+# 43. Current HP-24.32 REV Continuity
+
+HP-24.32 — Inventor / Knowledge Bench Discovery Input is complete, verified, browser-accepted, tagged, pushed, and frozen on branch `sprint006-build24-32-knowledge-discovery-input`. The final tag is `v24.32-knowledge-discovery-input`.
+
+The frozen parent is `915214121c6a563f6ed487d016ddb5ee432c0d24`, tagged `v24.31-neutral-workshop-entry`. Accepted Build 1 is `29135969e0202751de35ee71fb492c4a2618e9c2`, Sprint 006 Build 24.32.1: add Discovery input to Inventor Knowledge bench. Build 2 implementation is not required.
+
+The accepted flow is Workshop → deliberate Inventor / Knowledge selection → current Discovery question → answer → Record & Continue → unchanged `recordDiscoveryAnswer()` → existing Project persistence → reassessment → next question or derived checkpoint → Back to neutral Workshop. Normal Discovery answering no longer requires leaving the bench.
+
+Question authority remains unchanged `assessDiscovery(project)`. Answer authority remains unchanged `recordDiscoveryAnswer()`. Discovery and Knowledge Interview remain separate, and `/discovery/session` plus `/interview` remain intact. One answer creates only the existing Discovery write path; no duplicate event, Knowledge Interview entry, ProjectEvidence, ProjectDecision or additional mutation exists.
+
+The StandardBenchShell contains REV context, current question and input, read-only Discovery/Project ledgers, Back to Workshop and disabled Ask REV. The accepted browser walkthrough reaches all six areas and the derived checkpoint while preserving neutral entry and showing readiness changes produced solely by existing Project truth and `workshopBrain`.
+
+Fresh Engineering is AVAILABLE with Prototype and Validation DORMANT. The first realistic response advances readiness to UNDERSTANDING without forcing those benches. At Discovery completion Engineering and Prototype become READY, Patent / IP becomes recommended/pulsing, Marketing and Manufacturing / Costing become AVAILABLE, and Validation plus Reality remain DORMANT.
+
+Future product direction is non-authoritative visual idea evolution before validated truth: Original Idea → early recorded inventor input → evolving concept preview → continued Workshop refinement → later engineering and validation challenge. HP-24.33 — Cross-Bench Idea Evolving Preview is proposed but not started during this freeze.
+
 The Project Ledger is read-only, transient UI with THIS BENCH and PROJECT tabs. Patent THIS BENCH uses existing specialist contribution and exact ProjectEvidence-adoption truth. PROJECT uses existing Project and specialist Project Context truth. No raw IDs are displayed, no ledger state is persisted, and no new store, timeline, evidence collection, notes system, writer or Project semantics exist.
 
 Patent Specialist Inquiry, legal boundary, contribution capture and explicit evidence adoption remain semantically unchanged. Project context moved from the oversized Patent center panel into the concise Ledger. `workshopBrain` remains sole authority for bench state, reason, `nextMove`, recommendation and precedence. Back to Workshop is an in-app UI action; no browser Back is required. Ask REV remains disabled and no fake REV interaction or runtime model integration was introduced.

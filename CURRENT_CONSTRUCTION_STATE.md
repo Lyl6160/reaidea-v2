@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention
-**Branch:** `sprint006-build24-31-neutral-workshop-entry`
-**Accepted HEAD:** `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f`
+**Construction checkpoint:** HP-24.32 — Inventor / Knowledge Bench Discovery Input
+**Branch:** `sprint006-build24-32-knowledge-discovery-input`
+**Accepted HEAD:** `29135969e0202751de35ee71fb492c4a2618e9c2`
 **Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention**
+**HP-24.32 — Inventor / Knowledge Bench Discovery Input**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.31-neutral-workshop-entry`
+Final freeze tag: `v24.32-knowledge-discovery-input`
 
 Accepted HP-24.9 construction chain:
 
@@ -713,5 +713,17 @@ Direct bench clicks and the REV recommendation CTA deliberately open a bench. Ba
 Ask REV remains disabled. `workshopBrain`, Project model, storage, recommendation precedence, writers, Prototype HP-24.30 and other bench semantics remain unchanged. Browser acceptance, TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
 
 More atmospheric recommended-bench lighting and motion are deferred. Future attention cues must continue consuming the existing `workshopBrain` recommendation without creating readiness semantics. HP-24.31 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.31-neutral-workshop-entry`.
+
+## HP-24.32 Capability
+
+HP-24.32 makes Inventor / Knowledge a genuine working bench. The frozen parent is `915214121c6a563f6ed487d016ddb5ee432c0d24`, tagged `v24.31-neutral-workshop-entry`. Accepted Build 1 is `29135969e0202751de35ee71fb492c4a2618e9c2`; Build 2 implementation is not required.
+
+Deliberate bench selection opens StandardBenchShell with the current question from unchanged `assessDiscovery(project)`, an ephemeral textarea and Record & Continue. Valid submission calls unchanged `recordDiscoveryAnswer()` once, persists through the existing path, reassesses without route navigation and shows the next question or derived checkpoint. THIS BENCH exposes Discovery progress and authoritative recorded responses; PROJECT exposes bounded existing Project truth.
+
+Knowledge Interview remains separate. `/discovery/session` and `/interview` remain compatibility routes. No duplicate question state, completion state, timeline write, Knowledge Interview entry, ProjectEvidence or ProjectDecision exists. Neutral Workshop entry, Back to Workshop and disabled Ask REV remain preserved.
+
+The accepted readiness walkthrough confirms cross-bench development through existing truth: fresh Engineering AVAILABLE with Prototype/Validation DORMANT; first realistic response advances readiness to UNDERSTANDING without forcing them; Discovery completion makes Engineering and Prototype READY, Patent / IP recommended/pulsing, Marketing and Manufacturing / Costing AVAILABLE, while Validation and Reality remain DORMANT. `workshopBrain` is unchanged.
+
+Future non-authoritative idea evolution is deferred. HP-24.33 — Cross-Bench Idea Evolving Preview is proposed but not started. HP-24.32 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.32-knowledge-discovery-input`; freeze blockers are NONE.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.
