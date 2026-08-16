@@ -67,6 +67,7 @@ export default function ProjectReviewView({
   const engineeringTrace = summarizeEngineeringTrace(project);
   const currentEngineeringConclusions = engineeringTrace.currentEngineeringConclusions;
   const currentEngineeringDirections = engineeringTrace.currentEngineeringDirections;
+  const projectEvidenceCoverage = engineeringTrace.projectEvidence;
   const existingDirections = project.decisions.filter(
     (decision) => decision.category === "engineering-direction"
   );
@@ -500,6 +501,43 @@ export default function ProjectReviewView({
           </p>
 
       {hasProjectEvidence && (
+        <>
+          <section
+            className="evidence-review-coverage"
+            aria-label="Project evidence review coverage"
+          >
+            <p className="validation-label">Project Evidence Review Coverage</p>
+            <p className="evidence-review-coverage-intro">
+              Read-only trace of whether each recorded Project evidence item is
+              explicitly selected as support for at least one current Engineering
+              Conclusion. This does not rank evidence, judge its importance or require
+              another conclusion.
+            </p>
+            <div className="evidence-review-coverage-list">
+              {projectEvidenceCoverage.map((evidence) => (
+                <article key={evidence.evidenceId}>
+                  <div>
+                    <strong>{evidence.summary}</strong>
+                    <small>{evidence.source}</small>
+                  </div>
+                  <span
+                    className={
+                      evidence.conclusionCoverageState ===
+                      "referenced-by-current-conclusion"
+                        ? "coverage-referenced"
+                        : "coverage-unreferenced"
+                    }
+                  >
+                    {evidence.conclusionCoverageState ===
+                    "referenced-by-current-conclusion"
+                      ? `Explicitly selected by ${evidence.currentConclusionIds.length} current Engineering Conclusion${evidence.currentConclusionIds.length === 1 ? "" : "s"}.`
+                      : "Not explicitly selected by a current Engineering Conclusion."}
+                  </span>
+                </article>
+              ))}
+            </div>
+          </section>
+
         <section className="engineering-conclusion" aria-label="Engineering conclusion">
           <p className="validation-label">Engineering Conclusion</p>
           <p>
@@ -588,6 +626,7 @@ export default function ProjectReviewView({
             Record Engineering Conclusion
           </button>
         </section>
+        </>
       )}
 
       {currentEngineeringConclusions.length > 0 && (
@@ -953,6 +992,68 @@ export default function ProjectReviewView({
 
         .validation-complete-note p:last-child {
           margin-bottom: 0;
+        }
+
+        .evidence-review-coverage {
+          margin-top: 18px;
+          padding: 16px;
+          border: 1px solid rgba(103, 132, 155, 0.42);
+          border-radius: 9px;
+          background: rgba(20, 31, 46, 0.46);
+        }
+
+        .evidence-review-coverage-intro {
+          margin: 0 0 12px;
+          color: #aebdca;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .evidence-review-coverage-list {
+          display: grid;
+          gap: 8px;
+        }
+
+        .evidence-review-coverage-list article {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 12px;
+          align-items: center;
+          padding: 10px;
+          border: 1px solid rgba(103, 132, 155, 0.24);
+          border-radius: 7px;
+          background: rgba(7, 17, 29, 0.5);
+        }
+
+        .evidence-review-coverage-list strong,
+        .evidence-review-coverage-list small {
+          display: block;
+        }
+
+        .evidence-review-coverage-list strong {
+          color: #e1eaf2;
+          font-size: 12px;
+        }
+
+        .evidence-review-coverage-list small {
+          margin-top: 3px;
+          color: #91a3b4;
+          font-size: 11px;
+        }
+
+        .evidence-review-coverage-list span {
+          max-width: 310px;
+          font-size: 11px;
+          line-height: 1.4;
+          text-align: right;
+        }
+
+        .coverage-referenced {
+          color: #8ed9c4;
+        }
+
+        .coverage-unreferenced {
+          color: #b7c1ce;
         }
 
         .engineering-conclusion {
@@ -1425,6 +1526,15 @@ export default function ProjectReviewView({
         }
 
         @media (max-width: 640px) {
+          .evidence-review-coverage-list article {
+            grid-template-columns: 1fr;
+          }
+
+          .evidence-review-coverage-list span {
+            max-width: none;
+            text-align: left;
+          }
+
           .validation-outcome-options {
             grid-template-columns: 1fr;
           }

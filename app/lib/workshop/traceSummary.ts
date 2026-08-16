@@ -126,6 +126,10 @@ export type ProjectEvidenceSourceReference = {
   actionAvailable?: boolean;
 };
 
+export type ProjectEvidenceConclusionCoverageState =
+  | "referenced-by-current-conclusion"
+  | "not-referenced-by-current-conclusion";
+
 export type ProjectEvidenceTraceEntry = {
   evidenceId: string;
   summary: string;
@@ -134,6 +138,8 @@ export type ProjectEvidenceTraceEntry = {
   validationOutcome?: ValidationOutcome;
   sourceProvenance: ProjectEvidenceSourceProvenanceState;
   sourceReferences: ProjectEvidenceSourceReference[];
+  conclusionCoverageState: ProjectEvidenceConclusionCoverageState;
+  currentConclusionIds: string[];
 };
 
 export type LatestValidationResult = {
@@ -210,6 +216,7 @@ export type EngineeringTraceSummary = {
 export function summarizeEngineeringTrace(project: Project): EngineeringTraceSummary {
   const validationPlan = project.validationPlan;
   const latestValidationResult = findLatestValidationResult(project);
+  const engineeringConclusions = summarizeEngineeringConclusions(project);
 
   return {
     assertionTrace: summarizeAssertions(project),
@@ -223,10 +230,13 @@ export function summarizeEngineeringTrace(project: Project): EngineeringTraceSum
       "concept-direction",
       2
     ),
-    ...summarizeEngineeringConclusions(project),
+    ...engineeringConclusions,
     ...summarizeEngineeringDirections(project),
     adoptedEngineeringActions: summarizeEngineeringActions(project),
-    projectEvidence: summarizeProjectEvidence(project),
+    projectEvidence: summarizeProjectEvidence(
+      project,
+      engineeringConclusions.currentEngineeringConclusions
+    ),
     latestValidationResult,
     unresolvedValidation: Boolean(
       validationPlan?.items.some((item) => item.status !== "completed") ||
@@ -325,12 +335,22 @@ function summarizeEngineeringActions(project: Project): EngineeringActionTraceEn
   );
 }
 
-function summarizeProjectEvidence(project: Project): ProjectEvidenceTraceEntry[] {
+function summarizeProjectEvidence(
+  project: Project,
+  currentEngineeringConclusions: EngineeringConclusionTraceEntry[]
+): ProjectEvidenceTraceEntry[] {
   return project.evidence.map((evidence) => {
     const sourceReferences = resolveProjectEvidenceSourceReferences(
       project,
       evidence.sourceTimelineEventIds
     );
+    const currentConclusionIds = currentEngineeringConclusions
+      .filter((conclusion) =>
+        conclusion.supportingEvidence.some(
+          (reference) => reference.evidenceId === evidence.id
+        )
+      )
+      .map((conclusion) => conclusion.id);
 
     return {
       evidenceId: evidence.id,
@@ -342,6 +362,11 @@ function summarizeProjectEvidence(project: Project): ProjectEvidenceTraceEntry[]
         : {}),
       sourceProvenance: projectEvidenceSourceProvenanceState(sourceReferences),
       sourceReferences,
+      conclusionCoverageState:
+        currentConclusionIds.length > 0
+          ? "referenced-by-current-conclusion"
+          : "not-referenced-by-current-conclusion",
+      currentConclusionIds,
     };
   });
 }
