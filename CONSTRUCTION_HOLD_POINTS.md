@@ -1087,3 +1087,66 @@ The Workshop mount reuses existing authority; it does not create competing Proje
 ### Freeze Decision
 
 HP-24.19 completes the shared inventor Engineering Review surface. Discovery and the Living Workshop Engineering bench now use one implementation and one set of Project writers, while formal Validation execution remains deliberately separated. Build 3 implementation is not required.
+
+## HP-24.20 — Project Evidence Review Coverage
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.19 at `39bd653`, tag `v24.19-shared-engineering-review`
+
+**Construction branch:** `sprint006-build24-20-evidence-review-coverage`
+
+### Build 1 — Project Evidence Conclusion Coverage
+
+**Commit:** `46a8413`
+
+Extended the existing read-only engineering trace so each recorded Project evidence item reports whether it is explicitly referenced by at least one current Engineering Conclusion. Coverage is resolved only from exact `supportingEvidenceIds` on current `engineering-conclusion` decisions.
+
+`ProjectEvidenceTraceEntry` now exposes `conclusionCoverageState` plus exact `currentConclusionIds`. Superseded conclusions are excluded. Missing evidence references do not attach to another evidence item. Multiple current conclusions may independently reference the same evidence.
+
+The shared `ProjectReviewView` presents this neutral coverage in both Discovery and the Living Workshop Engineering bench. The view shows evidence summary/source and whether current Engineering Conclusions explicitly selected it. It does not rank evidence, judge importance, infer contradiction, preselect evidence, require a conclusion, or create any Project record.
+
+### Build 2 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed exact-ID trace fixtures, supersession regression, missing-reference safety, shared-surface browser checks, formal Validation boundary checks, no-automatic-write checks, and all static gates. No additional production machinery is required.
+
+### Final Outcome
+
+- **HP-24.20 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.20-evidence-review-coverage`
+- **Freeze blockers:** NONE
+- **Evidence coverage derivation:** READ ONLY
+- **Current conclusion linkage:** EXACT ID ONLY
+- **Superseded conclusion contribution:** EXCLUDED
+- **Evidence ranking/scoring:** NOT INTRODUCED
+- **New Project/domain writer:** NOT INTRODUCED
+- **Automatic Project writes:** NOT INTRODUCED
+- **Project schema/storage mutation:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **Formal Validation boundary:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.20 adds observability without adding authority:
+
+```text
+Project.evidence
+→ current Engineering Conclusions
+→ exact explicit supportingEvidenceIds
+→ read-only evidence review coverage
+```
+
+The coverage projection describes which evidence has or has not been explicitly selected by a current Engineering Conclusion. It does not state whether unreferenced evidence is important, contradictory, deficient, actionable, or required for another decision.
+
+### Deferred Capabilities
+
+- Semantic interpretation or ranking of unreferenced evidence.
+- Automatic prompts, recommendations, conclusions, supersession, or evidence selection based on coverage.
+- Evidence lifecycle/status, action lifecycle/task management, generic dependency graphs, specialist benches, or REV Project-write authority.
+
+### Freeze Decision
+
+HP-24.20 closes the read-only evidence-review coverage seam. The existing Project truth and conclusion writer already contain the authoritative relationship; Build 1 exposes it exactly without introducing new authority or persistence. Build 2 implementation is not required.

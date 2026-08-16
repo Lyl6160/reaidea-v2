@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.19 — Shared Engineering Review Surface for the Living Workshop
-**Branch:** `sprint006-build24-19-shared-engineering-review`
-**Accepted HEAD:** `6bfe302`
+**Construction checkpoint:** HP-24.20 — Project Evidence Review Coverage
+**Branch:** `sprint006-build24-20-evidence-review-coverage`
+**Accepted HEAD:** `46a8413`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.19 — Shared Engineering Review Surface for the Living Workshop**
+**HP-24.20 — Project Evidence Review Coverage**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.19-shared-engineering-review`
+Final freeze tag: `v24.20-evidence-review-coverage`
 
 Accepted HP-24.9 construction chain:
 
@@ -126,6 +126,16 @@ Accepted HP-24.19 construction chain:
 - Build 1 — `6660f59` — Establish shared Project review surface
 - Build 2 — `6bfe302` — Mount Project review on the Engineering bench
 - Build 3 — Readiness audit only; implementation not required
+
+Protected HP-24.19 foundation:
+
+- `39bd653`
+- `v24.19-shared-engineering-review`
+
+Accepted HP-24.20 construction chain:
+
+- Build 1 — `46a8413` — Expose Project evidence conclusion coverage
+- Build 2 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
 
@@ -495,3 +505,22 @@ HP-24.3 is VERIFIED.
 Build 24.2 remains protected at `c7d70d0`.
 
 The next construction stage may begin only after this verified checkpoint is committed and tagged.
+
+## HP-24.20 Capability
+
+HP-24.20 adds a neutral read-only evidence-review coverage projection to the existing engineering trace. For every recorded Project evidence item, the trace reports whether at least one current Engineering Conclusion explicitly selected that evidence through exact `supportingEvidenceIds`.
+
+The accepted relationship is:
+
+```text
+ProjectEvidence.id
+→ current engineering-conclusion supportingEvidenceIds
+→ conclusionCoverageState
+→ exact currentConclusionIds
+```
+
+Superseded conclusions do not count toward current coverage. Missing evidence references do not attach to another evidence item. Multiple current conclusions may independently reference the same evidence.
+
+The shared `ProjectReviewView` displays the same coverage in Discovery and on the Living Workshop Engineering bench. Coverage remains read-only and does not rank evidence, infer importance or contradiction, preselect evidence, require another conclusion, create records, alter recommendation precedence, or persist new Project state.
+
+Build 2 implementation is not required. HP-24.19 remains protected at `39bd653` / `v24.19-shared-engineering-review`.

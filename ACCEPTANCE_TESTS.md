@@ -822,6 +822,70 @@ Both surfaces act on the same Project and the same existing domain writers. The 
 
 Builds 1 and 2 fully close HP-24.19. The shared review implementation is singular, Discovery behavior is preserved, the Engineering bench now reuses that same review without exposing formal Validation execution, and no new domain or authority machinery is required. Build 3 implementation is not required.
 
+## HP-24.20 Consolidated Acceptance Record
+
+**Hold point:** HP-24.20 — Project Evidence Review Coverage
+**Branch:** `sprint006-build24-20-evidence-review-coverage`
+**Accepted implementation HEAD:** `46a8413`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.20-evidence-review-coverage`
+
+### Build Chain
+
+- Build 1 — `46a8413` — Expose Project evidence conclusion coverage.
+- Build 2 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- `summarizeEngineeringTrace()` derives a neutral read-only coverage projection for every recorded Project evidence item.
+- `ProjectEvidenceTraceEntry.conclusionCoverageState` is either `referenced-by-current-conclusion` or `not-referenced-by-current-conclusion`.
+- `ProjectEvidenceTraceEntry.currentConclusionIds` contains only exact IDs of current Engineering Conclusion decisions that explicitly selected that evidence in `supportingEvidenceIds`.
+- Superseded Engineering Conclusions do not count toward current coverage.
+- Missing/unavailable evidence references do not falsely attach to another Project evidence item.
+- Multiple current conclusions may independently reference the same evidence; their IDs remain in the existing current-conclusion order.
+- The shared `ProjectReviewView` displays the same read-only Project Evidence Review Coverage in Discovery and on the Living Workshop Engineering bench.
+- The coverage view does not rank evidence, infer importance, infer contradiction, preselect evidence, require another conclusion, or create Project records.
+- Existing Project model, storage, engineering writers, Validation writers, trace authority, recommendation precedence, and REV read-only authority remain unchanged.
+- HP-24.19 shared-review and formal-Validation boundaries remain unchanged.
+
+### Acceptance Results
+
+- Zero-current-conclusion Project evidence reports `not-referenced-by-current-conclusion` with no current conclusion IDs: **PASS**.
+- Exact explicit current-conclusion supporting-evidence linkage reports the exact conclusion ID: **PASS**.
+- Two current conclusions referencing the same evidence preserve both current conclusion IDs in current-conclusion order: **PASS**.
+- When a current conclusion supersedes an earlier conclusion, the superseded conclusion no longer contributes to current evidence coverage: **PASS**.
+- Current conclusions with no supporting evidence leave all Project evidence unreferenced: **PASS**.
+- Missing/unavailable evidence IDs do not falsely link an existing Project evidence item: **PASS**.
+- Trace coverage derivation does not mutate Project data: **PASS**.
+- Discovery shows the read-only coverage view when Project evidence exists: **PASS**.
+- The Living Workshop Engineering bench shows the same shared coverage view: **PASS**.
+- Workshop non-Engineering benches remain unchanged: **PASS**.
+- Workshop Engineering continues to suppress formal Validation Plan execution while Discovery retains the formal Validation path: **PASS**.
+- Evidence remains initially unselected; coverage changes only after an explicit inventor Engineering Conclusion write: **PASS**.
+- Navigation/refresh creates no automatic Project writes and no persisted coverage field: **PASS**.
+- Project model, storage, domain writers, recommendation precedence, and HP-24.19 surfaces remain unchanged: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+HP-24.20 exposes an exact read-only relationship already present in Project truth:
+
+```text
+Recorded Project evidence
+→ exact explicit supportingEvidenceIds on current Engineering Conclusions
+→ read-only conclusion coverage
+```
+
+Coverage is descriptive only. It is not a recommendation, score, evidence status, lifecycle, requirement, or automatic engineering transition.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.20. The required capability is a pure trace projection plus a shared read-only display; the existing writers and shared Engineering Review already provide the complete authority path. Additional Build 2 production implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

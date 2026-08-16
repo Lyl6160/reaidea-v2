@@ -632,6 +632,32 @@ Build 1 established the singular shared component and preserved Discovery behavi
 
 ---
 
+# 31. Current HP-24.20 REV Continuity
+
+HP-24.20 — Project Evidence Review Coverage is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-20-evidence-review-coverage`. The final tag is `v24.20-evidence-review-coverage`.
+
+HP-24.20 adds no new engineering authority. It exposes a relationship already recorded in Project truth: whether a recorded Project evidence item is explicitly selected by at least one current Engineering Conclusion.
+
+The read-only trace contract is:
+
+```text
+Project.evidence
+→ exact evidence ID
+→ current Engineering Conclusion supportingEvidenceIds
+→ conclusionCoverageState
+→ exact currentConclusionIds
+```
+
+Only current `engineering-conclusion` decisions count. Superseded conclusions are excluded from current coverage. Missing/unavailable evidence references do not falsely resolve to another evidence item. Multiple current conclusions may independently reference the same evidence and remain visible as exact IDs in existing current-conclusion order.
+
+The shared `ProjectReviewView` displays the same Project Evidence Review Coverage in Discovery and on the Living Workshop Engineering bench. The Workshop mount continues to use `showValidationPlan=false`, so formal authoritative Validation execution remains in Discovery exactly as frozen at HP-24.19.
+
+Coverage is descriptive only. It does not rank evidence, score evidence, infer importance, infer contradiction, flag a mandatory gap, preselect supporting evidence, create or supersede conclusions, change recommendation precedence, persist coverage state, or give REV Project-write authority.
+
+Build 1 (`46a8413`) fully closes HP-24.20. Additional Build 2 production implementation is not required.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count
