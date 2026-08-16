@@ -1676,3 +1676,39 @@ Genuine invention-specific visual concept generation is not yet implemented. A f
 ### Freeze Decision
 
 HP-24.30 closes the Prototype workflow-entry repair and honest procedural concept-study presentation. Build 2 implementation is not required.
+
+## HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.30 at `477e0f2292f39c655e27d3fe6f1892a29ff5e7fe`, tag `v24.30-prototype-study`
+
+**Accepted Build 1:** `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f` — Sprint 006 Build 24.31.1: separate Workshop recommendation from bench selection
+
+**Build 2:** Implementation NOT REQUIRED
+
+### Accepted Contract
+
+Workshop entry now shows the full neutral Workshop with no bench automatically selected. `workshopBrain` recommendation remains visible and is the sole source of recommended bench, readiness/state, reason and next move. The recommended bench receives a restrained presentation-only `REV RECOMMENDS` cue; recommendation does not equal selection.
+
+Direct bench clicks and the REV CTA deliberately open a bench. Back to Workshop clears ephemeral selection and restores `WORKSHOP FLOOR` / `NO BENCH SELECTED` without reopening the recommendation. Selecting or highlighting a bench creates no Project state, timeline event, `updatedAt` mutation, decision, evidence or Engineering State change. Ask REV remains disabled.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.31-neutral-workshop-entry`
+- **Browser acceptance:** PASS
+- **Neutral Workshop entry:** PASS
+- **No bench auto-selected:** PASS
+- **Recommendation authority:** `workshopBrain` ONLY
+- **Navigation/highlighting Project writes:** NONE
+- **Prototype HP-24.30:** PRESERVED
+- **Project, storage and writers:** UNCHANGED
+- **Freeze blockers:** NONE
+
+### Deferred Visual Polish
+
+Warmer lamp illumination, subtle slow pulse, stronger physical bench glow and environmental light response remain deferred. Any future visual enhancement must consume the existing `workshopBrain` recommendation and must not introduce new readiness semantics.
+
+### Freeze Decision
+
+HP-24.31 closes the separation of Workshop recommendation from deliberate bench selection. Build 2 implementation is not required.

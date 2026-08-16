@@ -1053,6 +1053,24 @@ Browser acceptance passes direct selection, immediate Concept Sheet, visual-stud
 
 Genuine invention-specific visual concept generation is deferred. Future work may consider Project engineering truth → bounded visual brief → real generated visual candidate → inventor review → explicit adoption/decision, while preserving the accepted authority boundary. This deferral is not a freeze blocker.
 
+---
+
+# 42. Current HP-24.31 REV Continuity
+
+HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention is complete, verified, browser-accepted, tagged, pushed, and frozen on branch `sprint006-build24-31-neutral-workshop-entry`. The final tag is `v24.31-neutral-workshop-entry`.
+
+The frozen parent is `477e0f2292f39c655e27d3fe6f1892a29ff5e7fe`, tagged `v24.30-prototype-study`. Accepted Build 1 is `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f`, Sprint 006 Build 24.31.1: separate Workshop recommendation from bench selection. Build 2 implementation is not required.
+
+The accepted entry flow is Enter Workshop → full Workshop overview → no bench selected → existing `workshopBrain` recommendation visible → recommended bench receives restrained attention → inventor deliberately chooses a bench → selected workspace opens. Recommendation does not equal selection, and selected bench remains ephemeral UI state only.
+
+`workshopBrain` remains sole authority for recommended bench, readiness/state, reason and next move. No hard-coded Inventor / Knowledge recommendation or second recommendation system exists. Direct bench click and the REV CTA select deliberately; choosing another bench does not overwrite the recommendation.
+
+Back to Workshop clears selection and restores `WORKSHOP FLOOR` / `NO BENCH SELECTED` with the recommendation preserved. Fresh observation-only Projects correctly recommend Inventor / Knowledge and retain dormant Prototype readiness. Entry, recommendation highlighting, selection, CTA navigation and Back cause no Project write, timeline event, `updatedAt` mutation, decision, evidence or Engineering State change.
+
+Ask REV remains disabled as Coming later. Prototype HP-24.30 and Patent StandardBenchShell behavior remain preserved. Browser acceptance and all static gates pass; freeze blockers are NONE.
+
+More atmospheric recommended-bench illumination, pulse, physical glow and environmental light response are deferred. Any future presentation enhancement must continue consuming existing `workshopBrain` truth and must not introduce new readiness semantics.
+
 The Project Ledger is read-only, transient UI with THIS BENCH and PROJECT tabs. Patent THIS BENCH uses existing specialist contribution and exact ProjectEvidence-adoption truth. PROJECT uses existing Project and specialist Project Context truth. No raw IDs are displayed, no ledger state is persisted, and no new store, timeline, evidence collection, notes system, writer or Project semantics exist.
 
 Patent Specialist Inquiry, legal boundary, contribution capture and explicit evidence adoption remain semantically unchanged. Project context moved from the oversized Patent center panel into the concise Ledger. `workshopBrain` remains sole authority for bench state, reason, `nextMove`, recommendation and precedence. Back to Workshop is an in-app UI action; no browser Back is required. Ask REV remains disabled and no fake REV interaction or runtime model integration was introduced.

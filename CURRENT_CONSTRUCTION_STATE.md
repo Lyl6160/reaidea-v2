@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study
-**Branch:** `sprint006-build24-30-prototype-study`
-**Accepted HEAD:** `f0fe4e863ac4ff39a27ed697309742d88d7c1ac7`
+**Construction checkpoint:** HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention
+**Branch:** `sprint006-build24-31-neutral-workshop-entry`
+**Accepted HEAD:** `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f`
 **Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.30 — Prototype Bench Workflow Entry + Procedural Concept Study**
+**HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.30-prototype-study`
+Final freeze tag: `v24.31-neutral-workshop-entry`
 
 Accepted HP-24.9 construction chain:
 
@@ -701,5 +701,17 @@ The generated SVG remains workshop-local and is explicitly not CAD, runtime AI i
 Prototype THIS BENCH distinguishes workshop-local study state from Project-recorded decisions; PROJECT uses existing read-model truth. Back to Workshop preserves state and Ask REV remains disabled. Browser acceptance, TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
 
 Genuine invention-specific visual concept generation is deferred. Any future runtime model/image integration must preserve the current authority boundary. HP-24.30 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.30-prototype-study`.
+
+## HP-24.31 Capability
+
+HP-24.31 separates Workshop recommendation from bench selection. The frozen parent is `477e0f2292f39c655e27d3fe6f1892a29ff5e7fe`, tagged `v24.30-prototype-study`. Accepted Build 1 is `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f`; Build 2 implementation is not required.
+
+Entering `/workshop` now presents the full Workshop overview with no bench automatically selected. `workshopBrain` remains sole authority for recommended bench, readiness/state, reason and next move. Whatever bench it recommends receives the restrained `REV RECOMMENDS` attention cue; recommendation and ephemeral selected-bench UI state remain distinct.
+
+Direct bench clicks and the REV recommendation CTA deliberately open a bench. Back to Workshop returns to `WORKSHOP FLOOR` / `NO BENCH SELECTED` while preserving the existing recommendation. Fresh observation-only Projects recommend Inventor / Knowledge and leave Prototype dormant according to unchanged readiness logic. No Project write, timeline event, `updatedAt` mutation, decision, evidence or Engineering State change occurs from entry, highlighting, selection, CTA navigation or Back.
+
+Ask REV remains disabled. `workshopBrain`, Project model, storage, recommendation precedence, writers, Prototype HP-24.30 and other bench semantics remain unchanged. Browser acceptance, TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
+
+More atmospheric recommended-bench lighting and motion are deferred. Future attention cues must continue consuming the existing `workshopBrain` recommendation without creating readiness semantics. HP-24.31 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.31-neutral-workshop-entry`.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.

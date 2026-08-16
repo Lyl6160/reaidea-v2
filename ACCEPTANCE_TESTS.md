@@ -1461,6 +1461,46 @@ Genuine invention-specific visual concept generation is not yet implemented. Fut
 
 Accepted Build 1 fully closes HP-24.30. Build 2 implementation is not required.
 
+## HP-24.31 Consolidated Acceptance Record
+
+**Hold point:** HP-24.31 — Neutral Workshop Entry + Recommended Bench Attention
+**Branch:** `sprint006-build24-31-neutral-workshop-entry`
+**Frozen parent:** `477e0f2292f39c655e27d3fe6f1892a29ff5e7fe`, `v24.30-prototype-study`
+**Accepted Build 1:** `138ec7d4ce80521b9e74cfb2c01273db8d37bb4f` — Sprint 006 Build 24.31.1: separate Workshop recommendation from bench selection
+**Build 2:** Implementation NOT REQUIRED
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.31-neutral-workshop-entry`
+
+### Accepted Contract
+
+- Workshop entry presents the full neutral Workshop overview with no bench auto-selected.
+- Recommendation and selection are separate: `workshopBrain` remains sole authority for recommended bench, readiness/state, reason and next move; selected bench is ephemeral UI state only.
+- Only the current `workshopBrain` recommendation receives the restrained `REV RECOMMENDS` attention cue. No hard-coded recommendation or second recommendation system exists.
+- Direct bench clicks and the REV recommendation CTA deliberately open a bench without changing the recommendation or mutating the Project.
+- Back to Workshop clears selection and returns to `WORKSHOP FLOOR` / `NO BENCH SELECTED`, with the recommendation still visible.
+- Ask REV remains disabled and marked Coming later. No runtime AI interaction exists.
+
+### Browser Acceptance
+
+**PASS:** fresh observation-only Project opens the full Workshop; Inventor / Knowledge is recommended but not selected; its attention cue is visible; Prototype remains dormant; the bottom panel is Workshop-level; direct Inventor / Knowledge selection opens the active workspace; Back restores the neutral Workshop; REV CTA opens the recommendation; and direct selection of another bench leaves recommendation authority unchanged.
+
+### Accepted Technical Results
+
+- Neutral entry, no auto-selection, recommendation cue, direct click, REV CTA, Back and Workshop-level bottom panel: **PASS**.
+- Navigation/highlighting Project writes: **NONE**.
+- `workshopBrain`, Project model, storage, recommendation precedence and writers: **UNCHANGED**.
+- Prototype HP-24.30: **PRESERVED**. Other benches: **UNCHANGED**.
+- TypeScript, ESLint, production build and `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Deferred Visual Polish
+
+More atmospheric recommendation attention—such as warmer lamp illumination, a subtle slow pulse, stronger physical bench glow or environmental light response—is deferred and is not an HP-24.31 blocker. Any future cue must continue consuming the existing `workshopBrain` recommendation without adding readiness semantics.
+
+### Freeze Decision
+
+Accepted Build 1 fully closes HP-24.31. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
