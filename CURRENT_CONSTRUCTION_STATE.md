@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.25 — Explicit Specialist Contribution Evidence Adoption
-**Branch:** `sprint006-build24-25-specialist-evidence`
-**Accepted HEAD:** `b808986db78c47be94e3e85b94664cca5a4e7e82`
+**Construction checkpoint:** HP-24.26 — Shared Specialist Project Context
+**Branch:** `sprint006-build24-26-specialist-project-context`
+**Accepted HEAD:** `5cb1f76be203066638f6eb0831090c4ece04ba65`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.25 — Explicit Specialist Contribution Evidence Adoption**
+**HP-24.26 — Shared Specialist Project Context**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.25-specialist-evidence`
+Final freeze tag: `v24.26-specialist-project-context`
 
 Accepted HP-24.9 construction chain:
 
@@ -653,6 +653,14 @@ The frozen parent is `1822c69a81d731e9c379b72aa71488686a4d2f68`, tagged `v24.24-
 Each explicit adoption creates one `ProjectEvidence` and one `project-evidence-recorded` timeline event. Exact provenance is `ProjectEvidence.sourceTimelineEventIds === [selected specialist contribution event ID]`; bench identity remains authoritative on the referenced contribution event and is not duplicated onto the audit event. Historical adoption and duplicate explicit adoption are allowed. The read-only trace counts only exact single-event provenance and excludes multi-source evidence.
 
 Engineering State, assertions, conclusions, directions, actions, Project decisions, Validation, recommendation precedence, Project model and storage remain unchanged. HP-24.25 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.25-specialist-evidence`; freeze blockers are NONE.
+
+## HP-24.26 Capability
+
+HP-24.26 gives exactly Patent / IP, Marketing, Manufacturing / Costing and Reality the same concise read-only Project Context at the point of specialist work. The frozen parent is `6ab127758a0ba921787bd96dcbbae02172bfcd4e`, tagged `v24.25-specialist-evidence`. Accepted Build 1 is `5cb1f76be203066638f6eb0831090c4ece04ba65` (`Sprint 006 Build 24.26.1: add shared specialist Project context`). Build 2 implementation is not required.
+
+Where recorded, the shared context shows current understanding, current constraints, greatest remaining uncertainty, Project evidence summaries and source/reference, current Engineering Conclusions, current Engineering Directions and adopted Engineering Actions. It excludes raw timeline history, superseded conclusions and directions, detailed Validation history, specialist-specific relevance filtering and specialist-generated interpretation.
+
+The panel is display-only. Presentation limits preserve authoritative order and do not rank Project truth. Viewing it creates no Project or localStorage writes. `workshopBrain`, recommendation precedence, the global REV Workshop Brief, both specialist workflows, the Project model and storage remain unchanged. HP-24.26 is COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN with tag `v24.26-specialist-project-context`; freeze blockers are NONE.
 
 The contribution is neutral Project history only. It does not automatically become Project evidence, Engineering State, an Engineering Assertion, Conclusion, Direction, Action, Project Decision, Validation, recommendation, requirement, proof or task state.
 

@@ -964,4 +964,25 @@ There is no automatic promotion into Engineering State, an Engineering Assertion
 
 ---
 
+# 37. Current HP-24.26 REV Continuity
+
+HP-24.26 — Shared Specialist Project Context is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-26-specialist-project-context`. The final tag is `v24.26-specialist-project-context`.
+
+The frozen parent is `6ab127758a0ba921787bd96dcbbae02172bfcd4e`, tagged `v24.25-specialist-evidence`. Accepted Build 1 is `5cb1f76be203066638f6eb0831090c4ece04ba65` (`Sprint 006 Build 24.26.1: add shared specialist Project context`). Build 2 implementation is not required.
+
+Exactly Patent / IP, Marketing, Manufacturing / Costing and Reality receive the same concise factual Project Context at the point of specialist work. Where recorded, it shows current understanding, current constraints, greatest remaining uncertainty, Project evidence summaries and source/reference, current Engineering Conclusions, current Engineering Directions and adopted Engineering Actions.
+
+```text
+existing Project + EngineeringTraceSummary truth
+→ pure bounded specialist Project context helper
+→ identical read-only panel on four specialist benches
+→ no Project or localStorage write
+```
+
+The panel excludes raw Project timeline, superseded conclusions and directions, detailed Validation history, specialist-specific relevance filtering and specialist-generated interpretation. It exposes no raw IDs. Five-item presentation limits preserve authoritative order and do not rank the visible facts.
+
+Existing bench-specific reason and `nextMove` guidance remains unchanged. `workshopBrain`, recommendation precedence, the global REV Workshop Brief, Specialist Contribution, Specialist Evidence Adoption, all writers, Project model, storage and REV authority remain unchanged. No new persisted state or writer exists.
+
+---
+
 **END OF REV-CONTINUITY-001**

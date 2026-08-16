@@ -1444,3 +1444,54 @@ The contribution remains neutral Project history until explicitly adopted. Adopt
 ### Freeze Decision
 
 HP-24.25 closes the explicit specialist-contribution evidence-adoption seam without generalizing HP-24.16, duplicating bench provenance or creating persisted adoption state. Build 2 implementation is not required.
+
+## HP-24.26 — Shared Specialist Project Context
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.25 at `6ab127758a0ba921787bd96dcbbae02172bfcd4e`, tag `v24.25-specialist-evidence`
+
+**Construction branch:** `sprint006-build24-26-specialist-project-context`
+
+### Build 1 — Shared Specialist Project Context
+
+**Commit:** `5cb1f76be203066638f6eb0831090c4ece04ba65`
+
+Added one pure bounded Project-context read model and one shared read-only panel above the existing controls on exactly Patent / IP, Marketing, Manufacturing / Costing and Reality. All four benches receive identical factual content from existing Project and resolved trace truth.
+
+The context includes recorded current understanding, constraints, greatest remaining uncertainty, Project evidence summaries and source/reference, current conclusions, current directions and adopted actions. It excludes raw timeline history, superseded records, detailed Validation history, specialist relevance filtering and specialist interpretation.
+
+### Build 2 — Hold-Point Readiness
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed pure-helper, authoritative-order, five-item display-limit, current-only trace, neutral empty-state, all-four-bench equality, excluded-bench, workflow non-regression, refresh, no-write and static gates.
+
+### Final Outcome
+
+- **HP-24.26 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.26-specialist-project-context`
+- **Freeze blockers:** NONE
+- **Allowed benches:** PATENT / MARKETING / MANUFACTURING / REALITY ONLY
+- **Context equality:** IDENTICAL FACTUAL CONTENT
+- **Panel authority:** READ ONLY
+- **Raw timeline and raw IDs:** NOT DISPLAYED
+- **Persisted state and writers:** NOT INTRODUCED
+- **workshopBrain and recommendation precedence:** UNCHANGED
+- **Global REV Workshop Brief and specialist workflows:** UNCHANGED
+- **Project model and storage:** UNCHANGED
+
+### Authority Boundary
+
+```text
+existing Project + EngineeringTraceSummary truth
+→ pure bounded specialist Project context helper
+→ identical read-only panel on four specialist benches
+→ no Project or localStorage write
+```
+
+Presentation limits preserve recorded order and do not imply importance. Existing bench-specific reason and `nextMove` remain the only specialist-specific guidance.
+
+### Freeze Decision
+
+HP-24.26 closes the shared specialist Project-context seam without creating specialist filtering, interpretation, a second Workshop Brief, a second Engineering State or new authority. Build 2 implementation is not required.

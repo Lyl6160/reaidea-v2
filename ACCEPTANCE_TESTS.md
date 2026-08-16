@@ -1203,6 +1203,57 @@ Build 1 fully closes HP-24.24. The existing Project timeline and persistence sea
 
 Build 1 fully closes HP-24.25. Explicit inventor adoption creates ordinary Project evidence with exact contribution-event provenance while preserving neutral contribution history and all existing engineering authority boundaries. Build 2 implementation is not required.
 
+## HP-24.26 Consolidated Acceptance Record
+
+**Hold point:** HP-24.26 — Shared Specialist Project Context
+**Branch:** `sprint006-build24-26-specialist-project-context`
+**Frozen parent:** `6ab127758a0ba921787bd96dcbbae02172bfcd4e`, `v24.25-specialist-evidence`
+**Accepted implementation HEAD:** `5cb1f76be203066638f6eb0831090c4ece04ba65`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.26-specialist-project-context`
+
+### Build Chain
+
+- Build 1 — `5cb1f76be203066638f6eb0831090c4ece04ba65` — Add shared specialist Project context.
+- Build 2 — Implementation not required.
+
+### Accepted Contract
+
+- Patent, Marketing, Manufacturing and Reality receive the same concise read-only Project Context.
+- Where recorded, context includes current understanding, constraints, greatest remaining uncertainty, Project evidence summary/source, current Engineering Conclusions, current Engineering Directions and adopted Engineering Actions.
+- Raw timeline, superseded conclusions and directions, detailed Validation history, specialist filtering and specialist interpretation are excluded.
+- Existing bench reason and `nextMove` guidance remains unchanged.
+- Presentation limits preserve authoritative order and do not rank Project truth.
+- Viewing context creates no timeline event, evidence, decision, assertion, action, Validation record, localStorage record or Project mutation.
+- No new persisted state or writer exists.
+- `workshopBrain`, recommendation precedence, the global REV Workshop Brief, specialist workflows, Project model and storage remain unchanged.
+
+### Accepted Results
+
+- Pure specialist Project context helper: **PASS**.
+- Patent, Marketing, Manufacturing and Reality Project Context: **PASS**.
+- Same factual context across four benches: **PASS**.
+- Knowledge, Engineering, Prototype and Validation excluded: **PASS**.
+- Current understanding, constraints and greatest remaining uncertainty: **PASS**.
+- Project evidence and source/reference visibility: **PASS**.
+- Current conclusions only and current directions only: **PASS**.
+- Adopted actions: **PASS**.
+- Presentation limits and neutral empty states: **PASS**.
+- Raw timeline and raw IDs: **NOT DISPLAYED**.
+- Read-model mutation and automatic Project writes: **NONE**.
+- `workshopBrain`, recommendation precedence and global REV Workshop Brief: **UNCHANGED**.
+- Specialist contribution and evidence adoption workflows: **UNCHANGED**.
+- Project model and storage: **UNCHANGED**.
+- TypeScript: **PASS**.
+- ESLint: **PASS**.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.26. The four specialist benches now share concise recorded Project truth at the point of work without specialist filtering, interpretation, persistence, writes or recommendation changes. Build 2 implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**
