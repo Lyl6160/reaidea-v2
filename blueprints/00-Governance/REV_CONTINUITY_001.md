@@ -690,6 +690,33 @@ Build 1 (`a24f950`) fully closes HP-24.21. Additional Build 2 production impleme
 
 ---
 
+# 33. Current HP-24.22 REV Continuity
+
+HP-24.22 — Engineering Action Result Evidence Adoption Trace is complete, verified, tagged, pushed, and frozen on branch `sprint006-build24-22-action-result-evidence-trace`. The final tag is `v24.22-action-result-evidence-trace`.
+
+HP-24.22 exposes the existing explicit boundary between recorded Engineering Action Results and inventor-adopted Project evidence.
+
+The read-only trace contract is:
+
+```text
+engineering-action-result-recorded event
+→ exact event ID
+→ ProjectEvidence.sourceTimelineEventIds exactly [event ID]
+→ adoptedEvidenceIds
+```
+
+This exact one-source provenance shape mirrors the frozen `recordProjectEvidenceFromActionResult()` writer. The writer itself remains unchanged. Multiple explicit adoptions of one result remain allowed and appear as multiple Project evidence IDs in stored Project evidence order.
+
+Project evidence with a different source, multiple source timeline IDs, or missing/unavailable source IDs does not count as this exact action-result adoption shape. No result text, action text, source text, Validation state or conclusion state is used to infer adoption.
+
+The shared `ProjectReviewView` adds one Action Result Evidence Adoption Trace surface while preserving the existing inventor-controlled Adopt Project Evidence UI. Discovery and the Living Workshop Engineering bench show the same trace. Workshop Engineering continues to suppress formal Validation through the existing `showValidationPlan=false` seam.
+
+An unadopted result remains valid engineering history. The trace does not mean that evidence adoption is required, does not mark an action complete, does not score or rank the result, does not change recommendation precedence, and does not give REV Project-write authority.
+
+Build 1 (`2ea111a`) fully closes HP-24.22. Additional Build 2 production implementation is not required.
+
+---
+
 - Innovation Brain as a separate truth source
 - Project Brain as a competing project model
 - AI Confidence derived from word count

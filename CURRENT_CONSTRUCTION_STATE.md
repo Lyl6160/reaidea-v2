@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.21 — Historical Evidence Consideration Trace
-**Branch:** `sprint006-build24-21-historical-evidence-trace`
-**Accepted HEAD:** `a24f950`
+**Construction checkpoint:** HP-24.22 — Engineering Action Result Evidence Adoption Trace
+**Branch:** `sprint006-build24-22-action-result-evidence-trace`
+**Accepted HEAD:** `2ea111a`
 **Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.21 — Historical Evidence Consideration Trace**
+**HP-24.22 — Engineering Action Result Evidence Adoption Trace**
 
 Protected previous foundation:
 
@@ -35,7 +35,7 @@ Accepted HP-24.8 construction chain:
 - Build 3 — `5f42a9c` — Validation planning to active assertion identity linkage
 - Build 4 — `841324f` — Identity-driven Validation assertion lifecycle
 
-Final freeze tag: `v24.21-historical-evidence-trace`
+Final freeze tag: `v24.22-action-result-evidence-trace`
 
 Accepted HP-24.9 construction chain:
 
@@ -145,6 +145,16 @@ Protected HP-24.20 foundation:
 Accepted HP-24.21 construction chain:
 
 - Build 1 — `a24f950` — Expose historical evidence conclusion trace
+- Build 2 — Readiness audit only; implementation not required
+
+Protected HP-24.21 foundation:
+
+- `811f222`
+- `v24.21-historical-evidence-trace`
+
+Accepted HP-24.22 construction chain:
+
+- Build 1 — `2ea111a` — Expose action result evidence adoption trace
 - Build 2 — Readiness audit only; implementation not required
 
 ## HP-24.8 Capability
@@ -558,3 +568,23 @@ The shared `ProjectReviewView` now distinguishes current selection, historical-o
 This capability is read-only. It does not add Project persistence, evidence lifecycle, ranking, semantic importance, automatic prompts, recommendation changes, new writers or REV Project-write authority.
 
 Build 2 implementation is not required. HP-24.20 remains protected at `5939568` / `v24.20-evidence-review-coverage`.
+
+## HP-24.22 Capability
+
+HP-24.22 adds a neutral read-only adoption projection to each recorded Engineering Action Result.
+
+For every action result:
+
+```text
+engineering-action-result-recorded event ID
+→ ProjectEvidence.sourceTimelineEventIds exactly [event ID]
+→ adoptedEvidenceIds
+```
+
+The exact single-source provenance shape mirrors the existing `recordProjectEvidenceFromActionResult()` writer contract. Duplicate explicit adoptions remain visible as multiple Project evidence IDs in Project evidence order. Evidence with another source, multiple sources, or unavailable source IDs does not falsely count.
+
+The shared `ProjectReviewView` displays Action Result Evidence Adoption Trace in Discovery and on the Living Workshop Engineering bench while retaining the existing explicit Adopt Project Evidence control.
+
+This capability is read-only. It does not add action completion, action status, evidence status/lifecycle, automatic evidence adoption, new writers, Project persistence, recommendation changes or REV Project-write authority.
+
+Build 2 implementation is not required. HP-24.21 remains protected at `811f222` / `v24.21-historical-evidence-trace`.

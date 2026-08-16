@@ -957,6 +957,74 @@ Historical selection is engineering history, not current authority. The trace do
 
 Build 1 fully closes HP-24.21. The existing conclusion supersession model already contains the historical relationship; Build 1 exposes it exactly in the read model and shared review without adding persistence or authority. Additional Build 2 production implementation is not required.
 
+## HP-24.22 Consolidated Acceptance Record
+
+**Hold point:** HP-24.22 — Engineering Action Result Evidence Adoption Trace
+**Branch:** `sprint006-build24-22-action-result-evidence-trace`
+**Accepted implementation HEAD:** `2ea111a`
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.22-action-result-evidence-trace`
+
+### Build Chain
+
+- Build 1 — `2ea111a` — Expose action result evidence adoption trace.
+- Build 2 — Readiness audit only; implementation not required.
+
+### Accepted Contract
+
+- `EngineeringActionResultTraceEntry.adoptedEvidenceIds` is a read-only exact provenance projection.
+- An action result counts as the explicit source of Project evidence only when a ProjectEvidence record has `sourceTimelineEventIds` with exactly one stored ID and that ID exactly equals the action-result timeline event ID.
+- The projection mirrors the existing `recordProjectEvidenceFromActionResult()` writer contract; the writer itself remains unchanged.
+- Multiple explicit adoptions of the same action result remain visible as multiple evidence IDs in Project evidence order.
+- Evidence with another source, multiple source timeline IDs, or a missing/unavailable result-event ID does not falsely count as this exact action-result adoption shape.
+- The shared `ProjectReviewView` adds one read-only Action Result Evidence Adoption Trace surface and preserves the existing inventor-controlled Adopt Project Evidence writer UI.
+- Discovery and the Living Workshop Engineering bench show the same read-only adoption trace.
+- Formal Validation remains hidden on the Workshop Engineering mount and remains available through the existing Discovery path.
+- No action lifecycle, completion status, evidence lifecycle, automatic adoption, recommendation change, Project schema change, storage change, or REV Project-write authority is introduced.
+
+### Acceptance Results
+
+- Zero-adoption action-result trace: **PASS**.
+- Exact action-result → Project evidence ID linkage: **PASS**.
+- Duplicate explicit adoption trace and Project evidence ordering: **PASS**.
+- Cross-result isolation: **PASS**.
+- Multi-source Project evidence excluded from the exact single-result adoption shape: **PASS**.
+- Missing/unavailable result-event linkage safety: **PASS**.
+- Read-model purity / no Project mutation: **PASS**.
+- Existing `engineeringEvidence.ts` writer: **UNCHANGED**.
+- Writer exact `sourceTimelineEventIds: [selected result event ID]`: **PASS**.
+- Writer duplicate explicit adoption remains allowed: **PASS**.
+- Read-only adoption UI: **PASS**.
+- Discovery adoption trace: **PASS**.
+- Living Workshop Engineering adoption trace: **PASS**.
+- Workshop non-Engineering benches remain unchanged: **PASS**.
+- Workshop Engineering formal Validation boundary remains unchanged: **PASS**.
+- Automatic Project writes: **NONE**.
+- Action lifecycle/completion semantics: **NOT INTRODUCED**.
+- Project model, storage, recommendation precedence and HP-24.21 remain unchanged: **PASS**.
+- TypeScript: **PASS**.
+- ESLint: **PASS** with 3 known pre-existing `<img>` warnings.
+- Production build: **PASS**.
+- `git diff --check`: **PASS**.
+- Freeze blockers: **NONE**.
+
+### Authority Boundary
+
+HP-24.22 exposes the existing deliberate adoption boundary:
+
+```text
+Engineering Action
+→ recorded Engineering Action Result
+→ exact sourceTimelineEventIds provenance
+→ explicitly adopted Project Evidence
+```
+
+The trace only reports whether that exact boundary was crossed in recorded Project truth. It does not require adoption, mark the action complete, rank the result, judge its importance, or create Project evidence automatically.
+
+### Freeze Decision
+
+Build 1 fully closes HP-24.22. The existing Project evidence provenance contract already contains the authoritative action-result adoption relationship; Build 1 exposes it exactly without modifying the writer or adding lifecycle, persistence or authority. Additional Build 2 production implementation is not required.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

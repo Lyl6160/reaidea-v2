@@ -1214,3 +1214,70 @@ A superseded conclusion may prove that evidence was explicitly selected in recor
 ### Freeze Decision
 
 HP-24.21 closes the historical evidence-selection trace seam. The existing Engineering Conclusion supersession history already provides the authoritative record; Build 1 exposes that record exactly without introducing a second history store, new persistence or new authority. Build 2 implementation is not required.
+
+## HP-24.22 — Engineering Action Result Evidence Adoption Trace
+
+**Status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+
+**Protected foundation:** HP-24.21 at `811f222`, tag `v24.21-historical-evidence-trace`
+
+**Construction branch:** `sprint006-build24-22-action-result-evidence-trace`
+
+### Build 1 — Action Result Evidence Adoption Trace
+
+**Commit:** `2ea111a`
+
+Extended the existing Engineering Action Result trace with read-only `adoptedEvidenceIds`. Each recorded action result now resolves exact Project evidence records whose `sourceTimelineEventIds` contain exactly one ID and that ID exactly matches the action-result timeline event ID.
+
+This mirrors the frozen HP-24.16 `recordProjectEvidenceFromActionResult()` writer contract without modifying the writer. Duplicate explicit adoptions remain visible as multiple evidence IDs in Project evidence order. Project evidence with other or multiple source timeline IDs is not treated as this exact action-result adoption shape.
+
+The shared `ProjectReviewView` adds one read-only Action Result Evidence Adoption Trace section. The existing inventor-controlled Adopt Project Evidence UI remains unchanged and remains the sole explicit action-result → Project evidence writer path.
+
+### Build 2 — Hold-Point Readiness Audit
+
+**Implementation:** NOT REQUIRED
+
+Build 1 passed zero/single/duplicate adoption fixtures, cross-result isolation, malformed/missing provenance safety, read-model purity, writer regression, shared Discovery/Workshop browser checks, formal Validation boundary checks, no-automatic-write checks and all static gates. No additional production machinery is required.
+
+### Final Outcome
+
+- **HP-24.22 status:** COMPLETE / VERIFIED / TAGGED / PUSHED / FROZEN
+- **Final freeze tag:** `v24.22-action-result-evidence-trace`
+- **Freeze blockers:** NONE
+- **Action-result evidence adoption trace:** READ ONLY
+- **Action-result → evidence linkage:** EXACT TIMELINE EVENT ID
+- **Required provenance shape:** EXACTLY ONE SOURCE ID
+- **Duplicate explicit adoption:** PRESERVED
+- **Existing evidence writer:** UNCHANGED
+- **Action lifecycle/completion:** NOT INTRODUCED
+- **Evidence lifecycle/status:** NOT INTRODUCED
+- **Automatic evidence adoption:** NOT INTRODUCED
+- **Project schema/storage mutation:** NOT INTRODUCED
+- **Recommendation precedence:** UNCHANGED
+- **Formal Validation boundary:** UNCHANGED
+- **REV authority:** Unchanged and read-only
+
+### Authority Boundary
+
+HP-24.22 closes the observability gap around the deliberate result-to-evidence boundary:
+
+```text
+engineering-action-result-recorded event ID
+→ ProjectEvidence.sourceTimelineEventIds === [that exact ID]
+→ adoptedEvidenceIds
+→ read-only adoption trace
+```
+
+An unadopted result remains valid engineering history. The trace does not say that it should become evidence, that the action is incomplete, or that the result lacks importance.
+
+### Deferred Capabilities
+
+- Automatic evidence adoption or prompting based on unadopted results.
+- Action lifecycle/completion/task management.
+- Evidence lifecycle/status/ranking.
+- Semantic evaluation of result importance or quality.
+- Generic dependency graphs, specialist benches or REV Project-write authority.
+
+### Freeze Decision
+
+HP-24.22 closes the explicit action-result evidence-adoption trace seam. The existing provenance record is already authoritative; Build 1 exposes it exactly without changing the writer, persistence model or engineering authority. Build 2 implementation is not required.
