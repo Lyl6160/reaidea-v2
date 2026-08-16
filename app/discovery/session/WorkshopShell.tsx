@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
 
 import ProjectReviewView from "./ProjectReviewView";
@@ -23,7 +24,11 @@ import {
   getEngineeringDefinitionInputs,
   recordEngineeringDefinitionAnswer,
 } from "../../lib/workshop/engineeringDefinition";
-import type { IdeaVisualMode } from "../../lib/ai/types";
+import type {
+  ConceptCandidate,
+  ConceptGenerationApiResponse,
+  IdeaVisualMode,
+} from "../../lib/ai/types";
 import {
   IDEA_VISUAL_MODES,
   buildConceptGenerationFoundation,
@@ -384,6 +389,7 @@ export default function WorkshopShell({
 }: WorkshopShellProps) {
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
+  const conceptGenerationInFlightRef = useRef(false);
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
@@ -394,6 +400,9 @@ export default function WorkshopShell({
   const [visualModeOverride, setVisualModeOverride] = useState<IdeaVisualMode | null>(null);
   const [confirmedVisualMode, setConfirmedVisualMode] = useState<IdeaVisualMode | null>(null);
   const [visualModeCorrectionOpen, setVisualModeCorrectionOpen] = useState(false);
+  const [generatedConceptCandidate, setGeneratedConceptCandidate] = useState<ConceptCandidate | null>(null);
+  const [conceptGenerationState, setConceptGenerationState] = useState<"idle" | "generating" | "failed" | "not-configured" | "unsupported">("idle");
+  const [conceptGenerationMessage, setConceptGenerationMessage] = useState("");
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -806,7 +815,7 @@ export default function WorkshopShell({
     [project]
   );
   const compactConceptPreview = (
-    <ConceptPreview preview={sharedConceptPreview} compact />
+    <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} compact />
   );
   const recentDiscoveryResponses = useMemo(
     () =>
@@ -981,6 +990,60 @@ export default function WorkshopShell({
   function changeVisualMode(mode: IdeaVisualMode) {
     setVisualModeOverride(mode);
     setConfirmedVisualMode(null);
+    setGeneratedConceptCandidate(null);
+    setConceptGenerationState("idle");
+    setConceptGenerationMessage("");
+  }
+
+  async function generateFirstRecognisableConcept() {
+    const generationRequest = conceptGenerationFoundation.request;
+    if (!generationRequest || conceptGenerationInFlightRef.current) return;
+
+    if (generationRequest.visualMode !== "product" || generationRequest.outputType !== "image") {
+      setConceptGenerationState("unsupported");
+      setConceptGenerationMessage("Visual generation for this mode is coming next.");
+      return;
+    }
+
+    conceptGenerationInFlightRef.current = true;
+    setConceptGenerationState("generating");
+    setConceptGenerationMessage("");
+
+    try {
+      const response = await fetch("/api/concepts/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(generationRequest),
+      });
+      const payload = await response.json() as ConceptGenerationApiResponse;
+
+      if (!response.ok || "error" in payload) {
+        const error = "error" in payload ? payload.error : null;
+        setConceptGenerationState(error?.code === "not-configured" ? "not-configured" : error?.code === "unsupported-mode" ? "unsupported" : "failed");
+        setConceptGenerationMessage(error?.message ?? "Concept generation could not complete.");
+        return;
+      }
+
+      const candidate = payload.candidate;
+      if (
+        candidate.conceptFamilyId !== generationRequest.conceptFamilyId ||
+        candidate.revision !== generationRequest.revision ||
+        candidate.output.type !== "image" ||
+        !candidate.output.dataUrl?.startsWith("data:image/")
+      ) {
+        setConceptGenerationState("failed");
+        setConceptGenerationMessage("Concept generation returned an invalid result.");
+        return;
+      }
+
+      setGeneratedConceptCandidate(candidate);
+      setConceptGenerationState("idle");
+    } catch {
+      setConceptGenerationState("failed");
+      setConceptGenerationMessage("Concept generation could not complete.");
+    } finally {
+      conceptGenerationInFlightRef.current = false;
+    }
   }
 
   function visualiseConcept() {
@@ -2133,7 +2196,7 @@ export default function WorkshopShell({
         </div>
 
         <div className="hub-concept-preview">
-          <ConceptPreview preview={sharedConceptPreview} />
+          <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} />
           <span className="hub-concept-pointer" aria-hidden="true">↓</span>
         </div>
 
@@ -2749,12 +2812,28 @@ export default function WorkshopShell({
                       : `Remaining: ${conceptGenerationFoundation.missingRequiredFields.join(", ")}.`}
                   </small>
                 </div>
-                <button type="button" disabled>
-                  {conceptGenerationFoundation.generationReady
-                    ? "GENERATION SERVICE NOT CONNECTED YET"
-                    : "GENERATE CONCEPT 01"}
+                <button
+                  type="button"
+                  onClick={generateFirstRecognisableConcept}
+                  disabled={!conceptGenerationFoundation.generationReady || conceptGenerationState === "generating" || conceptGenerationFoundation.request?.visualMode !== "product" || conceptGenerationFoundation.request?.outputType !== "image"}
+                >
+                  {conceptGenerationState === "generating"
+                    ? "REV IS FORMING CONCEPT 01..."
+                    : conceptGenerationState === "failed"
+                      ? "RETRY CONCEPT 01"
+                    : conceptGenerationFoundation.generationReady && (conceptGenerationFoundation.request?.visualMode !== "product" || conceptGenerationFoundation.request?.outputType !== "image")
+                      ? "VISUAL GENERATION FOR THIS MODE IS COMING NEXT"
+                      : "GENERATE CONCEPT 01"}
                 </button>
               </div>
+              {conceptGenerationState === "not-configured" && (
+                <p className="first-concept-generation-status is-warning">CONCEPT GENERATION IS NOT CONFIGURED</p>
+              )}
+              {(conceptGenerationState === "failed" || conceptGenerationState === "unsupported") && (
+                <p className="first-concept-generation-status is-error">
+                  {conceptGenerationState === "failed" ? "CONCEPT GENERATION COULD NOT COMPLETE" : conceptGenerationMessage}
+                </p>
+              )}
               {conceptGenerationFoundation.request && (
                 <p className="first-concept-identity">
                   Concept family <code>{conceptGenerationFoundation.request.conceptFamilyId}</code> · revision {conceptGenerationFoundation.request.revision} · output {conceptGenerationFoundation.request.outputType}
@@ -2762,13 +2841,32 @@ export default function WorkshopShell({
               )}
             </section>
 
-            <div className="concept-visual-actions">
+            {generatedConceptCandidate?.output.type === "image" && generatedConceptCandidate.output.dataUrl && (
+              <section className="generated-concept-candidate" aria-label="Generated Concept 01">
+                <div className="generated-concept-candidate-heading">
+                  <div><span>REV · FIRST RECOGNISABLE CONCEPT</span><strong>CONCEPT 01</strong></div>
+                  <b>PHYSICAL PRODUCT</b>
+                </div>
+                <Image
+                  src={generatedConceptCandidate.output.dataUrl}
+                  alt={generatedConceptCandidate.output.altText}
+                  width={1024}
+                  height={1024}
+                  unoptimized
+                />
+                <p>{generatedConceptCandidate.disclaimer}</p>
+                <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs. The image is a visual interpretation and does not prove feasibility.</p>
+                <small>Transient session result. Refreshing this page removes the generated image. It is not stored in the Project or local storage.</small>
+              </section>
+            )}
+
+            {!generatedConceptCandidate && <div className="concept-visual-actions">
               <button type="button" className="concept-visualise-button" onClick={visualiseConcept}>
                 {conceptVisualised ? "VISUAL STUDY STARTED" : "BEGIN VISUAL STUDY"}
               </button>
               <span>{conceptVisualised ? "Procedural study prepared from the current Project definition." : "Creates a procedural visual study from the current Project definition. This is not CAD, validation, or an adopted design."}</span>
-            </div>
-            {conceptVisualised && (
+            </div>}
+            {conceptVisualised && !generatedConceptCandidate && (
               <div className="concept-visual-board" aria-label="Concept 01 visual study">
                 <div className="visual-board-grid" aria-hidden="true" />
                 <div className="visual-board-label">CONCEPT 01 · PROCEDURAL CONCEPT STUDY</div>
@@ -2785,7 +2883,7 @@ export default function WorkshopShell({
               </div>
             )}
 
-            {conceptVisualised && (
+            {conceptVisualised && !generatedConceptCandidate && (
               <div className="visual-concept-brief">
                 <div className="visual-concept-brief-heading">
                   <div>
@@ -5725,6 +5823,17 @@ export default function WorkshopShell({
         .first-concept-readiness.is-ready { border-color:rgba(73,188,158,.5); background:rgba(15,48,41,.45); }
         .first-concept-readiness small { display:block; max-width:600px; margin-top:6px; color:#9eb0b6; font-size:10px; line-height:1.45; }
         .first-concept-readiness button:disabled { max-width:250px; border-color:#4a626b; background:#15242b; color:#789099; cursor:not-allowed; }
+        .first-concept-generation-status { margin:10px 0 0; padding:9px 11px; border:1px solid rgba(213,174,91,.48); color:#efd599; background:rgba(62,42,13,.38); font:800 10px/1.4 Arial,sans-serif; letter-spacing:.7px; }
+        .first-concept-generation-status.is-error { border-color:rgba(218,102,102,.48); color:#f1b2b2; background:rgba(62,20,20,.34); }
+        .generated-concept-candidate { margin:16px 0; padding:15px; border:1px solid rgba(79,208,203,.5); border-radius:12px; background:rgba(7,23,28,.86); }
+        .generated-concept-candidate-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; }
+        .generated-concept-candidate-heading span { display:block; color:#76dce0; font:800 9px/1.2 Arial,sans-serif; letter-spacing:1.3px; }
+        .generated-concept-candidate-heading strong { display:block; margin-top:5px; color:#f3ffff; font:900 20px/1.1 Arial,sans-serif; }
+        .generated-concept-candidate-heading b { color:#9bd1d4; font:800 9px/1.2 Arial,sans-serif; letter-spacing:1px; }
+        .generated-concept-candidate img { display:block; width:100%; max-height:620px; object-fit:contain; border:1px solid rgba(92,204,209,.22); border-radius:9px; background:#091216; }
+        .generated-concept-candidate p { margin:11px 0 4px; color:#c7f3ef; font:850 10px/1.4 Arial,sans-serif; letter-spacing:1px; }
+        .generated-concept-candidate .generated-concept-candidate-note { margin:4px 0; color:#a9bec2; font-weight:500; letter-spacing:0; }
+        .generated-concept-candidate small { display:block; color:#8aa2a7; font-size:10px; line-height:1.45; }
         .first-concept-identity { margin:9px 0 0; color:#758e97; font-size:9px; overflow-wrap:anywhere; }
 
         .concept-sheet-grid {

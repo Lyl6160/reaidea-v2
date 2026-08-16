@@ -103,3 +103,23 @@ export type ConceptCandidate = {
   sourceEventIds: string[];
   disclaimer: string;
 };
+
+export type ConceptGenerationErrorCode =
+  | "invalid-request"
+  | "unsupported-mode"
+  | "not-configured"
+  | "provider-failure";
+
+export type ConceptGenerationApiResponse =
+  | { candidate: ConceptCandidate }
+  | {
+      error: {
+        code: ConceptGenerationErrorCode;
+        message: string;
+        retryable: boolean;
+      };
+    };
+
+export interface ConceptGenerationProvider {
+  generateConcept(request: ConceptGenerationRequest): Promise<ConceptCandidate>;
+}
