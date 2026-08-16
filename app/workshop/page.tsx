@@ -58,7 +58,7 @@ export default function WorkshopPage() {
           <span>reAIdea</span>
           <strong>Living Workshop</strong>
         </div>
-        <Link href="/discovery/session">← Return to Discovery</Link>
+        <Link href="/">Home / New Project</Link>
       </header>
 
       <WorkshopShell

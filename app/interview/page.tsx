@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import {
@@ -98,6 +99,9 @@ export default function InterviewPage() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
+        <Link href="/workshop" style={styles.backToWorkshop}>
+          ← Back to Workshop
+        </Link>
         <h1>Knowledge Interview</h1>
         <p style={styles.greeting}>{greeting}</p>
         <p style={styles.description}>
@@ -340,6 +344,18 @@ const styles = {
 
   header: {
     marginBottom: "40px",
+  } as const,
+
+  backToWorkshop: {
+    display: "inline-block",
+    marginBottom: "20px",
+    padding: "10px 14px",
+    border: "1px solid #2a7a92",
+    borderRadius: "6px",
+    color: "#7edff2",
+    textDecoration: "none",
+    fontSize: "14px",
+    fontWeight: "600",
   } as const,
 
   greeting: {

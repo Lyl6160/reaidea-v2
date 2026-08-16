@@ -115,9 +115,14 @@ export default function DiscoverySession() {
             <p className="eyebrow">Discovery Bench</p>
             <h1>{project.projectName}</h1>
           </div>
-          <Link href="/" className="new-project-link">
-            New Project
-          </Link>
+          <div className="bench-navigation">
+            <Link href="/workshop" className="back-to-workshop-link">
+              ← Back to Workshop
+            </Link>
+            <Link href="/" className="new-project-link">
+              New Project
+            </Link>
+          </div>
         </header>
 
         <section className="project-origin">
@@ -204,7 +209,7 @@ export default function DiscoverySession() {
 
             <ProjectReviewView project={project} />
 
-            <Link href="/dashboard" className="checkpoint-link secondary-link">
+            <Link href="/workshop" className="checkpoint-link secondary-link">
               Return to Project Workshop
             </Link>
           </section>
@@ -328,6 +333,24 @@ export default function DiscoverySession() {
           text-decoration: none;
           border-bottom: 1px solid #45536a;
           padding-bottom: 3px;
+          white-space: nowrap;
+        }
+
+        .bench-navigation {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 10px 16px;
+        }
+
+        .back-to-workshop-link {
+          padding: 9px 13px;
+          border: 1px solid #00a9cc;
+          border-radius: 8px;
+          background: #092532;
+          color: #8be8f8;
+          font-weight: 800;
+          text-decoration: none;
           white-space: nowrap;
         }
 

@@ -1487,7 +1487,10 @@ export default function WorkshopShell({
           <div className="station-summary">
             <p className="station-summary-label">Knowledge station</p>
             <p>Structured inventor knowledge is managed through the existing Interview capability and Project timeline.</p>
-            <Link href="/interview">OPEN INTERVIEW</Link>
+            <div className="knowledge-actions">
+              <Link href="/discovery/session">Continue Discovery</Link>
+              <Link href="/interview">Open Knowledge Interview</Link>
+            </div>
           </div>
         )}
         {selectedBench.id === "engineering" && (
@@ -3488,6 +3491,27 @@ export default function WorkshopShell({
           padding: 16px;
           border-top: 1px solid rgba(224, 173, 86, 0.38);
           background: rgba(45, 33, 14, 0.24);
+        }
+
+        .knowledge-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 12px;
+        }
+
+        .knowledge-actions a {
+          display: inline-flex;
+          align-items: center;
+          min-height: 38px;
+          padding: 0 13px;
+          border: 1px solid #63b9ca;
+          border-radius: 7px;
+          background: #17333b;
+          color: #dff8fc;
+          font-size: 12px;
+          font-weight: 800;
+          text-decoration: none;
         }
 
         .specialist-project-context {

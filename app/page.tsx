@@ -30,7 +30,7 @@ export default function Home() {
 
     saveProject(project);
     setError("");
-    router.push("/discovery/session");
+    router.push("/workshop");
   }
 
   return (
@@ -57,7 +57,7 @@ export default function Home() {
             <span className="station-line" aria-hidden="true" />
             <div>
               <p>Workshop introduction</p>
-              <h2 id="name-station-title">Welcome, inventor.</h2>
+              <h2 id="name-station-title">Welcome.</h2>
             </div>
           </div>
 
@@ -105,7 +105,7 @@ export default function Home() {
           )}
 
           <button type="button" onClick={beginDiscovery}>
-            <span>Begin Discovery</span>
+            <span>Enter Workshop</span>
             <span className="button-arrow" aria-hidden="true">→</span>
           </button>
 
