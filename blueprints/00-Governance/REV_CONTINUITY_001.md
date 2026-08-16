@@ -1117,4 +1117,30 @@ HP-24.34 — Idea-Type-Aware Concept Evolution is proposed but not started. Futu
 
 ---
 
+# 45. Current HP-24.34 REV Continuity
+
+HP-24.34 — Engineering Interactive Solution Definition Foundation is complete, verified, browser-accepted, tagged, pushed and frozen on branch `sprint006-build24-34-engineering-definition`. The final tag is `v24.34-engineering-definition`.
+
+The frozen parent is `20e0e502626a7e0f06ab785daff6db9efe42748e`, tagged `v24.33-idea-evolving-viewer`. Accepted Build 1 is `1bef93c3db0e66c5876b0e86df4b54e454116d71`, Sprint 006 Build 24.34.1: add interactive Engineering solution definition. Accepted Build 2 is `ee45925dedfd79b85a941c43726080b2aba40327`, Sprint 006 Build 24.34.2: extend Idea Evolving through Engineering definition. Accepted Build 3 is `f5363620b86713247f25843de0a2e631dcf81295`, Sprint 006 Build 24.34.3: simplify Engineering question language. Accepted Build 4 is `28c2a140b3f0967b4e56f16c341a96631bfe1311`, Sprint 006 Build 24.34.4: connect Engineering definition to Prototype brief.
+
+The accepted product role is Workshop → select Engineering → REV asks one solution-definition question → inventor answers → neutral input is recorded → next question appears → IDEA EVOLVING advances → summary grows → Prototype receives the definition as its preferred concept brief. Engineering now fills the missing layer between Discovery problem/context understanding and Prototype concept work.
+
+The stable coverage areas are `proposed-solution`, `operating-concept`, `functional-elements`, `inputs-outputs`, `relationships-flow`, `user-interaction`, `arrangement`, `constraint-safety-response` and `technical-uncertainty`. Stable engineering structure is deliberately separate from simple conversational user-facing language. Future contextual phrasing, Already Covered, Not Relevant, adaptive selection, skipping and pursuit of the next meaningful uncertainty are deferred; the catalogue should evolve into a coverage guide rather than remain a compulsory questionnaire.
+
+Engineering uses StandardBenchShell: REV context, reason, next move and compact IDEA EVOLVING preview on the left; one question, answer input, progress, summary and secondary legacy Prototype handoff in the center; read-only Project Ledger on the right; Back to Workshop, focused identity and disabled Ask REV below.
+
+`recordEngineeringDefinitionAnswer()` records exactly one neutral `engineering-definition-input-recorded` timeline event, preserves the raw inventor response and updates `updatedAt`. Raw definition input is not Engineering State, ProjectEvidence, assertion, conclusion, direction, action, ProjectDecision, Validation result, adopted concept or approved design. It does not alter readiness or Prototype state. Formal Engineering Review remains the distinct deliberate engineering adoption layer.
+
+IDEA EVOLVING now continues deterministically and invention-neutrally through Engineering: zero inputs retains EARLY CONCEPT READY; one through nine yield SOLUTION FORMING, SOLUTION TAKING SHAPE, FUNCTIONAL ELEMENTS FORMING, INPUT / OUTPUT FORMING, FUNCTIONAL FLOW FORMING, INTERACTION FORMING, ARRANGEMENT FORMING, CONSTRAINT RESPONSE FORMING and ENGINEERING DEFINITION READY. Only recorded events advance it; drafts and keystrokes do not. Idea-type classification and recognisable geometry remain deferred.
+
+When Engineering Definition exists, Prototype prefers it for inventor-defined solution, how it works, main elements/stages, inputs/outputs, relationships/flow, user interaction, arrangement, constraint/safety response and technical uncertainty. Discovery remains available as problem/purpose, constraints, assumptions, evidence position and Project uncertainty. Sources are distinctly labelled, no conflict is silently merged, and inventor definition is explicitly unvalidated and not automatically adopted as formal Engineering truth. Projects without definition retain the previous Project-derived fallback. CREATE CONCEPT remains a secondary compatibility action and creates no Project truth.
+
+REV and the inventor browser-accepted the illuminated STOP/GO sign walkthrough, including improved driver awareness, illumination/flashing, pole/shaft, hexagonal sign head/frame, STOP and GO sides, manual turning/control, battery/runtime response and inventor technical uncertainty. The structured Prototype Concept Sheet and Visual Concept Brief preferred these answers while retaining Discovery context. TypeScript, ESLint, production build and `git diff --check` pass; freeze blockers are NONE.
+
+Record as the **AI Provider Independence Principle**: reAIdea shall use an internal AI service/orchestration layer between REV and external AI/model providers. OpenAI may be initial and primary, but REV, Project truth, Workshop logic, memory, authority boundaries, engineering semantics and user experience remain reAIdea-owned and provider-independent. External providers are replaceable capability suppliers, never the system of record or source of reAIdea authority semantics, and future integrations must communicate through controlled internal adapters or service boundaries.
+
+HP-24.35 — Provisional Idea Type + First Recognisable Concept is proposed but NOT STARTED. Classification must be provisional and inventor-correctable; visual form should suit product, machine, process, software, system, environmental, mixed or unknown ideas; the first recognisable concept remains non-authoritative; generated output does not become Project truth; and the original idea remains preserved.
+
+---
+
 **END OF REV-CONTINUITY-001**

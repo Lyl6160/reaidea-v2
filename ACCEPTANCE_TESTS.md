@@ -1595,6 +1595,56 @@ HP-24.34 — Idea-Type-Aware Concept Evolution is proposed but not started. Futu
 
 Accepted Builds 1 and 2 fully close HP-24.33. Build 3 implementation is not required.
 
+## HP-24.34 Consolidated Acceptance Record
+
+**Hold point:** HP-24.34 — Engineering Interactive Solution Definition Foundation
+**Branch:** `sprint006-build24-34-engineering-definition`
+**Frozen parent:** `20e0e502626a7e0f06ab785daff6db9efe42748e`, `v24.33-idea-evolving-viewer`
+**Accepted Build 1:** `1bef93c3db0e66c5876b0e86df4b54e454116d71` — Sprint 006 Build 24.34.1: add interactive Engineering solution definition
+**Accepted Build 2:** `ee45925dedfd79b85a941c43726080b2aba40327` — Sprint 006 Build 24.34.2: extend Idea Evolving through Engineering definition
+**Accepted Build 3:** `f5363620b86713247f25843de0a2e631dcf81295` — Sprint 006 Build 24.34.3: simplify Engineering question language
+**Accepted Build 4:** `28c2a140b3f0967b4e56f16c341a96631bfe1311` — Sprint 006 Build 24.34.4: connect Engineering definition to Prototype brief
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+**Final tag:** `v24.34-engineering-definition`
+
+### Accepted Interaction and Question Contract
+
+- Workshop → Engineering → one conversational solution-definition question → inventor answer → neutral record → reassessment → next question or summary → IDEA EVOLVING progression → Engineering-definition-aware Prototype brief.
+- Stable coverage areas are proposed solution, operating concept, functional elements, inputs/outputs, relationships/flow, user interaction, arrangement, constraint/safety response and technical uncertainty.
+- Stable engineering structure is distinct from user-facing language. Questions are simple, universal and deterministic; context-aware phrasing, Already Covered, Not Relevant and skipping are deferred.
+- Engineering uses StandardBenchShell with REV context and compact preview on the left, active work in the center, read-only Project Ledger on the right and Workshop navigation below.
+
+### Authority and Writer Acceptance
+
+- `recordEngineeringDefinitionAnswer()` creates exactly one `engineering-definition-input-recorded` timeline event, preserves the raw response and updates `updatedAt`.
+- Raw answers are neutral inventor input, not Engineering State, ProjectEvidence, assertion, conclusion, direction, action, decision, Validation result, adopted concept or approved design.
+- The writer does not alter readiness, Prototype state or any formal Engineering truth layer. Formal Engineering Review remains separate.
+- IDEA EVOLVING advances only from recorded events, never from drafts or keystrokes, through nine abstract invention-neutral Engineering stages ending at ENGINEERING DEFINITION READY.
+
+### Prototype Handoff and Browser Acceptance
+
+**PASS:** the illuminated STOP/GO sign walkthrough recorded the proposed solution, illumination/flashing concept, pole/shaft, hexagonal STOP-GO head/frame, STOP and GO sides, manual turning/control, battery/runtime response and technical uncertainty. Prototype preferred these answers in a structured Concept Sheet and Visual Concept Brief, retained Discovery as problem context, and did not present Discovery as the solution operating principle.
+
+The handoff labels Engineering Definition as inventor-provided solution understanding that is neither validated nor automatically adopted as formal Engineering truth. Projects without Engineering Definition retain the previous Project-derived fallback. CREATE CONCEPT remains a secondary compatibility handoff and creates no Project write.
+
+### Accepted Technical Results
+
+- Project model and new top-level state: **UNCHANGED / NONE**.
+- Storage, `workshopBrain`, formal Engineering writers and Prototype decision semantics: **UNCHANGED**.
+- Project writes from Prototype handoff: **NONE**.
+- TypeScript, ESLint, production build and `git diff --check`: **PASS**.
+- Browser acceptance: **PASS**. Freeze blockers: **NONE**.
+
+### Deferred Direction and Provider Independence
+
+HP-24.35 — Provisional Idea Type + First Recognisable Concept is proposed and NOT STARTED. Classification must remain provisional and inventor-correctable; visual form should match product, machine, process, software, system, environmental, mixed or unknown ideas without becoming Project truth.
+
+reAIdea shall use an internal AI service/orchestration layer between REV and external providers. OpenAI may be initial and primary, but REV, Project truth, Workshop logic, memory, authority boundaries, engineering semantics and user experience remain reAIdea-owned and provider-independent. External providers are replaceable capability suppliers accessed through controlled adapters, never the system of record or authority owner.
+
+### Freeze Decision
+
+Accepted Builds 1–4 fully close HP-24.34.
+
 ## AT-001 — Discovery to Checkpoint
 
 **Journey**

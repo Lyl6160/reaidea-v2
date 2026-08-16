@@ -1793,3 +1793,55 @@ The accepted loop is answer → see progress → become curious → continue bui
 ### Freeze Decision
 
 HP-24.33 closes the abstract cross-bench concept reward layer. Build 3 implementation is not required.
+
+## HP-24.34 — Engineering Interactive Solution Definition Foundation
+
+**Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
+
+**Frozen parent:** HP-24.33 at `20e0e502626a7e0f06ab785daff6db9efe42748e`, tag `v24.33-idea-evolving-viewer`
+
+**Accepted Build 1:** `1bef93c3db0e66c5876b0e86df4b54e454116d71` — Sprint 006 Build 24.34.1: add interactive Engineering solution definition
+
+**Accepted Build 2:** `ee45925dedfd79b85a941c43726080b2aba40327` — Sprint 006 Build 24.34.2: extend Idea Evolving through Engineering definition
+
+**Accepted Build 3:** `f5363620b86713247f25843de0a2e631dcf81295` — Sprint 006 Build 24.34.3: simplify Engineering question language
+
+**Accepted Build 4:** `28c2a140b3f0967b4e56f16c341a96631bfe1311` — Sprint 006 Build 24.34.4: connect Engineering definition to Prototype brief
+
+### Accepted Contract
+
+Engineering is a genuine StandardBenchShell workbench between Discovery problem understanding and Prototype concept work. REV presents one simple universal question at a time over nine stable solution-definition areas. Each recorded response grows a readable definition summary, reassesses the next gap and advances the abstract IDEA EVOLVING presentation.
+
+`recordEngineeringDefinitionAnswer()` is the neutral writer. It records one `engineering-definition-input-recorded` event with the raw inventor response and updates Project `updatedAt`; it creates no Engineering State, evidence, assertion, conclusion, direction, action, decision, Validation result, readiness or Prototype state. Formal Engineering Review remains a separate deliberate adoption workflow.
+
+Engineering IDEA EVOLVING stages are deterministic and invention-neutral: EARLY CONCEPT READY, SOLUTION FORMING, SOLUTION TAKING SHAPE, FUNCTIONAL ELEMENTS FORMING, INPUT / OUTPUT FORMING, FUNCTIONAL FLOW FORMING, INTERACTION FORMING, ARRANGEMENT FORMING, CONSTRAINT RESPONSE FORMING and ENGINEERING DEFINITION READY. Only recorded events advance the sequence.
+
+Prototype prefers recorded Engineering Definition for solution-specific Concept Sheet and Visual Concept Brief content, retains Discovery as problem context, clearly labels inventor input as unvalidated/non-adopted and preserves the prior fallback when definition has not started. CREATE CONCEPT remains a secondary local compatibility action with no Project write.
+
+### Final Outcome
+
+- **Final freeze tag:** `v24.34-engineering-definition`
+- **Browser acceptance:** PASS
+- **Engineering StandardBenchShell and one-question flow:** PASS
+- **Neutral writer and timeline semantics:** PASS
+- **Question language refinement:** PASS
+- **Engineering visual continuation:** PASS
+- **Structured Prototype handoff:** PASS
+- **Project writes from handoff:** NONE
+- **Project model, storage, `workshopBrain`, formal writers and decision semantics:** UNCHANGED
+- **Static gates:** PASS
+- **Freeze blockers:** NONE
+
+### Deferred Architecture
+
+Question catalogues are future coverage guides rather than permanently rigid questionnaires. Contextual phrasing, Already Covered, Not Relevant, adaptive selection, skipping and pursuit of the next meaningful uncertainty are deferred.
+
+HP-24.35 — Provisional Idea Type + First Recognisable Concept is proposed and NOT STARTED. Any classification is provisional and inventor-correctable; visual modes may include product, machine, process, software, system, environmental, mixed and unknown, and generated output remains non-authoritative.
+
+### AI Provider Independence Principle
+
+reAIdea shall own REV, Project truth, Workshop logic, memory, authority boundaries, engineering semantics and user experience behind an internal AI service/orchestration boundary. OpenAI may be the initial primary provider, but external models remain replaceable capability suppliers accessed through controlled adapters and never become the system of record or authority owner.
+
+### Freeze Decision
+
+Accepted Builds 1–4 close HP-24.34. HP-24.35 is not started by this freeze.

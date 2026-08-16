@@ -1,15 +1,15 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.33 — Cross-Bench Idea Evolving Viewer
-**Branch:** `sprint006-build24-33-idea-evolving-viewer`
-**Accepted HEAD:** `df5de03613c5dd048338d53cc0abcd0b653d06bb`
+**Construction checkpoint:** HP-24.34 — Engineering Interactive Solution Definition Foundation
+**Branch:** `sprint006-build24-34-engineering-definition`
+**Accepted HEAD:** `28c2a140b3f0967b4e56f16c341a96631bfe1311`
 **Status:** COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
 **Last governance update:** 2026-08-16
 
 ## Current Hold-Point Candidate
 
-**HP-24.32 — Inventor / Knowledge Bench Discovery Input**
+**HP-24.35 — Provisional Idea Type + First Recognisable Concept** — PROPOSED / NOT STARTED
 
 Protected previous foundation:
 
@@ -739,5 +739,21 @@ The viewer is read-only, abstract and invention-neutral. It does not automatical
 Browser acceptance and all static gates pass; freeze blockers are NONE. HP-24.33 is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN with tag `v24.33-idea-evolving-viewer`.
 
 The accepted engagement principle is answer → see progress → become curious → continue building the idea. HP-24.34 — Idea-Type-Aware Concept Evolution is proposed but not started. Future inspection should cover inventor-confirmed provisional idea classification, appropriate visual language for product, machine, process, software, system and other idea types, bounded non-authoritative generation, original-idea preservation and future concept history.
+
+## HP-24.34 Capability
+
+HP-24.34 — Engineering Interactive Solution Definition Foundation is COMPLETE / VERIFIED / BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN. The frozen parent is `20e0e502626a7e0f06ab785daff6db9efe42748e`, tagged `v24.33-idea-evolving-viewer`. Accepted builds are `1bef93c3db0e66c5876b0e86df4b54e454116d71`, `ee45925dedfd79b85a941c43726080b2aba40327`, `f5363620b86713247f25843de0a2e631dcf81295` and `28c2a140b3f0967b4e56f16c341a96631bfe1311`.
+
+Engineering is now a genuine StandardBenchShell working bench. One conversational question at a time captures the stable areas `proposed-solution`, `operating-concept`, `functional-elements`, `inputs-outputs`, `relationships-flow`, `user-interaction`, `arrangement`, `constraint-safety-response` and `technical-uncertainty`. `recordEngineeringDefinitionAnswer()` preserves each raw answer as one neutral `engineering-definition-input-recorded` event; it changes no Engineering State, evidence, assertion, conclusion, direction, action, decision, readiness or Prototype state.
+
+Recorded Engineering inputs extend the abstract deterministic IDEA EVOLVING sequence from EARLY CONCEPT READY through SOLUTION FORMING, SOLUTION TAKING SHAPE, FUNCTIONAL ELEMENTS FORMING, INPUT / OUTPUT FORMING, FUNCTIONAL FLOW FORMING, INTERACTION FORMING, ARRANGEMENT FORMING, CONSTRAINT RESPONSE FORMING and ENGINEERING DEFINITION READY. Progress occurs only after recording, never on keystrokes.
+
+Prototype now prefers Engineering Definition for solution-specific Concept Sheet and Visual Concept Brief fields while retaining Discovery as problem context and preserving the former Project-derived fallback for older Projects. The handoff is presentation-only and clearly labels the definition as inventor-provided, unvalidated and not automatically adopted as formal Engineering truth. Browser acceptance and all static gates pass; freeze blockers are NONE.
+
+Question adaptivity is deferred: future REV may contextually phrase questions, mark Already Covered or Not Relevant, skip unnecessary areas and pursue the next meaningful uncertainty. HP-24.35 — Provisional Idea Type + First Recognisable Concept is proposed but NOT STARTED; provisional inventor-correctable modes may include product, machine, process, software, system, environmental, mixed and unknown.
+
+### AI Provider Independence Principle
+
+reAIdea shall place an internal AI service/orchestration layer between REV and external model providers. OpenAI may be the initial primary provider, but REV, Project truth, Workshop logic, memory, authority boundaries, engineering semantics and user experience remain owned by reAIdea and provider-independent. External providers are replaceable capability suppliers, never the system of record or owner of reAIdea authority semantics, and future integrations must use controlled internal adapters or service boundaries.
 
 Build 2 implementation is not required. HP-24.23 remains protected at `efa30b98927b8247c1bef74f8e5b43119bdf91e6` / `v24.23-direction-action-trace`.
