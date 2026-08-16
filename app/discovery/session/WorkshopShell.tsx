@@ -80,6 +80,12 @@ function specialistContextLimitNote(
   return `Showing ${collection.items.length} of ${collection.total} recorded items.`;
 }
 
+function sameStringSet(left: string[], right: string[]): boolean {
+  if (left.length !== right.length) return false;
+  const rightValues = new Set(right);
+  return left.every((value) => rightValues.has(value));
+}
+
 
 function conceptKey(project: Project) {
   const source = `${project.projectName}::${project.originalObservation}`;
@@ -647,6 +653,14 @@ export default function WorkshopShell({
     ),
     [project, confirmedVisualMode, conceptWorkflowIdentity]
   );
+  const generatedConceptCandidateIsStale = useMemo(() => {
+    if (!generatedConceptCandidate) return false;
+    const currentRequest = conceptGenerationFoundation.request;
+    return !currentRequest ||
+      generatedConceptCandidate.visualMode !== currentRequest.visualMode ||
+      generatedConceptCandidate.representationStyle !== currentRequest.representationStyle ||
+      !sameStringSet(generatedConceptCandidate.sourceEventIds, currentRequest.sourceEventIds);
+  }, [conceptGenerationFoundation.request, generatedConceptCandidate]);
 
   const conceptSheet = useMemo(() => {
     const engineering = project.engineeringState;
@@ -815,7 +829,7 @@ export default function WorkshopShell({
     [project]
   );
   const compactConceptPreview = (
-    <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} compact />
+    <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} compact />
   );
   const recentDiscoveryResponses = useMemo(
     () =>
@@ -990,7 +1004,6 @@ export default function WorkshopShell({
   function changeVisualMode(mode: IdeaVisualMode) {
     setVisualModeOverride(mode);
     setConfirmedVisualMode(null);
-    setGeneratedConceptCandidate(null);
     setConceptGenerationState("idle");
     setConceptGenerationMessage("");
   }
@@ -2196,7 +2209,7 @@ export default function WorkshopShell({
         </div>
 
         <div className="hub-concept-preview">
-          <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} />
+          <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} />
           <span className="hub-concept-pointer" aria-hidden="true">↓</span>
         </div>
 
@@ -2722,12 +2735,13 @@ export default function WorkshopShell({
           <div className="concept-readout">
             <div className="concept-sheet-heading">
               <div>
-                <span>PROTOTYPE BENCH · CONCEPT 01</span>
+                <span>PROTOTYPE BENCH · CONCEPT DEVELOPMENT HOME</span>
                 <strong>{projectName}</strong>
               </div>
               <b>CONCEPT SHEET</b>
             </div>
             <p className="concept-persistence-note">Workshop-local concept study · saved locally for this Project workshop. Project truth changes only through explicit recorded decisions.</p>
+            <p className="concept-persistence-note">This is where the same idea that began with the inventor is developed into a large working engineering concept model. Prototype does not start a separate concept.</p>
 
             <section className="first-concept-foundation" aria-label="First recognisable concept foundation">
               <div className="first-concept-mode-heading">
@@ -2845,17 +2859,23 @@ export default function WorkshopShell({
               <section className="generated-concept-candidate" aria-label="Engineering Concept Model 01">
                 <div className="generated-concept-candidate-heading">
                   <div><span>REV · ENGINEERING CONCEPT MODEL</span><strong>CONCEPT 01</strong></div>
-                  <b>{generatedConceptCandidate.representationStyle.replaceAll("-", " ")}</b>
+                  <b>{generatedConceptCandidateIsStale ? "CURRENT MODEL · UPDATE AVAILABLE" : generatedConceptCandidate.representationStyle.replaceAll("-", " ")}</b>
                 </div>
-                <Image
-                  src={generatedConceptCandidate.output.dataUrl}
-                  alt={generatedConceptCandidate.output.altText}
-                  width={1024}
-                  height={1024}
-                  unoptimized
-                />
+                <div className="generated-concept-model-viewport">
+                  <i className="generated-concept-grid" aria-hidden="true" />
+                  <Image
+                    src={generatedConceptCandidate.output.dataUrl}
+                    alt={generatedConceptCandidate.output.altText}
+                    width={1024}
+                    height={1024}
+                    unoptimized
+                  />
+                  <span className="generated-concept-axis" aria-hidden="true">Z ↑<br />Y ↙ · X ↘</span>
+                </div>
                 <p>{generatedConceptCandidate.disclaimer}</p>
                 <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs as an early engineering representation. This is what reAIdea currently understands you are describing; it does not prove feasibility or depict a finished product.</p>
+                {generatedConceptCandidateIsStale && <p className="generated-concept-update-note">NEW INFORMATION RECORDED · The current model is retained. Update only through an explicit future model action.</p>}
+                <small>Prototype develops the same evolving idea into its large working model; the concept did not begin at this bench.</small>
                 <small>Transient session model. Refreshing this page removes it. It is not stored in the Project or local storage.</small>
               </section>
             )}
@@ -5830,9 +5850,13 @@ export default function WorkshopShell({
         .generated-concept-candidate-heading span { display:block; color:#76dce0; font:800 9px/1.2 Arial,sans-serif; letter-spacing:1.3px; }
         .generated-concept-candidate-heading strong { display:block; margin-top:5px; color:#f3ffff; font:900 20px/1.1 Arial,sans-serif; }
         .generated-concept-candidate-heading b { color:#9bd1d4; font:800 9px/1.2 Arial,sans-serif; letter-spacing:1px; }
-        .generated-concept-candidate img { display:block; width:100%; max-height:620px; object-fit:contain; border:1px solid rgba(92,204,209,.22); border-radius:9px; background:#091216; }
+        .generated-concept-model-viewport { position:relative; overflow:hidden; border:1px solid rgba(92,204,209,.22); border-radius:9px; background:#091216; }
+        .generated-concept-candidate img { position:relative; z-index:1; display:block; width:100%; max-height:620px; object-fit:contain; }
+        .generated-concept-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(78,174,190,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(78,174,190,.08) 1px,transparent 1px); background-size:28px 28px; }
+        .generated-concept-axis { position:absolute; z-index:2; right:12px; bottom:10px; color:rgba(119,225,228,.78); font:700 9px/1.25 monospace; text-align:center; }
         .generated-concept-candidate p { margin:11px 0 4px; color:#c7f3ef; font:850 10px/1.4 Arial,sans-serif; letter-spacing:1px; }
         .generated-concept-candidate .generated-concept-candidate-note { margin:4px 0; color:#a9bec2; font-weight:500; letter-spacing:0; }
+        .generated-concept-candidate .generated-concept-update-note { margin:8px 0; padding:8px 10px; border-left:2px solid #d4aa61; color:#dfc28d; background:rgba(67,47,19,.34); }
         .generated-concept-candidate small { display:block; color:#8aa2a7; font-size:10px; line-height:1.45; }
         .first-concept-identity { margin:9px 0 0; color:#758e97; font-size:9px; overflow-wrap:anywhere; }
 

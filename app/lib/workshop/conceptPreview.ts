@@ -19,10 +19,20 @@ export type ConceptEvolutionStage =
   | "constraint-response"
   | "engineering-ready";
 
+export type ConceptVisualJourneyStage =
+  | "idea-seed"
+  | "rough-sketch"
+  | "recognisable-concept"
+  | "engineering-sketch"
+  | "engineering-concept-model";
+
 export type SharedConceptPreview = {
   stage: ConceptEvolutionStage;
   answerCount: number;
   engineeringAnswerCount: number;
+  visualStage: ConceptVisualJourneyStage;
+  progressReason: string;
+  recognisableGenerationAvailable: boolean;
   title: string;
   subtitle: string;
 };
@@ -40,8 +50,8 @@ const STAGE_COPY: Record<
   Pick<SharedConceptPreview, "title" | "subtitle">
 > = {
   dormant: {
-    title: "IDEA WAITING",
-    subtitle: "Record a Discovery answer to begin forming the idea.",
+    title: "IDEA SEED",
+    subtitle: "The recorded original idea has begun one continuing concept journey.",
   },
   spark: {
     title: "IDEA EVOLVING",
@@ -81,16 +91,28 @@ export function deriveSharedConceptPreview(project: Project): SharedConceptPrevi
 
   const answerCount = recordedSubjects.size;
   const engineeringAnswerCount = engineeringSubjects.size;
+  const recognisableGenerationAvailable = [
+    "proposed-solution",
+    "operating-concept",
+    "functional-elements",
+  ].every((subject) => engineeringSubjects.has(subject));
+
+  if (engineeringAnswerCount > 0) {
+    return deriveEngineeringPreview(
+      answerCount,
+      engineeringAnswerCount,
+      recognisableGenerationAvailable
+    );
+  }
 
   if (assessDiscovery(project).readyToAdvance) {
-    if (engineeringAnswerCount > 0) {
-      return deriveEngineeringPreview(answerCount, engineeringAnswerCount);
-    }
-
     return {
       stage: "early-ready",
       answerCount,
       engineeringAnswerCount,
+      visualStage: "recognisable-concept",
+      progressReason: "Discovery understanding is ready to support solution definition.",
+      recognisableGenerationAvailable,
       title: "EARLY CONCEPT READY",
       subtitle: "Enough early understanding exists to begin a more specific concept study.",
     };
@@ -109,12 +131,21 @@ export function deriveSharedConceptPreview(project: Project): SharedConceptPrevi
               ? "structure"
               : "wireframe";
 
-  return { stage, answerCount, engineeringAnswerCount, ...STAGE_COPY[stage] };
+  return {
+    stage,
+    answerCount,
+    engineeringAnswerCount,
+    visualStage: answerCount >= 3 ? "recognisable-concept" : answerCount > 0 ? "rough-sketch" : "idea-seed",
+    progressReason: discoveryProgressReason(answerCount),
+    recognisableGenerationAvailable,
+    ...STAGE_COPY[stage],
+  };
 }
 
 function deriveEngineeringPreview(
   answerCount: number,
-  engineeringAnswerCount: number
+  engineeringAnswerCount: number,
+  recognisableGenerationAvailable: boolean
 ): SharedConceptPreview {
   const stages: Array<Pick<SharedConceptPreview, "stage" | "title" | "subtitle">> = [
     {
@@ -169,5 +200,35 @@ function deriveEngineeringPreview(
     ...selected,
     answerCount,
     engineeringAnswerCount,
+    visualStage: engineeringAnswerCount >= 7
+      ? "engineering-concept-model"
+      : engineeringAnswerCount >= 3
+        ? "engineering-sketch"
+        : "recognisable-concept",
+    progressReason: engineeringProgressReason(engineeringAnswerCount),
+    recognisableGenerationAvailable,
   };
+}
+
+function discoveryProgressReason(answerCount: number): string {
+  if (answerCount === 0) return "Original idea recorded.";
+  if (answerCount === 1) return "New problem context recorded.";
+  if (answerCount === 2) return "Another meaningful clarification recorded.";
+  if (answerCount === 3) return "Purpose and context are becoming clearer.";
+  return "Recorded Discovery understanding has added structure to the concept.";
+}
+
+function engineeringProgressReason(engineeringAnswerCount: number): string {
+  const reasons = [
+    "New solution detail recorded.",
+    "Operating concept recorded.",
+    "Main parts now understood.",
+    "Inputs and outputs clarified.",
+    "Functional relationships clarified.",
+    "Interaction clarified.",
+    "Arrangement clarified.",
+    "Constraint response recorded.",
+    "Engineering definition is ready for a deliberate model checkpoint.",
+  ];
+  return reasons[Math.min(engineeringAnswerCount, reasons.length) - 1];
 }

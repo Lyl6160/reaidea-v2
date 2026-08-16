@@ -6,6 +6,7 @@ import type { SharedConceptPreview } from "../lib/workshop/conceptPreview";
 type ConceptPreviewProps = {
   preview: SharedConceptPreview;
   candidate?: ConceptCandidate | null;
+  candidateStale?: boolean;
   compact?: boolean;
 };
 
@@ -21,7 +22,7 @@ const REAR_POINTS = POINTS.map(([x, y]) => [x - 5, y - 7] as const);
 const PRELIMINARY_REAR_LINES = OUTLINE_LINES.slice(0, 6);
 const DEPTH_NODES = [1, 3, 5, 6, 7, 8] as const;
 
-export default function ConceptPreview({ preview, candidate, compact = false }: ConceptPreviewProps) {
+export default function ConceptPreview({ preview, candidate, candidateStale = false, compact = false }: ConceptPreviewProps) {
   const discoveryStageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
   const engineeringLevel = preview.engineeringAnswerCount;
   const stageIndex = engineeringLevel > 0 ? 6 : discoveryStageIndex;
@@ -38,13 +39,15 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
       data-concept-stage={preview.stage}
       data-discovery-input-count={preview.answerCount}
       data-engineering-input-count={preview.engineeringAnswerCount}
+      data-visual-journey-stage={preview.visualStage}
     >
       <div className="concept-preview-heading">
         <span>{candidate ? "CONCEPT 01" : "IDEA EVOLVING"}</span>
-        {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : "DISCOVERY-DRIVEN PREVIEW"}</b>}
+        {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : preview.visualStage.replaceAll("-", " ")}</b>}
       </div>
       {candidate?.output.type === "image" && candidate.output.dataUrl ? (
         <div className="concept-candidate-preview">
+          <i className="technical-grid" aria-hidden="true" />
           <Image
             src={candidate.output.dataUrl}
             alt={candidate.output.altText}
@@ -52,6 +55,7 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
             height={1024}
             unoptimized
           />
+          <span className="orientation-cue" aria-hidden="true">Z<br />↑<br />Y · X</span>
         </div>
       ) : <div className="concept-field" aria-hidden="true">
         <svg viewBox="0 0 100 100" role="presentation">
@@ -144,12 +148,15 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
         <strong>{candidate ? "CONCEPT 01" : preview.title}</strong>
         <span>
           {candidate
-            ? "ENGINEERING CONCEPT MODEL · EARLY ENGINEERING CONCEPT"
+            ? candidateStale
+              ? "CURRENT MODEL · UPDATE AVAILABLE"
+              : `ENGINEERING CONCEPT MODEL · REVISION ${candidate.revision}`
             : preview.engineeringAnswerCount > 0
             ? `${preview.engineeringAnswerCount} ENGINEERING INPUT${preview.engineeringAnswerCount === 1 ? "" : "S"} RECORDED`
             : `${preview.answerCount} DISCOVERY INPUT${preview.answerCount === 1 ? "" : "S"} RECORDED`}
         </span>
-        {!compact && <p>{preview.subtitle}</p>}
+        {!compact && <p>{candidate ? (candidateStale ? "New recorded information exists. The current model remains visible until you explicitly update it." : "The same current engineering model follows the idea through the Workshop.") : preview.progressReason}</p>}
+        {!compact && !candidate && preview.recognisableGenerationAvailable && <em>MODEL CHECKPOINT AVAILABLE · EXPLICIT GENERATION ONLY</em>}
       </div>
       <small>CONCEPTUAL · UNVALIDATED · NOT PROJECT TRUTH</small>
 
@@ -171,8 +178,10 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
         .concept-preview-heading span { color: #8bf2f4; }
         .concept-preview-heading b { color: #779096; }
         .concept-field { height: 150px; margin: 8px 0; border: 1px solid rgba(102, 210, 224, .16); border-radius: 10px; overflow: hidden; background: radial-gradient(circle, rgba(53, 186, 204, .1), transparent 62%); }
-        .concept-candidate-preview { height:150px; margin:8px 0; border:1px solid rgba(102,210,224,.28); border-radius:10px; overflow:hidden; background:#0a1216; }
-        .concept-candidate-preview img { width:100%; height:100%; object-fit:contain; }
+        .concept-candidate-preview { position:relative; height:150px; margin:8px 0; border:1px solid rgba(102,210,224,.28); border-radius:10px; overflow:hidden; background:#0a1216; }
+        .concept-candidate-preview img { position:relative; z-index:1; width:100%; height:100%; object-fit:contain; }
+        .technical-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(88,180,194,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(88,180,194,.08) 1px,transparent 1px); background-size:16px 16px; }
+        .orientation-cue { position:absolute; z-index:2; right:7px; bottom:6px; color:rgba(139,242,244,.72); font:700 7px/1.05 monospace; text-align:center; }
         svg { width: 100%; height: 100%; }
         line { vector-effect: non-scaling-stroke; }
         .cluster-line { stroke: rgba(92, 214, 226, .32); stroke-width: .7; }
@@ -207,6 +216,7 @@ export default function ConceptPreview({ preview, candidate, compact = false }: 
         .concept-preview-copy strong { font-size: 17px; letter-spacing: .035em; }
         .concept-preview-copy span { color: #8eb3b8; }
         .concept-preview-copy p { margin: 4px 0 0; color: #b9cacc; font-size: 12px; line-height: 1.45; }
+        .concept-preview-copy em { color:#d6bb7c; font:800 8px/1.35 Arial,sans-serif; letter-spacing:.09em; font-style:normal; }
         small { display: block; margin-top: 10px; color: #71898d; }
         .is-compact { margin-top: 24px; padding: 11px; border-radius: 10px; }
         .is-compact .concept-field { height: 86px; margin: 7px 0; }
