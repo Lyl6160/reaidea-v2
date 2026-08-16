@@ -13,12 +13,17 @@ const POINTS = [
 const CLUSTER_LINES = [[2, 9], [9, 10], [10, 4], [4, 6]] as const;
 const OUTLINE_LINES = [[1, 3], [3, 11], [11, 5], [5, 6], [6, 7], [7, 8], [8, 0], [0, 1]] as const;
 const STRUCTURE_LINES = [[1, 9], [3, 4], [9, 3], [9, 7], [10, 5], [10, 7], [8, 9], [4, 10]] as const;
+const REAR_POINTS = POINTS.map(([x, y]) => [x - 5, y - 7] as const);
+const PRELIMINARY_REAR_LINES = OUTLINE_LINES.slice(0, 6);
+const DEPTH_NODES = [1, 3, 5, 6, 7, 8] as const;
 
 export default function ConceptPreview({ preview, compact = false }: ConceptPreviewProps) {
   const stageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
   const showCluster = stageIndex >= 2;
   const showOutline = stageIndex >= 3;
   const showStructure = stageIndex >= 4;
+  const showWireframe = stageIndex >= 5;
+  const showSettledWireframe = preview.stage === "early-ready";
 
   return (
     <section
@@ -48,6 +53,18 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
           ))}
           {showStructure && STRUCTURE_LINES.map(([from, to]) => (
             <line key={`s-${from}-${to}`} className="structure-line" x1={POINTS[from][0]} y1={POINTS[from][1]} x2={POINTS[to][0]} y2={POINTS[to][1]} />
+          ))}
+          {showWireframe && (showSettledWireframe ? OUTLINE_LINES : PRELIMINARY_REAR_LINES).map(([from, to]) => (
+            <line key={`r-${from}-${to}`} className="rear-line" x1={REAR_POINTS[from][0]} y1={REAR_POINTS[from][1]} x2={REAR_POINTS[to][0]} y2={REAR_POINTS[to][1]} />
+          ))}
+          {showWireframe && DEPTH_NODES.map((index) => (
+            <line key={`d-${index}`} className="depth-line" x1={POINTS[index][0]} y1={POINTS[index][1]} x2={REAR_POINTS[index][0]} y2={REAR_POINTS[index][1]} />
+          ))}
+          {showSettledWireframe && STRUCTURE_LINES.map(([from, to]) => (
+            <line key={`rs-${from}-${to}`} className="rear-structure-line" x1={REAR_POINTS[from][0]} y1={REAR_POINTS[from][1]} x2={REAR_POINTS[to][0]} y2={REAR_POINTS[to][1]} />
+          ))}
+          {showWireframe && REAR_POINTS.map(([x, y], index) => (
+            <circle key={`rear-${x}-${y}`} className={`rear-point rear-point-${index}`} cx={x} cy={y} r={showSettledWireframe ? 1.45 : 1.05} />
           ))}
           {POINTS.map(([x, y], index) => (
             <circle key={`${x}-${y}`} className={`idea-point point-${index}`} cx={x} cy={y} r={stageIndex === 0 ? 0.65 : showStructure ? 2 : 1.45} />
@@ -84,10 +101,18 @@ export default function ConceptPreview({ preview, compact = false }: ConceptPrev
         .cluster-line { stroke: rgba(92, 214, 226, .32); stroke-width: .7; }
         .outline-line { stroke: rgba(120, 235, 239, .58); stroke-width: .9; stroke-dasharray: 2 1.4; }
         .structure-line { stroke: rgba(159, 246, 239, .78); stroke-width: 1.05; }
+        .rear-line { stroke: rgba(94, 183, 218, .72); stroke-width: .85; stroke-dasharray: 1.5 1; }
+        .depth-line { stroke: rgba(129, 226, 235, .82); stroke-width: .9; }
+        .rear-structure-line { stroke: rgba(104, 202, 225, .48); stroke-width: .7; }
         .idea-point { fill: url(#idea-glow-hub); filter: drop-shadow(0 0 2px #66e5ee); opacity: .92; }
+        .rear-point { fill: #72cfe0; opacity: .72; filter: drop-shadow(0 0 1.5px #48b7ce); }
         .stage-dormant .idea-point { opacity: .13; filter: none; }
         .stage-spark .idea-point:nth-of-type(3n) { opacity: .38; }
         .stage-early-ready .idea-point { fill: #dfffff; }
+        .stage-wireframe .outline-line { stroke-width: 1.2; stroke-dasharray: 2.4 1; }
+        .stage-early-ready .outline-line, .stage-early-ready .rear-line { stroke-dasharray: none; stroke-width: 1.25; }
+        .stage-early-ready .depth-line { stroke: rgba(172, 248, 243, .95); stroke-width: 1.1; }
+        .stage-early-ready .structure-line { stroke-width: 1.2; }
         .stage-early-ready .concept-field { box-shadow: 0 0 32px rgba(76, 224, 226, .2) inset; }
         .concept-preview-copy { display: grid; gap: 4px; }
         .concept-preview-copy strong { font-size: 17px; letter-spacing: .035em; }
