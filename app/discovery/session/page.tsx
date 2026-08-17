@@ -126,7 +126,7 @@ export default function DiscoverySession() {
         </header>
 
         <section className="project-origin">
-          <p className="section-label">Original Observation · Preserved</p>
+            <p className="section-label">Your Original Observation</p>
           <blockquote>{project.originalObservation}</blockquote>
         </section>
 
@@ -148,7 +148,7 @@ export default function DiscoverySession() {
             </details>
 
             <section className="mission-complete-section">
-              <p className="mission-label">Mission Complete</p>
+              <p className="mission-label">Your Answer</p>
               <p>{getMissionCompleteMessage()}</p>
             </section>
 
@@ -166,7 +166,7 @@ export default function DiscoverySession() {
             {error && <p className="error">{error}</p>}
 
             <button type="button" onClick={saveAnswer}>
-              Update Project &amp; Continue
+              Save &amp; Continue
             </button>
 
             <section className="next-mission-section">
@@ -177,28 +177,25 @@ export default function DiscoverySession() {
         ) : (
           <section className="mission-card checkpoint-card">
             <p className="greeting">{greeting}</p>
-            <p className="mission-label">Discovery Checkpoint Reached</p>
-            <h2>Sufficient understanding to continue responsibly.</h2>
+            <p className="mission-label">We Have Enough to Move On</p>
+            <h2>You have covered the main Discovery questions.</h2>
             <p className="why">{assessment.summary}</p>
 
             <details className="reasoning-disclosure">
-              <summary>Why questioning stopped</summary>
+              <summary>Why REV has stopped asking broad questions</summary>
               <p>
-                Every core Discovery area has now been addressed. reAIdea stops
-                broad questioning here rather than manufacturing confidence from
-                conversation length. Remaining gaps stay explicit in the Engineering
-                State and must be reduced by evidence and validation.
+                You have answered each main Discovery area. Any unanswered details
+                will stay visible so you can check them with real information later.
               </p>
             </details>
 
             {!project.validationPlan && (
               <section className="validation-planning">
-                <p className="reasoning-label">Next Responsible Step</p>
-                <h3>Turn the remaining uncertainty into a validation plan.</h3>
+                <p className="reasoning-label">What to Do Next</p>
+                <h3>Make a plan to check the biggest unknowns.</h3>
                 <p>
-                  REV will convert the Project&apos;s assumptions and evidence gaps into a
-                  short set of targeted validation activities. The plan is designed to
-                  confirm, refine or challenge the current understanding — not defend it.
+                  REV will turn the things you are unsure about into a short list of
+                  checks. The results may support or change what we understand.
                 </p>
                 {error && <p className="error">{error}</p>}
                 <button type="button" onClick={planValidation}>
@@ -220,8 +217,8 @@ export default function DiscoverySession() {
             <p className="mission-label">Living Workshop</p>
             <h2>Step inside the reAIdea workshop.</h2>
             <p>
-              Leave the Discovery bench and enter the full workshop. The same Project
-              Brain will light the benches that now have useful work waiting.
+              Leave the Discovery bench and enter the full workshop. REV will show you
+              which benches have useful work waiting.
             </p>
           </div>
           <Link href="/workshop" className="enter-workshop-link">
@@ -233,15 +230,14 @@ export default function DiscoverySession() {
           <summary className="project-workshop-summary">
             <span>
               <span className="mission-label workshop-label">Project Workshop</span>
-              <strong>View the current Engineering State</strong>
+              <strong>Review What We Know</strong>
             </span>
             <span className="workshop-summary-hint">Open</span>
           </summary>
 
           <div className="project-workshop-body">
             <p className="reflection-intro">
-              The Project Workshop keeps the engineering detail available without
-              competing with the task at the bench.
+              This summary keeps the project details nearby without getting in the way.
             </p>
 
             <StateItem
@@ -808,8 +804,7 @@ function MissingProject() {
         <p style={{ color: "#00d4ff", fontWeight: 800 }}>Discovery Bench</p>
         <h1>No active Project is open.</h1>
         <p style={{ color: "#a8b3c7", lineHeight: 1.6 }}>
-          Start at the Workshop Door so the original observation can be preserved and
-          the Project can be created correctly.
+          Start at the Workshop Door to share your first observation and create a Project.
         </p>
         <Link
           href="/"

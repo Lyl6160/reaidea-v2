@@ -32,7 +32,7 @@ export function recordSpecialistContribution(
     return {
       status: "invalid",
       project,
-      reason: "Record a specialist contribution before saving it.",
+      reason: "Record what the specialist found before saving it.",
     };
   }
 

@@ -197,7 +197,7 @@ export default function ProjectReviewView({
 
   function recordConclusion() {
     if (!conclusion.trim()) {
-      setConclusionError("Record a conclusion before saving it.");
+      setConclusionError("Describe what you learned before saving.");
       return;
     }
 
@@ -234,7 +234,7 @@ export default function ProjectReviewView({
 
   function recordDirection() {
     if (!direction.trim() || selectedDirectionBasisIds.length === 0) {
-      setDirectionError("Record a direction and select at least one current conclusion.");
+      setDirectionError("Describe what to do next and choose at least one current finding.");
       return;
     }
 
@@ -269,7 +269,7 @@ export default function ProjectReviewView({
 
   function recordAction() {
     if (!action.trim() || selectedActionBasisIds.length === 0) {
-      setActionError("Record an action and select at least one current engineering direction.");
+      setActionError("Describe what you will do and choose at least one current direction.");
       return;
     }
 
@@ -295,7 +295,7 @@ export default function ProjectReviewView({
   function recordActionResult() {
     if (!actionResultActionId || !actionResult.trim()) {
       setActionResultError(
-        "Select an adopted engineering action and record what happened before saving the result."
+        "Choose a planned engineering action and describe what happened before saving."
       );
       return;
     }
@@ -324,7 +324,7 @@ export default function ProjectReviewView({
       !actionResultEvidenceSource.trim()
     ) {
       setActionResultEvidenceError(
-        "Select a recorded action result and explicitly record the evidence summary and source."
+        "Choose a saved result, then describe the evidence and where it came from."
       );
       return;
     }
@@ -371,7 +371,7 @@ export default function ProjectReviewView({
 
       {plan.status === "completed" && (
         <div className="validation-complete-note">
-          <p className="validation-label">Initial Validation Cycle Complete</p>
+          <p className="validation-label">First Set of Checks Complete</p>
           <p>
             Every planned activity has a recorded result. Review the Engineering State
             below before choosing the next development or validation action.
@@ -397,10 +397,10 @@ export default function ProjectReviewView({
                 {formatValidationStatus(item.status)}
               </span>
             </div>
-            <p><strong>Target:</strong> {item.target}</p>
-            <p><strong>Method:</strong> {item.method}</p>
-            <p><strong>Evidence needed:</strong> {item.evidenceNeeded}</p>
-            <p><strong>Done when:</strong> {item.completionRule}</p>
+            <p><strong>What to check:</strong> {item.target}</p>
+            <p><strong>How to check it:</strong> {item.method}</p>
+            <p><strong>What to collect:</strong> {item.evidenceNeeded}</p>
+            <p><strong>You are done when:</strong> {item.completionRule}</p>
 
             {item.status === "planned" && activeItemId !== item.id && (
               <button
@@ -414,10 +414,10 @@ export default function ProjectReviewView({
 
             {(item.status === "in-progress" || activeItemId === item.id) && (
               <section className="validation-execution">
-                <p className="validation-label">Record Validation Evidence</p>
+                <p className="validation-label">Record What You Found</p>
 
                 <div className="validation-field validation-evidence-field">
-                  <label htmlFor={`evidence-${item.id}`}>Evidence gathered</label>
+                  <label htmlFor={`evidence-${item.id}`}>What you found</label>
                   <p className="validation-field-hint">
                     Record what you actually observed, measured, tested or independently reviewed.
                   </p>
@@ -429,12 +429,12 @@ export default function ProjectReviewView({
                       setEvidenceSummary(event.target.value);
                       if (validationError) setValidationError("");
                     }}
-                    placeholder="Type the evidence you actually gathered here — example text is not saved."
+                    placeholder="Describe the real information you gathered. Example text is not saved."
                   />
                 </div>
 
                 <div className="validation-field validation-source-field">
-                  <label htmlFor={`source-${item.id}`}>Evidence source / reference</label>
+                  <label htmlFor={`source-${item.id}`}>Where it came from</label>
                   <p className="validation-field-hint">
                     Identify where the evidence came from so it can be reviewed later.
                   </p>
@@ -446,12 +446,12 @@ export default function ProjectReviewView({
                       setEvidenceSource(event.target.value);
                       if (validationError) setValidationError("");
                     }}
-                    placeholder="Type the real source or reference here — example text is not saved."
+                    placeholder="Add the real source or reference. Example text is not saved."
                   />
                 </div>
 
                 <div className="validation-field validation-finding-field">
-                  <label htmlFor={`result-${item.id}`}>What did the evidence show?</label>
+                  <label htmlFor={`result-${item.id}`}>What did you learn?</label>
                   <p className="validation-field-hint">
                     Type the finding here in your own words. REV will assess its effect on the Engineering State after you record it.
                   </p>
@@ -463,12 +463,12 @@ export default function ProjectReviewView({
                       setResultSummary(event.target.value);
                       if (validationError) setValidationError("");
                     }}
-                    placeholder="Type what the evidence actually showed here — example text is not saved."
+                    placeholder="Describe what the information showed. Example text is not saved."
                   />
                 </div>
 
                 <div className="validation-rev-assessment-note">
-                  <p className="validation-label">REV Assessment</p>
+                  <p className="validation-label">REV&apos;s View</p>
                   <p>
                     You provide the evidence and describe what happened. REV will assess how
                     that evidence affects the current Engineering State when the result is
@@ -494,13 +494,13 @@ export default function ProjectReviewView({
 
             {item.status === "completed" && (
               <section className="validation-result">
-                <p className="validation-label">Recorded Result</p>
+                <p className="validation-label">Saved Result</p>
                 <p><strong>Outcome:</strong> {formatValidationOutcome(item.outcome)}</p>
                 <p><strong>Evidence:</strong> {item.evidenceSummary}</p>
                 <p><strong>Source:</strong> {item.evidenceSource}</p>
                 <p><strong>What it showed:</strong> {item.resultSummary}</p>
                 {item.assessmentRationale && (
-                  <p><strong>REV assessment:</strong> {item.assessmentRationale.replace(/^REV assessment:\s*/i, "")}</p>
+                <p><strong>REV&apos;s view:</strong> {item.assessmentRationale.replace(/^REV assessment:\s*/i, "")}</p>
                 )}
               </section>
             )}
@@ -511,10 +511,10 @@ export default function ProjectReviewView({
       )}
 
       {hasEngineeringReviewActivity && (
-        <section className="engineering-review" aria-label="Engineering review">
-          <p className="validation-label">Engineering Review</p>
+      <section className="engineering-review" aria-label="Engineering review">
+        <p className="validation-label">Review What We Learned</p>
           <p className="engineering-review-intro">
-            Continue the inventor-owned engineering loop from recorded Project truth.
+            Continue from the information and decisions already saved in the Project.
             This review remains available whether or not a formal Validation plan exists.
           </p>
 
@@ -523,10 +523,10 @@ export default function ProjectReviewView({
           className="direction-action-adoption-trace"
           aria-label="Engineering direction action adoption trace"
         >
-          <p className="validation-label">Engineering Direction Action Adoption Trace</p>
+          <p className="validation-label">How Findings Led to Actions</p>
           <p>
             Read-only trace of exact recorded basis links from current and superseded
-            Engineering Directions to adopted Engineering Actions. Superseded directions
+            current directions to planned actions. Replaced directions
             remain visible as engineering history. The absence of a linked action is not
             a judgement or a requirement to adopt one.
           </p>
@@ -574,7 +574,7 @@ export default function ProjectReviewView({
             className="evidence-review-coverage"
             aria-label="Project evidence review coverage"
           >
-            <p className="validation-label">Project Evidence Review Coverage</p>
+          <p className="validation-label">Evidence Used in This Review</p>
             <p className="evidence-review-coverage-intro">
               Read-only trace of whether each recorded Project evidence item is
               explicitly selected as support by current or superseded Engineering
@@ -599,10 +599,10 @@ export default function ProjectReviewView({
                     }
                   >
                     {evidence.currentConclusionIds.length > 0
-                      ? `Explicitly selected by ${evidence.currentConclusionIds.length} current Engineering Conclusion${evidence.currentConclusionIds.length === 1 ? "" : "s"}.${evidence.supersededConclusionIds.length > 0 ? ` Also selected by ${evidence.supersededConclusionIds.length} superseded Engineering Conclusion${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.` : ""}`
+                      ? `Used by ${evidence.currentConclusionIds.length} current finding${evidence.currentConclusionIds.length === 1 ? "" : "s"}.${evidence.supersededConclusionIds.length > 0 ? ` Also used by ${evidence.supersededConclusionIds.length} replaced finding${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.` : ""}`
                       : evidence.supersededConclusionIds.length > 0
-                        ? `Not explicitly selected by a current Engineering Conclusion. Previously selected by ${evidence.supersededConclusionIds.length} superseded Engineering Conclusion${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.`
-                        : "Never explicitly selected by an Engineering Conclusion."}
+                        ? `Not used by a current finding. Previously used by ${evidence.supersededConclusionIds.length} replaced finding${evidence.supersededConclusionIds.length === 1 ? "" : "s"}.`
+                        : "Not yet used by a saved finding."}
                   </span>
                 </article>
               ))}
@@ -610,13 +610,13 @@ export default function ProjectReviewView({
           </section>
 
         <section className="engineering-conclusion" aria-label="Engineering conclusion">
-          <p className="validation-label">Engineering Conclusion</p>
+        <p className="validation-label">What Have We Learned?</p>
           <p>
             After reviewing recorded Project evidence, you may deliberately record what you conclude from the evidence you explicitly select. Project evidence may come from Validation or another inventor-adopted engineering source.
           </p>
 
           <div className="validation-field">
-            <label htmlFor="engineering-conclusion">Conclusion</label>
+          <label htmlFor="engineering-conclusion">What we learned</label>
             <textarea
               id="engineering-conclusion"
               className="validation-textarea"
@@ -625,7 +625,7 @@ export default function ProjectReviewView({
                 setConclusion(event.target.value);
                 if (conclusionError) setConclusionError("");
               }}
-              placeholder="Record your bounded engineering conclusion in your own words."
+            placeholder="Describe what the current information allows us to say."
             />
           </div>
 
@@ -644,7 +644,7 @@ export default function ProjectReviewView({
           </div>
 
           <fieldset className="conclusion-evidence-selector">
-            <legend>Supporting Project evidence (optional)</legend>
+          <legend>Project evidence that supports this (optional)</legend>
             {project.evidence.length === 0 ? (
               <p>No Project evidence recorded yet.</p>
             ) : (
@@ -671,12 +671,12 @@ export default function ProjectReviewView({
 
           {existingConclusions.length > 0 && (
             <label className="validation-field conclusion-supersession">
-              <span>Supersedes previous conclusion (optional)</span>
+              <span>Replace an earlier finding (optional)</span>
               <select
                 value={supersedesConclusionId}
                 onChange={(event) => setSupersedesConclusionId(event.target.value)}
               >
-                <option value="">Do not supersede a previous conclusion</option>
+              <option value="">Do not replace an earlier finding</option>
                 {existingConclusions.map((decision) => (
                   <option key={decision.id} value={decision.id}>
                     {decision.decision}
@@ -694,7 +694,7 @@ export default function ProjectReviewView({
             disabled={!conclusion.trim()}
             onClick={recordConclusion}
           >
-            Record Engineering Conclusion
+            Save What We Learned
           </button>
         </section>
         </>
@@ -702,13 +702,13 @@ export default function ProjectReviewView({
 
       {currentEngineeringConclusions.length > 0 && (
         <section className="engineering-direction" aria-label="Engineering direction">
-          <p className="validation-label">Engineering Direction</p>
+        <p className="validation-label">What Should We Do Next?</p>
           <p>
-            After reviewing current engineering conclusions, you may deliberately record the engineering course you choose to pursue next.
+            Review what you have learned, then choose the direction you want to take next.
           </p>
 
           <div className="validation-field">
-            <label htmlFor="engineering-direction">Direction</label>
+          <label htmlFor="engineering-direction">What to do next</label>
             <textarea
               id="engineering-direction"
               className="validation-textarea"
@@ -717,7 +717,7 @@ export default function ProjectReviewView({
                 setDirection(event.target.value);
                 if (directionError) setDirectionError("");
               }}
-              placeholder="Record the engineering course you deliberately choose in your own words."
+            placeholder="Describe the direction you choose in your own words."
             />
           </div>
 
@@ -736,7 +736,7 @@ export default function ProjectReviewView({
           </div>
 
           <fieldset className="direction-basis-selector">
-            <legend>Based on current conclusions</legend>
+          <legend>Based on what we have learned</legend>
             <div className="direction-basis-options">
               {currentEngineeringConclusions.map((conclusion) => (
                 <label key={conclusion.id}>
@@ -756,12 +756,12 @@ export default function ProjectReviewView({
 
           {existingDirections.length > 0 && (
             <label className="validation-field direction-supersession">
-              <span>Supersedes previous direction (optional)</span>
+              <span>Replace an earlier direction (optional)</span>
               <select
                 value={supersedesDirectionId}
                 onChange={(event) => setSupersedesDirectionId(event.target.value)}
               >
-                <option value="">Do not supersede a previous direction</option>
+              <option value="">Do not replace an earlier direction</option>
                 {existingDirections.map((existingDirection) => (
                   <option key={existingDirection.id} value={existingDirection.id}>
                     {existingDirection.decision}
@@ -779,20 +779,20 @@ export default function ProjectReviewView({
             disabled={!direction.trim() || selectedDirectionBasisIds.length === 0}
             onClick={recordDirection}
           >
-            Record Engineering Direction
+            Save Direction
           </button>
         </section>
       )}
 
       {currentEngineeringDirections.length > 0 && (
         <section className="engineering-action" aria-label="Engineering action">
-          <p className="validation-label">Engineering Action</p>
+        <p className="validation-label">What Are We Going to Do?</p>
           <p>
-            Based on the current engineering directions you select, you may deliberately adopt a concrete engineering action.
+            Choose a practical action based on one or more current directions.
           </p>
 
           <div className="validation-field">
-            <label htmlFor="engineering-action">Action</label>
+          <label htmlFor="engineering-action">Planned action</label>
             <textarea
               id="engineering-action"
               className="validation-textarea"
@@ -801,7 +801,7 @@ export default function ProjectReviewView({
                 setAction(event.target.value);
                 if (actionError) setActionError("");
               }}
-              placeholder="Record the concrete engineering action you deliberately adopt."
+            placeholder="Describe the practical action you choose to take."
             />
           </div>
 
@@ -815,12 +815,12 @@ export default function ProjectReviewView({
                 setActionReason(event.target.value);
                 if (actionError) setActionError("");
               }}
-              placeholder="Optionally record why you adopted this action."
+            placeholder="Optionally explain why you chose this action."
             />
           </div>
 
           <fieldset className="action-basis-selector">
-            <legend>Based on current engineering directions</legend>
+          <legend>Based on current directions</legend>
             <div className="action-basis-options">
               {currentEngineeringDirections.map((direction) => (
                 <label key={direction.id}>
@@ -856,14 +856,14 @@ export default function ProjectReviewView({
           className="engineering-action-result"
           aria-label="Engineering action result"
         >
-          <p className="validation-label">Engineering Action Result</p>
+        <p className="validation-label">What Happened?</p>
           <p>
             Record what actually happened while undertaking an adopted engineering action.
             This records engineering history only and does not mark the action complete.
           </p>
 
           <div className="validation-field">
-            <label htmlFor="engineering-action-result-action">Adopted engineering action</label>
+          <label htmlFor="engineering-action-result-action">Planned engineering action</label>
             <select
               id="engineering-action-result-action"
               className="engineering-action-result-select"
@@ -873,7 +873,7 @@ export default function ProjectReviewView({
                 if (actionResultError) setActionResultError("");
               }}
             >
-              <option value="">Select an adopted engineering action</option>
+              <option value="">Choose a planned engineering action</option>
               {project.engineeringActions.map((engineeringAction) => (
                 <option key={engineeringAction.id} value={engineeringAction.id}>
                   {engineeringAction.action}
@@ -892,7 +892,7 @@ export default function ProjectReviewView({
                 setActionResult(event.target.value);
                 if (actionResultError) setActionResultError("");
               }}
-              placeholder="Record what actually happened while undertaking this adopted action."
+            placeholder="Describe what happened when you carried out this action."
             />
           </div>
 
@@ -908,7 +908,7 @@ export default function ProjectReviewView({
             disabled={!actionResultActionId || !actionResult.trim()}
             onClick={recordActionResult}
           >
-            Record Engineering Action Result
+            Save What Happened
           </button>
         </section>
       )}
@@ -919,9 +919,9 @@ export default function ProjectReviewView({
           className="action-result-evidence-coverage"
           aria-label="Engineering action result evidence adoption trace"
         >
-          <p className="validation-label">Action Result Evidence Adoption Trace</p>
+          <p className="validation-label">Evidence Added From Results</p>
           <p>
-            Read-only trace of whether each recorded engineering action result is the
+            Read-only summary showing whether each saved result has been
             exact recorded source of Project evidence. A result does not need to become
             Project evidence, and this trace does not mark an action complete or judge
             the result&apos;s importance.
@@ -957,14 +957,14 @@ export default function ProjectReviewView({
           className="engineering-action-evidence"
           aria-label="Adopt project evidence from action result"
         >
-          <p className="validation-label">Adopt Project Evidence</p>
+        <p className="validation-label">Add This as Project Evidence</p>
           <p>
-            Explicitly adopt a recorded engineering action result as Project evidence.
+            Add information from a saved engineering result as Project evidence.
             A result does not become evidence automatically.
           </p>
 
           <div className="validation-field">
-            <label htmlFor="action-result-evidence-result">Recorded engineering action result</label>
+          <label htmlFor="action-result-evidence-result">Saved engineering result</label>
             <select
               id="action-result-evidence-result"
               className="engineering-action-result-select"
@@ -974,7 +974,7 @@ export default function ProjectReviewView({
                 if (actionResultEvidenceError) setActionResultEvidenceError("");
               }}
             >
-              <option value="">Select a recorded engineering action result</option>
+              <option value="">Choose a saved engineering result</option>
               {adoptableActionResultEvents.map((resultEvent) => {
                 const engineeringAction = project.engineeringActions.find(
                   (action) => action.id === resultEvent.engineeringActionId
@@ -999,12 +999,12 @@ export default function ProjectReviewView({
                 setActionResultEvidenceSummary(event.target.value);
                 if (actionResultEvidenceError) setActionResultEvidenceError("");
               }}
-              placeholder="Record the evidence you explicitly adopt from this result."
+            placeholder="Describe the evidence you want to add from this result."
             />
           </div>
 
           <div className="validation-field">
-            <label htmlFor="action-result-evidence-source">Evidence source / reference</label>
+          <label htmlFor="action-result-evidence-source">Where it came from</label>
             <input
               id="action-result-evidence-source"
               value={actionResultEvidenceSource}
@@ -1012,7 +1012,7 @@ export default function ProjectReviewView({
                 setActionResultEvidenceSource(event.target.value);
                 if (actionResultEvidenceError) setActionResultEvidenceError("");
               }}
-              placeholder="Record the source or reference for this evidence."
+            placeholder="Add the source or reference for this evidence."
             />
           </div>
 

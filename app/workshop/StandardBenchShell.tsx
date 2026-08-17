@@ -44,7 +44,7 @@ export default function StandardBenchShell({
       aria-label={`${benchTitle} bench workspace`}
     >
       <aside className="bench-focus">
-        <p className="eyebrow">REV · YOUR ENGINEERING PARTNER</p>
+        <p className="eyebrow">REV · YOUR WORKSHOP PARTNER</p>
         <div className="bench-identity">
           <span>Bench</span>
           <h1>{benchTitle}</h1>
@@ -63,7 +63,7 @@ export default function StandardBenchShell({
 
       <main className="bench-work-area">
         <div className="work-area-heading">
-          <p className="eyebrow">ACTIVE WORK AREA</p>
+          <p className="eyebrow">WORK AREA</p>
           <h2>{benchTitle}</h2>
         </div>
         {children}
@@ -71,7 +71,7 @@ export default function StandardBenchShell({
 
       <aside className="project-ledger" aria-label="Project Ledger">
         <div className="ledger-heading">
-          <p className="eyebrow">READ ONLY</p>
+          <p className="eyebrow">SUMMARY · READ ONLY</p>
           <h2>Project Ledger</h2>
         </div>
         <div className="ledger-tabs" role="tablist" aria-label="Project Ledger views">
@@ -106,7 +106,7 @@ export default function StandardBenchShell({
           type="button"
           className="ask-rev"
           disabled={askRevState === "unavailable"}
-          title="Interactive REV guidance is not enabled yet."
+          title="REV chat will be available here in a future update."
         >
           <strong>Ask REV</strong>
           <small>Coming later</small>

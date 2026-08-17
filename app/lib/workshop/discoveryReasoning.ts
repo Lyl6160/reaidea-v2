@@ -34,15 +34,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "purpose",
     focus: "purpose",
-    focusLabel: "Underlying Problem",
+    focusLabel: "What's the main problem?",
     prompt:
-      "Before we develop the solution, what problem or failure in the current situation makes this necessary?",
+      "What is the main problem you want to fix?",
     purpose:
-      "Separate the proposed solution from the problem that created the need for it.",
+      "Tell REV what is going wrong now, before thinking about the solution.",
     uncertainty:
-      "The underlying problem that created the need for a solution is not yet clear enough.",
+      "We still need a clearer picture of the problem.",
     nextEngineeringStep:
-      "Clarify the underlying problem before evaluating or developing a solution.",
+      "Describe the problem before we develop the solution.",
     stateSignals: [
       /underlying/i,
       /real problem/i,
@@ -63,15 +63,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "people",
     focus: "people",
-    focusLabel: "People Affected",
+    focusLabel: "Who is having this problem?",
     prompt:
-      "Who experiences this problem most directly, and whose outcome matters most?",
+      "Who is having this problem?",
     purpose:
-      "Identify the people affected so Discovery understands the problem from the right point of view.",
+      "Tell REV who is affected most by it.",
     uncertainty:
-      "Who is most affected by the problem, and whose outcome matters most, is not yet clear.",
+      "We do not yet know who is most affected.",
     nextEngineeringStep:
-      "Identify the people most affected by the problem and the outcome that matters to them.",
+      "Tell us who is most affected and what matters to them.",
     stateSignals: [
       /\bwho\b/i,
       /affected/i,
@@ -105,15 +105,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "conditions",
     focus: "conditions",
-    focusLabel: "Operating Conditions",
+    focusLabel: "When or where does it happen?",
     prompt:
-      "Under what conditions does the problem become most noticeable or most difficult?",
+      "When or where is the problem at its worst?",
     purpose:
-      "Reveal when and where the problem matters so later engineering decisions are grounded in real operating conditions.",
+      "Knowing when and where it happens will help us make better choices later.",
     uncertainty:
-      "The conditions in which the problem appears most clearly are not yet understood.",
+      "We still need to know when and where the problem happens.",
     nextEngineeringStep:
-      "Establish the operating conditions in which the problem occurs or becomes most severe.",
+      "Describe when and where the problem is most serious.",
     stateSignals: [
       /condition/i,
       /\bwhen\b/i,
@@ -143,15 +143,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "consequence",
     focus: "consequence",
-    focusLabel: "Consequence",
+    focusLabel: "What happens when it goes wrong?",
     prompt:
-      "When this problem occurs, what actually goes wrong, and why does that consequence matter?",
+      "What happens when this problem occurs?",
     purpose:
-      "Understand the consequence before deciding how valuable or urgent a future solution may be.",
+      "What goes wrong will show us how important the problem is.",
     uncertainty:
-      "The consequence of the problem — what goes wrong and why it matters — is not yet clear.",
+      "We do not yet know clearly what goes wrong.",
     nextEngineeringStep:
-      "Clarify the consequence of the problem and why that consequence matters.",
+      "Describe what goes wrong and why it matters.",
     stateSignals: [
       /consequence/i,
       /impact/i,
@@ -180,15 +180,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "evidence",
     focus: "evidence",
-    focusLabel: "Evidence",
+    focusLabel: "What have you seen or measured?",
     prompt:
-      "What have you seen, measured, recorded, or been told that shows this problem is really occurring?",
+      "What have you seen or measured that shows this problem is happening?",
     purpose:
-      "Separate current evidence from belief so the Project knows what is known and what still needs validation.",
+      "This helps us separate what we know from what we still need to check.",
     uncertainty:
-      "The Project does not yet have enough evidence showing how often or how severely the problem occurs.",
+      "We need more information about how often the problem happens and how serious it is.",
     nextEngineeringStep:
-      "Identify existing evidence and what evidence still needs to be gathered.",
+      "Share what you already know and what we still need to check.",
     stateSignals: [
       /evidence/i,
       /measur/i,
@@ -219,15 +219,15 @@ const QUESTION_CANDIDATES: QuestionCandidate[] = [
   {
     id: "constraints",
     focus: "constraints",
-    focusLabel: "Constraints",
+    focusLabel: "What could affect a solution?",
     prompt:
-      "What practical constraints would any future solution have to respect?",
+      "What problems, limits, or issues could affect a solution?",
     purpose:
-      "Expose boundaries early without allowing them to force a solution before the problem is understood.",
+      "Knowing the limits early helps us avoid problems later.",
     uncertainty:
-      "The practical constraints that any future solution must respect are not yet clear.",
+      "We do not yet know what limits a solution may face.",
     nextEngineeringStep:
-      "Identify the practical, physical, regulatory, cost, and operating constraints that matter.",
+      "Tell us about any practical, physical, legal, cost, or use limits.",
     stateSignals: [
       /constraint/i,
       /must respect/i,

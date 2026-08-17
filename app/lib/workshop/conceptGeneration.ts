@@ -155,7 +155,7 @@ export function suggestVisualMode(project: Project): VisualModeSuggestion {
     return {
       mode: "unknown",
       confidence: "low",
-      reason: "The current bounded Project context does not yet indicate one safe visual language.",
+      reason: "There is not enough detail yet for REV to suggest one type of picture.",
       supportingSignals: strongest?.signals.slice(0, 4) ?? [],
     };
   }

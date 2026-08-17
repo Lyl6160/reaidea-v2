@@ -44,7 +44,7 @@ export function recordProjectEvidenceFromSpecialistContribution(
     return {
       status: "invalid",
       project,
-      reason: "Select an available recorded specialist contribution before adopting Project evidence.",
+      reason: "Choose a saved specialist finding before adding it as Project evidence.",
     };
   }
 

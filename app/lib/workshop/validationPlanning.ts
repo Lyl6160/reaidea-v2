@@ -34,7 +34,7 @@ export function createValidationPlan(project: Project): ValidationPlanningResult
   const validationPlan: ValidationPlan = {
     status: "planned",
     purpose:
-      "Reduce the highest-impact uncertainty by testing assumptions and strengthening evidence before solution development.",
+      "Check the biggest unknowns before developing the solution further.",
     items,
     createdAt: now,
     updatedAt: now,
@@ -71,14 +71,14 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
     addUniqueItem(items, {
       id: createId(),
       source: "assumption",
-      title: "Test a potential assumption",
+      title: "Check something we think may be true",
       target: stripPrefix(assumption, ASSUMPTION_PREFIX),
       method:
-        "Observe, measure, test, or independently review the suspected relationship under representative operating conditions.",
+        "Observe, measure, test, or ask someone independent to review it in realistic conditions.",
       evidenceNeeded:
-        "Recorded evidence that can confirm, refine, or contradict the assumption.",
+        "Information that shows whether this idea is right, partly right, or wrong.",
       completionRule:
-        "The assumption is no longer carried as an untested belief; the Project records what the evidence actually showed.",
+        "Record what the check showed so we no longer rely only on a belief.",
       status: "planned",
       ...getAssumptionAssertionLink(project, assumption),
     });
@@ -89,14 +89,14 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
       addUniqueItem(items, {
         id: createId(),
         source: "evidence-gap",
-        title: "Close an evidence gap",
+        title: "Fill a gap in what we know",
         target: stripPrefix(note, EVIDENCE_GAP_PREFIX),
         method:
-          "Gather direct measurements, records, tests, photographs, video, or independent observations that specifically address this gap.",
+          "Gather measurements, records, tests, photos, video, or observations that answer this question.",
         evidenceNeeded:
-          "Traceable evidence that addresses the stated gap and can be reviewed later.",
+          "Information with a clear source that can be reviewed later.",
         completionRule:
-          "The gap is supported, narrowed, or explicitly retained as unresolved based on the evidence gathered.",
+          "Record whether the new information answers the question, narrows it, or leaves it open.",
         status: "planned",
       });
       continue;
@@ -106,14 +106,14 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
       addUniqueItem(items, {
         id: createId(),
         source: "reported-evidence",
-        title: "Validate owner-reported evidence",
+        title: "Check information from the inventor",
         target: stripPrefix(note, REPORTED_EVIDENCE_PREFIX),
         method:
-          "Attach existing records where available or repeat the observation in a controlled, traceable way.",
+          "Add existing records, or repeat the observation in a controlled way and record where it came from.",
         evidenceNeeded:
-          "A source, record, measurement, test result, image, video, or independent observation linked to the reported evidence.",
+          "A source, record, measurement, test result, image, video, or independent observation linked to the information.",
         completionRule:
-          "The Project can distinguish the inventor's report from independently reviewable evidence.",
+          "The Project clearly shows what the inventor reported and what someone else can check.",
         status: "planned",
       });
     }
@@ -123,14 +123,14 @@ function buildValidationItems(project: Project): ValidationPlanItem[] {
     addUniqueItem(items, {
       id: createId(),
       source: "engineering-state",
-      title: "Challenge the current understanding",
+      title: "Check what we understand so far",
       target: project.engineeringState.greatestRemainingUncertainty,
       method:
-        "Choose the simplest practical observation, measurement, calculation, test, or independent review capable of confirming or contradicting the current understanding.",
+        "Choose the simplest useful observation, measurement, calculation, test, or independent review.",
       evidenceNeeded:
-        "A traceable result that can strengthen, refine, or challenge the current Engineering State.",
+        "A result with a clear source that can support or change what we understand.",
       completionRule:
-        "The Project records what was tested, what happened, and how the Engineering State changed as a result.",
+        "Record what was tested, what happened, and what we learned from it.",
       status: "planned",
     });
   }

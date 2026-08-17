@@ -15,52 +15,49 @@ const GUIDANCE_FRAMEWORKS: Record<
   Omit<SpecialistBenchGuidance, "structuralNotes">
 > = {
   patent: {
-    title: "Patent / IP Inquiry",
-    lens: "Technical distinction and investigation",
+    title: "What might be different about your idea?",
+    lens: "What seems new or different",
     explanation:
-      "Consider how the recorded technical definition could be described and investigated without treating this inquiry as an IP finding.",
+      "Start with the parts of your idea that seem different from things you have seen before.",
     prompts: [
-      "What technical features appear distinctive enough to investigate further?",
-      "What alternative arrangements or implementations should be considered before describing the technical distinction?",
-      "What public disclosures, prior art or existing products should be investigated?",
-      "What technical detail would need clearer definition before an IP professional could assess it?",
+      "What parts of your idea seem new or different?",
+      "Have you seen anything similar before?",
+      "What should we look into further?",
     ],
-    disclaimer: "These inquiry prompts are not legal advice or patentability findings.",
+    disclaimer: "This is an early check only. It is not legal advice or a patent decision.",
   },
   marketing: {
-    title: "Marketing Inquiry",
-    lens: "People, value claims and validation",
+    title: "Who is this idea for?",
+    lens: "Who it helps and why",
     explanation:
-      "Consider the recorded problem and evidence without inferring demand, market size or customer preference.",
+      "Think about who this idea could help and why it may matter to them.",
     prompts: [
-      "Who experiences the problem or benefit being described?",
-      "What value is being claimed for that user or customer?",
-      "What recorded evidence supports that claimed value?",
-      "What assumptions would need real customer or market testing?",
+      "Who is this for?",
+      "Why would it help them?",
+      "What would make them interested in it?",
     ],
   },
   manufacturing: {
     title: "Manufacturing / Costing Inquiry",
-    lens: "Physical definition, sourcing and measurement",
+    lens: "How it could be built and costed",
     explanation:
-      "Consider what would require definition or measurement without selecting a process, material, supplier or cost.",
+      "Work out what still needs to be defined or measured before choosing how to build it or what it may cost.",
     prompts: [
-      "What would physically need to be made, assembled or sourced?",
-      "Which materials, components or processes would require clearer definition?",
-      "Which recorded constraints could affect manufacture or cost?",
-      "What should be measured or quoted before relying on a costing assumption?",
+      "What would need to be made, bought, or put together?",
+      "Which materials, parts, or building methods need a clearer plan?",
+      "What problems or limits could affect how we build it or what it costs?",
+      "What should we measure or get a price for before estimating the cost?",
     ],
   },
   reality: {
-    title: "Reality Inquiry",
-    lens: "Practical conditions, uncertainty and evidence",
+    title: "Reality — will this work in the real world?",
+    lens: "Useful, practical, and worth building",
     explanation:
-      "Consider what should be checked in real use without making a viability, safety, affordability or adoption determination.",
+      "Check whether the idea is useful, practical, and worth building.",
     prompts: [
-      "What conditions must be true for the concept to work in practical use?",
-      "What real-world constraint or uncertainty deserves testing?",
-      "What evidence currently supports practical viability?",
-      "What cost, adoption, operating or implementation assumption should be checked?",
+      "Would people actually use this?",
+      "Could it be built and used practically?",
+      "Is the cost and effort worth it?",
     ],
   },
 };
@@ -81,19 +78,19 @@ export function createSpecialistBenchGuidance(
 function createStructuralNotes(context: SpecialistProjectContext): string[] {
   return [
     context.evidence.total > 0
-      ? "Recorded Project evidence is available for reference in Project Context."
-      : "No Project evidence is currently recorded.",
+      ? "Project evidence is available in the project summary."
+      : "No Project evidence has been added yet.",
     context.directions.total > 0
-      ? "Current Engineering Directions are recorded."
-      : "No current Engineering Direction is recorded.",
+      ? "Current directions are available."
+      : "No current direction has been added yet.",
     context.actions.total > 0
-      ? "Adopted Engineering Actions are already recorded."
-      : "No adopted Engineering Action is currently recorded.",
+      ? "Planned engineering actions are available."
+      : "No engineering action has been added yet.",
     context.constraints.total > 0
-      ? "Current constraints are recorded in Project Context."
-      : "No current constraint is recorded.",
+      ? "Current limits are shown in the project summary."
+      : "No current limits have been added yet.",
     context.greatestRemainingUncertainty.trim()
-      ? "A greatest remaining uncertainty is recorded in Project Context."
-      : "No greatest remaining uncertainty is currently recorded.",
+      ? "The biggest remaining unknown is shown in the project summary."
+      : "No biggest remaining unknown has been added yet.",
   ];
 }

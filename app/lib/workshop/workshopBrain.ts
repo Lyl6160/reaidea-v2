@@ -58,7 +58,7 @@ export type WorkshopBenchDefinition = {
 };
 
 export const CANONICAL_WORKSHOP_BENCHES: WorkshopBenchDefinition[] = [
-  { id: "knowledge", label: "Inventor / Knowledge", shortLabel: "Inventor", positionClass: "slot-discovery", route: "/interview" },
+  { id: "knowledge", label: "Your Idea", shortLabel: "Your Idea", positionClass: "slot-discovery", route: "/interview" },
   { id: "engineering", label: "Engineering", shortLabel: "Engineering", positionClass: "slot-engineering" },
   { id: "prototype", label: "Prototype", shortLabel: "Prototype", positionClass: "slot-prototype" },
   { id: "validation", label: "Validation", shortLabel: "Validation", positionClass: "slot-validation" },
@@ -109,14 +109,14 @@ export function assessWorkshop(project: Project): WorkshopState {
   const benches: WorkshopBenchSignal[] = [
     {
       id: "knowledge",
-      label: "Inventor / Knowledge",
+      label: "Your Idea",
       state: discoveryReachedCheckpoint ? "available" : "active",
       reason: discoveryReachedCheckpoint
-        ? "The core Discovery checkpoint has been reached, but this bench remains available when the Project needs clarification."
-        : "The Project is still building the understanding needed by the rest of the workshop.",
+        ? "You have answered the main Discovery questions. Come back here whenever something needs more detail."
+        : "Keep sharing what you know so the rest of the workshop can help.",
       nextMove: discoveryReachedCheckpoint
-        ? "Return here when another bench exposes a missing fact or unclear assumption."
-        : "Keep answering the next best Discovery question.",
+        ? "Return here when another bench shows that something is missing or unclear."
+        : "Answer the next Discovery question.",
       fedBy: [],
     },
     {
@@ -124,11 +124,11 @@ export function assessWorkshop(project: Project): WorkshopState {
       label: "Engineering",
       state: engineeringDefined ? "ready" : "available",
       reason: engineeringDefined
-        ? "The Project contains enough defined understanding and constraints for meaningful engineering work."
-        : "Engineering has some Project knowledge, but important definition is still forming.",
+        ? "We know enough about the idea and its limits to start useful engineering work."
+        : "We know some things about the idea, but important details are still missing.",
       nextMove: engineeringDefined
-        ? "Develop the concept and expose the next technical uncertainties."
-        : "Strengthen the problem, operating conditions and constraints first.",
+        ? "Develop the idea and find out what still may not work."
+        : "Add more detail about the problem, when it happens, and any limits.",
       fedBy: ["knowledge"],
     },
     {
@@ -143,14 +143,14 @@ export function assessWorkshop(project: Project): WorkshopState {
           : "dormant",
       reason: validationPlanned
         ? validationCompleted
-          ? "Validation has produced evidence the rest of the workshop can now use."
-          : "A validation plan exists and is waiting for execution."
+          ? "Your checks have produced information the rest of the workshop can use."
+          : "Your test plan is ready to begin."
         : discoveryReachedCheckpoint && (hasAssumptions || hasEvidence)
-          ? "Discovery has exposed assumptions or evidence gaps that can now be tested."
-          : "There is not yet enough defined uncertainty to make validation useful.",
+          ? "Discovery found things we should now check."
+          : "We need a clearer question before testing will be useful.",
       nextMove: validationPlanned
-        ? "Work the next validation item and record what the evidence changes."
-        : "Reach the Discovery checkpoint and identify testable assumptions or evidence gaps.",
+        ? "Complete the next check and record what you learn."
+        : "Finish the main Discovery questions and choose something useful to check.",
       fedBy: ["knowledge", "engineering"],
     },
     {
@@ -158,11 +158,11 @@ export function assessWorkshop(project: Project): WorkshopState {
       label: "Patent / IP",
       state: engineeringDefined ? "pulse" : "dormant",
       reason: engineeringDefined
-        ? "Engineering definition now contains features and constraints that may be worth examining for potentially distinctive territory."
-        : "Patent reasoning would be premature while the invention is still too loosely defined.",
+        ? "The idea now has enough detail to look for parts that may be different from earlier inventions."
+        : "The idea needs more detail before a patent review would be useful.",
       nextMove: engineeringDefined
-        ? "Inspect the defined mechanism and features before deciding what deserves prior-art investigation."
-        : "Add enough engineering definition for REV to identify concrete features to examine.",
+        ? "Review how the idea works and decide what earlier inventions or public information to check."
+        : "Explain how the idea works so REV can identify what to look into.",
       fedBy: ["engineering", "validation"],
     },
     {
@@ -171,10 +171,10 @@ export function assessWorkshop(project: Project): WorkshopState {
       state: discoveryReachedCheckpoint && engineeringDefined ? "available" : "dormant",
       reason: discoveryReachedCheckpoint && engineeringDefined
         ? "The Project has enough problem and concept definition to begin discussing audience and value without inventing a market story."
-        : "There is not enough reliable problem and concept definition yet for a responsible marketing strategy.",
+        : "We need to know more about the problem and the idea before asking who may want it.",
       nextMove: discoveryReachedCheckpoint && engineeringDefined
-        ? "Define who benefits, why they care, and what evidence would support the value proposition."
-        : "Return to Discovery and Engineering to strengthen the problem, user and concept definition.",
+        ? "Work out who this helps, why they would want it, and what makes it useful."
+        : "Work out who this helps, why they would want it, and what makes it useful.",
       fedBy: ["knowledge", "engineering", "validation"],
     },
     {
@@ -182,11 +182,11 @@ export function assessWorkshop(project: Project): WorkshopState {
       label: "Prototype",
       state: engineeringDefined && hasConstraints ? "ready" : "dormant",
       reason: engineeringDefined && hasConstraints
-        ? "The concept has enough definition and constraints to begin planning a physical or visual prototype."
-        : "Prototype work needs a more defined concept and practical constraints first.",
+        ? "The idea has enough detail to start an early physical or visual model."
+        : "The idea and its practical limits need more detail before making a model.",
       nextMove: engineeringDefined && hasConstraints
-        ? "Create the first concept representation and decide what the prototype must prove."
-        : "Use Engineering to establish the concept and constraints.",
+        ? "Create the first model and decide what it needs to show."
+        : "Use Engineering to explain the idea and its limits.",
       fedBy: ["engineering", "validation"],
     },
     {
@@ -194,11 +194,11 @@ export function assessWorkshop(project: Project): WorkshopState {
       label: "Manufacturing / Costing",
       state: engineeringDefined && hasConstraints ? "available" : "dormant",
       reason: engineeringDefined && hasConstraints
-        ? "Defined constraints are beginning to expose materials, construction and cost questions."
-        : "Manufacturing and costing would be guesswork before key engineering constraints exist.",
+        ? "We know enough about the limits to start asking how to build it and what it may cost."
+        : "We need to know more about the idea's limits before estimating how to build or price it.",
       nextMove: engineeringDefined && hasConstraints
-        ? "Identify build method, major components and the cost-driving assumptions."
-        : "Define the engineering constraints that will drive construction and cost.",
+        ? "Look at how to build it, the main parts, and what may affect the cost."
+        : "Describe the limits that could affect how it is built and what it costs.",
       fedBy: ["engineering", "prototype", "validation"],
     },
     {
@@ -206,11 +206,11 @@ export function assessWorkshop(project: Project): WorkshopState {
       label: "Reality",
       state: validationCompleted && engineeringDefined ? "available" : "dormant",
       reason: validationCompleted && engineeringDefined
-        ? "The Project now has both concept definition and tested evidence that can meet real-world viability questions."
-        : "Reality needs a defined concept plus evidence from validation before strong viability conclusions are justified.",
+        ? "We know enough about the idea and its test results to ask whether it will work in the real world."
+        : "We still need a clearer design and test results before deciding whether the idea will work in the real world.",
       nextMove: validationCompleted && engineeringDefined
-        ? "Challenge customer value, practical viability, cost and impact against the evidence."
-        : "Strengthen Engineering and Validation before treating viability as known.",
+        ? "Check whether the idea is useful, practical, and worth building."
+        : "Use Engineering and Validation to fill the gaps, then return here.",
       fedBy: ["marketing", "manufacturing", "validation", "prototype"],
     },
   ];

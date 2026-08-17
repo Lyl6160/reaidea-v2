@@ -75,6 +75,15 @@ type SpecialistEvidenceInput = {
   source: string;
 };
 
+const DISCOVERY_REVIEW_AREAS = [
+  { id: "purpose", label: "What's the main problem?" },
+  { id: "people", label: "Who is having this problem?" },
+  { id: "conditions", label: "When or where does it happen?" },
+  { id: "consequence", label: "What happens when it goes wrong?" },
+  { id: "evidence", label: "What have you seen or measured?" },
+  { id: "constraints", label: "What could affect a solution?" },
+] as const;
+
 function getBench(workshop: WorkshopState, id: WorkshopBenchId) {
   return workshop.benches.find((bench) => bench.id === id);
 }
@@ -140,7 +149,7 @@ function createConceptRenderSvg(brief: {
   const nextMove = escapeSvgText(brief.nextMove.slice(0, 82));
   const conceptLabel = escapeSvgText(brief.conceptLabel ?? "CONCEPT 01");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Procedural concept study">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Early working model">
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#071217"/>
@@ -158,7 +167,7 @@ function createConceptRenderSvg(brief: {
       <path d="M0 80H1000M0 160H1000M0 240H1000M0 320H1000M0 400H1000M0 480H1000"/>
       <path d="M80 0V560M160 0V560M240 0V560M320 0V560M400 0V560M480 0V560M560 0V560M640 0V560M720 0V560M800 0V560M880 0V560M960 0V560"/>
     </g>
-    <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · PROCEDURAL CONCEPT STUDY</text>
+    <text x="28" y="34" fill="#86dce9" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">REV · EARLY WORKING MODEL</text>
     <text x="28" y="54" fill="#718891" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.2">${conceptLabel} · PROCEDURAL ENGINEERING VISUAL · REVISION ${variant + 1}</text>
 
     <g transform="translate(165 190) skewX(${bodySkew})" filter="url(#glow)">
@@ -362,7 +371,7 @@ function formatProjectEvidenceSourceProvenance(
   }
 
   if (evidence.sourceProvenance === "recorded-source-unavailable") {
-    return "Recorded source provenance is unavailable in the current Project.";
+    return "Where this information came from is not available in the current Project.";
   }
 
   return references;
@@ -407,6 +416,7 @@ export default function WorkshopShell({
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
+  const [discoveryReviewOpen, setDiscoveryReviewOpen] = useState(false);
   const [knowledgeAnswerDraft, setKnowledgeAnswerDraft] = useState("");
   const [knowledgeAnswerError, setKnowledgeAnswerError] = useState("");
   const [engineeringAnswerDraft, setEngineeringAnswerDraft] = useState("");
@@ -416,11 +426,11 @@ export default function WorkshopShell({
   const [visualModeCorrectionOpen, setVisualModeCorrectionOpen] = useState(false);
   const [generatedConceptCandidate, setGeneratedConceptCandidate] = useState<ConceptCandidate | null>(null);
   const [conceptCandidateHistory, setConceptCandidateHistory] = useState<ConceptCandidate[]>([]);
-  const [conceptGenerationState, setConceptGenerationState] = useState<"idle" | "generating" | "failed" | "not-configured" | "unsupported">("idle");
+  const [conceptGenerationState, setConceptGenerationState] = useState<"idle" | "generating" | "ready" | "failed" | "not-configured" | "unsupported">("idle");
   const [conceptGenerationMessage, setConceptGenerationMessage] = useState("");
   const [conceptRefinementOpen, setConceptRefinementOpen] = useState(false);
   const [conceptRefinementDraft, setConceptRefinementDraft] = useState("");
-  const [conceptRefinementState, setConceptRefinementState] = useState<"idle" | "refining" | "failed">("idle");
+  const [conceptRefinementState, setConceptRefinementState] = useState<"idle" | "refining" | "ready" | "failed">("idle");
   const [conceptRefinementMessage, setConceptRefinementMessage] = useState("");
   const [previousConceptVisible, setPreviousConceptVisible] = useState(false);
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
@@ -877,6 +887,16 @@ export default function WorkshopShell({
         .reverse(),
     [project.timeline]
   );
+  const discoveryReviewResponses = useMemo(() => {
+    const responses = new Map<string, string>();
+
+    for (const event of project.timeline) {
+      if (event.type !== "discovery-answer-recorded" || !event.subject) continue;
+      responses.set(event.subject, event.response ?? event.description);
+    }
+
+    return responses;
+  }, [project.timeline]);
   const prototypeBenchIsFocused =
     prototypeBenchFocused && selectedBench?.id === "prototype";
   const selectedSpecialistBenchId = selectedBench && isSpecialistContributionBenchId(selectedBench.id)
@@ -900,6 +920,11 @@ export default function WorkshopShell({
         specialistProjectContext
       )
     : null;
+  const currentSpecialistPrompt = specialistBenchGuidance
+    ? specialistBenchGuidance.prompts[
+        Math.min(selectedSpecialistContributions.length, specialistBenchGuidance.prompts.length - 1)
+      ]
+    : null;
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? workshop.benches[0];
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
@@ -907,6 +932,7 @@ export default function WorkshopShell({
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
+    setDiscoveryReviewOpen(false);
     setPatentBenchFocused(id === "patent");
     setPrototypeBenchFocused(id === "prototype");
     setSpecialistContributionError("");
@@ -918,6 +944,7 @@ export default function WorkshopShell({
 
   function returnToWorkshop() {
     setSelectedId(null);
+    setDiscoveryReviewOpen(false);
     setPatentBenchFocused(false);
     setPrototypeBenchFocused(false);
     setKnowledgeAnswerDraft("");
@@ -1089,7 +1116,7 @@ export default function WorkshopShell({
 
       setGeneratedConceptCandidate(candidate);
       setConceptCandidateHistory([candidate]);
-      setConceptGenerationState("idle");
+      setConceptGenerationState("ready");
       void persistCurrentConceptCandidate(project.id, candidate).catch(() => {
         // The generated model remains available for this session if persistence fails.
       });
@@ -1161,7 +1188,7 @@ export default function WorkshopShell({
       const history = [...conceptCandidateHistory, candidate];
       setConceptCandidateHistory(history);
       setGeneratedConceptCandidate(candidate);
-      setConceptRefinementState("idle");
+      setConceptRefinementState("ready");
       setConceptRefinementDraft("");
       setConceptRefinementOpen(false);
       setPreviousConceptVisible(false);
@@ -1382,8 +1409,8 @@ export default function WorkshopShell({
 
     return (
       <fieldset className="concept-evidence-selector">
-        <legend>Supporting evidence (optional)</legend>
-        <p>Select only the Project evidence you want recorded as support for this decision.</p>
+        <legend>Project evidence to support this decision (optional)</legend>
+        <p>Choose only the evidence you want to link to this decision.</p>
         <div className="concept-evidence-options">
           {project.evidence.map((evidence) => (
             <label key={evidence.id}>
@@ -1516,45 +1543,43 @@ export default function WorkshopShell({
         <section className="specialist-inquiry" aria-label="Specialist Inquiry">
           <div className="specialist-inquiry-heading">
             <div>
-              <p className="station-summary-label">Specialist Inquiry</p>
+              <p className="station-summary-label">Questions to explore</p>
               <strong>{specialistBenchGuidance.title}</strong>
             </div>
-            <span>Read only</span>
+            <span>Guide</span>
           </div>
           <p className="specialist-inquiry-lens">
-            <strong>Lens:</strong> {specialistBenchGuidance.lens}
+            <strong>Focus:</strong> {specialistBenchGuidance.lens}
           </p>
           <p>{specialistBenchGuidance.explanation}</p>
           <p className="specialist-inquiry-boundary">
-            These are prompts for consideration. They are not recorded Project truth.
+            These questions are here to help you think. Nothing is added to the Project unless you choose to save it.
           </p>
-          {specialistBenchGuidance.disclaimer && (
-            <p className="specialist-inquiry-disclaimer">
-              {specialistBenchGuidance.disclaimer}
-            </p>
+          {currentSpecialistPrompt && (
+            <div className="specialist-current-question">
+              <span>Current question</span>
+              <strong>{currentSpecialistPrompt}</strong>
+            </div>
           )}
-          <ol>
-            {specialistBenchGuidance.prompts.map((prompt) => (
-              <li key={prompt}>{prompt}</li>
-            ))}
-          </ol>
-          <div className="specialist-inquiry-notes">
-            <strong>Recorded structure</strong>
+          {selectedSpecialistBenchId !== "patent" && <div className="specialist-inquiry-notes">
+            <strong>What we already know</strong>
             <ul>
               {specialistBenchGuidance.structuralNotes.map((note) => (
                 <li key={note}>{note}</li>
               ))}
             </ul>
-          </div>
+          </div>}
         </section>
       )}
       <div className="specialist-contribution-panel">
-        <p className="station-summary-label">Specialist Contribution</p>
+        <p className="station-summary-label">What did you learn here?</p>
         <p>
-          Record an inventor-controlled contribution into Project history. It does not
-          automatically become Project evidence or an engineering decision.
+          Write down anything useful you learned while working on this bench.
         </p>
+        <label className="specialist-answer-input">
+          <span>Your answer</span>
         <textarea
+          id="specialist-contribution"
           value={specialistContributionDrafts[selectedSpecialistBenchId] ?? ""}
           onChange={(event) => {
             setSpecialistContributionDrafts((drafts) => ({
@@ -1563,21 +1588,22 @@ export default function WorkshopShell({
             }));
             if (specialistContributionError) setSpecialistContributionError("");
           }}
-          placeholder="Record the specialist contribution in your own words."
+          placeholder="Write your answer in your own words."
           rows={4}
         />
+        </label>
         {specialistContributionError && (
           <p className="specialist-contribution-error" role="alert">
             {specialistContributionError}
           </p>
         )}
         <button type="button" onClick={submitSpecialistContribution}>
-          Record contribution
+          Save &amp; Continue
         </button>
 
         {selectedSpecialistContributions.length > 0 && (
           <div className="specialist-contribution-history">
-            <strong>Recorded Project history</strong>
+            <strong>Earlier notes from this bench</strong>
             {selectedSpecialistContributions.map((event) => (
               <article key={event.id}>
                 <p>{event.description}</p>
@@ -1600,10 +1626,9 @@ export default function WorkshopShell({
 
         {selectedSpecialistContributions.length > 0 && (
           <div className="specialist-evidence-adoption">
-            <strong>Adopt specialist contribution as Project evidence</strong>
+            <strong>Add as Project Evidence</strong>
             <p>
-              A contribution is Project history only until you explicitly adopt it.
-              Adoption creates Project evidence, not an Engineering Conclusion or Decision.
+              Save this as information we can use to judge how well the invention works.
             </p>
             <select
               value={specialistEvidenceInputs[selectedSpecialistBenchId]?.eventId ?? ""}
@@ -1619,7 +1644,7 @@ export default function WorkshopShell({
                 if (specialistEvidenceError) setSpecialistEvidenceError("");
               }}
             >
-              <option value="">Select a recorded specialist contribution</option>
+              <option value="">Choose a specialist finding</option>
               {selectedSpecialistContributions.map((event) => (
                 <option key={event.id} value={event.id}>
                   {event.description}
@@ -1639,7 +1664,7 @@ export default function WorkshopShell({
                 }));
                 if (specialistEvidenceError) setSpecialistEvidenceError("");
               }}
-              placeholder="Evidence summary"
+              placeholder="What did we learn?"
               rows={3}
             />
             <input
@@ -1655,7 +1680,7 @@ export default function WorkshopShell({
                 }));
                 if (specialistEvidenceError) setSpecialistEvidenceError("");
               }}
-              placeholder="Evidence source / reference"
+              placeholder="Where this information came from"
             />
             {specialistEvidenceError && (
               <p className="specialist-contribution-error" role="alert">
@@ -1663,11 +1688,16 @@ export default function WorkshopShell({
               </p>
             )}
             <button type="button" onClick={submitSpecialistEvidence}>
-              Adopt as Project evidence
+              Add as Project Evidence
             </button>
           </div>
         )}
       </div>
+      {specialistBenchGuidance?.disclaimer && (
+        <p className="specialist-inquiry-disclaimer">
+          {specialistBenchGuidance.disclaimer}
+        </p>
+      )}
     </>
   );
 
@@ -1689,14 +1719,14 @@ export default function WorkshopShell({
         askRevState="unavailable"
         thisBenchLedger={
           <div className="engineering-definition-ledger">
-            <p className="engineering-definition-ledger-label">Solution definition</p>
+            <p className="engineering-definition-ledger-label">How the idea works</p>
             <dl>
               <div><dt>Current focus</dt><dd>{currentQuestion?.label ?? "Ready for summary"}</dd></div>
               <div><dt>Areas addressed</dt><dd>{engineeringDefinitionAssessment.addressedAreas.length}</dd></div>
               <div><dt>Areas remaining</dt><dd>{engineeringDefinitionAssessment.remainingAreas.length}</dd></div>
-              <div><dt>Definition status</dt><dd>{engineeringDefinitionAssessment.status.replaceAll("-", " ")}</dd></div>
+              <div><dt>Progress</dt><dd>{engineeringDefinitionAssessment.status.replaceAll("-", " ")}</dd></div>
             </dl>
-            <p className="engineering-definition-ledger-label">Recorded Engineering inputs</p>
+            <p className="engineering-definition-ledger-label">Your saved answers</p>
             {recentEngineeringDefinitionInputs.length > 0 ? (
               <div className="engineering-definition-input-list">
                 {recentEngineeringDefinitionInputs.map((input) => (
@@ -1708,7 +1738,7 @@ export default function WorkshopShell({
                 ))}
               </div>
             ) : (
-              <p className="engineering-definition-empty">No inventor Engineering inputs recorded yet.</p>
+              <p className="engineering-definition-empty">No Engineering answers have been saved yet.</p>
             )}
           </div>
         }
@@ -1717,18 +1747,18 @@ export default function WorkshopShell({
             <strong className="engineering-definition-project-name">{project.projectName}</strong>
             <section><strong>Original observation</strong><p>{project.originalObservation}</p></section>
             <section><strong>Current understanding</strong><p>{project.engineeringState.currentUnderstanding}</p></section>
-            <section><strong>Greatest remaining uncertainty</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
-            <section><strong>Next engineering step</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
+            <section><strong>Biggest unknown</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
+            <section><strong>What to do next</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
             <dl>
-              <div><dt>Readiness</dt><dd>{project.readiness}</dd></div>
-              <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
-              <div><dt>Assumptions</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
-              <div><dt>ProjectEvidence</dt><dd>{project.evidence.length}</dd></div>
-              <div><dt>Formal conclusions</dt><dd>{workshop.trace.currentEngineeringConclusions.length}</dd></div>
-              <div><dt>Formal directions</dt><dd>{workshop.trace.currentEngineeringDirections.length}</dd></div>
-              <div><dt>Adopted actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
+              <div><dt>Project stage</dt><dd>{project.readiness}</dd></div>
+              <div><dt>Known limits</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+              <div><dt>Ideas to check</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
+              <div><dt>Project evidence</dt><dd>{project.evidence.length}</dd></div>
+              <div><dt>What we have learned</dt><dd>{workshop.trace.currentEngineeringConclusions.length}</dd></div>
+              <div><dt>Current directions</dt><dd>{workshop.trace.currentEngineeringDirections.length}</dd></div>
+              <div><dt>Planned actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
             </dl>
-            <section><strong>Validation</strong><p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p></section>
+            <section><strong>Test plan</strong><p>{project.validationPlan?.status ?? "No test plan has been created."}</p></section>
           </div>
         }
       >
@@ -1736,7 +1766,7 @@ export default function WorkshopShell({
           <section className="engineering-definition-intro">
             <span>REV · ENGINEERING DEFINITION</span>
             <h2>Now I understand the problem. Let&apos;s work out how your idea works.</h2>
-            <p>Explain the idea one step at a time. These notes are inventor input—not conclusions, evidence, or an approved design.</p>
+            <p>Explain your idea one step at a time. These are your working notes, and they can change.</p>
           </section>
 
           {currentQuestion ? (
@@ -1764,31 +1794,31 @@ export default function WorkshopShell({
                 />
               </label>
               {engineeringAnswerError && <p className="engineering-definition-error" role="alert">{engineeringAnswerError}</p>}
-              <button type="button" className="engineering-definition-record" onClick={submitEngineeringDefinitionAnswer}>RECORD &amp; CONTINUE</button>
+              <button type="button" className="engineering-definition-record" onClick={submitEngineeringDefinitionAnswer}>Save &amp; Continue</button>
             </>
           ) : (
             <section className="engineering-definition-ready">
-              <span>SOLUTION DEFINITION · READY FOR SUMMARY</span>
-              <h2>Your explanation now covers the universal Engineering definition areas.</h2>
-              <p>This is inventor-defined solution understanding. It is not validated, approved, or automatically adopted as formal Engineering truth.</p>
+              <span>YOUR IDEA · READY TO REVIEW</span>
+              <h2>You have explained the main parts of how your idea could work.</h2>
+              <p>This is your current thinking. It can change and has not been proven yet.</p>
             </section>
           )}
 
           {engineeringDefinitionAssessment.solutionDefinitionSummary && (
             <section className="engineering-definition-summary">
-              <span>CURRENT SOLUTION-DEFINITION SUMMARY</span>
+              <span>HOW YOUR IDEA COULD WORK</span>
               <p>{engineeringDefinitionAssessment.solutionDefinitionSummary}</p>
             </section>
           )}
 
           <section className="engineering-definition-legacy">
             <div>
-              <span>EXISTING PROTOTYPE HANDOFF</span>
+              <span>CREATE A WORKING MODEL</span>
               <strong>{conceptCreated ? "Concept 01 study is available." : "Create the existing local procedural study when useful."}</strong>
-              <small>This compatibility control is not the primary Engineering workflow and does not create Project truth.</small>
+              <small>Create an early model when it will help you explore the idea.</small>
             </div>
             <button type="button" onClick={createConcept} disabled={!canCreateConcept}>
-              {conceptCreated ? "OPEN CONCEPT 01" : "CREATE CONCEPT"}
+              {conceptCreated ? "Open Concept 01" : "Create Model"}
             </button>
           </section>
 
@@ -1843,13 +1873,13 @@ export default function WorkshopShell({
         askRevState="unavailable"
         thisBenchLedger={
           <div className="knowledge-ledger-view">
-            <p className="knowledge-ledger-label">Discovery progress</p>
+            <p className="knowledge-ledger-label">What we understand so far</p>
             <dl>
               <div><dt>Current focus</dt><dd>{currentQuestion?.focusLabel ?? "Discovery checkpoint reached"}</dd></div>
               <div><dt>Addressed areas</dt><dd>{discoveryAssessment.addressedFocuses.length}</dd></div>
               <div><dt>Remaining areas</dt><dd>{discoveryAssessment.unansweredFocuses.length}</dd></div>
               <div><dt>Checkpoint</dt><dd>{discoveryAssessment.readyToAdvance ? "Reached" : "Not reached"}</dd></div>
-              <div><dt>Evidence position</dt><dd>{discoveryAssessment.evidenceStatus}</dd></div>
+              <div><dt>What we know</dt><dd>{discoveryAssessment.evidenceStatus}</dd></div>
             </dl>
             <p className="knowledge-ledger-label">Recorded responses</p>
             {recentDiscoveryResponses.length > 0 ? (
@@ -1873,20 +1903,42 @@ export default function WorkshopShell({
             <section><strong>Original observation</strong><p>{project.originalObservation}</p></section>
             <section><strong>Current understanding</strong><p>{project.engineeringState.currentUnderstanding}</p></section>
             <dl>
-              <div><dt>Readiness</dt><dd>{project.readiness}</dd></div>
-              <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
-              <div><dt>Assumptions</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
-              <div><dt>Evidence notes</dt><dd>{project.engineeringState.currentEvidence.length}</dd></div>
-              <div><dt>ProjectEvidence</dt><dd>{project.evidence.length}</dd></div>
+              <div><dt>Project stage</dt><dd>{project.readiness}</dd></div>
+              <div><dt>Known limits</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+              <div><dt>Ideas to check</dt><dd>{project.engineeringState.currentAssumptions.length}</dd></div>
+              <div><dt>Notes from checks</dt><dd>{project.engineeringState.currentEvidence.length}</dd></div>
+              <div><dt>Project evidence</dt><dd>{project.evidence.length}</dd></div>
             </dl>
-            <section><strong>Greatest remaining uncertainty</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
-            <section><strong>Next engineering step</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
-            <section><strong>Formal Validation</strong><p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p></section>
+            <section><strong>Biggest unknown</strong><p>{project.engineeringState.greatestRemainingUncertainty}</p></section>
+            <section><strong>What to do next</strong><p>{project.engineeringState.nextEngineeringStep}</p></section>
+            <section><strong>Test plan</strong><p>{project.validationPlan?.status ?? "No test plan has been created."}</p></section>
           </div>
         }
       >
         <div className="knowledge-work-area">
-          {currentQuestion ? (
+          {discoveryReviewOpen ? (
+            <section className="discovery-review" aria-label="Discovery review">
+              <div className="discovery-review-heading">
+                <div>
+                  <span>DISCOVERY REVIEW</span>
+                  <h2>What you have shared</h2>
+                </div>
+                <b>READ ONLY</b>
+              </div>
+              <p>Review your Discovery answers without leaving the Workshop.</p>
+              <div className="discovery-review-grid">
+                {DISCOVERY_REVIEW_AREAS.map((area) => (
+                  <article key={area.id}>
+                    <strong>{area.label}</strong>
+                    <p>{discoveryReviewResponses.get(area.id) ?? "No answer recorded yet."}</p>
+                  </article>
+                ))}
+              </div>
+              <button type="button" onClick={() => setDiscoveryReviewOpen(false)}>
+                Back to Your Idea
+              </button>
+            </section>
+          ) : currentQuestion ? (
             <>
               <div className="knowledge-question-heading">
                 <div><span>DISCOVERY · CURRENT QUESTION</span><h2>{currentQuestion.focusLabel}</h2></div>
@@ -1910,25 +1962,27 @@ export default function WorkshopShell({
                 />
               </label>
               {knowledgeAnswerError && <p className="knowledge-answer-error" role="alert">{knowledgeAnswerError}</p>}
-              <button type="button" className="knowledge-record-action" onClick={submitDiscoveryAnswer}>RECORD &amp; CONTINUE</button>
+              <button type="button" className="knowledge-record-action" onClick={submitDiscoveryAnswer}>Save &amp; Continue</button>
               <section className="knowledge-next-context">
-                <strong>Current uncertainty</strong><p>{currentQuestion.uncertainty}</p>
-                <strong>Next engineering step</strong><p>{currentQuestion.nextEngineeringStep}</p>
+                <strong>What we still need to know</strong><p>{currentQuestion.uncertainty}</p>
+                <strong>What to do next</strong><p>{currentQuestion.nextEngineeringStep}</p>
               </section>
             </>
           ) : (
             <section className="knowledge-checkpoint-card">
-              <span>DISCOVERY CHECKPOINT REACHED</span>
-              <h2>Sufficient broad understanding has been recorded.</h2>
+              <span>WE HAVE ENOUGH TO MOVE ON</span>
+              <h2>You have covered the main Discovery questions.</h2>
               <p>{discoveryAssessment.summary}</p>
-              <p>Use the full Discovery route for existing checkpoint review and Validation planning.</p>
-              <Link href="/discovery/session">OPEN DISCOVERY CHECKPOINT</Link>
+              <p>Review what you shared and decide what to check next.</p>
+              <button type="button" onClick={() => setDiscoveryReviewOpen(true)}>Review Discovery</button>
             </section>
           )}
-          <div className="knowledge-compatibility-links">
-            <Link href="/discovery/session">Open full Discovery</Link>
-            <Link href="/interview">Open Knowledge Interview</Link>
-          </div>
+          {!discoveryReviewOpen && (
+            <div className="knowledge-compatibility-links">
+              <button type="button" onClick={() => setDiscoveryReviewOpen(true)}>Review Discovery</button>
+              <Link href="/interview">Open Knowledge Interview</Link>
+            </div>
+          )}
         </div>
 
         <style jsx>{`
@@ -1946,6 +2000,18 @@ export default function WorkshopShell({
           .knowledge-answer-input textarea { resize: vertical; box-sizing: border-box; width: 100%; padding: 13px; border: 1px solid #496069; border-radius: 9px; background: #081114; color: #edf2ef; font: inherit; line-height: 1.55; }
           .knowledge-answer-input textarea:focus { outline: 2px solid rgba(79, 205, 224, .45); border-color: #67d6e7; }
           .knowledge-answer-error { margin: -8px 0 0; color: #ffb6a9; font-size: 12px; }
+          .discovery-review { display: grid; gap: 16px; }
+          .discovery-review > p { margin: 0; color: #aeb9b9; line-height: 1.6; }
+          .discovery-review-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+          .discovery-review-heading span { color: #69d9e9; font-size: 10px; font-weight: 850; letter-spacing: .1em; }
+          .discovery-review-heading h2 { margin: 6px 0 0; color: #f2f5f3; font-size: 25px; }
+          .discovery-review-heading b { color: #b7a879; font-size: 10px; letter-spacing: .08em; }
+          .discovery-review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+          .discovery-review-grid article { padding: 14px; border: 1px solid #3e5055; border-radius: 9px; background: rgba(7, 13, 15, .5); }
+          .discovery-review-grid strong { color: #9edce5; font-size: 12px; }
+          .discovery-review-grid p { margin: 8px 0 0; color: #eef0ec; line-height: 1.55; white-space: pre-line; }
+          .discovery-review > button { justify-self: start; }
+          @media (max-width: 700px) { .discovery-review-grid { grid-template-columns: 1fr; } }
           .knowledge-record-action { justify-self: start; padding: 12px 18px; border: 1px solid #69d9e9; border-radius: 8px; background: #173c44; color: #edfdff; font: inherit; font-size: 12px; font-weight: 850; letter-spacing: .07em; cursor: pointer; }
           .knowledge-next-context p { margin: 5px 0 13px; }
           .knowledge-next-context p:last-child { margin-bottom: 0; }
@@ -1995,7 +2061,7 @@ export default function WorkshopShell({
                   <p>{latestContribution.contribution}</p>
                 </section>
                 <section>
-                  <strong>Evidence Adoption</strong>
+                  <strong>Evidence Added to Project</strong>
                   <p>
                     {adoptedEvidenceCount > 0
                       ? `Explicitly adopted as ${adoptedEvidenceCount} Project evidence item${adoptedEvidenceCount === 1 ? "" : "s"}.`
@@ -2107,7 +2173,7 @@ export default function WorkshopShell({
       <section className="workshop-brief" aria-label="REV Workshop Brief">
         <div className="workshop-brief-copy">
           <p className="workshop-kicker">REV · Workshop Brief</p>
-          <p className="workshop-brief-partner">AI Engineering Partner · {workshop.summary}</p>
+          <p className="workshop-brief-partner">Your Workshop Partner · {workshop.summary}</p>
           <h3>Recommended next: {recommendedBench.label}</h3>
           <p className="workshop-brief-reason"><strong>Why:</strong> {recommendedBench.reason}</p>
           {workshop.assertionGuidance && (
@@ -2145,8 +2211,8 @@ export default function WorkshopShell({
           {workshop.trace.projectEvidence.some(
             (evidence) => evidence.sourceProvenance !== "not-recorded"
           ) && (
-            <div className="workshop-brief-trace" aria-label="Project evidence source provenance">
-              <p><strong>Project evidence with recorded source provenance:</strong></p>
+            <div className="workshop-brief-trace" aria-label="Where Project evidence came from">
+              <p><strong>Project evidence with a saved source:</strong></p>
               {workshop.trace.projectEvidence
                 .filter((evidence) => evidence.sourceProvenance !== "not-recorded")
                 .map((evidence) => (
@@ -2154,7 +2220,7 @@ export default function WorkshopShell({
                     <p><strong>Evidence:</strong> {evidence.summary}</p>
                     <p><strong>Recorded source:</strong> {evidence.source}</p>
                     <p>
-                      <strong>Source provenance:</strong>{" "}
+                      <strong>Where it came from:</strong>{" "}
                       {formatProjectEvidenceSourceProvenance(evidence)}
                     </p>
                   </div>
@@ -2163,7 +2229,7 @@ export default function WorkshopShell({
           )}
           {workshop.trace.currentEngineeringConclusions.length > 0 && (
             <div className="workshop-brief-trace" aria-label="Current engineering conclusions">
-              <p><strong>Engineering conclusions:</strong></p>
+              <p><strong>What we have learned:</strong></p>
               {workshop.trace.currentEngineeringConclusions.map((conclusion) => (
                 <div key={conclusion.id} className="workshop-brief-conclusion">
                   <p><strong>Conclusion:</strong> {conclusion.conclusion}</p>
@@ -2178,7 +2244,7 @@ export default function WorkshopShell({
           )}
           {workshop.trace.currentEngineeringDirections.length > 0 && (
             <div className="workshop-brief-trace" aria-label="Current engineering directions">
-              <p><strong>Engineering directions:</strong></p>
+              <p><strong>Current directions:</strong></p>
               {workshop.trace.currentEngineeringDirections.map((direction) => (
                 <div key={direction.id} className="workshop-brief-direction">
                   <p><strong>Direction:</strong> {direction.direction}</p>
@@ -2227,7 +2293,7 @@ export default function WorkshopShell({
           <p>REV recommends next</p>
           <strong>{recommendedBench.label}</strong>
           {recommendedDefinition?.informational && (
-            <span className="workshop-brief-informational">Informational · Future capability</span>
+            <span className="workshop-brief-informational">Explore this area</span>
           )}
           <button type="button" onClick={() => selectBench(recommendedBench.id)}>
             GO TO {recommendedBench.label.toUpperCase()} BENCH
@@ -2257,7 +2323,7 @@ export default function WorkshopShell({
         </div>
       </section>
 
-      <div className="workshop-flow" aria-label="Engineering cycle">
+      <div className="workshop-flow" aria-label="Workshop stages">
         {[
           { id: "knowledge" as WorkshopBenchId, label: "Knowledge" },
           { id: "engineering" as WorkshopBenchId, label: "Engineering" },
@@ -2394,7 +2460,7 @@ export default function WorkshopShell({
         })}
 
         <p className="room-caption">
-          One project brain · every bench listens to the same evolving invention.
+          One Project · every bench works from the same evolving idea.
         </p>
       </div>
         </>
@@ -2439,7 +2505,7 @@ export default function WorkshopShell({
         <div className="readout-title">
           <div>
             <span className="readout-light" aria-hidden="true" />
-            <strong>ACTIVE BENCH WORKSPACE · {selectedBench.label}</strong>
+            <strong>WORKING AT · {selectedBench.label}</strong>
           </div>
           <span>{stateLabel(selectedBench.state)} · ACTIVE</span>
         </div>
@@ -2448,32 +2514,59 @@ export default function WorkshopShell({
           <span>REV · NEXT MOVE</span>
           <strong>{selectedBench.nextMove}</strong>
         </div>
+        {selectedBench.id === "validation" && (
+          <div className="bench-guided-actions">
+            {!discoveryAssessment.readyToAdvance ? (
+              <button type="button" onClick={() => selectBench("knowledge")}>GO TO DISCOVERY</button>
+            ) : (
+              <button type="button" onClick={() => document.getElementById("validation-check-question")?.focus()}>
+                CHOOSE WHAT TO CHECK
+              </button>
+            )}
+          </div>
+        )}
+        {selectedBench.id === "marketing" && (
+          <div className="bench-guided-actions">
+            <button type="button" onClick={() => selectBench("validation")}>REVIEW VALIDATION</button>
+            <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING</button>
+          </div>
+        )}
+        {selectedBench.id === "reality" && (
+          <div className="bench-guided-actions">
+            <button type="button" onClick={() => selectBench("validation")}>GO TO VALIDATION</button>
+            <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING</button>
+            <button type="button" onClick={() => selectBench("marketing")}>GO TO MARKETING</button>
+          </div>
+        )}
           </>
         )}
         {selectedBench?.id === "validation" && (
           <div className="station-summary validation-summary">
             <p className="station-summary-label">Project Validation Status · Read only</p>
-            <p>Planned validation execution remains managed through Discovery.</p>
+            <p>{discoveryAssessment.readyToAdvance ? "Discovery is complete. Choose something useful to test." : "We found something worth checking. Finish Discovery, then choose what you want to test."}</p>
             <div className="validation-summary-grid">
               <span>Plan: {project.validationPlan?.status ?? "not created"}</span>
               <span>Items: {project.validationPlan?.items.length ?? 0}</span>
               <span>Completed: {project.validationPlan?.items.filter((item) => item.status === "completed").length ?? 0}</span>
               <span>Evidence: {project.evidence.length}</span>
             </div>
+            <button type="button" onClick={() => discoveryAssessment.readyToAdvance ? document.getElementById("validation-check-question")?.focus() : selectBench("knowledge")}>
+              {discoveryAssessment.readyToAdvance ? "CHOOSE WHAT TO CHECK" : "GO TO DISCOVERY"}
+            </button>
           </div>
         )}
         {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
-          <section className="specialist-project-context" aria-label="Project Context">
+          <section className="specialist-project-context" aria-label="Project summary">
             <div className="specialist-project-context-heading">
-              <p className="station-summary-label">Project Context</p>
-              <span>Read only</span>
+              <p className="station-summary-label">Project Summary</p>
+              <span>Guide</span>
             </div>
             <p className="specialist-project-context-name">
               {specialistProjectContext.projectName}
             </p>
             <div className="specialist-project-context-grid">
               <section>
-                <strong>Current Understanding</strong>
+                <strong>{selectedSpecialistBenchId === "reality" ? "What We Know" : "Current Understanding"}</strong>
                 <p>
                   {specialistProjectContext.currentUnderstanding ||
                     "No current Project understanding recorded."}
@@ -2495,7 +2588,7 @@ export default function WorkshopShell({
                 )}
               </section>
               <section>
-                <strong>Greatest Remaining Uncertainty</strong>
+                <strong>{selectedSpecialistBenchId === "reality" ? "What Still Needs Checking" : "Biggest Unknown"}</strong>
                 <p>
                   {specialistProjectContext.greatestRemainingUncertainty ||
                     "No greatest remaining uncertainty recorded."}
@@ -2513,14 +2606,19 @@ export default function WorkshopShell({
                     ))}
                   </div>
                 ) : (
-                  <p>No recorded Project evidence.</p>
+                  <>
+                    <p>No recorded Project evidence.</p>
+                    {(selectedSpecialistBenchId === "marketing" || selectedSpecialistBenchId === "reality") && (
+                      <button type="button" onClick={() => selectBench("validation")}>REVIEW VALIDATION</button>
+                    )}
+                  </>
                 )}
                 {specialistContextLimitNote(specialistProjectContext.evidence) && (
                   <small>{specialistContextLimitNote(specialistProjectContext.evidence)}</small>
                 )}
               </section>
               <section>
-                <strong>Current Engineering Conclusions</strong>
+                <strong>What We Have Learned</strong>
                 {specialistProjectContext.conclusions.items.length > 0 ? (
                   <ul>
                     {specialistProjectContext.conclusions.items.map((conclusion) => (
@@ -2528,14 +2626,21 @@ export default function WorkshopShell({
                     ))}
                   </ul>
                 ) : (
-                  <p>No current Engineering Conclusions.</p>
+                  <>
+                    <p>No current findings have been saved.</p>
+                    {(selectedSpecialistBenchId === "marketing" || selectedSpecialistBenchId === "reality") && (
+                      <button type="button" onClick={() => document.getElementById("specialist-contribution")?.focus()}>
+                        ADD WHAT YOU LEARNED
+                      </button>
+                    )}
+                  </>
                 )}
                 {specialistContextLimitNote(specialistProjectContext.conclusions) && (
                   <small>{specialistContextLimitNote(specialistProjectContext.conclusions)}</small>
                 )}
               </section>
               <section>
-                <strong>Current Engineering Directions</strong>
+                <strong>{selectedSpecialistBenchId === "reality" ? "What Should We Do Next" : "Current Directions"}</strong>
                 {specialistProjectContext.directions.items.length > 0 ? (
                   <ul>
                     {specialistProjectContext.directions.items.map((direction) => (
@@ -2543,14 +2648,19 @@ export default function WorkshopShell({
                     ))}
                   </ul>
                 ) : (
-                  <p>No current Engineering Directions.</p>
+                  <>
+                    <p>No current directions have been saved.</p>
+                    {(selectedSpecialistBenchId === "marketing" || selectedSpecialistBenchId === "reality") && (
+                      <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING</button>
+                    )}
+                  </>
                 )}
                 {specialistContextLimitNote(specialistProjectContext.directions) && (
                   <small>{specialistContextLimitNote(specialistProjectContext.directions)}</small>
                 )}
               </section>
               <section>
-                <strong>Adopted Engineering Actions</strong>
+                <strong>Planned Engineering Actions</strong>
                 {specialistProjectContext.actions.items.length > 0 ? (
                   <ul>
                     {specialistProjectContext.actions.items.map((action) => (
@@ -2558,7 +2668,12 @@ export default function WorkshopShell({
                     ))}
                   </ul>
                 ) : (
-                  <p>No adopted Engineering Actions.</p>
+                  <>
+                    <p>No engineering actions have been planned.</p>
+                    {(selectedSpecialistBenchId === "marketing" || selectedSpecialistBenchId === "reality") && (
+                      <button type="button" onClick={() => selectBench("engineering")}>PLAN IN ENGINEERING</button>
+                    )}
+                  </>
                 )}
                 {specialistContextLimitNote(specialistProjectContext.actions) && (
                   <small>{specialistContextLimitNote(specialistProjectContext.actions)}</small>
@@ -2571,30 +2686,26 @@ export default function WorkshopShell({
           <section className="specialist-inquiry" aria-label="Specialist Inquiry">
             <div className="specialist-inquiry-heading">
               <div>
-                <p className="station-summary-label">Specialist Inquiry</p>
+              <p className="station-summary-label">Questions to explore</p>
                 <strong>{specialistBenchGuidance.title}</strong>
               </div>
-              <span>Read only</span>
+              <span>Guide</span>
             </div>
             <p className="specialist-inquiry-lens">
-              <strong>Lens:</strong> {specialistBenchGuidance.lens}
+            <strong>Focus:</strong> {specialistBenchGuidance.lens}
             </p>
             <p>{specialistBenchGuidance.explanation}</p>
             <p className="specialist-inquiry-boundary">
-              These are prompts for consideration. They are not recorded Project truth.
+              These questions are here to help you think. Nothing is added to the Project unless you choose to save it.
             </p>
-            {specialistBenchGuidance.disclaimer && (
-              <p className="specialist-inquiry-disclaimer">
-                {specialistBenchGuidance.disclaimer}
-              </p>
+            {currentSpecialistPrompt && (
+              <div className="specialist-current-question">
+                <span>Current question</span>
+                <strong>{currentSpecialistPrompt}</strong>
+              </div>
             )}
-            <ol>
-              {specialistBenchGuidance.prompts.map((prompt) => (
-                <li key={prompt}>{prompt}</li>
-              ))}
-            </ol>
             <div className="specialist-inquiry-notes">
-              <strong>Recorded structure</strong>
+            <strong>What we already know</strong>
               <ul>
                 {specialistBenchGuidance.structuralNotes.map((note) => (
                   <li key={note}>{note}</li>
@@ -2605,12 +2716,14 @@ export default function WorkshopShell({
         )}
         {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
           <div className="specialist-contribution-panel">
-            <p className="station-summary-label">Specialist Contribution</p>
+        <p className="station-summary-label">What did you learn here?</p>
             <p>
-              Record an inventor-controlled contribution into Project history. It does not
-              automatically become Project evidence or an engineering decision.
+              Write down anything useful you learned while working on this bench.
             </p>
+            <label className="specialist-answer-input">
+              <span>Your answer</span>
             <textarea
+              id="specialist-contribution"
               value={specialistContributionDrafts[selectedSpecialistBenchId] ?? ""}
               onChange={(event) => {
                 setSpecialistContributionDrafts((drafts) => ({
@@ -2619,21 +2732,22 @@ export default function WorkshopShell({
                 }));
                 if (specialistContributionError) setSpecialistContributionError("");
               }}
-              placeholder="Record the specialist contribution in your own words."
+          placeholder="Write your answer in your own words."
               rows={4}
             />
+            </label>
             {specialistContributionError && (
               <p className="specialist-contribution-error" role="alert">
                 {specialistContributionError}
               </p>
             )}
             <button type="button" onClick={submitSpecialistContribution}>
-              Record contribution
+              Save &amp; Continue
             </button>
 
             {selectedSpecialistContributions.length > 0 && (
               <div className="specialist-contribution-history">
-                <strong>Recorded Project history</strong>
+            <strong>Earlier notes from this bench</strong>
                 {selectedSpecialistContributions.map((event) => (
                   <article key={event.id}>
                     <p>{event.description}</p>
@@ -2656,10 +2770,9 @@ export default function WorkshopShell({
 
             {selectedSpecialistContributions.length > 0 && (
               <div className="specialist-evidence-adoption">
-                <strong>Adopt specialist contribution as Project evidence</strong>
+            <strong>Add as Project Evidence</strong>
                 <p>
-                  A contribution is Project history only until you explicitly adopt it.
-                  Adoption creates Project evidence, not an Engineering Conclusion or Decision.
+                  Save this as information we can use to judge how well the invention works.
                 </p>
                 <select
                   value={specialistEvidenceInputs[selectedSpecialistBenchId]?.eventId ?? ""}
@@ -2675,7 +2788,7 @@ export default function WorkshopShell({
                     if (specialistEvidenceError) setSpecialistEvidenceError("");
                   }}
                 >
-                  <option value="">Select a recorded specialist contribution</option>
+              <option value="">Choose a specialist finding</option>
                   {selectedSpecialistContributions.map((event) => (
                     <option key={event.id} value={event.id}>
                       {event.description}
@@ -2695,7 +2808,7 @@ export default function WorkshopShell({
                     }));
                     if (specialistEvidenceError) setSpecialistEvidenceError("");
                   }}
-                  placeholder="Evidence summary"
+                  placeholder="What did we learn?"
                   rows={3}
                 />
                 <input
@@ -2711,7 +2824,7 @@ export default function WorkshopShell({
                     }));
                     if (specialistEvidenceError) setSpecialistEvidenceError("");
                   }}
-                  placeholder="Evidence source / reference"
+              placeholder="Where this information came from"
                 />
                 {specialistEvidenceError && (
                   <p className="specialist-contribution-error" role="alert">
@@ -2719,7 +2832,7 @@ export default function WorkshopShell({
                   </p>
                 )}
                 <button type="button" onClick={submitSpecialistEvidence}>
-                  Adopt as Project evidence
+                  Add as Project Evidence
                 </button>
               </div>
             )}
@@ -2729,38 +2842,39 @@ export default function WorkshopShell({
           <div className="concept-decision-panel">
             <div className="concept-decision-heading">
               <div>
-                <span>REV · VALIDATION EVIDENCE</span>
-                <strong>Turn the accepted concept into testable evidence.</strong>
+                <span>REV · CHECK YOUR INVENTION</span>
+            <strong>Let&apos;s check whether your invention works the way you expect.</strong>
               </div>
               <b>{validationEvidence.outcome === "pending" ? "EVIDENCE PENDING" : validationEvidence.outcome.toUpperCase()}</b>
             </div>
             <p className="concept-decision-intro">
-              Validation is not a second opinion. Record what must be proven, what evidence will count, and what the observation actually showed.
+              Use what you tested and saw to decide whether your invention worked as expected.
             </p>
             <div className="concept-refinement-grid">
               <section>
-                <span>VALIDATION QUESTION</span>
-                <textarea value={validationEvidence.question} onChange={(event) => saveValidationEvidence({ question: event.target.value })} placeholder="What must be true for Concept 02 to remain credible?" rows={3} />
+              <span>1. WHAT ARE WE CHECKING?</span>
+              <textarea id="validation-check-question" value={validationEvidence.question} onChange={(event) => saveValidationEvidence({ question: event.target.value })} placeholder="What part of your invention do you want to test?" rows={3} />
               </section>
               <section>
-                <span>EVIDENCE TO COLLECT</span>
-                <textarea value={validationEvidence.evidence} onChange={(event) => saveValidationEvidence({ evidence: event.target.value })} placeholder="What measurement, test, observation, comparison, or prototype evidence will answer it?" rows={3} />
+              <span>2. WHAT DID YOU DO?</span>
+              <textarea value={validationEvidence.evidence} onChange={(event) => saveValidationEvidence({ evidence: event.target.value })} placeholder="Tell REV what you tested, measured, or looked at." rows={3} />
               </section>
             </div>
             <label className="concept-decision-note">
-              <span>OBSERVED RESULT</span>
-              <textarea value={validationEvidence.observed} onChange={(event) => saveValidationEvidence({ observed: event.target.value })} placeholder="Record what actually happened. Separate observation from interpretation." rows={4} />
+              <span>3. WHAT HAPPENED?</span>
+              <textarea value={validationEvidence.observed} onChange={(event) => saveValidationEvidence({ observed: event.target.value })} placeholder="Tell REV what you saw or measured." rows={4} />
             </label>
+            <p className="concept-decision-step">4. WHAT DOES THAT TELL US ABOUT YOUR INVENTION?</p>
             <div className="concept-decision-actions">
-              <button type="button" className={validationEvidence.outcome === "supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "supported" })}>SUPPORTED</button>
-              <button type="button" className={validationEvidence.outcome === "inconclusive" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "inconclusive" })}>INCONCLUSIVE</button>
-              <button type="button" className={validationEvidence.outcome === "not-supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "not-supported" })}>NOT SUPPORTED</button>
+              <button type="button" className={validationEvidence.outcome === "supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "supported" })}>It worked</button>
+              <button type="button" className={validationEvidence.outcome === "inconclusive" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "inconclusive" })}>Still unsure</button>
+              <button type="button" className={validationEvidence.outcome === "not-supported" ? "is-selected" : ""} onClick={() => saveValidationEvidence({ outcome: "not-supported" })}>It didn&apos;t work</button>
             </div>
             <div className={`concept-decision-status decision-${validationEvidence.outcome}`}>
-              {validationEvidence.outcome === "pending" && "No validation outcome recorded yet."}
-              {validationEvidence.outcome === "supported" && "Evidence currently supports the tested proposition. Record what should be tested next."}
-              {validationEvidence.outcome === "inconclusive" && "The evidence is insufficient to decide. Define the next test or observation."}
-              {validationEvidence.outcome === "not-supported" && "The evidence does not support the proposition. Feed the finding back into Engineering."}
+              {validationEvidence.outcome === "pending" && "Choose the answer that best matches what happened."}
+              {validationEvidence.outcome === "supported" && "What happened supports the idea so far. Decide what to check next."}
+              {validationEvidence.outcome === "inconclusive" && "The result is not clear yet. Choose another useful check."}
+              {validationEvidence.outcome === "not-supported" && "The result did not support the idea. Take what you learned back to Engineering."}
             </div>
           </div>
         )}
@@ -2776,21 +2890,21 @@ export default function WorkshopShell({
             askRevState="unavailable"
             thisBenchLedger={
               <div className="prototype-ledger-view">
-                <p className="prototype-ledger-boundary">Workshop-local study state</p>
+                <p className="prototype-ledger-boundary">Models saved in this browser</p>
                 <dl>
                   <div><dt>Concept study started</dt><dd>{conceptCreated ? "Yes" : "No"}</dd></div>
-                  <div><dt>Procedural Concept 01</dt><dd>{conceptGenerated ? "Available" : "Not available"}</dd></div>
-                  <div><dt>Procedural Concept 02</dt><dd>{refinedConceptGenerated ? "Available" : "Not available"}</dd></div>
-                  <div><dt>Procedural Concept 03</dt><dd>{thirdConceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div><dt>Concept 01 model</dt><dd>{conceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div><dt>Concept 02 model</dt><dd>{refinedConceptGenerated ? "Available" : "Not available"}</dd></div>
+                  <div><dt>Concept 03 model</dt><dd>{thirdConceptGenerated ? "Available" : "Not available"}</dd></div>
                   <div>
                     <dt>Latest local study stage</dt>
                     <dd>
                       {thirdConceptGenerated
-                        ? "Concept 03 procedural study"
+                        ? "Concept 03 model"
                         : refinedConceptGenerated
-                          ? "Concept 02 procedural study"
+                          ? "Concept 02 model"
                           : conceptGenerated
-                            ? "Concept 01 procedural study"
+                            ? "Concept 01 model"
                             : conceptVisualised
                               ? "Visual brief prepared"
                               : conceptCreated
@@ -2799,10 +2913,10 @@ export default function WorkshopShell({
                     </dd>
                   </div>
                 </dl>
-                <p className="prototype-ledger-boundary">Project-recorded decisions</p>
+                <p className="prototype-ledger-boundary">Decisions saved in the Project</p>
                 <section>
                   <strong>Active concept review</strong>
-                  <p>{workshop.trace.activeConceptReview?.outcome ?? "No Project-recorded concept review."}</p>
+                  <p>{workshop.trace.activeConceptReview?.outcome ?? "No concept review has been saved."}</p>
                   {workshop.trace.activeConceptReview && (
                     <small>
                       {workshop.trace.activeConceptReview.supportingEvidence.length > 0
@@ -2813,7 +2927,7 @@ export default function WorkshopShell({
                 </section>
                 <section>
                   <strong>Active concept direction</strong>
-                  <p>{workshop.trace.activeConceptDirection?.outcome ?? "No Project-recorded concept direction."}</p>
+                  <p>{workshop.trace.activeConceptDirection?.outcome ?? "No concept direction has been saved."}</p>
                   {workshop.trace.activeConceptDirection && (
                     <small>
                       {workshop.trace.activeConceptDirection.supportingEvidence.length > 0
@@ -2836,15 +2950,15 @@ export default function WorkshopShell({
                   <p>{project.engineeringState.greatestRemainingUncertainty || "No greatest remaining uncertainty recorded."}</p>
                 </section>
                 <dl className="prototype-ledger-counts">
-                  <div><dt>Constraints</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
+                  <div><dt>Known Limits</dt><dd>{project.engineeringState.currentConstraints.length}</dd></div>
                   <div><dt>Project Evidence</dt><dd>{workshop.trace.projectEvidence.length}</dd></div>
                   <div><dt>Current Conclusions</dt><dd>{workshop.trace.currentEngineeringConclusions.length}</dd></div>
                   <div><dt>Current Directions</dt><dd>{workshop.trace.currentEngineeringDirections.length}</dd></div>
-                  <div><dt>Adopted Actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
+                  <div><dt>Planned Actions</dt><dd>{workshop.trace.adoptedEngineeringActions.length}</dd></div>
                 </dl>
                 <section>
-                  <strong>Formal Validation</strong>
-                  <p>{project.validationPlan?.status ?? "No formal Validation plan recorded."}</p>
+                  <strong>Test Plan</strong>
+                  <p>{project.validationPlan?.status ?? "No test plan has been created."}</p>
                 </section>
               </div>
             }
@@ -2852,13 +2966,13 @@ export default function WorkshopShell({
           <div className="concept-readout">
             <div className="concept-sheet-heading">
               <div>
-                <span>PROTOTYPE BENCH · CONCEPT DEVELOPMENT HOME</span>
+              <span>PROTOTYPE BENCH · BUILD YOUR IDEA</span>
                 <strong>{projectName}</strong>
               </div>
               <b>CONCEPT SHEET</b>
             </div>
-            <p className="concept-persistence-note">Workshop-local concept study · saved locally for this Project workshop. Project truth changes only through explicit recorded decisions.</p>
-            <p className="concept-persistence-note">This is where the same idea that began with the inventor is developed into a large working engineering concept model. Prototype does not start a separate concept.</p>
+              <p className="concept-persistence-note">This early working model is saved in this browser. It can change and has not been proven yet.</p>
+              <p className="concept-persistence-note">Keep developing the same idea you started with. Each new concept is another version, not a separate idea.</p>
 
             <section className="first-concept-foundation" aria-label="First recognisable concept foundation">
               <div className="first-concept-mode-heading">
@@ -2866,7 +2980,7 @@ export default function WorkshopShell({
                   <span>REV SUGGESTS</span>
                   <strong>{visualModeLabel(selectedVisualMode).toUpperCase()}</strong>
                 </div>
-                <b>{confirmedVisualMode ? "MODE CONFIRMED" : `${visualModeSuggestion.confidence.toUpperCase()} CONFIDENCE`}</b>
+                <b>{confirmedVisualMode ? "TYPE CONFIRMED" : `${visualModeSuggestion.confidence.toUpperCase()} MATCH`}</b>
               </div>
               <p className="first-concept-mode-reason">{visualModeSuggestion.reason}</p>
               {visualModeSuggestion.supportingSignals.length > 0 && (
@@ -2876,7 +2990,7 @@ export default function WorkshopShell({
               )}
               <div className="first-concept-mode-actions">
                 <button type="button" onClick={confirmVisualMode}>
-                  CONFIRM {selectedVisualMode.toUpperCase()}
+                  USE {selectedVisualMode.toUpperCase()}
                 </button>
                 <button
                   type="button"
@@ -2888,7 +3002,7 @@ export default function WorkshopShell({
               </div>
               {visualModeCorrectionOpen && (
                 <label className="first-concept-mode-select">
-                  <span>Choose the visual language that best fits this idea</span>
+                  <span>Choose the kind of picture that best fits this idea</span>
                   <select
                     value={selectedVisualMode}
                     onChange={(event) => changeVisualMode(event.target.value as IdeaVisualMode)}
@@ -2902,10 +3016,10 @@ export default function WorkshopShell({
 
               <div className="first-concept-brief-heading">
                 <div>
-                  <span>REV · FIRST CONCEPT BRIEF</span>
-                  <strong>Bounded input for Concept 01</strong>
+                <span>REV · FIRST MODEL BRIEF</span>
+                <strong>What REV will use for Concept 01</strong>
                 </div>
-                <b>INVENTOR-DEFINED · UNVALIDATED · NOT PROJECT TRUTH</b>
+              <b>EARLY WORKING MODEL · NOT PROVEN YET</b>
               </div>
               <div className="first-concept-brief-grid">
                 <section><span>VISUAL MODE</span><p>{visualModeLabel(confirmedVisualMode ?? selectedVisualMode)}</p></section>
@@ -2924,7 +3038,7 @@ export default function WorkshopShell({
                 {conceptGenerationFoundation.brief.technicalUncertainty && <section><span>TECHNICAL UNCERTAINTY</span><p>{conceptGenerationFoundation.brief.technicalUncertainty}</p></section>}
               </div>
               <details className="first-concept-trace">
-                <summary>Exact source trace · {conceptGenerationFoundation.sourceEventIds.length} timeline event{conceptGenerationFoundation.sourceEventIds.length === 1 ? "" : "s"}</summary>
+                <summary>See where this came from · {conceptGenerationFoundation.sourceEventIds.length} saved item{conceptGenerationFoundation.sourceEventIds.length === 1 ? "" : "s"}</summary>
                 <ul>
                   {conceptGenerationFoundation.sourceTrace.map((source) => (
                     <li key={`${source.field}-${source.sourceKind}-${source.sourceId}`}>
@@ -2935,12 +3049,12 @@ export default function WorkshopShell({
               </details>
               <div className={`first-concept-readiness${conceptGenerationFoundation.generationReady ? " is-ready" : ""}`}>
                 <div>
-                  <span>REV · GENERATION READINESS</span>
-                  <strong>{conceptGenerationFoundation.generationReady ? "READY TO CREATE CONCEPT 01" : "MORE DEFINITION NEEDED"}</strong>
+              <span>READY TO CREATE</span>
+                  <strong>{conceptGenerationFoundation.generationReady ? "READY TO CREATE CONCEPT 01" : "MORE DETAILS NEEDED"}</strong>
                   <small>
                     {conceptGenerationFoundation.generationReady
-                      ? "reAIdea has enough inventor-defined structure to prepare a first engineering representation."
-                      : `Remaining: ${conceptGenerationFoundation.missingRequiredFields.join(", ")}.`}
+                      ? "reAIdea has enough detail to prepare the first working model."
+                      : `Still needed: ${conceptGenerationFoundation.missingRequiredFields.map(missingConceptDetailLabel).join(", ")}.`}
                   </small>
                 </div>
                 <button
@@ -2956,11 +3070,21 @@ export default function WorkshopShell({
                       ? "RETRY CONCEPT 01"
                     : conceptGenerationFoundation.generationReady && (conceptGenerationFoundation.request?.visualMode !== "product" || conceptGenerationFoundation.request?.outputType !== "image")
                       ? "VISUAL GENERATION FOR THIS MODE IS COMING NEXT"
-                      : "GENERATE CONCEPT 01"}
+                      : "Create Concept 01"}
                 </button>
               </div>
+              {conceptGenerationState === "generating" && (
+                <p className="first-concept-generation-status is-working" role="status">
+                  REV is updating your design — please wait… Reading your answers and preparing the first view.
+                </p>
+              )}
+              {conceptGenerationState === "ready" && (
+                <p className="first-concept-generation-status is-ready" role="status">
+                  Your design is ready.
+                </p>
+              )}
               {conceptGenerationState === "not-configured" && (
-                <p className="first-concept-generation-status is-warning">CONCEPT GENERATION IS NOT CONFIGURED</p>
+              <p className="first-concept-generation-status is-warning">MODEL CREATION IS NOT AVAILABLE</p>
               )}
               {(conceptGenerationState === "failed" || conceptGenerationState === "unsupported") && (
                 <p className="first-concept-generation-status is-error">
@@ -2992,11 +3116,11 @@ export default function WorkshopShell({
                   <span className="generated-concept-axis" aria-hidden="true">Z ↑<br />Y ↙ · X ↘</span>
                 </div>
                 <p>{generatedConceptCandidate.disclaimer}</p>
-                <p className="generated-concept-candidate-note">Generated from inventor-defined Discovery and Engineering inputs as an early engineering representation. This is what reAIdea currently understands you are describing; it does not prove feasibility or depict a finished product.</p>
-                {generatedConceptCandidateIsStale && <p className="generated-concept-update-note">NEW INFORMATION RECORDED · The current model is retained. Update only through an explicit future model action.</p>}
+                <p className="generated-concept-candidate-note">This early model shows what reAIdea currently understands. It may change, has not been proven, and is not a finished product.</p>
+                {generatedConceptCandidateIsStale && <p className="generated-concept-update-note">NEW INFORMATION SAVED · Your current model is unchanged. Choose to update it when you are ready.</p>}
                 <small>Candidate <code>{generatedConceptCandidate.candidateId}</code> · family <code>{generatedConceptCandidate.conceptFamilyId}</code> · revision {generatedConceptCandidate.revision}</small>
-                <small>Prototype develops the same evolving idea into its large working model; the concept did not begin at this bench.</small>
-                <small>Workshop-local model cache. It can return after refresh, but remains outside the Project and may be cleared with browser site data.</small>
+                <small>This is the next view of the same idea you have been developing.</small>
+                <small>This model is saved in this browser and may be removed if browser data is cleared.</small>
                 <div className="concept-refinement-actions">
                   <button type="button" onClick={() => setConceptRefinementOpen((open) => !open)}>REFINE MODEL</button>
                   {conceptCandidateHistory.length > 1 && (
@@ -3005,10 +3129,20 @@ export default function WorkshopShell({
                     </button>
                   )}
                 </div>
+                {conceptRefinementState === "refining" && (
+                  <p className="first-concept-generation-status is-working" role="status">
+                    REV is updating your design — please wait… Reading your changes and preparing the new view.
+                  </p>
+                )}
+                {conceptRefinementState === "ready" && (
+                  <p className="first-concept-generation-status is-ready" role="status">
+                    Your updated design is ready.
+                  </p>
+                )}
                 {conceptRefinementOpen && (
                   <div className="concept-refinement-panel">
                     <label>
-                      <span>What would you like to change about the model?</span>
+                    <span>What would you like to change?</span>
                       <textarea
                         value={conceptRefinementDraft}
                         onChange={(event) => setConceptRefinementDraft(event.target.value)}
@@ -3017,7 +3151,7 @@ export default function WorkshopShell({
                         placeholder="Describe what doesn't look right yet..."
                       />
                     </label>
-                    <small>This creates the next revision of the same engineering concept. It does not approve or adopt the model.</small>
+                    <small>This creates a new version of the same idea. It does not mark the model as approved.</small>
                     <button
                       type="button"
                       onClick={refineCurrentConcept}
@@ -3047,14 +3181,14 @@ export default function WorkshopShell({
 
             {!generatedConceptCandidate && <div className="concept-visual-actions">
               <button type="button" className="concept-visualise-button" onClick={visualiseConcept}>
-                {conceptVisualised ? "VISUAL STUDY STARTED" : "BEGIN VISUAL STUDY"}
+                {conceptVisualised ? "WORKING MODEL STARTED" : "Create Working Model"}
               </button>
-              <span>{conceptVisualised ? "Procedural study prepared from the current Project definition." : "Creates a procedural visual study from the current Project definition. This is not CAD, validation, or an adopted design."}</span>
+              <span>{conceptVisualised ? "An early model has been prepared from what you shared." : "Create an early picture of the idea. It will not be a finished or approved design."}</span>
             </div>}
             {conceptVisualised && !generatedConceptCandidate && (
               <div className="concept-visual-board" aria-label="Concept 01 visual study">
                 <div className="visual-board-grid" aria-hidden="true" />
-                <div className="visual-board-label">CONCEPT 01 · PROCEDURAL CONCEPT STUDY</div>
+                <div className="visual-board-label">CONCEPT 01 · EARLY WORKING MODEL</div>
                 <div className="visual-object">
                   <i className="visual-object-top" />
                   <i className="visual-object-core" />
@@ -3064,7 +3198,7 @@ export default function WorkshopShell({
                   <span className="visual-callout visual-callout-constraint">CONSTRAINT</span>
                   <span className="visual-callout visual-callout-unknown">UNKNOWN</span>
                 </div>
-                <div className="visual-board-footer">WORKING REPRESENTATION ONLY · NOT CAD · NOT PROJECT TRUTH · NOT VALIDATED</div>
+                <div className="visual-board-footer">EARLY WORKING MODEL · IT CAN CHANGE AND HAS NOT BEEN PROVEN YET</div>
               </div>
             )}
 
@@ -3075,18 +3209,18 @@ export default function WorkshopShell({
                     <span>REV · VISUAL CONCEPT BRIEF</span>
                     <strong>{visualConceptBrief.title}</strong>
                   </div>
-                  <b>ENGINEERING HANDOFF</b>
+                  <b>WHAT REV UNDERSTANDS</b>
                 </div>
 
                 <p className="visual-concept-brief-intro">
                   {visualConceptBrief.hasEngineeringDefinition
-                    ? "Use the inventor-defined solution understanding with the Project problem context to prepare a first-pass visual."
+                    ? "Use what you have shared about the idea and problem to prepare the first picture."
                     : "Translate the current Project engineering state into a first-pass visual. This brief is the controlled handoff between REV reasoning and future visual generation."}
                 </p>
 
                 {visualConceptBrief.hasEngineeringDefinition && (
                   <p className="concept-persistence-note">
-                    Engineering Definition reflects inventor-provided solution understanding. It is not validated or automatically adopted as formal Engineering truth.
+                    This is how you have explained the idea so far. It can change and has not been proven yet.
                   </p>
                 )}
 
@@ -3114,7 +3248,7 @@ export default function WorkshopShell({
                   )}
 
                   <section>
-                    <span>KEY CONSTRAINTS</span>
+                    <span>IMPORTANT LIMITS</span>
                     <ul>
                       {visualConceptBrief.constraints.map((item) => (
                         <li key={item}>{item}</li>
@@ -3139,24 +3273,27 @@ export default function WorkshopShell({
                   </section>
 
                   <section className="visual-concept-brief-warning">
-                    <span>{visualConceptBrief.hasEngineeringDefinition ? "PROJECT UNCERTAINTIES" : "UNRESOLVED QUESTIONS"}</span>
+                    <span>WHAT WE STILL NEED TO KNOW</span>
                     <ul>
                       {visualConceptBrief.unknowns.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
+                    <button type="button" onClick={() => selectBench("engineering")}>OPEN ENGINEERING</button>
                   </section>
 
                   {visualConceptBrief.hasEngineeringDefinition && visualConceptBrief.technicalUncertainty && (
                     <section className="visual-concept-brief-warning">
-                      <span>INVENTOR-IDENTIFIED TECHNICAL UNCERTAINTY</span>
+                      <span>WHAT YOU&apos;RE STILL UNSURE ABOUT</span>
                       <p>{visualConceptBrief.technicalUncertainty}</p>
+                      <button type="button" onClick={() => selectBench("engineering")}>WORK ON THIS IN ENGINEERING</button>
                     </section>
                   )}
 
                   <section className="visual-concept-brief-next">
-                    <span>NEXT ENGINEERING MOVE</span>
+                    <span>NEXT STEP</span>
                     <p>{visualConceptBrief.nextMove}</p>
+                    <button type="button" onClick={() => selectBench("engineering")}>OPEN ENGINEERING BENCH</button>
                   </section>
                 </div>
 
@@ -3167,11 +3304,11 @@ export default function WorkshopShell({
                 <div className="concept-generation-action">
                   <div>
                     <span>REV · CONCEPT GENERATION</span>
-                    <strong>{conceptGenerated ? "PROCEDURAL CONCEPT STUDY AVAILABLE" : "Create the first procedural concept study from this brief."}</strong>
-                    <small>{conceptGenerated ? "Saved locally with this Project workshop. This working representation is not Project truth or validation." : "Creates a procedural visual study only. It is not CAD, validation, or an adopted design."}</small>
+                    <strong>{conceptGenerated ? "EARLY WORKING MODEL AVAILABLE" : "Create the first working model from this brief."}</strong>
+                    <small>{conceptGenerated ? "Saved in this browser. It can change and has not been proven yet." : "Creates an early picture of the idea, not a finished or approved design."}</small>
                   </div>
                   <button type="button" onClick={generateConcept}>
-                    {conceptGenerated ? "PROCEDURAL STUDY AVAILABLE" : "CREATE PROCEDURAL CONCEPT STUDY"}
+                    {conceptGenerated ? "Working Model Available" : "Create Working Model"}
                   </button>
                 </div>
 
@@ -3180,11 +3317,11 @@ export default function WorkshopShell({
                     <img
                       className="generated-concept-image"
                       src={generatedConceptDataUri}
-                      alt={`Procedural concept study for ${projectName}`}
+                      alt={`Early working model for ${projectName}`}
                     />
                     <div className="generated-concept-meta">
                       <span>CREATED FROM CURRENT VISUAL BRIEF</span>
-                      <b>PROCEDURAL CONCEPT STUDY · NOT CAD · NOT VALIDATED</b>
+                  <b>EARLY WORKING MODEL · NOT PROVEN YET</b>
                     </div>
                   </div>
                 )}
@@ -3194,7 +3331,7 @@ export default function WorkshopShell({
                     <div className="concept-review-heading">
                       <div>
                         <span>REV · CONCEPT REVIEW</span>
-                        <strong>Challenge the first-pass concept</strong>
+                  <strong>Review the first model</strong>
                       </div>
                       <b>{conceptReview === "unreviewed" ? "AWAITING REVIEW" : conceptReview.toUpperCase()}</b>
                     </div>
@@ -3206,9 +3343,9 @@ export default function WorkshopShell({
                     {renderSupportingEvidenceSelector()}
 
                     <div className="concept-review-actions">
-                      <button type="button" className={conceptReview === "accepted" ? "is-selected" : ""} onClick={() => reviewConcept("accepted")}>ACCEPT CONCEPT</button>
-                      <button type="button" className={conceptReview === "refine" ? "is-selected" : ""} onClick={() => reviewConcept("refine")}>NEEDS REFINEMENT</button>
-                      <button type="button" className={conceptReview === "rethink" ? "is-selected" : ""} onClick={() => reviewConcept("rethink")}>RETHINK CONCEPT</button>
+                  <button type="button" className={conceptReview === "accepted" ? "is-selected" : ""} onClick={() => reviewConcept("accepted")}>Looks Right</button>
+                  <button type="button" className={conceptReview === "refine" ? "is-selected" : ""} onClick={() => reviewConcept("refine")}>Needs Changes</button>
+                  <button type="button" className={conceptReview === "rethink" ? "is-selected" : ""} onClick={() => reviewConcept("rethink")}>Try a Different Direction</button>
                     </div>
 
                     <label className="concept-review-note">
@@ -3233,7 +3370,7 @@ export default function WorkshopShell({
                         <div className="concept-refinement-panel">
                           <div className="concept-refinement-heading">
                             <div>
-                              <span>REV · REFINEMENT DIRECTIVE</span>
+                  <span>REV · CHANGES TO MAKE</span>
                               <strong>{refinementDirective.focus}</strong>
                             </div>
                             <b>CONCEPT 02</b>
@@ -3247,8 +3384,9 @@ export default function WorkshopShell({
                               <p>{refinementDirective.note}</p>
                             </section>
                             <section>
-                              <span>NEXT ENGINEERING MOVE</span>
+                              <span>NEXT STEP</span>
                               <p>{refinementDirective.nextMove}</p>
+                              <button type="button" onClick={() => selectBench("engineering")}>OPEN ENGINEERING BENCH</button>
                             </section>
                           </div>
 
@@ -3265,8 +3403,8 @@ export default function WorkshopShell({
                               alt={`Procedural Concept 02 study for ${projectName}`}
                             />
                             <div className="generated-concept-meta">
-                              <span>CREATED FROM REVIEW-DRIVEN REFINEMENT</span>
-                              <b>CONCEPT 02 · PROCEDURAL STUDY · NOT VALIDATED</b>
+                    <span>UPDATED FROM YOUR REVIEW</span>
+                    <b>CONCEPT 02 · EARLY WORKING MODEL · NOT PROVEN YET</b>
                             </div>
                           </div>
                         )}
@@ -3285,9 +3423,9 @@ export default function WorkshopShell({
                             </p>
                             {renderSupportingEvidenceSelector()}
                             <div className="concept-decision-actions">
-                              <button type="button" className={conceptDecision === "accept" ? "is-selected" : ""} onClick={() => decideConcept("accept")}>ACCEPT FOR VALIDATION</button>
+                  <button type="button" className={conceptDecision === "accept" ? "is-selected" : ""} onClick={() => decideConcept("accept")}>Ready to Test</button>
                               <button type="button" className={conceptDecision === "refine" ? "is-selected" : ""} onClick={() => decideConcept("refine")}>REFINE AGAIN</button>
-                              <button type="button" className={conceptDecision === "rethink" ? "is-selected" : ""} onClick={() => decideConcept("rethink")}>RETHINK DIRECTION</button>
+                  <button type="button" className={conceptDecision === "rethink" ? "is-selected" : ""} onClick={() => decideConcept("rethink")}>Try a Different Direction</button>
                             </div>
                             <label className="concept-decision-note">
                               <span>REV · DECISION NOTE</span>
@@ -3314,14 +3452,14 @@ export default function WorkshopShell({
                             {conceptDecision === "rethink" && (
                               <div className="concept-decision-handoff">
                                 <span>REV · ENGINEERING HANDOFF</span>
-                                <p>The previous concepts remain preserved. Continue the reasoning from the Engineering bench before generating another direction.</p>
+                  <p>Your earlier concepts are saved. Return to Engineering to think through a different direction.</p>
                               </div>
                             )}
 
                             {conceptDecision === "accept" && (
                               <div className="concept-decision-handoff">
                                 <span>REV · VALIDATION HANDOFF</span>
-                                <p>Concept 02 is now the working candidate for validation. The earlier concepts and review history remain preserved.</p>
+                  <p>Concept 02 is ready to test. Your earlier concepts and review notes are still saved.</p>
                               </div>
                             )}
 
@@ -3333,8 +3471,8 @@ export default function WorkshopShell({
                                   alt={`Procedural Concept 03 study for ${projectName}`}
                                 />
                                 <div className="generated-concept-meta">
-                                  <span>CREATED FROM SECOND DECISION GATE</span>
-                                  <b>CONCEPT 03 · PROCEDURAL STUDY · NOT VALIDATED</b>
+                    <span>UPDATED FROM YOUR SECOND REVIEW</span>
+                    <b>CONCEPT 03 · EARLY WORKING MODEL · NOT PROVEN YET</b>
                                 </div>
                               </div>
                             )}
@@ -3356,8 +3494,8 @@ export default function WorkshopShell({
                 {conceptSheet.hasEngineeringDefinition ? (
                   <>
                     <section className="concept-sheet-card concept-sheet-wide">
-                      <span>ENGINEERING DEFINITION BOUNDARY</span>
-                      <p>Engineering Definition reflects inventor-provided solution understanding. It is not validated or automatically adopted as formal Engineering truth.</p>
+                <span>YOUR CURRENT IDEA</span>
+                <p>This is how you have explained the idea so far. It can change and has not been proven yet.</p>
                     </section>
                     {conceptSheet.proposedSolution && <section className="concept-sheet-card concept-sheet-wide"><span>INVENTOR-DEFINED SOLUTION</span><p>{conceptSheet.proposedSolution}</p></section>}
                     {conceptSheet.howItWorks && <section className="concept-sheet-card concept-sheet-wide"><span>HOW IT WORKS</span><p>{conceptSheet.howItWorks}</p></section>}
@@ -3369,12 +3507,12 @@ export default function WorkshopShell({
                   </>
                 ) : (
                   <section className="concept-sheet-card concept-sheet-wide">
-                    <span>CURRENT OPERATING PRINCIPLE</span>
+                    <span>HOW IT COULD WORK</span>
                     <p>{conceptSheet.operatingPrinciple}</p>
                   </section>
                 )}
                 <section className="concept-sheet-card">
-                  <span>{conceptSheet.hasEngineeringDefinition ? "KNOWN CONSTRAINTS" : "KEY CONSTRAINTS"}</span>
+                  <span>{conceptSheet.hasEngineeringDefinition ? "KNOWN LIMITS" : "IMPORTANT LIMITS"}</span>
                   <ul>{conceptSheet.constraints.map((item) => <li key={item}>{item}</li>)}</ul>
                 </section>
                 {conceptSheet.hasEngineeringDefinition && conceptSheet.constraintSafetyResponse && (
@@ -3388,19 +3526,22 @@ export default function WorkshopShell({
                   <ul>{conceptSheet.assumptions.map((item) => <li key={item}>{item}</li>)}</ul>
                 </section>
                 <section className="concept-sheet-card concept-sheet-alert">
-                  <span>{conceptSheet.hasEngineeringDefinition ? "PROJECT UNCERTAINTIES" : "UNRESOLVED QUESTIONS"}</span>
+                  <span>WHAT WE STILL NEED TO KNOW</span>
                   <ul>{conceptSheet.unresolvedQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
+                  <button type="button" onClick={() => selectBench("engineering")}>OPEN ENGINEERING</button>
                 </section>
                 {conceptSheet.hasEngineeringDefinition && conceptSheet.technicalUncertainty && (
                   <section className="concept-sheet-card concept-sheet-alert">
-                    <span>INVENTOR-IDENTIFIED TECHNICAL UNCERTAINTY</span>
+                    <span>WHAT YOU&apos;RE STILL UNSURE ABOUT</span>
                     <p>{conceptSheet.technicalUncertainty}</p>
+                    <button type="button" onClick={() => selectBench("engineering")}>WORK ON THIS IN ENGINEERING</button>
                   </section>
                 )}
                 <section className="concept-sheet-card concept-sheet-next">
-                  <span>NEXT ENGINEERING MOVE</span>
+                  <span>NEXT STEP</span>
                   <p>{conceptSheet.nextEngineeringMove}</p>
                   <small>{conceptSheet.evidenceCount} evidence item{conceptSheet.evidenceCount === 1 ? "" : "s"} currently attached to the Project.</small>
+                  <button type="button" onClick={() => selectBench("engineering")}>OPEN ENGINEERING BENCH</button>
                 </section>
               </div>
             )}
@@ -5077,6 +5218,10 @@ export default function WorkshopShell({
           letter-spacing: 0.08em;
           text-transform: uppercase;
         }
+        .specialist-current-question { display:grid; gap:6px; margin:14px 0; padding:12px; border:1px solid rgba(119,218,240,.28); background:rgba(13,29,40,.48); }
+        .specialist-current-question span { color:#77daf0; font:800 9px/1.25 Arial,sans-serif; letter-spacing:.8px; text-transform:uppercase; }
+        .specialist-current-question strong { color:#f4f8fb; font:700 13px/1.45 Arial,sans-serif; }
+        .bench-guided-actions { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; }
 
         .specialist-inquiry > p,
         .specialist-inquiry > ol,
@@ -6009,6 +6154,8 @@ export default function WorkshopShell({
         .first-concept-readiness small { display:block; max-width:600px; margin-top:6px; color:#9eb0b6; font-size:10px; line-height:1.45; }
         .first-concept-readiness button:disabled { max-width:250px; border-color:#4a626b; background:#15242b; color:#789099; cursor:not-allowed; }
         .first-concept-generation-status { margin:10px 0 0; padding:9px 11px; border:1px solid rgba(213,174,91,.48); color:#efd599; background:rgba(62,42,13,.38); font:800 10px/1.4 Arial,sans-serif; letter-spacing:.7px; }
+        .first-concept-generation-status.is-working { animation:rev-working-pulse 1.15s ease-in-out infinite alternate; }
+        @keyframes rev-working-pulse { from { box-shadow:0 0 0 rgba(105,217,233,0); opacity:.72; } to { box-shadow:0 0 18px rgba(105,217,233,.28); opacity:1; } }
         .first-concept-generation-status.is-error { border-color:rgba(218,102,102,.48); color:#f1b2b2; background:rgba(62,20,20,.34); }
         .generated-concept-candidate { margin:16px 0; padding:15px; border:1px solid rgba(79,208,203,.5); border-radius:12px; background:rgba(7,23,28,.86); }
         .generated-concept-candidate-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; }
@@ -6296,4 +6443,17 @@ export default function WorkshopShell({
       `}</style>
     </section>
   );
+}
+
+function missingConceptDetailLabel(
+  field: "proposedSolution" | "operatingConcept" | "functionalElements" | "confirmedVisualMode"
+): string {
+  const labels = {
+    proposedSolution: "what the idea should do",
+    operatingConcept: "how the idea could work",
+    functionalElements: "the main parts or steps",
+    confirmedVisualMode: "the kind of picture to create",
+  } as const;
+
+  return labels[field];
 }

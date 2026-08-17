@@ -101,7 +101,7 @@ export function startValidationItem(
       engineeringState: {
         ...project.engineeringState,
         greatestRemainingUncertainty: targetItem.target,
-        nextEngineeringStep: `Execute the validation method for ${targetItem.title.toLowerCase()} and record traceable evidence before drawing a conclusion.`,
+        nextEngineeringStep: `Complete the check for ${targetItem.title.toLowerCase()} and save what you found and where it came from before deciding what it means.`,
       },
       timeline: [...project.timeline, timelineEvent],
       updatedAt: now,
@@ -129,7 +129,7 @@ export function completeValidationItem(
     return {
       status: "invalid",
       project,
-      reason: "Start this validation activity before recording a result.",
+      reason: "Start this check before adding a result.",
     };
   }
 
@@ -142,7 +142,7 @@ export function completeValidationItem(
       status: "invalid",
       project,
       reason:
-        "Record the evidence gathered, where it came from, and what it showed before completing validation.",
+        "Tell us what you found, where it came from, and what it showed.",
     };
   }
 
@@ -218,7 +218,7 @@ export function completeValidationItem(
           type: "validation-plan-completed",
           title: "Validation plan completed",
           description:
-            "Every planned validation activity now has a recorded result. Remaining uncertainty stays explicit and no result is treated as proof beyond the evidence gathered.",
+            "Every planned check now has a result. Any remaining unknowns stay visible, and we only claim what the results show.",
           createdAt: now,
         }
       : null;
@@ -452,28 +452,28 @@ function describeNextState(plan: ValidationPlan): {
     return {
       uncertainty: `Validation remains inconclusive for: ${inconclusive.target}`,
       nextStep:
-        "Review the inconclusive result and decide whether another targeted validation activity is required before solution development.",
+        "Review the unclear result and decide whether another check is needed before developing the solution.",
     };
   }
 
   return {
     uncertainty:
-      "The initial validation plan is complete. New uncertainty may still emerge as the Project moves forward.",
+      "The first set of checks is complete. New questions may still come up as the Project moves forward.",
     nextStep:
-      "Review the validation results together, confirm what changed in the Engineering State, and decide the next responsible development action.",
+      "Review the results, note what changed, and choose what to do next.",
   };
 }
 
 function outcomeLabel(outcome: ValidationOutcome): string {
   switch (outcome) {
     case "confirmed":
-      return "Supported by evidence";
+      return "Looks supported";
     case "refined":
-      return "Understanding refined";
+      return "We learned more";
     case "challenged":
-      return "Understanding challenged";
+      return "Our understanding changed";
     case "inconclusive":
-      return "Inconclusive";
+      return "Not clear yet";
   }
 }
 

@@ -22,6 +22,10 @@ const REAR_POINTS = POINTS.map(([x, y]) => [x - 5, y - 7] as const);
 const PRELIMINARY_REAR_LINES = OUTLINE_LINES.slice(0, 6);
 const DEPTH_NODES = [1, 3, 5, 6, 7, 8] as const;
 
+function visualStageLabel(stage: SharedConceptPreview["visualStage"]): string {
+  return stage === "idea-seed" ? "YOUR DESIGN" : stage.replaceAll("-", " ");
+}
+
 export default function ConceptPreview({ preview, candidate, candidateStale = false, compact = false }: ConceptPreviewProps) {
   const discoveryStageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
   const engineeringLevel = preview.engineeringAnswerCount;
@@ -43,7 +47,7 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
     >
       <div className="concept-preview-heading">
         <span>{candidate ? `CONCEPT ${String(candidate.revision).padStart(2, "0")}` : "IDEA EVOLVING"}</span>
-        {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : preview.visualStage.replaceAll("-", " ")}</b>}
+        {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : visualStageLabel(preview.visualStage)}</b>}
       </div>
       {candidate?.output.type === "image" && candidate.output.dataUrl ? (
         <div className="concept-candidate-preview">
@@ -156,9 +160,9 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
             : `${preview.answerCount} DISCOVERY INPUT${preview.answerCount === 1 ? "" : "S"} RECORDED`}
         </span>
         {!compact && <p>{candidate ? (candidateStale ? "New recorded information exists. The current model remains visible until you explicitly update it." : "The same current engineering model follows the idea through the Workshop.") : preview.progressReason}</p>}
-        {!compact && !candidate && preview.recognisableGenerationAvailable && <em>MODEL CHECKPOINT AVAILABLE · EXPLICIT GENERATION ONLY</em>}
+        {!compact && !candidate && preview.recognisableGenerationAvailable && <em>READY TO CREATE AN EARLY MODEL</em>}
       </div>
-      <small>CONCEPTUAL · UNVALIDATED · NOT PROJECT TRUTH</small>
+      <small>EARLY WORKING MODEL · IT CAN CHANGE AND HAS NOT BEEN PROVEN YET</small>
 
       <style jsx>{`
         .concept-preview {

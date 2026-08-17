@@ -50,8 +50,8 @@ const STAGE_COPY: Record<
   Pick<SharedConceptPreview, "title" | "subtitle">
 > = {
   dormant: {
-    title: "IDEA SEED",
-    subtitle: "The recorded original idea has begun one continuing concept journey.",
+    title: "YOUR DESIGN",
+    subtitle: "Your original idea is starting to take shape.",
   },
   spark: {
     title: "IDEA EVOLVING",
@@ -71,7 +71,7 @@ const STAGE_COPY: Record<
   },
   wireframe: {
     title: "EARLY CONCEPT FORMING",
-    subtitle: "Discovery has formed an abstract preliminary structure.",
+    subtitle: "Your Discovery answers have formed an early outline.",
   },
 };
 
@@ -114,7 +114,7 @@ export function deriveSharedConceptPreview(project: Project): SharedConceptPrevi
       progressReason: "Discovery understanding is ready to support solution definition.",
       recognisableGenerationAvailable,
       title: "EARLY CONCEPT READY",
-      subtitle: "Enough early understanding exists to begin a more specific concept study.",
+      subtitle: "We know enough to begin a clearer working model.",
     };
   }
 
@@ -156,22 +156,22 @@ function deriveEngineeringPreview(
     {
       stage: "solution-shaping",
       title: "SOLUTION TAKING SHAPE",
-      subtitle: "The operating concept is adding stronger functional organisation.",
+      subtitle: "Your explanation of how it works is making the idea clearer.",
     },
     {
       stage: "functional-elements",
-      title: "FUNCTIONAL ELEMENTS FORMING",
-      subtitle: "Major abstract elements and their relationships are becoming distinct.",
+      title: "MAIN PARTS FORMING",
+      subtitle: "The main parts and how they connect are becoming clearer.",
     },
     {
       stage: "input-output",
-      title: "INPUT / OUTPUT FORMING",
-      subtitle: "Generic entry, transformation, and exit relationships are appearing.",
+      title: "WHAT IT NEEDS AND PRODUCES",
+      subtitle: "The things going into and coming out of the idea are becoming clearer.",
     },
     {
       stage: "functional-flow",
-      title: "FUNCTIONAL FLOW FORMING",
-      subtitle: "A more organised functional pathway is forming through the concept.",
+      title: "HOW IT WORKS IS FORMING",
+      subtitle: "The order of the parts or steps is becoming clearer.",
     },
     {
       stage: "interaction",
@@ -185,13 +185,13 @@ function deriveEngineeringPreview(
     },
     {
       stage: "constraint-response",
-      title: "CONSTRAINT RESPONSE FORMING",
-      subtitle: "A conceptual boundary now marks where constraints must be addressed.",
+      title: "LIMITS AND SAFETY FORMING",
+      subtitle: "The model now shows where limits or safety issues need attention.",
     },
     {
       stage: "engineering-ready",
       title: "ENGINEERING DEFINITION READY",
-      subtitle: "Enough inventor-defined solution detail exists to classify the idea and prepare a more specific concept.",
+      subtitle: "You have shared enough detail to prepare a clearer working model.",
     },
   ];
   const selected = stages[Math.min(engineeringAnswerCount, stages.length) - 1];
