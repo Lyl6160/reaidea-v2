@@ -58,13 +58,13 @@ export type WorkshopBenchDefinition = {
 };
 
 export const CANONICAL_WORKSHOP_BENCHES: WorkshopBenchDefinition[] = [
-  { id: "knowledge", label: "Your Idea", shortLabel: "Your Idea", positionClass: "slot-discovery", route: "/interview" },
+  { id: "knowledge", label: "Inventor's Bench", shortLabel: "Inventor", positionClass: "slot-discovery", route: "/interview" },
   { id: "engineering", label: "Engineering", shortLabel: "Engineering", positionClass: "slot-engineering" },
   { id: "prototype", label: "Prototype", shortLabel: "Prototype", positionClass: "slot-prototype" },
-  { id: "validation", label: "Validation", shortLabel: "Validation", positionClass: "slot-validation" },
+  { id: "validation", label: "Testing Bench", shortLabel: "Testing", positionClass: "slot-validation" },
   { id: "patent", label: "Patent / IP", shortLabel: "Patent / IP", positionClass: "slot-patent", informational: true },
+  { id: "manufacturing", label: "Manufacturing & Costing", shortLabel: "Manufacturing", positionClass: "slot-manufacturing", informational: true },
   { id: "marketing", label: "Marketing", shortLabel: "Marketing", positionClass: "slot-marketing", informational: true },
-  { id: "manufacturing", label: "Manufacturing / Costing", shortLabel: "Manufacturing / Costing", positionClass: "slot-manufacturing", informational: true },
   { id: "reality", label: "Reality", shortLabel: "Reality", positionClass: "slot-reality", informational: true },
 ];
 
@@ -109,7 +109,7 @@ export function assessWorkshop(project: Project): WorkshopState {
   const benches: WorkshopBenchSignal[] = [
     {
       id: "knowledge",
-      label: "Your Idea",
+      label: "Inventor's Bench",
       state: discoveryReachedCheckpoint ? "available" : "active",
       reason: discoveryReachedCheckpoint
         ? "You have answered the main Discovery questions. Come back here whenever something needs more detail."
@@ -133,7 +133,7 @@ export function assessWorkshop(project: Project): WorkshopState {
     },
     {
       id: "validation",
-      label: "Validation",
+      label: "Testing Bench",
       state: validationPlanned
         ? validationCompleted
           ? "ready"
@@ -191,7 +191,7 @@ export function assessWorkshop(project: Project): WorkshopState {
     },
     {
       id: "manufacturing",
-      label: "Manufacturing / Costing",
+      label: "Manufacturing & Costing",
       state: engineeringDefined && hasConstraints ? "available" : "dormant",
       reason: engineeringDefined && hasConstraints
         ? "We know enough about the limits to start asking how to build it and what it may cost."

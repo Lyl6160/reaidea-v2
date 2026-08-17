@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ProjectReviewView from "./ProjectReviewView";
 import ConceptPreview from "../../workshop/ConceptPreview";
 import StandardBenchShell from "../../workshop/StandardBenchShell";
+import RollingBenchFlow, { type BenchNote } from "../../workshop/RollingBenchFlow";
 
 import {
   isSpecialistContributionBenchId,
@@ -55,7 +56,6 @@ import {
 } from "../../lib/workshop/specialistProjectContext";
 import type {
   WorkshopBenchId,
-  WorkshopBenchSignal,
   WorkshopState,
 } from "../../lib/workshop/workshopBrain";
 import { CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
@@ -207,21 +207,6 @@ function createConceptRenderSvg(brief: {
     <text x="44" y="514" fill="#d1dfe3" font-family="Arial,sans-serif" font-size="10">${nextMove}</text>
     <text x="972" y="494" text-anchor="end" fill="#607983" font-family="Arial,sans-serif" font-size="8" font-weight="700">REV · NOT CAD</text>
   </svg>`;
-}
-
-function stateLabel(state: WorkshopBenchSignal["state"]) {
-  switch (state) {
-    case "active":
-      return "Working here";
-    case "pulse":
-      return "New knowledge";
-    case "ready":
-      return "Ready";
-    case "available":
-      return "Available";
-    default:
-      return "Dormant";
-  }
 }
 
 function formatReadiness(readiness: Project["readiness"]): string {
@@ -409,6 +394,7 @@ export default function WorkshopShell({
   workshop,
   onProjectChange,
 }: WorkshopShellProps) {
+  const showLegacyBenchPanels: boolean = false;
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
   const conceptGenerationInFlightRef = useRef(false);
@@ -437,6 +423,9 @@ export default function WorkshopShell({
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
   const [specialistContributionError, setSpecialistContributionError] = useState("");
+  const [benchPresentationProgress, setBenchPresentationProgress] = useState<
+    Partial<Record<WorkshopBenchId, "red" | "yellow" | "green">>
+  >({});
   const [specialistEvidenceInputs, setSpecialistEvidenceInputs] = useState<
     Partial<Record<SpecialistContributionBenchId, SpecialistEvidenceInput>>
   >({});
@@ -925,6 +914,15 @@ export default function WorkshopShell({
         Math.min(selectedSpecialistContributions.length, specialistBenchGuidance.prompts.length - 1)
       ]
     : null;
+  const rollingSpecialistNotes: BenchNote[] = selectedSpecialistContributions.map(
+    (event, index) => ({
+      question:
+        specialistBenchGuidance?.prompts[index] ??
+        specialistBenchGuidance?.prompts.at(-1) ??
+        "What did REV ask?",
+      answer: event.description,
+    })
+  );
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? workshop.benches[0];
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
@@ -933,8 +931,8 @@ export default function WorkshopShell({
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
     setDiscoveryReviewOpen(false);
-    setPatentBenchFocused(id === "patent");
-    setPrototypeBenchFocused(id === "prototype");
+    setPatentBenchFocused(false);
+    setPrototypeBenchFocused(false);
     setSpecialistContributionError("");
     setSpecialistEvidenceError("");
     window.setTimeout(() => {
@@ -1008,6 +1006,24 @@ export default function WorkshopShell({
       [selectedSpecialistBenchId]: "",
     }));
     setSpecialistContributionError("");
+  }
+
+  function recordRollingSpecialistAnswer(answer: string): boolean {
+    if (!selectedSpecialistBenchId) return false;
+
+    const result = recordSpecialistContribution(project, {
+      specialistBenchId: selectedSpecialistBenchId,
+      contribution: answer,
+    });
+
+    if (result.status === "invalid") {
+      setSpecialistContributionError(result.reason);
+      return false;
+    }
+
+    onProjectChange(result.project);
+    setSpecialistContributionError("");
+    return true;
   }
 
   function submitSpecialistEvidence() {
@@ -1537,6 +1553,66 @@ export default function WorkshopShell({
     }
   }
 
+  function createPrototypeModelFromCurrentDesign() {
+    const renderSvg = createConceptRenderSvg(visualConceptBrief);
+    const nextFamilyId = conceptFamilyId || globalThis.crypto.randomUUID();
+    setConceptCreated(true);
+    setConceptVisualised(true);
+    setConceptGenerated(true);
+    setGeneratedConceptSvg(renderSvg);
+    setConceptFamilyId(nextFamilyId);
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
+      window.localStorage.setItem(conceptStorageKey, JSON.stringify({
+        ...existing,
+        version: 2,
+        conceptCreated: true,
+        conceptVisualised: true,
+        conceptGenerated: true,
+        generatedConceptSvg: renderSvg,
+        conceptFamilyId: nextFamilyId,
+        projectName,
+        generatedAt: new Date().toISOString(),
+      }));
+    } catch {
+      // The model remains available for this session if browser persistence fails.
+    }
+  }
+
+  function updatePrototypeModelFromCurrentDesign() {
+    const inventorChange = conceptRefinementDraft.trim();
+    if (!inventorChange) return;
+
+    const renderSvg = createConceptRenderSvg({
+      ...visualConceptBrief,
+      conceptLabel: refinedConceptGenerated ? "CONCEPT 03" : "CONCEPT 02",
+      nextMove: inventorChange,
+    });
+    setRefinedConceptSvg(renderSvg);
+    setRefinedConceptGenerated(true);
+    setPreviousConceptVisible(false);
+    setConceptRefinementState("ready");
+
+    try {
+      const saved = window.localStorage.getItem(conceptStorageKey);
+      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
+      window.localStorage.setItem(conceptStorageKey, JSON.stringify({
+        ...existing,
+        version: refinedConceptGenerated ? 5 : 4,
+        conceptGenerated: true,
+        conceptFamilyId: conceptFamilyId || globalThis.crypto.randomUUID(),
+        refinedConceptGenerated: true,
+        refinedConceptSvg: renderSvg,
+        latestRefinement: inventorChange,
+        refinedAt: new Date().toISOString(),
+      }));
+    } catch {
+      // The updated model remains available for this session if browser persistence fails.
+    }
+  }
+
   const specialistWorkArea = selectedSpecialistBenchId && (
     <>
       {specialistBenchGuidance && (
@@ -1701,7 +1777,32 @@ export default function WorkshopShell({
     </>
   );
 
-  if (selectedBench?.id === "engineering") {
+  function presentationProgressForBench(id: WorkshopBenchId): "red" | "yellow" | "green" {
+    const override = benchPresentationProgress[id];
+    if (override) return override;
+
+    if (id === "knowledge") {
+      return discoveryAssessment.readyToAdvance
+        ? "green"
+        : discoveryAssessment.addressedFocuses.length > 0 ? "yellow" : "red";
+    }
+    if (id === "engineering") {
+      return engineeringDefinitionAssessment.status === "ready-for-summary"
+        ? "green"
+        : engineeringDefinitionAssessment.addressedAreas.length > 0 ? "yellow" : "red";
+    }
+    if (id === "prototype") return generatedConceptCandidate || conceptGenerated ? "yellow" : "red";
+    if (id === "validation") {
+      return validationEvidence.outcome !== "pending"
+        ? "green"
+        : validationEvidence.question || validationEvidence.evidence || validationEvidence.observed ? "yellow" : "red";
+    }
+    const count = getSpecialistContributions(project, id).length;
+    const total = id === "patent" || id === "reality" ? 4 : 5;
+    return count >= total ? "green" : count > 0 ? "yellow" : "red";
+  }
+
+  if (showLegacyBenchPanels && selectedBench?.id === "engineering") {
     const currentQuestion = engineeringDefinitionAssessment.nextQuestion;
     const totalAreas =
       engineeringDefinitionAssessment.addressedAreas.length +
@@ -1858,7 +1959,7 @@ export default function WorkshopShell({
     );
   }
 
-  if (selectedBench?.id === "knowledge") {
+  if (showLegacyBenchPanels && selectedBench?.id === "knowledge") {
     const currentQuestion = discoveryAssessment.nextQuestion;
 
     return (
@@ -2032,7 +2133,7 @@ export default function WorkshopShell({
     );
   }
 
-  if (patentBenchFocused && selectedBench?.id === "patent") {
+  if (showLegacyBenchPanels && patentBenchFocused && selectedBench?.id === "patent") {
     const latestContribution = selectedSpecialistContributionTrace.at(-1);
     const adoptedEvidenceCount = latestContribution?.adoptedEvidenceIds.length ?? 0;
 
@@ -2325,10 +2426,13 @@ export default function WorkshopShell({
 
       <div className="workshop-flow" aria-label="Workshop stages">
         {[
-          { id: "knowledge" as WorkshopBenchId, label: "Knowledge" },
+          { id: "knowledge" as WorkshopBenchId, label: "Inventor" },
           { id: "engineering" as WorkshopBenchId, label: "Engineering" },
-          { id: "validation" as WorkshopBenchId, label: "Validation" },
           { id: "prototype" as WorkshopBenchId, label: "Prototype" },
+          { id: "validation" as WorkshopBenchId, label: "Testing" },
+          { id: "patent" as WorkshopBenchId, label: "Patent / IP" },
+          { id: "manufacturing" as WorkshopBenchId, label: "Manufacturing" },
+          { id: "marketing" as WorkshopBenchId, label: "Marketing" },
           { id: "reality" as WorkshopBenchId, label: "Reality" },
         ].map((stage, index, stages) => (
           <span key={stage.id} className={stage.id === recommendedBench.id ? "is-recommended" : ""}>
@@ -2402,6 +2506,7 @@ export default function WorkshopShell({
 
           const isSelected = selectedBench?.id === id;
           const isRecommended = recommendedBench.id === id;
+          const presentationProgress = presentationProgressForBench(id);
 
           return (
             <button
@@ -2412,7 +2517,7 @@ export default function WorkshopShell({
               } ${isRecommended ? "is-recommended" : ""}`}
               onClick={() => selectBench(id)}
               aria-pressed={isSelected}
-              aria-label={`${bench.label}: ${stateLabel(bench.state)}`}
+              aria-label={`${shortLabel}: ${presentationProgress}`}
             >
               <span className="lamp-rig" aria-hidden="true">
                 <span className="lamp-cord" />
@@ -2453,7 +2558,7 @@ export default function WorkshopShell({
               </span>
               <span className="bench-stool" aria-hidden="true"><i /><b /></span>
               <span className="bench-shadow" aria-hidden="true" />
-              <span className="bench-status">{stateLabel(bench.state)}</span>
+              <span className="bench-status">{presentationProgress.toUpperCase()}</span>
               {isRecommended && <span className="bench-recommendation">REV RECOMMENDS</span>}
             </button>
           );
@@ -2507,7 +2612,7 @@ export default function WorkshopShell({
             <span className="readout-light" aria-hidden="true" />
             <strong>WORKING AT · {selectedBench.label}</strong>
           </div>
-          <span>{stateLabel(selectedBench.state)} · ACTIVE</span>
+          <span>{presentationProgressForBench(selectedBench.id).toUpperCase()} · ACTIVE</span>
         </div>
         <p>{selectedBench.reason}</p>
         <div className="next-move">
@@ -2540,7 +2645,50 @@ export default function WorkshopShell({
         )}
           </>
         )}
-        {selectedBench?.id === "validation" && (
+        {selectedBench && (
+          <RollingBenchFlow
+            key={selectedBench.id}
+            benchId={selectedBench.id}
+            projectId={project.id}
+            externalNotes={selectedSpecialistBenchId ? rollingSpecialistNotes : undefined}
+            onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
+            error={specialistContributionError}
+            modelView={generatedConceptCandidate ? (
+              <ConceptPreview preview={sharedConceptPreview} candidate={previousConceptVisible ? previousConceptCandidate : generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} compact />
+            ) : (refinedConceptDataUri || generatedConceptDataUri) ? (
+              <Image
+                src={previousConceptVisible ? generatedConceptDataUri : refinedConceptDataUri || generatedConceptDataUri}
+                alt={previousConceptVisible ? "Previous working design model" : "Current working design model"}
+                width={1000}
+                height={560}
+                unoptimized
+              />
+            ) : compactConceptPreview}
+            modelReady={Boolean(generatedConceptCandidate || conceptGenerated)}
+            canCreateModel
+            modelUpdating={conceptGenerationState === "generating" || conceptRefinementState === "refining"}
+            modelJustUpdated={conceptGenerationState === "ready" || conceptRefinementState === "ready"}
+            currentRevision={generatedConceptCandidate?.revision ?? (refinedConceptGenerated ? 2 : conceptGenerated ? 1 : undefined)}
+            previousAvailable={Boolean(previousConceptCandidate || (refinedConceptGenerated && generatedConceptSvg))}
+            viewingPrevious={previousConceptVisible}
+            refinementDraft={conceptRefinementDraft}
+            onRefinementDraftChange={setConceptRefinementDraft}
+            onCreateModel={conceptGenerationFoundation.request ? generateFirstRecognisableConcept : createPrototypeModelFromCurrentDesign}
+            onUpdateModel={generatedConceptCandidate ? refineCurrentConcept : updatePrototypeModelFromCurrentDesign}
+            onViewPrevious={() => setPreviousConceptVisible((visible) => !visible)}
+            onGoToBench={selectBench}
+            onBack={returnToWorkshop}
+            testingOutcome={validationEvidence.outcome}
+            onTestingOutcomeChange={(outcome) => saveValidationEvidence({ outcome })}
+            onProgressChange={(answered, total) => {
+              setBenchPresentationProgress((progress) => ({
+                ...progress,
+                [selectedBench.id]: answered >= total ? "green" : answered > 0 ? "yellow" : "red",
+              }));
+            }}
+          />
+        )}
+        {showLegacyBenchPanels && selectedBench?.id === "validation" && (
           <div className="station-summary validation-summary">
             <p className="station-summary-label">Project Validation Status · Read only</p>
             <p>{discoveryAssessment.readyToAdvance ? "Discovery is complete. Choose something useful to test." : "We found something worth checking. Finish Discovery, then choose what you want to test."}</p>
@@ -2555,7 +2703,7 @@ export default function WorkshopShell({
             </button>
           </div>
         )}
-        {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
+        {showLegacyBenchPanels && selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
           <section className="specialist-project-context" aria-label="Project summary">
             <div className="specialist-project-context-heading">
               <p className="station-summary-label">Project Summary</p>
@@ -2682,7 +2830,7 @@ export default function WorkshopShell({
             </div>
           </section>
         )}
-        {selectedSpecialistBenchId !== "patent" && specialistBenchGuidance && (
+        {showLegacyBenchPanels && selectedSpecialistBenchId !== "patent" && specialistBenchGuidance && (
           <section className="specialist-inquiry" aria-label="Specialist Inquiry">
             <div className="specialist-inquiry-heading">
               <div>
@@ -2714,7 +2862,7 @@ export default function WorkshopShell({
             </div>
           </section>
         )}
-        {selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
+        {showLegacyBenchPanels && selectedSpecialistBenchId && selectedSpecialistBenchId !== "patent" && (
           <div className="specialist-contribution-panel">
         <p className="station-summary-label">What did you learn here?</p>
             <p>
@@ -2838,7 +2986,7 @@ export default function WorkshopShell({
             )}
           </div>
         )}
-        {selectedBench?.id === "validation" && (
+        {showLegacyBenchPanels && selectedBench?.id === "validation" && (
           <div className="concept-decision-panel">
             <div className="concept-decision-heading">
               <div>
@@ -2878,7 +3026,7 @@ export default function WorkshopShell({
             </div>
           </div>
         )}
-        {selectedBench?.id === "prototype" && (
+        {showLegacyBenchPanels && selectedBench?.id === "prototype" && (
           <StandardBenchShell
             benchId={selectedBench.id}
             benchTitle={selectedBench.label}
@@ -3548,7 +3696,7 @@ export default function WorkshopShell({
           </div>
           </StandardBenchShell>
         )}
-        {selectedBench && selectedBench.id !== "prototype" && (
+        {showLegacyBenchPanels && selectedBench && selectedBench.id !== "prototype" && (
           <div className="active-workspace-navigation">
             <button type="button" onClick={returnToWorkshop}>← Back to Workshop</button>
             <span>{selectedBench.label} · Selected bench</span>

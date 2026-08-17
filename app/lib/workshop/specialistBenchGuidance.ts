@@ -20,8 +20,9 @@ const GUIDANCE_FRAMEWORKS: Record<
     explanation:
       "Start with the parts of your idea that seem different from things you have seen before.",
     prompts: [
-      "What parts of your idea seem new or different?",
-      "Have you seen anything similar before?",
+      "What part of your invention do you think is most different?",
+      "Have you seen anything that works in a similar way?",
+      "What part of your design would you most want to protect?",
       "What should we look into further?",
     ],
     disclaimer: "This is an early check only. It is not legal advice or a patent decision.",
@@ -32,9 +33,11 @@ const GUIDANCE_FRAMEWORKS: Record<
     explanation:
       "Think about who this idea could help and why it may matter to them.",
     prompts: [
-      "Who is this for?",
-      "Why would it help them?",
-      "What would make them interested in it?",
+      "Who do you think would use or buy this?",
+      "What problem does it solve for them?",
+      "Why would they choose your invention instead of what they use now?",
+      "Where would people normally find or buy something like this?",
+      "What do we still need to learn about the market?",
     ],
   },
   manufacturing: {
@@ -43,10 +46,11 @@ const GUIDANCE_FRAMEWORKS: Record<
     explanation:
       "Work out what still needs to be defined or measured before choosing how to build it or what it may cost.",
     prompts: [
-      "What would need to be made, bought, or put together?",
-      "Which materials, parts, or building methods need a clearer plan?",
-      "What problems or limits could affect how we build it or what it costs?",
-      "What should we measure or get a price for before estimating the cost?",
+      "What parts would need to be made or bought?",
+      "What materials are you thinking about?",
+      "How do you imagine it being built or put together?",
+      "Are there any parts you would need to buy from a supplier?",
+      "What do you think will cost the most?",
     ],
   },
   reality: {
@@ -56,8 +60,9 @@ const GUIDANCE_FRAMEWORKS: Record<
       "Check whether the idea is useful, practical, and worth building.",
     prompts: [
       "Would people actually use this?",
-      "Could it be built and used practically?",
-      "Is the cost and effort worth it?",
+      "Can it realistically be built and used?",
+      "Does the likely cost make sense for the value it provides?",
+      "Is there anything important that could stop it succeeding?",
     ],
   },
 };
