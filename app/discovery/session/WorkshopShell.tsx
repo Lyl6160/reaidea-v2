@@ -68,6 +68,7 @@ import type {
   WorkshopState,
 } from "../../lib/workshop/workshopBrain";
 import { CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
+import { deriveRevWorkingUnderstanding } from "../../lib/workshop/revWorkingUnderstanding";
 
 type WorkshopShellProps = {
   project: Project;
@@ -433,6 +434,7 @@ export default function WorkshopShell({
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
+  const [workingUnderstandingRevision, setWorkingUnderstandingRevision] = useState(0);
   const [discoveryReviewOpen, setDiscoveryReviewOpen] = useState(false);
   const [knowledgeAnswerDraft, setKnowledgeAnswerDraft] = useState("");
   const [knowledgeAnswerError, setKnowledgeAnswerError] = useState("");
@@ -755,7 +757,6 @@ export default function WorkshopShell({
     const currentRequest = conceptGenerationFoundation.request;
     return !currentRequest ||
       generatedConceptCandidate.visualMode !== currentRequest.visualMode ||
-      generatedConceptCandidate.representationStyle !== currentRequest.representationStyle ||
       !sameStringSet(generatedConceptCandidate.sourceEventIds, currentRequest.sourceEventIds);
   }, [conceptGenerationFoundation.request, generatedConceptCandidate]);
   const hasEngineeringDesignBrief = engineeringDefinitionAssessment.addressedAreas.length > 0;
@@ -988,11 +989,8 @@ export default function WorkshopShell({
       ]
     : null;
   const rollingSpecialistNotes: BenchNote[] = selectedSpecialistContributions.map(
-    (event, index) => ({
-      question:
-        specialistBenchGuidance?.prompts[index] ??
-        specialistBenchGuidance?.prompts.at(-1) ??
-        "What did REV ask?",
+    (event) => ({
+      question: event.subject?.trim() || "Specialist contribution",
       answer: event.description,
     })
   );
@@ -1000,6 +998,13 @@ export default function WorkshopShell({
   const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
     (bench) => bench.id === recommendedBench.id
   );
+  const revWorkingUnderstanding = useMemo(() => {
+    void workingUnderstandingRevision;
+    return deriveRevWorkingUnderstanding(
+      project,
+      Object.fromEntries(CANONICAL_WORKSHOP_BENCHES.map((bench) => [bench.id, readRollingBenchNotes(project.id, bench.id)]))
+    );
+  }, [project, workingUnderstandingRevision]);
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
@@ -1081,12 +1086,13 @@ export default function WorkshopShell({
     setSpecialistContributionError("");
   }
 
-  function recordRollingSpecialistAnswer(answer: string): boolean {
+  function recordRollingSpecialistAnswer(answer: string, subject: string): boolean {
     if (!selectedSpecialistBenchId) return false;
 
     const result = recordSpecialistContribution(project, {
       specialistBenchId: selectedSpecialistBenchId,
       contribution: answer,
+      subject,
     });
 
     if (result.status === "invalid") {
@@ -1267,10 +1273,9 @@ export default function WorkshopShell({
     entryGenerationStartedRef.current = true;
     window.sessionStorage.removeItem(ENTRY_GENERATION_SESSION_KEY);
     window.setTimeout(() => {
-      setSelectedId("knowledge");
       void createOrUpdateDesignModel("inventor-hero");
     }, 0);
-    // The session marker is written only by the inventor's explicit BRING MY IDEA TO LIFE action.
+    // Home writes this marker only after the inventor explicitly enters with enough information.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id]);
 
@@ -2718,6 +2723,8 @@ export default function WorkshopShell({
               <span>REV · RECOMMENDED NEXT MOVE</span>
               <strong>{recommendedBench.nextMove}</strong>
             </div>
+            {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
+            {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
             <div className="workshop-floor-actions">
               <button type="button" onClick={() => selectBench(recommendedBench.id)}>
                 GO TO {recommendedBench.label.toUpperCase()} BENCH
@@ -2775,6 +2782,8 @@ export default function WorkshopShell({
             key={selectedBench.id}
             benchId={selectedBench.id}
             projectId={project.id}
+            workingContext={revWorkingUnderstanding.byBench[selectedBench.id]}
+            onWorkingNotesChange={() => setWorkingUnderstandingRevision((revision) => revision + 1)}
             externalNotes={selectedSpecialistBenchId ? rollingSpecialistNotes : undefined}
             onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
             error={specialistContributionError}

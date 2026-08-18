@@ -8,6 +8,7 @@ import {
 export type RecordSpecialistContributionInput = {
   specialistBenchId: SpecialistContributionBenchId;
   contribution: string;
+  subject?: string;
 };
 
 export type RecordSpecialistContributionResult =
@@ -27,6 +28,7 @@ export function recordSpecialistContribution(
   }
 
   const contribution = input.contribution.trim();
+  const subject = input.subject?.trim();
 
   if (!contribution) {
     return {
@@ -43,6 +45,7 @@ export function recordSpecialistContribution(
     type: "specialist-contribution-recorded",
     title: "Specialist contribution recorded",
     description: contribution,
+    ...(subject ? { subject } : {}),
     specialistBenchId: input.specialistBenchId,
     createdAt: now,
   };

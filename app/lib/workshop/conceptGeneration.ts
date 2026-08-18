@@ -257,7 +257,8 @@ export function buildConceptGenerationFoundation(
   ]);
   const answers = definition.latestAnswers;
   const rollingAnswers = rollingEngineeringNotes.map((note) => note.answer.trim().slice(0, 1_600));
-  const inventorDescription = rollingInventorNotes[0]?.answer.trim().slice(0, 1_600) ?? "";
+  const inventorDescription = rollingInventorNotes[0]?.answer.trim().slice(0, 1_600) || project.originalObservation.slice(0, 1_600);
+  const inventorDescriptionSource = rollingInventorNotes[0] ? "bench-note" : "project-field";
   const rollingProposedSolution = rollingAnswers[0] ?? "";
   const rollingOperatingConcept = joinBenchAnswers([rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]]);
   const rollingFunctionalElements = joinBenchAnswers([rollingAnswers[3], rollingAnswers[1], rollingAnswers[2]]);
@@ -284,9 +285,9 @@ export function buildConceptGenerationFoundation(
     ...rollingBriefSourceTrace(answers, rollingAnswers),
     ...(inventorDescription && !answers["proposed-solution"]?.trim() && !rollingProposedSolution
       ? [
-          { field: "proposedSolution", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
-          { field: "operatingConcept", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
-          { field: "functionalElements", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
+          { field: "proposedSolution", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
+          { field: "operatingConcept", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
+          { field: "functionalElements", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
         ]
       : []),
     ...(constraintEvent

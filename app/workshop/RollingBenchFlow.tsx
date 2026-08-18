@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 
 import GenerationProgress from "./GenerationProgress";
@@ -8,6 +8,7 @@ import GenerationProgress from "./GenerationProgress";
 import type { ConceptViewId } from "../lib/ai/types";
 import type { ConceptGeometry } from "../lib/geometry/conceptGeometry";
 import type { WorkshopBenchId } from "../lib/workshop/workshopBrain";
+import type { RevBenchWorkingContext } from "../lib/workshop/revWorkingUnderstanding";
 
 const Prototype3DViewer = dynamic(() => import("./Prototype3DViewer"), {
   ssr: false,
@@ -24,8 +25,10 @@ type BenchQuestion = { prompt: string; helper?: string };
 type RollingBenchFlowProps = {
   benchId: WorkshopBenchId;
   projectId: string;
+  workingContext?: RevBenchWorkingContext;
+  onWorkingNotesChange?: () => void;
   externalNotes?: BenchNote[];
-  onSaveExternal?: (answer: string) => boolean;
+  onSaveExternal?: (answer: string, question: string) => boolean;
   error?: string;
   modelView?: ReactNode;
   modelReady?: boolean;
@@ -57,18 +60,6 @@ type RollingBenchFlowProps = {
   onTestingOutcomeChange?: (outcome: "supported" | "not-supported" | "inconclusive") => void;
   onProgressChange?: (answered: number, total: number) => void;
 };
-
-function nextUsefulInventorQuestion(notes: BenchNote[]): BenchQuestion | null {
-  const understanding = notes.map((note) => note.answer).join(" ").toLowerCase();
-  if (notes.length >= 3 || understanding.length >= 360) return null;
-  if (!/\b(move|moves|moving|rotate|turn|fold|slide|open|close|adjust|fixed|stationary)\b/.test(understanding)) {
-    return { prompt: "Does anything move or change while the invention works?", helper: "Only describe movement that matters to the idea." };
-  }
-  if (!/\b(mm|cm|metre|meter|inch|foot|feet|small|large|handheld|table|room|vehicle|person)\b/.test(understanding)) {
-    return { prompt: "What should REV understand about its rough size?", helper: "A simple comparison is enough if you do not know dimensions yet." };
-  }
-  return { prompt: "What is the most important detail REV still needs to understand?", helper: "Add only what would improve the idea or its visual." };
-}
 
 const FLOW: Record<Exclude<WorkshopBenchId, "prototype">, {
   title: string;
@@ -214,6 +205,15 @@ export function saveRollingBenchNotes(projectId: string, benchId: WorkshopBenchI
   window.localStorage.setItem(storageKey(projectId, benchId), JSON.stringify(notes));
 }
 
+function RevWorkingContextPanel({ context }: { context?: RevBenchWorkingContext }) {
+  if (!context) return null;
+  const sourceById = new Map(context.sources.map((source) => [source.id, source.label]));
+  return <section className="rev-working-context" aria-label="REV Working Understanding">
+    <div><span>WHAT REV ALREADY KNOWS</span>{context.known.length ? <ul>{context.known.map((fact, index) => <li key={`${fact.text}-${index}`}>{fact.text}<small>Source: {fact.sourceIds.map((id) => sourceById.get(id) ?? id).join(", ")}</small></li>)}</ul> : <p>No relevant detail has been recorded yet.</p>}</div>
+    <div><span>WHAT REV PREPARED</span>{context.prepared.map((item) => <p key={item}>{item}</p>)}</div>
+  </section>;
+}
+
 export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   const { benchId, projectId } = props;
   const [localNotes, setLocalNotes] = useState<BenchNote[]>(() => {
@@ -244,15 +244,16 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   }, [fullScreenOpen]);
 
   const notes = props.externalNotes ?? localNotes;
-  const flow = benchId === "prototype" ? null : FLOW[benchId];
-  const currentQuestion = flow?.questions[Math.min(notes.length, flow.questions.length - 1)];
-  const complete = Boolean(flow && notes.length >= flow.questions.length);
+  const baseFlow = benchId === "prototype" ? null : FLOW[benchId];
+  const routedQuestion = props.workingContext?.missingQuestion ?? null;
+  const flow = baseFlow ? { ...baseFlow, questions: routedQuestion ? [{ prompt: routedQuestion }] : [] } : null;
+  const currentQuestion: BenchQuestion | undefined = flow ? { prompt: routedQuestion ?? "" } : undefined;
+  const complete = Boolean(flow && (
+    !routedQuestion ||
+    (props.externalNotes ? notes.length > 0 : notes.some((note) => note.question === routedQuestion))
+  ));
 
-  const progress = useMemo(() => {
-    if (!flow) return props.modelReady ? "yellow" : "red";
-    if (complete) return "green";
-    return notes.length > 0 ? "yellow" : "red";
-  }, [complete, flow, notes.length, props.modelReady]);
+  const progress = !flow ? (props.modelReady ? "yellow" : "red") : complete ? "green" : notes.length > 0 ? "yellow" : "red";
 
   function save() {
     if (!currentQuestion || !draft.trim()) {
@@ -264,13 +265,14 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
       return;
     }
     if (props.onSaveExternal) {
-      if (!props.onSaveExternal(draft.trim())) return;
+      if (!props.onSaveExternal(draft.trim(), currentQuestion.prompt)) return;
     } else {
       const next = [...notes, { question: currentQuestion.prompt, answer: draft.trim() }];
       setLocalNotes(next);
       saveRollingBenchNotes(projectId, benchId, next);
+      props.onWorkingNotesChange?.();
     }
-    props.onProgressChange?.(notes.length + 1, flow.questions.length);
+    props.onProgressChange?.(1, 1);
     setDraft("");
     setLocalError("");
   }
@@ -279,6 +281,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     const next = [...notes, { question, answer: answer.trim() }];
     setLocalNotes(next);
     saveRollingBenchNotes(projectId, benchId, next);
+    props.onWorkingNotesChange?.();
     setDraft("");
     setLocalError("");
     return next;
@@ -307,8 +310,10 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   }
 
   if (benchId === "knowledge") {
-    const initialDescription = notes[0]?.answer ?? "";
-    const contextualQuestion = nextUsefulInventorQuestion(notes);
+    const initialDescription = props.workingContext?.sources.find((source) => source.kind === "original-observation")?.text ?? notes[0]?.answer ?? "";
+    const contextualQuestion = props.workingContext?.missingQuestion
+      ? { prompt: props.workingContext.missingQuestion, helper: "Only add the smallest detail REV still needs." }
+      : null;
     const inventorPresentation = `${props.currentRevision ?? "none"}:${props.modelPresentationKey ?? "initial"}`;
     const currentInventorReview = reviewedInventorPresentation === inventorPresentation ? inventorReview : "unreviewed";
     const usefulUnderstanding = Boolean(props.modelReady && (!contextualQuestion || notes.length >= 2));
@@ -316,6 +321,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     return (
       <section className="rolling-bench-flow inventor-bench-v2" data-progress={inventorProgress} aria-label="Inventor's Bench work area">
         <header><div><span>ACTIVE BENCH</span><h2>Inventor&apos;s Bench</h2><p>Show REV your idea.</p></div><b>{inventorProgress.toUpperCase()}</b></header>
+        <RevWorkingContextPanel context={props.workingContext} />
         {props.modelReady && props.modelView && <section className="inventor-concept-stage" aria-label="Idea Evolving"><div><span>IDEA EVOLVING</span><strong>CONCEPT {String(props.currentRevision ?? 1).padStart(2, "0")}</strong></div>{props.modelView}</section>}
         {props.modelUpdating && <GenerationProgress kind={props.modelActionKind === "view" ? "view" : props.modelReady ? "refinement" : "first-generation"} status="working" />}
         {!props.modelUpdating && props.modelJustUpdated && <GenerationProgress kind={props.modelActionKind === "view" ? "view" : props.currentRevision && props.currentRevision > 1 ? "refinement" : "first-generation"} status="ready" />}
@@ -343,6 +349,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     return (
       <section className="rolling-bench-flow prototype-rolling-flow" data-progress={progress} aria-label="Prototype Bench work area">
         <header><div><span>ACTIVE BENCH</span><h2>Prototype Bench</h2><p>Turn the current design into a working visual model and refine it until it matches what you have in mind.</p></div><b>{progress.toUpperCase()}</b></header>
+        <RevWorkingContextPanel context={props.workingContext} />
         {displayedModel && <div className="prototype-model-stage"><div className="prototype-model-toolbar"><strong>{viewingHistoricalRevision ? `VIEWING CONCEPT ${String(displayedRevision).padStart(2, "0")}` : `CONCEPT ${String(displayedRevision ?? 1).padStart(2, "0")} · CURRENT`}</strong><button type="button" onClick={() => setFullScreenOpen(true)}>VIEW FULL SCREEN</button></div>{representationSelector}{!showing3d && viewSelector}{!fullScreenOpen && displayedModel}</div>}
         {!props.conceptGeometry && <div className="prototype-3d-unavailable"><strong>3D model needs more design information.</strong><p>Add a few more design details in Engineering, then REV can build the 3D model.</p><button type="button" onClick={() => props.onGoToBench("engineering")}>OPEN ENGINEERING BENCH</button></div>}
         {fullScreenOpen && displayedModel && <div className="prototype-fullscreen" role="dialog" aria-modal="true" aria-label={`Concept ${String(displayedRevision ?? 1).padStart(2, "0")} full screen`}><div className="prototype-fullscreen-toolbar"><strong>{showing3d ? "3D MODEL" : viewingHistoricalRevision ? `VIEWING CONCEPT ${String(displayedRevision).padStart(2, "0")}` : `CONCEPT ${String(displayedRevision ?? 1).padStart(2, "0")} · CURRENT`}</strong><button type="button" onClick={() => setFullScreenOpen(false)}>CLOSE</button></div>{representationSelector}{!showing3d && viewSelector}<div className="prototype-fullscreen-model">{displayedModel}</div></div>}
@@ -370,6 +377,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   return (
     <section className="rolling-bench-flow" data-progress={progress} aria-label={`${flow.title} work area`}>
       <header><div><span>ACTIVE BENCH</span><h2>{flow.title}</h2><p>{flow.purpose}</p></div><b>{progress.toUpperCase()}</b></header>
+      <RevWorkingContextPanel context={props.workingContext} />
       {benchId === "engineering" && (
         <section className="engineering-visible-design" aria-label="Your Design">
           <div className="engineering-visible-design-heading">

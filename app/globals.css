@@ -164,8 +164,16 @@ body {
 .prototype-fullscreen-model .concept-preview { width:min(100%, 1100px); max-width:1100px; }
 .prototype-fullscreen-model .concept-candidate-preview { height:min(calc(100vh - 170px), calc(100vw - 60px)) !important; max-height:100% !important; }
 .prototype-fullscreen-model > .prototype-3d-viewer { width:min(100%, 1200px); height:100%; min-height:0; }
+.rev-working-context { display:grid; grid-template-columns:1.2fr 1fr; gap:12px; padding:14px 18px; border-block:1px solid rgba(97,210,230,.18); background:rgba(6,20,25,.72); }
+.rev-working-context > div { padding:12px; border:1px solid rgba(97,210,230,.2); border-radius:8px; background:rgba(7,18,22,.68); }
+.rev-working-context span { color:#69d9e9; font-size:10px; font-weight:850; letter-spacing:.1em; }
+.rev-working-context ul { margin:9px 0 0; padding-left:18px; color:#d7e1e2; }
+.rev-working-context li + li { margin-top:8px; }
+.rev-working-context small { display:block; margin-top:2px; color:#81969b; font-size:9px; }
+.rev-working-context p { margin:9px 0 0; color:#b9c8cb; }
 
 @media (max-width: 900px) {
+  .rev-working-context { grid-template-columns:1fr; }
   .rolling-bench-main { grid-template-columns: 1fr; }
   .bench-notepad { border-top: 1px solid rgba(97, 210, 230, 0.2); border-left: 0; }
 }

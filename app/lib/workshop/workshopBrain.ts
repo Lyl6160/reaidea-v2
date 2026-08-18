@@ -1,4 +1,5 @@
 import type { Project } from "../core/project";
+import { assessHomeUnderstanding } from "./revWorkingUnderstanding";
 import { assessDiscovery } from "./discoveryReasoning";
 import {
   summarizeEngineeringTrace,
@@ -102,6 +103,7 @@ export function assessWorkshop(project: Project): WorkshopState {
   const validationPlanned = hasValidationActivity(project);
   const validationCompleted = hasCompletedValidation(project);
   const discoveryReachedCheckpoint = discoveryComplete(project);
+  const homeDescriptionReady = assessHomeUnderstanding(project.originalObservation).ready;
   const hasEvidence = project.evidence.length > 0;
   const hasConstraints = project.engineeringState.currentConstraints.length > 0;
   const hasAssumptions = project.engineeringState.currentAssumptions.length > 0;
@@ -110,11 +112,13 @@ export function assessWorkshop(project: Project): WorkshopState {
     {
       id: "knowledge",
       label: "Inventor's Bench",
-      state: discoveryReachedCheckpoint ? "available" : "active",
+      state: discoveryReachedCheckpoint || homeDescriptionReady ? "available" : "active",
       reason: discoveryReachedCheckpoint
         ? "You have answered the main Discovery questions. Come back here whenever something needs more detail."
+        : homeDescriptionReady
+          ? "REV has the Home description. Come back here whenever you want to add a thought or correct REV."
         : "Keep sharing what you know so the rest of the workshop can help.",
-      nextMove: discoveryReachedCheckpoint
+      nextMove: discoveryReachedCheckpoint || homeDescriptionReady
         ? "Return here when another bench shows that something is missing or unclear."
         : "Answer the next Discovery question.",
       fedBy: [],
@@ -215,12 +219,13 @@ export function assessWorkshop(project: Project): WorkshopState {
     },
   ];
 
-  const baselineRecommended =
-    benches.find((bench) => bench.state === "pulse") ??
-    benches.find((bench) => bench.state === "active") ??
-    benches.find((bench) => bench.state === "ready") ??
-    benches.find((bench) => bench.state === "available") ??
-    benches[0];
+  const baselineRecommended = homeDescriptionReady && !discoveryReachedCheckpoint
+    ? benches.find((bench) => bench.id === "engineering") ?? benches[0]
+    : benches.find((bench) => bench.state === "pulse") ??
+      benches.find((bench) => bench.state === "active") ??
+      benches.find((bench) => bench.state === "ready") ??
+      benches.find((bench) => bench.state === "available") ??
+      benches[0];
   const direction = trace.activeConceptDirection?.outcome;
   const latestOutcome = trace.latestValidationResult?.outcome;
   let recommended = baselineRecommended;
