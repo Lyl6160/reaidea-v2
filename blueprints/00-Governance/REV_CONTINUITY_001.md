@@ -1167,4 +1167,70 @@ Machine-aware visuals, process diagrams, software UI, system graphs, environment
 
 ---
 
+# 47. HP-24.38 Approved Design Direction — Implementation Not Started
+
+**Recorded:** 18 August 2026
+
+**Current safe checkpoint:** `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1`
+
+**Current branch:** `sprint006-build24-36-engineering-concept-model`
+
+**HP-24.37:** IN CONSTRUCTION
+
+**Next proposed hold point:** HP-24.38 — Home Intelligence + Workshop Information Routing
+
+HP-24.38 implementation has not started. This entry preserves an approved product evolution discovered through live walkthrough testing and competitive/product observation.
+
+## Locked Principles
+
+**TELL REV ONCE PRINCIPLE**
+
+“The inventor tells REV once. REV carries that understanding throughout the Workshop.”
+
+**REV DOES MORE WORK PRINCIPLE**
+
+“REV should do more work and ask fewer questions.”
+
+**OUTPUT-FIRST BENCH PRINCIPLE**
+
+“Every bench should open with something useful already prepared from what the Workshop knows.”
+
+**SMALLEST QUESTION PRINCIPLE**
+
+“REV asks only the smallest question needed to remove an important gap.”
+
+**NO-REPETITION PRINCIPLE**
+
+“Do not ask the inventor for information REV already has.”
+
+## Approved Home Experience
+
+Home becomes the birthplace of the invention. It captures the inventor's name and one large, rich invention description. The inventor gives as much information as they already know. The Understanding Meter reports **Starting**, **Taking Shape**, or **Ready for Workshop**.
+
+ASK REV is available when the inventor is stuck and asks one short question addressing the most important missing information. When enough information exists, REV says “I have enough information to get started” and “Enter the Workshop and we'll develop your invention from here.” ENTER WORKSHOP becomes available. There is no mandatory questionnaire.
+
+Concept 01 may begin quietly during Workshop entry without a separate image-generation action. If ready, it is visible; if still generating, the Workshop opens normally and approved footstep progress may appear. Concept generation remains non-authoritative and provider mechanics stay hidden.
+
+## Working Understanding and Routing Boundary
+
+REV may maintain a provider-neutral derived working understanding containing purpose, problem, users, dimensions, materials, components, colours, movement, power, environment, benefits, constraints, safety, unknowns, and clues relevant to testing, manufacturing, marketing, and IP/distinctiveness.
+
+Relevant information may be routed across Engineering, Prototype, Testing, Patent / IP, Manufacturing / Costing, Marketing, and Reality. For example, a 30 cm dimension may inform Engineering, Prototype, and Manufacturing; an earlier-warning benefit may inform Testing, Marketing, and Reality; and a rechargeable battery may inform Engineering, Testing, Manufacturing, and Reality. The inventor is not asked to repeat information REV already has.
+
+The working understanding is not automatically ProjectEvidence, a ProjectDecision, an Engineering Conclusion, an Engineering Direction, an Engineering Action, validated Engineering truth, or a formal Validation result. Unknown remains unknown. No second authoritative Project system is authorized.
+
+## Bench Philosophy and Inventor Bench
+
+Every bench opens with what REV already knows, what REV has prepared, and one smart question only if genuinely needed. REV does the work first; the inventor corrects, confirms, or fills critical gaps.
+
+Inventor Bench remains but is optional. It supports reviewing the original idea, adding another thought, correcting REV, adding notes, future sketch/file upload, and revisiting the original invention description. It must not force the historical fixed six-question sequence.
+
+## Protected Architecture and History
+
+Preserve the always-visible Workshop, active-bench glow/pulse, red/yellow/green guidance, footstep progress, Prototype revision history, candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D viewer, safe 3D refusal, provider independence, Project truth boundaries, no-dead-end navigation, MODEL ≠ RENDER, Hide the labour. Show the progress., and KIS.
+
+Earlier Inventor and Engineering question-flow decisions remain part of the historical record. This continuity entry does not rewrite history and authorizes no HP-24.38 application implementation.
+
+---
+
 **END OF REV-CONTINUITY-001**

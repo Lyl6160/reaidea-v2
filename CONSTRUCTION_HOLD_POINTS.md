@@ -1872,4 +1872,41 @@ Machine visuals, process diagrams, software UI representation, system graphs/wor
 
 HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. It should allow inventor feedback on Concept 01, preserve concept-family identity, advance revision identity, generate a deliberate Concept 02 and require explicit adoption before anything crosses into Project truth.
 
+## HP-24.38 — Home Intelligence + Workshop Information Routing
+
+**Status:** PROPOSED / NOT STARTED
+
+**Recorded:** 18 August 2026
+
+**Current safe checkpoint:** `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1`
+
+**Current branch:** `sprint006-build24-36-engineering-concept-model`
+
+**HP-24.37:** IN CONSTRUCTION
+
+### Purpose
+
+Turn one rich Home invention description into a provider-neutral REV working understanding that can be routed to Engineering, Prototype, Testing, Patent / IP, Manufacturing / Costing, Marketing, and Reality without requiring the inventor to repeat known information and without creating a second authoritative Project system.
+
+### Approved Direction
+
+- Home captures name and one rich invention description.
+- The Understanding Meter reports Starting, Taking Shape, or Ready for Workshop.
+- ASK REV asks one short question about the most important missing information.
+- ENTER WORKSHOP unlocks once REV has enough information to begin.
+- Concept 01 may generate quietly during Workshop entry and remains non-authoritative.
+- Inventor Bench is optional and supports review, correction, notes, and future sketch/file input.
+- Every bench opens with what REV knows, what REV prepared, and one smallest-gap question only when necessary.
+- Relevant known information is routed across benches; the inventor is not asked to repeat it.
+
+### Authority Boundary
+
+REV may maintain a provider-neutral derived working understanding, but it does not automatically create ProjectEvidence, ProjectDecision, Engineering Conclusion, Engineering Direction, Engineering Action, validated Engineering truth, or a formal Validation result. Unknown remains unknown. Project truth and existing writer boundaries remain authoritative.
+
+### Existing Architecture to Preserve
+
+Workshop visibility, active-bench glow/pulse, red/yellow/green guidance, footstep progress, Prototype revision history, candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D, safe 3D refusal, provider independence, Project truth boundaries, no-dead-end navigation, MODEL ≠ RENDER, Hide the labour. Show the progress., and KIS.
+
+This hold point is a product evolution identified through live walkthrough testing and competitive/product observation. Earlier question-flow decisions remain preserved as history. No HP-24.38 application implementation begins with this documentation update.
+
 Freeze blockers: NONE.

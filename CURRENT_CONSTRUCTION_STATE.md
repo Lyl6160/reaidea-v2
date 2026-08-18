@@ -1,15 +1,21 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Construction checkpoint:** HP-24.35 — Provisional Visual Mode + First Recognisable Concept
-**Branch:** `sprint006-build24-35-first-recognisable-concept`
-**Accepted HEAD:** `f7b7d7d9e105a094614c5b9693d6cccf7930d3d2`
-**Status:** COMPLETE / VERIFIED / LIVE-BROWSER-ACCEPTED / TAGGED / PUSHED / FROZEN
-**Last governance update:** 2026-08-16
+**Current safe checkpoint:** `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1`
+
+**Branch:** `sprint006-build24-36-engineering-concept-model`
+
+**Current hold point:** HP-24.37 — IN CONSTRUCTION
+
+**Next proposed hold point:** HP-24.38 — Home Intelligence + Workshop Information Routing
+
+**HP-24.38 implementation:** NOT STARTED
+
+**Last governance update:** 2026-08-18
 
 ## Current Hold-Point Candidate
 
-**HP-24.36 — Inventor-Guided Concept Refinement** — PROPOSED / NOT STARTED
+**HP-24.38 — Home Intelligence + Workshop Information Routing** — PROPOSED / NOT STARTED
 
 Protected previous foundation:
 
@@ -771,3 +777,23 @@ Concept 01 is an early, unvalidated visual interpretation and not Project truth.
 Generated image bytes remain transient React state and are not stored in Project, timeline, `storageEngine` or localStorage. Refresh may lose Concept 01. Durable artifact history is deferred. Original idea preservation remains independent of generated concepts.
 
 HP-24.36 — Inventor-Guided Concept Refinement is proposed but NOT STARTED. Its purpose is a deliberate Concept 01 → inventor feedback → Concept 02 revision loop that retains family identity, advances revision identity and keeps every candidate non-authoritative until explicit adoption. Question adaptivity from HP-24.34 also remains deferred.
+
+## HP-24.37 Current Construction Checkpoint
+
+HP-24.37 remains **IN CONSTRUCTION**. The current safe checkpoint is `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` on branch `sprint006-build24-36-engineering-concept-model`.
+
+The protected construction work includes the visual-first Workshop and Inventor flow, footstep progress, Prototype revision history and candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D viewing, and truthful 3D refusal when structured design information is insufficient. HP-24.37 is not frozen by this documentation update.
+
+## HP-24.38 Proposed Direction — Not Started
+
+**HP-24.38 — Home Intelligence + Workshop Information Routing** is the next proposed hold point. Implementation has not started.
+
+Its purpose is to turn one rich Home invention description into a provider-neutral REV working understanding that can be routed to Engineering, Prototype, Testing, Patent / IP, Manufacturing / Costing, Marketing, and Reality without requiring the inventor to repeat known information and without creating a second authoritative Project system.
+
+The approved Home direction is name plus one large rich invention-description input, an Understanding Meter with **Starting**, **Taking Shape**, and **Ready for Workshop**, and **ASK REV** for one short question addressing the most important missing information. When ready, Home says “I have enough information to get started” and “Enter the Workshop and we'll develop your invention from here,” then enables **ENTER WORKSHOP**. No mandatory questionnaire is required.
+
+Concept 01 may begin quietly on Workshop entry. This remains non-authoritative visual generation; provider mechanics remain hidden. If generation is incomplete, the Workshop opens normally and may show approved footstep progress.
+
+REV's derived working understanding may cover purpose, problem, users, dimensions, materials, components, colours, movement, power, environment, benefits, constraints, safety, unknowns, and testing, manufacturing, marketing, and IP clues. It is not automatically evidence, a decision, an Engineering Conclusion, an Engineering Direction, an Engineering Action, validated Engineering truth, or a formal Validation result. Unknown remains unknown.
+
+Every bench should open with what REV already knows, what REV has prepared, and one smart question only if genuinely needed. Inventor Bench remains optional for reviewing, adding to, and correcting the original idea rather than enforcing the historical fixed question sequence.

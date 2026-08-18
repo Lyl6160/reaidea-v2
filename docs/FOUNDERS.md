@@ -2,6 +2,18 @@
 
 Version: 1.0
 
+## Product Direction Evolution — 18 August 2026
+
+Live walkthrough testing and product observation produced the next major correction:
+
+> The inventor tells REV once. REV carries that understanding throughout the Workshop.
+
+REV should do more work and ask fewer questions. Home becomes the birthplace of the invention: one rich invention description, an Understanding Meter, and one smallest-gap **ASK REV** question only when needed. **ENTER WORKSHOP** becomes available when REV has enough information to begin, and non-authoritative Concept 01 may start quietly during entry.
+
+Inventor Bench remains available for reviewing, adding to, or correcting the original idea, but is no longer a mandatory questionnaire. Every bench should open with what REV knows, what REV has prepared, and one smart question only if genuinely required.
+
+This is an intentional evolution. Earlier Discovery, Inventor, and Engineering question-flow decisions remain part of the founder history.
+
 ---
 
 # Why This Document Exists

@@ -101,3 +101,31 @@ The existing `/dashboard` route remains in place. Build 1 does not perform a bro
 The installed reference image shows the long-term direction: one active Project at the centre, REV as the engineering partner, and specialist benches surrounding the same evolving work. Future construction may deepen the visual room, bench capabilities, and cross-bench handoffs, but each expansion must preserve one Project, one authoritative history, and explicit responsibility boundaries.
 
 The reference should guide architecture and experience without being treated as a claim that all visualized benches or specialist capabilities are already implemented.
+
+## HP-24.38 Proposed Product Direction
+
+HP-24.38 — Home Intelligence + Workshop Information Routing is proposed and not implemented. It evolves the experience around one locked rule:
+
+> The inventor tells REV once. REV carries that understanding throughout the Workshop.
+
+Home becomes the birthplace of the invention: name, one rich invention description, an Understanding Meter, and a smallest-gap ASK REV question when the inventor needs help. ENTER WORKSHOP becomes available when REV has enough information to start. There is no mandatory Home questionnaire.
+
+On entry, non-authoritative Concept 01 may begin quietly. The Workshop still opens normally if generation is underway, and approved footstep progress may communicate the work without exposing provider mechanics.
+
+### Information Routing
+
+REV may derive a provider-neutral working understanding from inventor input and route only relevant information to Engineering, Prototype, Testing, Patent / IP, Manufacturing / Costing, Marketing, and Reality. Information already known must not be requested again.
+
+The working understanding may organize purpose, problem, users, dimensions, materials, components, colours, movement, power, environment, benefits, constraints, safety, unknowns, testing clues, manufacturing clues, marketing clues, and IP/distinctiveness clues. It is a derived orchestration/read model, not a second authoritative Project system and not automatic evidence, decision, formal Engineering truth, or Validation.
+
+### Output-First Benches
+
+Every bench should open with:
+
+1. What REV already knows.
+2. What REV has prepared.
+3. One smart question only if genuinely needed.
+
+REV does the work first. The inventor corrects, confirms, or fills a critical gap. Inventor Bench remains in the Workshop but becomes optional: it supports review of the original idea, another thought, corrections, notes, future sketch/file upload, and revisiting the initial description. It must not force the historical fixed six-question sequence.
+
+All existing Workshop and Project authority boundaries remain protected. Earlier question-flow architecture remains part of the historical record rather than being rewritten.
