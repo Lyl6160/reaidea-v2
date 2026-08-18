@@ -1,21 +1,21 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1`
+**Current safe checkpoint:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
 
 **Branch:** `sprint006-build24-36-engineering-concept-model`
 
 **Current hold point:** HP-24.37 — IN CONSTRUCTION
 
-**Next proposed hold point:** HP-24.38 — Home Intelligence + Workshop Information Routing
+**Next proposed hold point:** HP-24.38 — Home Intelligence + Workshop Information Routing, Build 1 accepted
 
-**HP-24.38 implementation:** NOT STARTED
+**HP-24.38 implementation:** BUILD 1 ACCEPTED / PUSHED
 
 **Last governance update:** 2026-08-18
 
 ## Current Hold-Point Candidate
 
-**HP-24.38 — Home Intelligence + Workshop Information Routing** — PROPOSED / NOT STARTED
+**HP-24.38 — Home Intelligence + Workshop Information Routing** — BUILD 1 ACCEPTED / PUSHED
 
 Protected previous foundation:
 
@@ -784,9 +784,9 @@ HP-24.37 remains **IN CONSTRUCTION**. The current safe checkpoint is `36b461e243
 
 The protected construction work includes the visual-first Workshop and Inventor flow, footstep progress, Prototype revision history and candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D viewing, and truthful 3D refusal when structured design information is insufficient. HP-24.37 is not frozen by this documentation update.
 
-## HP-24.38 Proposed Direction — Not Started
+## HP-24.38 Build 1 — Accepted and Pushed
 
-**HP-24.38 — Home Intelligence + Workshop Information Routing** is the next proposed hold point. Implementation has not started.
+**HP-24.38 — Home Intelligence + Workshop Information Routing** Build 1 is accepted and pushed at `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12` on `sprint006-build24-36-engineering-concept-model`.
 
 Its purpose is to turn one rich Home invention description into a provider-neutral REV working understanding that can be routed to Engineering, Prototype, Testing, Patent / IP, Manufacturing / Costing, Marketing, and Reality without requiring the inventor to repeat known information and without creating a second authoritative Project system.
 
@@ -796,4 +796,14 @@ Concept 01 may begin quietly on Workshop entry. This remains non-authoritative v
 
 REV's derived working understanding may cover purpose, problem, users, dimensions, materials, components, colours, movement, power, environment, benefits, constraints, safety, unknowns, and testing, manufacturing, marketing, and IP clues. It is not automatically evidence, a decision, an Engineering Conclusion, an Engineering Direction, an Engineering Action, validated Engineering truth, or a formal Validation result. Unknown remains unknown.
 
-Every bench should open with what REV already knows, what REV has prepared, and one smart question only if genuinely needed. Inventor Bench remains optional for reviewing, adding to, and correcting the original idea rather than enforcing the historical fixed question sequence.
+Every live bench now opens with what REV already knows, what REV has prepared, and at most one smallest routed question. Inventor Bench is optional for additions and corrections; Engineering is recommended after a Home-ready description. The Workshop opens with no bench selected, Concept 01 starts automatically, branded progress footsteps and candidate persistence worked, and output-first presentation is preserved.
+
+Home creates the authoritative Project exactly once and preserves the complete description in `Project.originalObservation`. Specialist routed-question provenance uses the existing `ProjectTimelineEvent.subject`, one routed answer closes the question, and historical subjectless contributions remain neutral. Project schema and truth boundaries are unchanged. VisualDesignSnapshot, ConceptGeometry, safe 3D, and provider independence remain preserved.
+
+### Deferred Follow-ups
+
+- Generated concept quality needs improvement.
+- The small Workshop concept preview needs improvement.
+- Visual sizing, spacing, and graphics were intentionally not assessed in Build 1.
+- The current Home PC requires Node system CA support for provider HTTPS.
+- Three existing image-optimization lint warnings remain non-blocking.

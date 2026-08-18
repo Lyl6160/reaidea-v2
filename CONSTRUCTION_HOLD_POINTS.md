@@ -1874,11 +1874,11 @@ HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. It 
 
 ## HP-24.38 — Home Intelligence + Workshop Information Routing
 
-**Status:** PROPOSED / NOT STARTED
+**Status:** BUILD 1 ACCEPTED / PUSHED
 
 **Recorded:** 18 August 2026
 
-**Current safe checkpoint:** `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1`
+**Build 1 checkpoint:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
 
 **Current branch:** `sprint006-build24-36-engineering-concept-model`
 
@@ -1907,6 +1907,28 @@ REV may maintain a provider-neutral derived working understanding, but it does n
 
 Workshop visibility, active-bench glow/pulse, red/yellow/green guidance, footstep progress, Prototype revision history, candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D, safe 3D refusal, provider independence, Project truth boundaries, no-dead-end navigation, MODEL ≠ RENDER, Hide the labour. Show the progress., and KIS.
 
-This hold point is a product evolution identified through live walkthrough testing and competitive/product observation. Earlier question-flow decisions remain preserved as history. No HP-24.38 application implementation begins with this documentation update.
+This hold point is a product evolution identified through live walkthrough testing and competitive/product observation. Earlier question-flow decisions remain preserved as history. Build 1 implements the approved direction without introducing a new governance rule.
+
+### Build 1 Acceptance
+
+- Home captures one rich invention description with a deterministic understanding meter and one helping question.
+- Home creates the existing authoritative Project exactly once.
+- Workshop opens with no bench selected; Engineering is recommended and Inventor's Bench remains optional.
+- Concept 01 starts automatically through the existing provider-independent pipeline.
+- Branded progress footsteps, candidate persistence, information routing, and output-first presentation worked.
+- Live benches show what REV already knows and prepared, with at most one smallest routed question.
+- Specialist question provenance uses the existing `ProjectTimelineEvent.subject`; one routed answer closes the question and historical subjectless contributions remain neutral.
+- Project schema and truth boundaries remain unchanged.
+- VisualDesignSnapshot, ConceptGeometry, interactive 3D, and safe 3D refusal remain preserved.
+
+### Deferred After Build 1
+
+- Generated concept quality needs improvement.
+- The small Workshop concept preview needs improvement.
+- Visual sizing, spacing, and graphics were intentionally not assessed.
+- The current Home PC requires Node system CA support for provider HTTPS.
+- Three existing image-optimization lint warnings remain non-blocking.
+
+Build 1 was pushed without a tag or merge. HP-24.37 remains in construction.
 
 Freeze blockers: NONE.

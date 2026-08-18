@@ -1,7 +1,7 @@
 # reAIdea Founder Journal — HP-24.38 Design Decision
 
 **Date:** 18 August 2026  
-**Status:** Approved product direction; implementation not started
+**Status:** Build 1 accepted and pushed
 
 ## The Product Correction
 
@@ -65,10 +65,32 @@ Preserve the always-visible Workshop, active-bench glow and pulse, red/yellow/gr
 
 Earlier Inventor and Engineering question flows remain valid historical construction decisions. HP-24.38 is an intentional product evolution discovered through live walkthrough testing and competitive/product observation; the history is not rewritten to imply this direction always existed.
 
-## Proposed Next Hold Point
+## Build 1 Closeout
 
 **HP-24.38 — Home Intelligence + Workshop Information Routing**
 
-Turn one rich Home invention description into a provider-neutral REV working understanding routed across the Workshop without repetition and without creating a second authoritative Project system.
+**Build commit:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
+**Push:** Passed on `sprint006-build24-36-engineering-concept-model`
 
-Implementation has not started.
+Build 1 proved that Home can capture one rich invention description, measure understanding deterministically, and ask one short helping question when needed. Home creates the existing authoritative Project exactly once and preserves the complete description as `Project.originalObservation`.
+
+The Workshop opens immediately with no bench selected. Concept 01 starts automatically through the existing provider-independent pipeline, the branded footstep progress communicates IDEA EVOLVING, and candidate persistence restores the generated concept. Output-first presentation works without making Inventor's Bench mandatory: Inventor remains available for additions and corrections while Engineering is the recommended development bench.
+
+REV now derives a source-traceable working understanding and routes relevant context to the live benches. Each bench shows what REV already knows and what REV prepared, with at most one smallest missing question. Specialist answers preserve the displayed routed-question provenance in the existing `ProjectTimelineEvent.subject`; one routed answer closes the question, and historical subjectless contributions remain readable without invented attribution.
+
+Project schema and truth boundaries remain unchanged. The derived understanding creates no parallel truth. VisualDesignSnapshot, ConceptGeometry, safe 3D behavior, and provider independence remain preserved.
+
+### What We Learned
+
+- Tell REV Once works best when Home owns the first complete description and downstream benches consume routed context.
+- Recommended and active are separate states; the Workshop can recommend Engineering while leaving every bench closed.
+- Presentation choices such as the inventor-hero product concept are not new Project information and must not make a current candidate appear stale.
+- Routed question provenance must travel with the recorded contribution rather than being reconstructed from legacy prompt order.
+
+### Deferred Follow-ups
+
+- Generated concept quality needs improvement.
+- The small Workshop concept preview needs improvement.
+- Visual sizing, spacing, and graphics were intentionally not assessed in Build 1.
+- The current Home PC requires Node system CA support for provider HTTPS.
+- Three existing image-optimization lint warnings remain non-blocking.
