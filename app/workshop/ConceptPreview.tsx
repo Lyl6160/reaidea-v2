@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { ConceptCandidate } from "../lib/ai/types";
+import type { ConceptCandidate, ConceptViewId } from "../lib/ai/types";
 import type { SharedConceptPreview } from "../lib/workshop/conceptPreview";
 
 type ConceptPreviewProps = {
@@ -8,6 +8,8 @@ type ConceptPreviewProps = {
   candidate?: ConceptCandidate | null;
   candidateStale?: boolean;
   compact?: boolean;
+  expanded?: boolean;
+  selectedView?: ConceptViewId;
 };
 
 const POINTS = [
@@ -26,7 +28,7 @@ function visualStageLabel(stage: SharedConceptPreview["visualStage"]): string {
   return stage === "idea-seed" ? "YOUR DESIGN" : stage.replaceAll("-", " ");
 }
 
-export default function ConceptPreview({ preview, candidate, candidateStale = false, compact = false }: ConceptPreviewProps) {
+export default function ConceptPreview({ preview, candidate, candidateStale = false, compact = false, expanded = false, selectedView = "iso" }: ConceptPreviewProps) {
   const discoveryStageIndex = ["dormant", "spark", "clustering", "outline", "structure", "wireframe", "early-ready"].indexOf(preview.stage);
   const engineeringLevel = preview.engineeringAnswerCount;
   const stageIndex = engineeringLevel > 0 ? 6 : discoveryStageIndex;
@@ -35,10 +37,15 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
   const showStructure = stageIndex >= 4;
   const showWireframe = stageIndex >= 5;
   const showSettledWireframe = preview.stage === "early-ready" || engineeringLevel > 0;
+  const selectedImageView = candidate?.output.type === "image"
+    ? candidate.output.views?.find((view) => view.id === selectedView)
+    : undefined;
+  const selectedImageSource = selectedImageView?.dataUrl ?? (candidate?.output.type === "image" ? candidate.output.dataUrl : undefined);
+  const selectedImageAlt = selectedImageView?.altText ?? (candidate?.output.type === "image" ? candidate.output.altText : "");
 
   return (
     <section
-      className={`concept-preview${compact ? " is-compact" : ""} stage-${preview.stage}`}
+      className={`concept-preview${compact ? " is-compact" : ""}${expanded ? " is-expanded" : ""} stage-${preview.stage}`}
       aria-label={candidate ? `Concept ${String(candidate.revision).padStart(2, "0")}: ${candidate.title}` : `Idea evolving: ${preview.title}`}
       data-concept-stage={preview.stage}
       data-discovery-input-count={preview.answerCount}
@@ -49,12 +56,12 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
         <span>{candidate ? `CONCEPT ${String(candidate.revision).padStart(2, "0")}` : "IDEA EVOLVING"}</span>
         {!compact && <b>{candidate ? "ENGINEERING CONCEPT MODEL" : visualStageLabel(preview.visualStage)}</b>}
       </div>
-      {candidate?.output.type === "image" && candidate.output.dataUrl ? (
+      {candidate?.output.type === "image" && selectedImageSource ? (
         <div className="concept-candidate-preview">
           <i className="technical-grid" aria-hidden="true" />
           <Image
-            src={candidate.output.dataUrl}
-            alt={candidate.output.altText}
+            src={selectedImageSource}
+            alt={selectedImageAlt}
             width={1024}
             height={1024}
             unoptimized
@@ -228,6 +235,9 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
         .is-compact .concept-preview-copy strong { font-size: 13px; }
         .is-compact small { font-size: 7px; line-height: 1.4; }
         .is-compact .idea-point { fill: url(#idea-glow-compact); }
+        .is-expanded { width: 100%; }
+        .is-expanded .concept-field { height: 300px; }
+        .is-expanded .concept-candidate-preview { height: min(520px, 58vw); min-height: 300px; }
         @media (prefers-reduced-motion: no-preference) {
           .stage-spark .idea-point, .stage-clustering .idea-point { animation: idea-pulse 3.6s ease-in-out infinite alternate; }
         }

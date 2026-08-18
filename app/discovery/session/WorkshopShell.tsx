@@ -7,7 +7,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ProjectReviewView from "./ProjectReviewView";
 import ConceptPreview from "../../workshop/ConceptPreview";
 import StandardBenchShell from "../../workshop/StandardBenchShell";
-import RollingBenchFlow, { type BenchNote } from "../../workshop/RollingBenchFlow";
+import RollingBenchFlow, { readRollingBenchNotes, type BenchNote } from "../../workshop/RollingBenchFlow";
+import GenerationProgress from "../../workshop/GenerationProgress";
+import WorkshopRoom from "../../workshop/WorkshopRoom";
 
 import {
   isSpecialistContributionBenchId,
@@ -17,6 +19,7 @@ import {
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import { deriveSharedConceptPreview } from "../../lib/workshop/conceptPreview";
 import {
+  MAX_RETAINED_CONCEPT_CANDIDATES,
   persistConceptCandidateHistory,
   persistCurrentConceptCandidate,
   restoreConceptCandidateHistory,
@@ -33,10 +36,16 @@ import {
 import type {
   ConceptCandidate,
   ConceptGenerationApiResponse,
+  ConceptGenerationRequest,
   ConceptRefinementApiResponse,
   ConceptRefinementRequest,
+  ConceptViewAssetApiResponse,
+  ConceptViewAssetRequest,
+  ConceptViewId,
   IdeaVisualMode,
 } from "../../lib/ai/types";
+import { bindConceptGeometry } from "../../lib/geometry/buildConceptGeometry";
+import { interpretRefinementIntent, type RefinementIntent } from "../../lib/ai/viewRequest";
 import {
   IDEA_VISUAL_MODES,
   buildConceptGenerationFoundation,
@@ -69,11 +78,27 @@ type WorkshopShellProps = {
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
 type ConceptDecision = "undecided" | "accept" | "refine" | "rethink";
 type ValidationEvidenceOutcome = "pending" | "supported" | "not-supported" | "inconclusive";
+type ConceptCandidateStorageStatus =
+  | "loading"
+  | "no-candidate-saved"
+  | "candidate-restored"
+  | "candidate-saving"
+  | "candidate-saved"
+  | "candidate-could-not-be-saved"
+  | "restore-failed";
 type SpecialistEvidenceInput = {
   eventId: string;
   summary: string;
   source: string;
 };
+
+const ENTRY_GENERATION_SESSION_KEY = "reaidea.entry-generation.v2";
+const MIN_ACTION_FEEDBACK_MS = 450;
+
+async function holdActionFeedback(startedAt: number): Promise<void> {
+  const remaining = MIN_ACTION_FEEDBACK_MS - (performance.now() - startedAt);
+  if (remaining > 0) await new Promise((resolve) => window.setTimeout(resolve, remaining));
+}
 
 const DISCOVERY_REVIEW_AREAS = [
   { id: "purpose", label: "What's the main problem?" },
@@ -102,17 +127,21 @@ function sameStringSet(left: string[], right: string[]): boolean {
   return left.every((value) => rightValues.has(value));
 }
 
+function hasValidConceptImageSet(candidate: ConceptCandidate): boolean {
+  if (candidate.output.type !== "image" || !candidate.output.dataUrl?.startsWith("data:image/")) return false;
+  const output = candidate.output;
+  const views = output.views;
+  return Boolean(
+    views?.length && views.length <= 3 &&
+    views.every((view) => view.dataUrl.startsWith("data:image/")) &&
+    new Set(views.map((view) => view.id)).size === views.length &&
+    views.some((view) => view.id === output.primaryView && view.dataUrl === output.dataUrl)
+  );
+}
+
 
 function conceptKey(project: Project) {
-  const source = `${project.projectName}::${project.originalObservation}`;
-  let hash = 2166136261;
-
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return `reaidea.workshop.concept.v1.${(hash >>> 0).toString(16)}`;
+  return `reaidea.workshop.concept.v2.${project.id}`;
 }
 
 
@@ -398,7 +427,9 @@ export default function WorkshopShell({
   const projectName = project.projectName;
   const workspaceRef = useRef<HTMLDivElement>(null);
   const conceptGenerationInFlightRef = useRef(false);
+  const pendingConceptGenerationRequestRef = useRef<ConceptGenerationRequest | null>(null);
   const conceptRefinementInFlightRef = useRef(false);
+  const entryGenerationStartedRef = useRef(false);
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
@@ -411,6 +442,7 @@ export default function WorkshopShell({
   const [confirmedVisualMode, setConfirmedVisualMode] = useState<IdeaVisualMode | null>(null);
   const [visualModeCorrectionOpen, setVisualModeCorrectionOpen] = useState(false);
   const [generatedConceptCandidate, setGeneratedConceptCandidate] = useState<ConceptCandidate | null>(null);
+  const [candidateStorageStatus, setCandidateStorageStatus] = useState<ConceptCandidateStorageStatus>("loading");
   const [conceptCandidateHistory, setConceptCandidateHistory] = useState<ConceptCandidate[]>([]);
   const [conceptGenerationState, setConceptGenerationState] = useState<"idle" | "generating" | "ready" | "failed" | "not-configured" | "unsupported">("idle");
   const [conceptGenerationMessage, setConceptGenerationMessage] = useState("");
@@ -418,7 +450,10 @@ export default function WorkshopShell({
   const [conceptRefinementDraft, setConceptRefinementDraft] = useState("");
   const [conceptRefinementState, setConceptRefinementState] = useState<"idle" | "refining" | "ready" | "failed">("idle");
   const [conceptRefinementMessage, setConceptRefinementMessage] = useState("");
-  const [previousConceptVisible, setPreviousConceptVisible] = useState(false);
+  const [conceptViewState, setConceptViewState] = useState<"idle" | "generating" | "ready" | "failed">("idle");
+  const [conceptViewMessage, setConceptViewMessage] = useState("");
+  const [viewedConceptRevision, setViewedConceptRevision] = useState<number | null>(null);
+  const [prototypeConceptView, setPrototypeConceptView] = useState<ConceptViewId>("iso");
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -498,6 +533,28 @@ export default function WorkshopShell({
       return "";
     }
   });
+  const [engineeringPreviewRevision, setEngineeringPreviewRevision] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return 1;
+      const parsed = JSON.parse(saved) as { engineeringPreviewRevision?: number };
+      return Math.max(1, parsed.engineeringPreviewRevision ?? 1);
+    } catch {
+      return 1;
+    }
+  });
+  const [engineeringPreviewLatestChange, setEngineeringPreviewLatestChange] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const saved = window.localStorage.getItem(conceptKey(project));
+      if (!saved) return "";
+      const parsed = JSON.parse(saved) as { engineeringPreviewLatestChange?: string };
+      return parsed.engineeringPreviewLatestChange ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [conceptWorkflowIdentity, setConceptWorkflowIdentity] = useState(() =>
     createConceptWorkflowIdentity(conceptFamilyId || undefined)
   );
@@ -506,9 +563,12 @@ export default function WorkshopShell({
     restoreConceptCandidateHistory(project.id)
       .then((history) => {
         if (!active) return;
-        const candidate = history.at(-1) ?? null;
-        setConceptCandidateHistory(history);
+        const boundHistory = history.map(bindConceptGeometry);
+        const candidate = boundHistory.at(-1) ?? null;
+        setCandidateStorageStatus(candidate ? "candidate-restored" : "no-candidate-saved");
+        setConceptCandidateHistory(boundHistory);
         setGeneratedConceptCandidate(candidate);
+        if (boundHistory.some((item, index) => item !== history[index])) void persistConceptCandidateHistory(project.id, boundHistory);
         if (candidate) {
           setVisualModeOverride(candidate.visualMode);
           setConfirmedVisualMode(candidate.visualMode);
@@ -517,6 +577,7 @@ export default function WorkshopShell({
         }
       })
       .catch(() => {
+        if (active) setCandidateStorageStatus("restore-failed");
         // Workshop continuity remains optional if the browser cache is unavailable.
       });
     return () => {
@@ -697,7 +758,19 @@ export default function WorkshopShell({
       generatedConceptCandidate.representationStyle !== currentRequest.representationStyle ||
       !sameStringSet(generatedConceptCandidate.sourceEventIds, currentRequest.sourceEventIds);
   }, [conceptGenerationFoundation.request, generatedConceptCandidate]);
+  const hasEngineeringDesignBrief = engineeringDefinitionAssessment.addressedAreas.length > 0;
+  const engineeringBriefText = Object.values(conceptGenerationFoundation.brief).flat().join(" ");
+  const engineeringBriefIsStopGoSign = /\bstop\b/i.test(engineeringBriefText) && /\bgo\b/i.test(engineeringBriefText) && /\b(pole|shaft|sign)\b/i.test(engineeringBriefText);
   const previousConceptCandidate = conceptCandidateHistory.at(-2) ?? null;
+  const viewedConceptCandidate = viewedConceptRevision === null
+    ? generatedConceptCandidate
+    : conceptCandidateHistory.find((candidate) => candidate.revision === viewedConceptRevision) ?? generatedConceptCandidate;
+  const viewedConceptAvailableViews: ConceptViewId[] = viewedConceptCandidate?.output.type === "image" && viewedConceptCandidate.output.views?.length
+    ? viewedConceptCandidate.output.views.map((view) => view.id)
+    : ["iso"];
+  const selectedPrototypeConceptView = viewedConceptAvailableViews.includes(prototypeConceptView)
+    ? prototypeConceptView
+    : viewedConceptAvailableViews[0];
 
   const conceptSheet = useMemo(() => {
     const engineering = project.engineeringState;
@@ -1089,8 +1162,8 @@ export default function WorkshopShell({
     setConceptGenerationMessage("");
   }
 
-  async function generateFirstRecognisableConcept() {
-    const generationRequest = conceptGenerationFoundation.request;
+  async function generateFirstRecognisableConcept(requestOverride?: ConceptGenerationRequest) {
+    const generationRequest = requestOverride ?? conceptGenerationFoundation.request;
     if (!generationRequest || conceptGenerationInFlightRef.current) return;
 
     if (generationRequest.visualMode !== "product" || generationRequest.outputType !== "image") {
@@ -1099,9 +1172,11 @@ export default function WorkshopShell({
       return;
     }
 
+    pendingConceptGenerationRequestRef.current = generationRequest;
     conceptGenerationInFlightRef.current = true;
     setConceptGenerationState("generating");
     setConceptGenerationMessage("");
+    const generationStartedAt = performance.now();
 
     try {
       const response = await fetch("/api/concepts/generate", {
@@ -1113,30 +1188,38 @@ export default function WorkshopShell({
 
       if (!response.ok || "error" in payload) {
         const error = "error" in payload ? payload.error : null;
+        await holdActionFeedback(generationStartedAt);
         setConceptGenerationState(error?.code === "not-configured" ? "not-configured" : error?.code === "unsupported-mode" ? "unsupported" : "failed");
         setConceptGenerationMessage(error?.message ?? "Concept generation could not complete.");
         return;
       }
 
-      const candidate = payload.candidate;
+      const candidate = bindConceptGeometry(payload.candidate);
       if (
         candidate.conceptFamilyId !== generationRequest.conceptFamilyId ||
         candidate.revision !== generationRequest.revision ||
-        candidate.output.type !== "image" ||
-        !candidate.output.dataUrl?.startsWith("data:image/")
+        !hasValidConceptImageSet(candidate)
       ) {
+        await holdActionFeedback(generationStartedAt);
         setConceptGenerationState("failed");
         setConceptGenerationMessage("Concept generation returned an invalid result.");
         return;
       }
 
+      await holdActionFeedback(generationStartedAt);
       setGeneratedConceptCandidate(candidate);
       setConceptCandidateHistory([candidate]);
       setConceptGenerationState("ready");
-      void persistCurrentConceptCandidate(project.id, candidate).catch(() => {
-        // The generated model remains available for this session if persistence fails.
-      });
+      pendingConceptGenerationRequestRef.current = null;
+      setCandidateStorageStatus("candidate-saving");
+      try {
+        const persisted = await persistCurrentConceptCandidate(project.id, candidate);
+        setCandidateStorageStatus(persisted ? "candidate-saved" : "candidate-could-not-be-saved");
+      } catch {
+        setCandidateStorageStatus("candidate-could-not-be-saved");
+      }
     } catch {
+      await holdActionFeedback(generationStartedAt);
       setConceptGenerationState("failed");
       setConceptGenerationMessage("Concept generation could not complete.");
     } finally {
@@ -1144,15 +1227,88 @@ export default function WorkshopShell({
     }
   }
 
+  function retryFirstRecognisableConcept() {
+    const failedRequest = pendingConceptGenerationRequestRef.current;
+    if (!failedRequest || conceptGenerationInFlightRef.current) return;
+    void generateFirstRecognisableConcept(failedRequest);
+  }
+
+  async function createOrUpdateDesignModel(intent: "inventor-hero" | "technical" = selectedId === "knowledge" ? "inventor-hero" : "technical") {
+    const rollingEngineeringNotes = readRollingBenchNotes(project.id, "engineering");
+    const rollingInventorNotes = readRollingBenchNotes(project.id, "knowledge");
+    const suggestedMode = suggestVisualMode(project, [...rollingInventorNotes, ...rollingEngineeringNotes]).mode;
+    const selectedMode = confirmedVisualMode && confirmedVisualMode !== "unknown"
+      ? confirmedVisualMode
+      : visualModeOverride && visualModeOverride !== "unknown"
+        ? visualModeOverride
+        : suggestedMode;
+    if (selectedMode === "unknown") {
+      setConceptGenerationState("failed");
+      setConceptGenerationMessage("What are we designing? Tell REV whether it is a physical product, machine, process, software, or system.");
+      return;
+    }
+    const visualMode = selectedMode;
+    const foundation = buildConceptGenerationFoundation(project, visualMode, conceptWorkflowIdentity, rollingEngineeringNotes, rollingInventorNotes);
+    if (!foundation.request) {
+      setConceptGenerationState("failed");
+      setConceptGenerationMessage(`Still needed: ${foundation.missingRequiredFields.map(missingConceptDetailLabel).join(", ")}.`);
+      return;
+    }
+    setConfirmedVisualMode(visualMode);
+    await generateFirstRecognisableConcept({
+      ...foundation.request,
+      representationStyle: intent === "inventor-hero" ? "product-concept" : foundation.request.representationStyle,
+    });
+  }
+
+  useEffect(() => {
+    if (entryGenerationStartedRef.current) return;
+    if (window.sessionStorage.getItem(ENTRY_GENERATION_SESSION_KEY) !== project.id) return;
+    entryGenerationStartedRef.current = true;
+    window.sessionStorage.removeItem(ENTRY_GENERATION_SESSION_KEY);
+    window.setTimeout(() => {
+      setSelectedId("knowledge");
+      void createOrUpdateDesignModel("inventor-hero");
+    }, 0);
+    // The session marker is written only by the inventor's explicit BRING MY IDEA TO LIFE action.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id]);
+
   async function refineCurrentConcept() {
     const currentCandidate = generatedConceptCandidate;
-    const currentRequest = conceptGenerationFoundation.request;
-    const inventorRefinement = conceptRefinementDraft.trim();
+    const rawInventorRefinement = conceptRefinementDraft.trim();
+    const refinementIntent = interpretRefinementIntent(rawInventorRefinement);
+    const inventorRefinement = refinementIntent.designClauses.join(", ");
+    const rollingEngineeringNotes = readRollingBenchNotes(project.id, "engineering");
+    const rollingInventorNotes = readRollingBenchNotes(project.id, "knowledge");
+    const currentRequest = currentCandidate
+      ? buildConceptGenerationFoundation(
+          project,
+          currentCandidate.visualMode,
+          conceptWorkflowIdentity,
+          rollingEngineeringNotes,
+          rollingInventorNotes
+        ).request
+      : null;
     if (
-      !currentCandidate || !currentRequest || !inventorRefinement ||
+      !currentCandidate || !rawInventorRefinement ||
       conceptRefinementInFlightRef.current || currentCandidate.output.type !== "image" ||
       !currentCandidate.output.dataUrl
     ) return;
+    if (!currentRequest) {
+      setConceptRefinementState("failed");
+      setConceptRefinementMessage("The current Engineering design could not be prepared for an update.");
+      return;
+    }
+    if (refinementIntent.hasViewChange && refinementIntent.designClauses.length === 0) {
+      await generateRequestedViewAsset(currentCandidate, currentRequest, refinementIntent, conceptCandidateHistory);
+      return;
+    }
+    if (conceptCandidateHistory.length >= MAX_RETAINED_CONCEPT_CANDIDATES) {
+      setConceptRefinementState("failed");
+      setConceptRefinementMessage("You've reached 5 design versions for this direction.");
+      return;
+    }
 
     const refinementRequest: ConceptRefinementRequest = {
       requestId: globalThis.crypto.randomUUID(),
@@ -1169,6 +1325,7 @@ export default function WorkshopShell({
       sourceTrace: currentRequest.sourceTrace,
       briefVersion: currentRequest.briefVersion,
       inventorRefinement,
+      sourceVisualDesignSnapshot: currentCandidate.visualDesignSnapshot,
       sourceImage: {
         mediaType: currentCandidate.output.mediaType,
         dataUrl: currentCandidate.output.dataUrl,
@@ -1178,6 +1335,9 @@ export default function WorkshopShell({
     conceptRefinementInFlightRef.current = true;
     setConceptRefinementState("refining");
     setConceptRefinementMessage("");
+    // Event-handler timing keeps brief progress feedback visible; it is not render output.
+    // eslint-disable-next-line react-hooks/purity
+    const refinementStartedAt = performance.now();
     try {
       const response = await fetch("/api/concepts/refine", {
         method: "POST",
@@ -1186,36 +1346,146 @@ export default function WorkshopShell({
       });
       const payload = await response.json() as ConceptRefinementApiResponse;
       if (!response.ok || "error" in payload) {
+        await holdActionFeedback(refinementStartedAt);
         setConceptRefinementState("failed");
         setConceptRefinementMessage("error" in payload ? payload.error.message : "Model update could not complete.");
         return;
       }
-      const candidate = payload.candidate;
+      const candidate = bindConceptGeometry(payload.candidate);
       if (
         candidate.conceptFamilyId !== currentCandidate.conceptFamilyId ||
         candidate.revision !== currentCandidate.revision + 1 ||
         candidate.sourceCandidateId !== currentCandidate.candidateId ||
-        candidate.output.type !== "image" || !candidate.output.dataUrl?.startsWith("data:image/")
+        !hasValidConceptImageSet(candidate)
       ) {
+        await holdActionFeedback(refinementStartedAt);
         setConceptRefinementState("failed");
         setConceptRefinementMessage("Model update returned an invalid result.");
         return;
       }
+      await holdActionFeedback(refinementStartedAt);
       const history = [...conceptCandidateHistory, candidate];
       setConceptCandidateHistory(history);
       setGeneratedConceptCandidate(candidate);
       setConceptRefinementState("ready");
-      setConceptRefinementDraft("");
-      setConceptRefinementOpen(false);
-      setPreviousConceptVisible(false);
-      void persistConceptCandidateHistory(project.id, history).catch(() => {
-        // The updated model history remains available for this session if persistence fails.
-      });
+      setViewedConceptRevision(null);
+      setCandidateStorageStatus("candidate-saving");
+      try {
+        const persisted = await persistConceptCandidateHistory(project.id, history);
+        setCandidateStorageStatus(persisted ? "candidate-saved" : "candidate-could-not-be-saved");
+        if (persisted) {
+          if (refinementIntent.hasViewChange) {
+            await generateRequestedViewAsset(candidate, currentRequest, refinementIntent, history);
+          } else {
+            setConceptRefinementDraft("");
+            setConceptRefinementOpen(false);
+          }
+        }
+      } catch {
+        setCandidateStorageStatus("candidate-could-not-be-saved");
+      }
     } catch {
+      await holdActionFeedback(refinementStartedAt);
       setConceptRefinementState("failed");
       setConceptRefinementMessage("Model update could not complete.");
     } finally {
       conceptRefinementInFlightRef.current = false;
+    }
+  }
+
+  async function generateRequestedViewAsset(
+    candidate: ConceptCandidate,
+    currentRequest: ConceptGenerationRequest,
+    intent: RefinementIntent,
+    history: ConceptCandidate[]
+  ) {
+    if (candidate.output.type !== "image" || !candidate.output.views?.length || conceptViewState === "generating") return;
+    const requestedView = intent.requestedView ?? selectedPrototypeConceptView;
+    const viewRequest: ConceptViewAssetRequest = {
+      ...currentRequest,
+      requestId: globalThis.crypto.randomUUID(),
+      conceptFamilyId: candidate.conceptFamilyId,
+      revision: candidate.revision,
+      sourceCandidateId: candidate.candidateId,
+      requestedView,
+      fullObject: intent.fullObject,
+      visualDesignSnapshot: candidate.visualDesignSnapshot,
+    };
+    setConceptViewState("generating");
+    setConceptViewMessage("");
+    const viewStartedAt = performance.now();
+    try {
+      const response = await fetch("/api/concepts/view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(viewRequest),
+      });
+      const payload = await response.json() as ConceptViewAssetApiResponse;
+      if (!response.ok || "error" in payload || payload.view.id !== requestedView || !payload.view.dataUrl.startsWith("data:image/")) {
+        await holdActionFeedback(viewStartedAt);
+        setConceptViewState("failed");
+        setConceptViewMessage("error" in payload ? payload.error.message : "The requested view could not be created.");
+        return;
+      }
+      const existingView = candidate.output.views.some((view) => view.id === requestedView);
+      const views = existingView
+        ? candidate.output.views.map((view) => view.id === requestedView ? payload.view : view)
+        : [...candidate.output.views, payload.view];
+      const updatedCandidate: ConceptCandidate = {
+        ...candidate,
+        output: {
+          ...candidate.output,
+          views,
+          availableViews: views.map((view) => view.id),
+          dataUrl: candidate.output.primaryView === requestedView ? payload.view.dataUrl : candidate.output.dataUrl,
+        },
+        createdAt: new Date().toISOString(),
+      };
+      const updatedHistory = history.map((item) => item.candidateId === candidate.candidateId ? updatedCandidate : item);
+      const persisted = await persistConceptCandidateHistory(project.id, updatedHistory);
+      await holdActionFeedback(viewStartedAt);
+      if (!persisted) {
+        setConceptViewState("failed");
+        setConceptViewMessage("The requested view could not be saved.");
+        return;
+      }
+      setConceptCandidateHistory(updatedHistory);
+      setGeneratedConceptCandidate(updatedCandidate);
+      setViewedConceptRevision(null);
+      setPrototypeConceptView(requestedView);
+      setCandidateStorageStatus("candidate-saved");
+      setConceptViewState("ready");
+      setConceptRefinementDraft("");
+      setConceptRefinementOpen(false);
+    } catch {
+      await holdActionFeedback(viewStartedAt);
+      setConceptViewState("failed");
+      setConceptViewMessage("The requested view could not be created.");
+    }
+  }
+
+  async function deleteHistoricalConceptRevision(revision: number): Promise<boolean> {
+    const currentCandidate = generatedConceptCandidate;
+    if (!currentCandidate || revision === currentCandidate.revision) return false;
+    const nextHistory = conceptCandidateHistory.filter((candidate) => candidate.revision !== revision);
+    if (nextHistory.length === conceptCandidateHistory.length || nextHistory.length === 0) return false;
+    try {
+      const persisted = await persistConceptCandidateHistory(project.id, nextHistory);
+      if (!persisted) {
+        setConceptRefinementState("failed");
+        setConceptRefinementMessage("That saved design version could not be deleted.");
+        return false;
+      }
+      setConceptCandidateHistory(nextHistory);
+      if (viewedConceptRevision === revision) setViewedConceptRevision(null);
+      setCandidateStorageStatus("candidate-saved");
+      setConceptRefinementState("idle");
+      setConceptRefinementMessage("");
+      return true;
+    } catch {
+      setConceptRefinementState("failed");
+      setConceptRefinementMessage("That saved design version could not be deleted.");
+      return false;
     }
   }
 
@@ -1553,46 +1823,13 @@ export default function WorkshopShell({
     }
   }
 
-  function createPrototypeModelFromCurrentDesign() {
-    const renderSvg = createConceptRenderSvg(visualConceptBrief);
-    const nextFamilyId = conceptFamilyId || globalThis.crypto.randomUUID();
-    setConceptCreated(true);
-    setConceptVisualised(true);
-    setConceptGenerated(true);
-    setGeneratedConceptSvg(renderSvg);
-    setConceptFamilyId(nextFamilyId);
-
-    try {
-      const saved = window.localStorage.getItem(conceptStorageKey);
-      const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
-      window.localStorage.setItem(conceptStorageKey, JSON.stringify({
-        ...existing,
-        version: 2,
-        conceptCreated: true,
-        conceptVisualised: true,
-        conceptGenerated: true,
-        generatedConceptSvg: renderSvg,
-        conceptFamilyId: nextFamilyId,
-        projectName,
-        generatedAt: new Date().toISOString(),
-      }));
-    } catch {
-      // The model remains available for this session if browser persistence fails.
-    }
-  }
-
-  function updatePrototypeModelFromCurrentDesign() {
+  function updateInheritedEngineeringPreview() {
     const inventorChange = conceptRefinementDraft.trim();
     if (!inventorChange) return;
-
-    const renderSvg = createConceptRenderSvg({
-      ...visualConceptBrief,
-      conceptLabel: refinedConceptGenerated ? "CONCEPT 03" : "CONCEPT 02",
-      nextMove: inventorChange,
-    });
-    setRefinedConceptSvg(renderSvg);
-    setRefinedConceptGenerated(true);
-    setPreviousConceptVisible(false);
+    const nextRevision = engineeringPreviewRevision + 1;
+    setEngineeringPreviewRevision(nextRevision);
+    setEngineeringPreviewLatestChange(inventorChange);
+    setViewedConceptRevision(null);
     setConceptRefinementState("ready");
 
     try {
@@ -1600,16 +1837,14 @@ export default function WorkshopShell({
       const existing = saved ? (JSON.parse(saved) as Record<string, unknown>) : {};
       window.localStorage.setItem(conceptStorageKey, JSON.stringify({
         ...existing,
-        version: refinedConceptGenerated ? 5 : 4,
-        conceptGenerated: true,
-        conceptFamilyId: conceptFamilyId || globalThis.crypto.randomUUID(),
-        refinedConceptGenerated: true,
-        refinedConceptSvg: renderSvg,
-        latestRefinement: inventorChange,
-        refinedAt: new Date().toISOString(),
+        projectId: project.id,
+        conceptFamilyId: conceptFamilyId || conceptWorkflowIdentity.conceptFamilyId,
+        engineeringPreviewRevision: nextRevision,
+        engineeringPreviewLatestChange: inventorChange,
+        engineeringPreviewUpdatedAt: new Date().toISOString(),
       }));
     } catch {
-      // The updated model remains available for this session if browser persistence fails.
+      // The inherited Engineering preview remains available for this session if persistence fails.
     }
   }
 
@@ -1782,16 +2017,18 @@ export default function WorkshopShell({
     if (override) return override;
 
     if (id === "knowledge") {
-      return discoveryAssessment.readyToAdvance
+      const inventorNotes = readRollingBenchNotes(project.id, "knowledge");
+      const inventorUnderstanding = inventorNotes.map((note) => note.answer).join(" ");
+      return generatedConceptCandidate && (inventorNotes.length >= 2 || inventorUnderstanding.length >= 360)
         ? "green"
-        : discoveryAssessment.addressedFocuses.length > 0 ? "yellow" : "red";
+        : generatedConceptCandidate || inventorNotes.length > 0 || discoveryAssessment.addressedFocuses.length > 0 ? "yellow" : "red";
     }
     if (id === "engineering") {
       return engineeringDefinitionAssessment.status === "ready-for-summary"
         ? "green"
         : engineeringDefinitionAssessment.addressedAreas.length > 0 ? "yellow" : "red";
     }
-    if (id === "prototype") return generatedConceptCandidate || conceptGenerated ? "yellow" : "red";
+    if (id === "prototype") return generatedConceptCandidate || hasEngineeringDesignBrief ? "yellow" : "red";
     if (id === "validation") {
       return validationEvidence.outcome !== "pending"
         ? "green"
@@ -2442,132 +2679,18 @@ export default function WorkshopShell({
         ))}
       </div>
 
-      <div className="room" role="group" aria-label="Workshop benches">
-        <div className="ceiling ceiling-left" aria-hidden="true" />
-        <div className="ceiling ceiling-right" aria-hidden="true" />
-        <div className="beam beam-one" aria-hidden="true" />
-        <div className="beam beam-two" aria-hidden="true" />
-        <div className="back-wall" aria-hidden="true" />
-        <div className="side-wall side-left" aria-hidden="true" />
-        <div className="side-wall side-right" aria-hidden="true" />
-        <div className="floor" aria-hidden="true" />
-        <div className="floor-line floor-line-one" aria-hidden="true" />
-        <div className="floor-line floor-line-two" aria-hidden="true" />
-
-        <div className="conduit conduit-main" aria-hidden="true" />
-        <div className="conduit conduit-left" aria-hidden="true" />
-        <div className="conduit conduit-right" aria-hidden="true" />
-        <div className="junction junction-one" aria-hidden="true" />
-        <div className="junction junction-two" aria-hidden="true" />
-        <div className="junction junction-three" aria-hidden="true" />
-
-        <div className="workshop-plaque" aria-hidden="true">
-          <span>reAIdea</span>
-          <small>WHERE IDEAS BECOME REAL</small>
-        </div>
-
-        <div className="wall-life" aria-hidden="true">
-          <span className="shelf shelf-left"><i /><i /><i /></span>
-          <span className="shelf shelf-right"><i /><i /></span>
-          <span className="tall-cabinet cabinet-left"><i /><i /><i /></span>
-          <span className="tall-cabinet cabinet-right"><i /><i /></span>
-          <span className="wall-sheet sheet-left"><i /><i /></span>
-          <span className="wall-sheet sheet-right"><i /><i /><i /></span>
-        </div>
-
-        <div className="rev-station" aria-label="REV, your AI design engineer">
-          <div className="rev-bubble">
-            <strong>REV</strong>
-            <span>{selectedBench?.reason ?? recommendedBench.reason}</span>
-          </div>
-          <div className="rev-figure" aria-hidden="true">
-            <div className="rev-hair" />
-            <div className="rev-head"><i className="rev-eye rev-eye-left" /><i className="rev-eye rev-eye-right" /><i className="rev-smile" /></div>
-            <div className="rev-neck" />
-            <div className="rev-body">
-              <span>REV</span>
-              <i className="rev-pocket" />
-            </div>
-            <div className="rev-arm rev-arm-left" />
-            <div className="rev-arm rev-arm-right" />
-            <div className="rev-leg rev-leg-left" />
-            <div className="rev-leg rev-leg-right" />
-          </div>
-        </div>
-
-        <div className="hub-concept-preview">
-          <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} />
-          <span className="hub-concept-pointer" aria-hidden="true">↓</span>
-        </div>
-
-        {CANONICAL_WORKSHOP_BENCHES.map(({ id, shortLabel, positionClass }) => {
+      <WorkshopRoom
+        revMessage={selectedBench?.reason ?? recommendedBench.reason}
+        conceptPreview={<><ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} /><ConceptCandidateStorageStatusLine status={candidateStorageStatus} /></>}
+        benches={CANONICAL_WORKSHOP_BENCHES.flatMap(({ id, shortLabel, positionClass }) => {
           const bench = getBench(workshop, id);
-          if (!bench) return null;
-
-          const isSelected = selectedBench?.id === id;
-          const isRecommended = recommendedBench.id === id;
-          const presentationProgress = presentationProgressForBench(id);
-
-          return (
-            <button
-              key={id}
-              type="button"
-              className={`room-bench ${positionClass} state-${bench.state} ${
-                isSelected ? "is-selected" : ""
-              } ${isRecommended ? "is-recommended" : ""}`}
-              onClick={() => selectBench(id)}
-              aria-pressed={isSelected}
-              aria-label={`${shortLabel}: ${presentationProgress}`}
-            >
-              <span className="lamp-rig" aria-hidden="true">
-                <span className="lamp-cord" />
-                <span className="lamp-cap" />
-                <span className="lamp-shade" />
-                <span className="room-light" />
-                <span className="light-pool" />
-              </span>
-              <span className="bench-sign">{shortLabel}</span>
-              <span className="bench-backsplash" aria-hidden="true">
-                <span className="pinboard-line" />
-                <span className="pinboard-note note-a" />
-                <span className="pinboard-note note-b" />
-              </span>
-              <span className="bench-top" aria-hidden="true">
-                {id !== "prototype" && <span className="bench-screen" />}
-                {id !== "prototype" && (
-                  <span className="bench-tools">
-                    <i className="tool-a" />
-                    <i className="tool-b" />
-                    <i className="tool-c" />
-                  </span>
-                )}
-                {id === "prototype" && !conceptCreated && <span className="empty-bench-glint" />}
-                {id === "prototype" && conceptCreated && (
-                  <span className="concept-model" aria-label={`${projectName} concept 01`}>
-                    <i className="concept-body" />
-                    <i className="concept-deck" />
-                    <i className="concept-wheel concept-wheel-left" />
-                    <i className="concept-wheel concept-wheel-right" />
-                    <b>CONCEPT 01</b>
-                  </span>
-                )}
-              </span>
-              <span className="bench-cabinet" aria-hidden="true">
-                <i />
-                <i />
-              </span>
-              <span className="bench-stool" aria-hidden="true"><i /><b /></span>
-              <span className="bench-shadow" aria-hidden="true" />
-              <span className="bench-status">{presentationProgress.toUpperCase()}</span>
-              {isRecommended && <span className="bench-recommendation">REV RECOMMENDS</span>}
-            </button>
-          );
+          return bench ? [{ id, shortLabel, positionClass, state: bench.state, progress: presentationProgressForBench(id), selected: selectedBench?.id === id, recommended: recommendedBench.id === id }] : [];
         })}
-
-        <p className="room-caption">
-          One Project · every bench works from the same evolving idea.
-        </p>
-      </div>
+        hasCurrentDesign={Boolean(generatedConceptCandidate || hasEngineeringDesignBrief)}
+        stopGoDesign={engineeringBriefIsStopGoSign}
+        onSelectBench={selectBench}
+        caption="One Project · every bench works from the same evolving idea."
+      />
         </>
       )}
 
@@ -2646,6 +2769,8 @@ export default function WorkshopShell({
           </>
         )}
         {selectedBench && (
+          <>
+          <ConceptCandidateStorageStatusLine status={candidateStorageStatus} />
           <RollingBenchFlow
             key={selectedBench.id}
             benchId={selectedBench.id}
@@ -2654,28 +2779,51 @@ export default function WorkshopShell({
             onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
             error={specialistContributionError}
             modelView={generatedConceptCandidate ? (
-              <ConceptPreview preview={sharedConceptPreview} candidate={previousConceptVisible ? previousConceptCandidate : generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} compact />
-            ) : (refinedConceptDataUri || generatedConceptDataUri) ? (
-              <Image
-                src={previousConceptVisible ? generatedConceptDataUri : refinedConceptDataUri || generatedConceptDataUri}
-                alt={previousConceptVisible ? "Previous working design model" : "Current working design model"}
-                width={1000}
-                height={560}
-                unoptimized
+              <ConceptPreview preview={sharedConceptPreview} candidate={selectedBench.id === "prototype" ? viewedConceptCandidate : generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} expanded selectedView={selectedBench.id === "prototype" ? selectedPrototypeConceptView : "iso"} />
+            ) : hasEngineeringDesignBrief ? (
+              <EngineeringDesignPreview
+                projectName={projectName}
+                proposedSolution={conceptGenerationFoundation.brief.proposedSolution}
+                operatingConcept={conceptGenerationFoundation.brief.operatingConcept}
+                functionalElements={conceptGenerationFoundation.brief.functionalElements}
+                arrangement={conceptGenerationFoundation.brief.arrangement ?? ""}
+                revision={engineeringPreviewRevision}
+                latestChange={engineeringPreviewLatestChange}
               />
-            ) : compactConceptPreview}
-            modelReady={Boolean(generatedConceptCandidate || conceptGenerated)}
-            canCreateModel
-            modelUpdating={conceptGenerationState === "generating" || conceptRefinementState === "refining"}
-            modelJustUpdated={conceptGenerationState === "ready" || conceptRefinementState === "ready"}
-            currentRevision={generatedConceptCandidate?.revision ?? (refinedConceptGenerated ? 2 : conceptGenerated ? 1 : undefined)}
-            previousAvailable={Boolean(previousConceptCandidate || (refinedConceptGenerated && generatedConceptSvg))}
-            viewingPrevious={previousConceptVisible}
+            ) : selectedBench.id === "engineering" ? compactConceptPreview : undefined}
+            modelReady={selectedBench.id === "knowledge" ? Boolean(generatedConceptCandidate) : Boolean(generatedConceptCandidate || hasEngineeringDesignBrief)}
+            generatedModelReady={Boolean(generatedConceptCandidate && (candidateStorageStatus === "candidate-saved" || candidateStorageStatus === "candidate-restored"))}
+            canCreateModel={false}
+            modelUpdating={conceptGenerationState === "generating" || conceptRefinementState === "refining" || conceptViewState === "generating"}
+            modelJustUpdated={(conceptViewState === "ready" || conceptRefinementState === "ready" || (conceptRefinementState === "idle" && conceptGenerationState === "ready")) && (candidateStorageStatus === "candidate-saved" || candidateStorageStatus === "candidate-restored")}
+            modelActionKind={conceptViewState === "generating" || conceptViewState === "ready" || conceptViewState === "failed" ? "view" : conceptRefinementState === "refining" || conceptRefinementState === "ready" || conceptRefinementState === "failed" ? "refinement" : "generation"}
+            modelPresentationKey={generatedConceptCandidate?.createdAt}
+            modelError={conceptViewState === "failed"
+              ? conceptViewMessage || "The requested view could not be created."
+              : conceptRefinementState === "failed"
+                ? conceptRefinementMessage || "Your design could not be updated. Try again."
+              : conceptGenerationState === "failed" || conceptGenerationState === "unsupported" || conceptGenerationState === "not-configured"
+                ? conceptGenerationMessage || "Your design could not be created. Try again."
+                : undefined}
+            currentRevision={generatedConceptCandidate?.revision ?? (selectedBench.id !== "knowledge" && hasEngineeringDesignBrief ? engineeringPreviewRevision : undefined)}
+            modelRevisions={conceptCandidateHistory.map((candidate) => ({
+              revision: candidate.revision,
+              candidateId: candidate.candidateId,
+              changeNote: candidate.inventorRefinement,
+            }))}
+            viewedRevision={viewedConceptCandidate?.revision}
+            conceptLimitReached={conceptCandidateHistory.length >= MAX_RETAINED_CONCEPT_CANDIDATES}
+            availableViews={viewedConceptAvailableViews}
+            selectedView={selectedPrototypeConceptView}
+            conceptGeometry={selectedBench.id === "prototype" ? viewedConceptCandidate?.conceptGeometry : undefined}
             refinementDraft={conceptRefinementDraft}
             onRefinementDraftChange={setConceptRefinementDraft}
-            onCreateModel={conceptGenerationFoundation.request ? generateFirstRecognisableConcept : createPrototypeModelFromCurrentDesign}
-            onUpdateModel={generatedConceptCandidate ? refineCurrentConcept : updatePrototypeModelFromCurrentDesign}
-            onViewPrevious={() => setPreviousConceptVisible((visible) => !visible)}
+            onCreateModel={conceptGenerationState === "failed" ? retryFirstRecognisableConcept : () => void createOrUpdateDesignModel()}
+            onUpdateModel={generatedConceptCandidate ? refineCurrentConcept : updateInheritedEngineeringPreview}
+            onViewRevision={setViewedConceptRevision}
+            onBackToCurrent={() => setViewedConceptRevision(null)}
+            onDeleteRevision={deleteHistoricalConceptRevision}
+            onViewChange={setPrototypeConceptView}
             onGoToBench={selectBench}
             onBack={returnToWorkshop}
             testingOutcome={validationEvidence.outcome}
@@ -2687,6 +2835,7 @@ export default function WorkshopShell({
               }));
             }}
           />
+          </>
         )}
         {showLegacyBenchPanels && selectedBench?.id === "validation" && (
           <div className="station-summary validation-summary">
@@ -3207,7 +3356,7 @@ export default function WorkshopShell({
                 </div>
                 <button
                   type="button"
-                  onClick={generateFirstRecognisableConcept}
+                  onClick={() => void generateFirstRecognisableConcept()}
                   disabled={Boolean(generatedConceptCandidate) || !conceptGenerationFoundation.generationReady || conceptGenerationState === "generating" || conceptGenerationFoundation.request?.visualMode !== "product" || conceptGenerationFoundation.request?.outputType !== "image"}
                 >
                   {generatedConceptCandidate
@@ -3222,22 +3371,16 @@ export default function WorkshopShell({
                 </button>
               </div>
               {conceptGenerationState === "generating" && (
-                <p className="first-concept-generation-status is-working" role="status">
-                  REV is updating your design — please wait… Reading your answers and preparing the first view.
-                </p>
+                <GenerationProgress kind="generation" status="working" />
               )}
               {conceptGenerationState === "ready" && (
-                <p className="first-concept-generation-status is-ready" role="status">
-                  Your design is ready.
-                </p>
+                <GenerationProgress kind="generation" status="ready" />
               )}
               {conceptGenerationState === "not-configured" && (
               <p className="first-concept-generation-status is-warning">MODEL CREATION IS NOT AVAILABLE</p>
               )}
               {(conceptGenerationState === "failed" || conceptGenerationState === "unsupported") && (
-                <p className="first-concept-generation-status is-error">
-                  {conceptGenerationState === "failed" ? "CONCEPT GENERATION COULD NOT COMPLETE" : conceptGenerationMessage}
-                </p>
+                conceptGenerationState === "failed" ? <GenerationProgress kind="generation" status="failed" onRetry={retryFirstRecognisableConcept} /> : <p className="first-concept-generation-status is-error">{conceptGenerationMessage}</p>
               )}
               {conceptGenerationFoundation.request && (
                 <p className="first-concept-identity">
@@ -3272,20 +3415,16 @@ export default function WorkshopShell({
                 <div className="concept-refinement-actions">
                   <button type="button" onClick={() => setConceptRefinementOpen((open) => !open)}>REFINE MODEL</button>
                   {conceptCandidateHistory.length > 1 && (
-                    <button type="button" onClick={() => setPreviousConceptVisible((visible) => !visible)}>
-                      {previousConceptVisible ? "HIDE PREVIOUS" : "VIEW PREVIOUS"}
+                    <button type="button" onClick={() => setViewedConceptRevision((revision) => revision === previousConceptCandidate?.revision ? null : previousConceptCandidate?.revision ?? null)}>
+                      {viewedConceptRevision === previousConceptCandidate?.revision ? "HIDE PREVIOUS" : "VIEW PREVIOUS"}
                     </button>
                   )}
                 </div>
                 {conceptRefinementState === "refining" && (
-                  <p className="first-concept-generation-status is-working" role="status">
-                    REV is updating your design — please wait… Reading your changes and preparing the new view.
-                  </p>
+                  <GenerationProgress kind="refinement" status="working" />
                 )}
                 {conceptRefinementState === "ready" && (
-                  <p className="first-concept-generation-status is-ready" role="status">
-                    Your updated design is ready.
-                  </p>
+                  <GenerationProgress kind="refinement" status="ready" />
                 )}
                 {conceptRefinementOpen && (
                   <div className="concept-refinement-panel">
@@ -3308,11 +3447,11 @@ export default function WorkshopShell({
                       {conceptRefinementState === "refining" ? "REV IS UPDATING THE MODEL..." : "UPDATE MODEL"}
                     </button>
                     {conceptRefinementState === "failed" && (
-                      <p className="first-concept-generation-status is-error">MODEL UPDATE COULD NOT COMPLETE · {conceptRefinementMessage}</p>
+                      <GenerationProgress kind="refinement" status="failed" onRetry={() => void refineCurrentConcept()} />
                     )}
                   </div>
                 )}
-                {previousConceptVisible && previousConceptCandidate?.output.type === "image" && previousConceptCandidate.output.dataUrl && (
+                {viewedConceptRevision === previousConceptCandidate?.revision && previousConceptCandidate?.output.type === "image" && previousConceptCandidate.output.dataUrl && (
                   <div className="previous-concept-model">
                     <span>PREVIOUS · CONCEPT {String(previousConceptCandidate.revision).padStart(2, "0")}</span>
                     <Image
@@ -3705,7 +3844,7 @@ export default function WorkshopShell({
         )}
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         .living-workshop {
           box-sizing: border-box;
           width: min(1500px, calc(100% - 28px));
@@ -4525,6 +4664,12 @@ export default function WorkshopShell({
           background: linear-gradient(#17242f, #0d171f);
           box-shadow: inset 0 0 9px rgba(55, 217, 245, 0.08);
         }
+
+        .shared-design-screen.has-current-design { box-shadow: inset 0 0 11px rgba(88, 226, 240, .24), 0 0 6px rgba(88, 226, 240, .2); }
+        .shared-design-screen > i { position:absolute; inset:3px 24%; display:block; }
+        .mini-current-design { border:1px solid #7cdde6; transform:skewX(-12deg); background:rgba(75,188,202,.18); }
+        .mini-stop-go-design::before { content:""; position:absolute; left:50%; top:0; width:11px; height:11px; transform:translateX(-50%); clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%); border:1px solid #8eeef1; background:#6d2027; }
+        .mini-stop-go-design::after { content:""; position:absolute; left:50%; top:10px; width:2px; height:9px; transform:translateX(-50%); background:#8bd3d9; }
 
         .bench-status {
           position: absolute;
@@ -6593,6 +6738,97 @@ export default function WorkshopShell({
   );
 }
 
+function EngineeringDesignPreview({
+  projectName,
+  proposedSolution,
+  operatingConcept,
+  functionalElements,
+  arrangement,
+  revision,
+  latestChange,
+}: {
+  projectName: string;
+  proposedSolution: string;
+  operatingConcept: string;
+  functionalElements: string;
+  arrangement: string;
+  revision: number;
+  latestChange: string;
+}) {
+  const designText = [projectName, proposedSolution, operatingConcept, functionalElements, arrangement].join(" ");
+  const isStopGoSign = /\bstop\b/i.test(designText) && /\bgo\b/i.test(designText) && /\b(pole|shaft|sign)\b/i.test(designText);
+
+  return (
+    <section className="engineering-inherited-model" aria-label={`Current Engineering design · revision ${revision}`}>
+      <div className="engineering-inherited-model-heading">
+        <span>CURRENT ENGINEERING DESIGN</span>
+        <strong>REVISION {revision}</strong>
+      </div>
+      {isStopGoSign ? (
+        <svg viewBox="0 0 720 430" role="img" aria-label="Illuminated rotating STOP and GO sign on one pole">
+          <defs>
+            <linearGradient id="inherited-model-bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#071217" />
+              <stop offset="1" stopColor="#102a32" />
+            </linearGradient>
+            <filter id="inherited-led-glow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+          </defs>
+          <rect width="720" height="430" fill="url(#inherited-model-bg)" />
+          <g opacity=".14" stroke="#78d4e2"><path d="M0 70H720M0 140H720M0 210H720M0 280H720M0 350H720" /><path d="M90 0V430M180 0V430M270 0V430M360 0V430M450 0V430M540 0V430M630 0V430" /></g>
+          <g transform="translate(210 30)">
+            <path d="M150 30 L230 62 L265 140 L230 218 L150 250 L70 218 L35 140 L70 62 Z" fill="#641d24" stroke="#8ceaf0" strokeWidth="5" />
+            <path d="M166 35 L246 69 L278 146 L244 224" fill="none" stroke="#4c9fae" strokeWidth="3" opacity=".7" />
+            <text x="150" y="153" textAnchor="middle" fill="#fff" fontFamily="Arial,sans-serif" fontSize="48" fontWeight="900">STOP</text>
+            <text x="282" y="151" fill="#98f5c0" fontFamily="Arial,sans-serif" fontSize="24" fontWeight="900">GO</text>
+            <g fill="#baffff" filter="url(#inherited-led-glow)">
+              {[55, 88, 121, 154, 187, 220].map((x) => <circle key={`top-${x}`} cx={x} cy={58 + Math.abs(137 - x) * .22} r="4" />)}
+              {[55, 88, 121, 154, 187, 220].map((x) => <circle key={`bottom-${x}`} cx={x} cy={222 - Math.abs(137 - x) * .22} r="4" />)}
+            </g>
+            <rect x="140" y="250" width="20" height="135" rx="8" fill="#467681" stroke="#a8edf1" strokeWidth="3" />
+            <ellipse cx="150" cy="386" rx="78" ry="12" fill="#071014" stroke="#3d7b87" strokeWidth="2" />
+            <path d="M150 263 C185 275 190 300 168 320" fill="none" stroke="#e7c778" strokeWidth="3" strokeDasharray="7 6" />
+            <path d="M171 312 L168 320 L160 316" fill="none" stroke="#e7c778" strokeWidth="3" />
+          </g>
+          <text x="22" y="28" fill="#82dce8" fontFamily="Arial,sans-serif" fontSize="12" fontWeight="800" letterSpacing="2">SAME EVOLVING DESIGN · ENGINEERING OUTLINE</text>
+          <text x="22" y="406" fill="#b9ced3" fontFamily="Arial,sans-serif" fontSize="11">One shaft · rotating sign head · STOP face · GO reverse face · illuminated intent</text>
+        </svg>
+      ) : (
+        <div className="engineering-design-brief-view">
+          <strong>{projectName}</strong>
+          <p>{proposedSolution || operatingConcept || "Engineering has begun defining the current design."}</p>
+          {functionalElements && <p><b>Main parts:</b> {functionalElements}</p>}
+          {arrangement && <p><b>Arrangement:</b> {arrangement}</p>}
+        </div>
+      )}
+      {latestChange && <p className="engineering-inherited-change"><strong>Latest change:</strong> {latestChange}</p>}
+      <small>Inherited from the current Engineering design · not a separate invention</small>
+    </section>
+  );
+}
+
+function ConceptCandidateStorageStatusLine({ status }: { status: ConceptCandidateStorageStatus }) {
+  const labels: Record<ConceptCandidateStorageStatus, string> = {
+    loading: "CHECKING SAVED CANDIDATE",
+    "no-candidate-saved": "NO CANDIDATE SAVED",
+    "candidate-restored": "CANDIDATE RESTORED",
+    "candidate-saving": "SAVING CANDIDATE",
+    "candidate-saved": "CANDIDATE SAVED",
+    "candidate-could-not-be-saved": "CANDIDATE COULD NOT BE SAVED",
+    "restore-failed": "SAVED CANDIDATE COULD NOT BE CHECKED",
+  };
+  const failed = status === "candidate-could-not-be-saved" || status === "restore-failed";
+
+  return (
+    <p
+      className={`first-concept-generation-status ${failed ? "is-error" : "is-ready"}`}
+      role="status"
+      title="Browser storage status only. This does not change the Project."
+    >
+      MODEL STORAGE · {labels[status]}
+    </p>
+  );
+}
+
 function missingConceptDetailLabel(
   field: "proposedSolution" | "operatingConcept" | "functionalElements" | "confirmedVisualMode"
 ): string {
@@ -6600,7 +6836,7 @@ function missingConceptDetailLabel(
     proposedSolution: "what the idea should do",
     operatingConcept: "how the idea could work",
     functionalElements: "the main parts or steps",
-    confirmedVisualMode: "the kind of picture to create",
+    confirmedVisualMode: "what we are designing",
   } as const;
 
   return labels[field];

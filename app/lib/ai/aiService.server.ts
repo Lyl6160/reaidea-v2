@@ -4,7 +4,9 @@ import type {
   ConceptCandidate,
   ConceptGenerationErrorCode,
   ConceptGenerationRequest,
+  ConceptImageView,
   ConceptRefinementRequest,
+  ConceptViewAssetRequest,
 } from "./types";
 import { OpenAIConceptGenerationProvider } from "./providers/openaiProvider.server";
 
@@ -16,6 +18,20 @@ export class ConceptGenerationServiceError extends Error {
   ) {
     super(message);
     this.name = "ConceptGenerationServiceError";
+  }
+}
+
+export async function generateViewAsset(request: ConceptViewAssetRequest): Promise<ConceptImageView> {
+  if (request.visualMode !== "product" || request.outputType !== "image") {
+    throw new ConceptGenerationServiceError("unsupported-mode", "View generation for this mode is coming next.", false);
+  }
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  if (!apiKey) throw new ConceptGenerationServiceError("not-configured", "View generation is not configured.", false);
+  try {
+    return await new OpenAIConceptGenerationProvider(apiKey).generateViewAsset(request);
+  } catch (error) {
+    console.error("Concept provider view generation failed.", error instanceof Error ? error.name : "Unknown provider failure");
+    throw new ConceptGenerationServiceError("provider-failure", "View generation could not complete.", true);
   }
 }
 

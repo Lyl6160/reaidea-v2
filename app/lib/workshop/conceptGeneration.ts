@@ -26,6 +26,11 @@ export type ConceptWorkflowIdentity = {
   revision: 1;
 };
 
+export type ConceptGenerationBenchNote = {
+  question: string;
+  answer: string;
+};
+
 export type ConceptGenerationFoundation = {
   brief: ConceptBrief;
   sourceTrace: ConceptBriefSource[];
@@ -62,6 +67,10 @@ const MODE_LABELS: Record<IdeaVisualMode, string> = {
 const MODE_SIGNALS: Record<Exclude<IdeaVisualMode, "mixed" | "unknown">, RegExp[]> = {
   product: [
     /\bhand[ -]?held\b/i,
+    /\b\d+(?:\.\d+)?\s*(?:mm|cm|m|millimet(?:re|er)s?|centimet(?:re|er)s?|met(?:re|er)s?)\b/i,
+    /\b(?:steel|stainless steel|aluminium|aluminum|plastic|timber|wood|fabric)\b/i,
+    /\b(?:leds?|lights?|illuminat(?:e|ed|ion))\b/i,
+    /\b(?:physical|shape|dimensions?|materials?|parts?)\b/i,
     /\bpole\b/i,
     /\bshaft\b/i,
     /\bsign head\b/i,
@@ -130,7 +139,10 @@ export function visualModeLabel(mode: IdeaVisualMode): string {
   return MODE_LABELS[mode];
 }
 
-export function suggestVisualMode(project: Project): VisualModeSuggestion {
+export function suggestVisualMode(
+  project: Project,
+  rollingEngineeringNotes: ConceptGenerationBenchNote[] = []
+): VisualModeSuggestion {
   const definition = assessEngineeringDefinition(project);
   const discoveryContext = latestDiscoveryResponses(project, ["purpose", "conditions"])
     .map((event) => event.response?.trim())
@@ -138,6 +150,7 @@ export function suggestVisualMode(project: Project): VisualModeSuggestion {
   const boundedText = [
     project.originalObservation,
     ...Object.values(definition.latestAnswers),
+    ...rollingEngineeringNotes.map((note) => note.answer),
     ...discoveryContext,
   ].join("\n");
   const matches = Object.entries(MODE_SIGNALS).map(([mode, patterns]) => {
@@ -223,7 +236,9 @@ export function createConceptWorkflowIdentity(
 export function buildConceptGenerationFoundation(
   project: Project,
   confirmedVisualMode: IdeaVisualMode | null,
-  identity: ConceptWorkflowIdentity
+  identity: ConceptWorkflowIdentity,
+  rollingEngineeringNotes: ConceptGenerationBenchNote[] = [],
+  rollingInventorNotes: ConceptGenerationBenchNote[] = []
 ): ConceptGenerationFoundation {
   const definition = assessEngineeringDefinition(project);
   const definitionInputs = latestDefinitionInputs(project);
@@ -241,17 +256,22 @@ export function buildConceptGenerationFoundation(
       : []),
   ]);
   const answers = definition.latestAnswers;
+  const rollingAnswers = rollingEngineeringNotes.map((note) => note.answer.trim().slice(0, 1_600));
+  const inventorDescription = rollingInventorNotes[0]?.answer.trim().slice(0, 1_600) ?? "";
+  const rollingProposedSolution = rollingAnswers[0] ?? "";
+  const rollingOperatingConcept = joinBenchAnswers([rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]]);
+  const rollingFunctionalElements = joinBenchAnswers([rollingAnswers[3], rollingAnswers[1], rollingAnswers[2]]);
   const brief: ConceptBrief = {
     originalIdea: project.originalObservation,
     problemContext,
-    proposedSolution: answers["proposed-solution"]?.trim() || "",
-    operatingConcept: answers["operating-concept"]?.trim() || "",
-    functionalElements: answers["functional-elements"]?.trim() || "",
-    ...(optionalAnswer(answers, "inputs-outputs", "inputsOutputs")),
-    ...(optionalAnswer(answers, "relationships-flow", "relationshipsFlow")),
+    proposedSolution: answers["proposed-solution"]?.trim() || rollingProposedSolution || inventorDescription,
+    operatingConcept: answers["operating-concept"]?.trim() || rollingOperatingConcept || inventorDescription,
+    functionalElements: answers["functional-elements"]?.trim() || rollingFunctionalElements || (inventorDescription ? "Main elements have not been specified by the inventor yet." : ""),
+    ...(optionalAnswer(answers, "inputs-outputs", "inputsOutputs", rollingAnswers[6])),
+    ...(optionalAnswer(answers, "relationships-flow", "relationshipsFlow", rollingAnswers[4])),
     ...(optionalAnswer(answers, "user-interaction", "userInteraction")),
-    ...(optionalAnswer(answers, "arrangement", "arrangement")),
-    constraints,
+    ...(optionalAnswer(answers, "arrangement", "arrangement", rollingAnswers[1])),
+    constraints: unique([...constraints, rollingAnswers[7] ?? ""]),
     assumptions: unique(project.engineeringState.currentAssumptions),
     ...(optionalAnswer(answers, "technical-uncertainty", "technicalUncertainty")),
   };
@@ -261,6 +281,14 @@ export function buildConceptGenerationFoundation(
       ? [{ field: "problemContext", sourceKind: "timeline-event", sourceId: problemEvent.id } as const]
       : [{ field: "problemContext", sourceKind: "project-field", sourceId: project.purpose.trim() ? "purpose" : "originalObservation" } as const]),
     ...definitionSourceTrace(definitionInputs),
+    ...rollingBriefSourceTrace(answers, rollingAnswers),
+    ...(inventorDescription && !answers["proposed-solution"]?.trim() && !rollingProposedSolution
+      ? [
+          { field: "proposedSolution", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
+          { field: "operatingConcept", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
+          { field: "functionalElements", sourceKind: "bench-note", sourceId: "inventor-rolling-1" } as const,
+        ]
+      : []),
     ...(constraintEvent
       ? [{ field: "constraints", sourceKind: "timeline-event", sourceId: constraintEvent.id } as const]
       : []),
@@ -364,10 +392,26 @@ function optionalAnswer<
 >(
   answers: ReturnType<typeof assessEngineeringDefinition>["latestAnswers"],
   area: EngineeringDefinitionArea,
-  key: Key
+  key: Key,
+  fallback = ""
 ): Partial<Record<Key, string>> {
-  const answer = answers[area]?.trim();
+  const answer = answers[area]?.trim() || fallback.trim();
   return answer ? { [key]: answer } as Partial<Record<Key, string>> : {};
+}
+
+function rollingBriefSourceTrace(
+  answers: ReturnType<typeof assessEngineeringDefinition>["latestAnswers"],
+  rollingAnswers: string[]
+): ConceptBriefSource[] {
+  return [
+    !answers["proposed-solution"]?.trim() && rollingAnswers[0] ? { field: "proposedSolution", sourceKind: "bench-note", sourceId: "engineering-rolling-1" } : null,
+    !answers["operating-concept"]?.trim() && [rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]].some(Boolean) ? { field: "operatingConcept", sourceKind: "bench-note", sourceId: "engineering-rolling-5-7" } : null,
+    !answers["functional-elements"]?.trim() && [rollingAnswers[3], rollingAnswers[1], rollingAnswers[2]].some(Boolean) ? { field: "functionalElements", sourceKind: "bench-note", sourceId: "engineering-rolling-2-4" } : null,
+    !answers["inputs-outputs"]?.trim() && rollingAnswers[6] ? { field: "inputsOutputs", sourceKind: "bench-note", sourceId: "engineering-rolling-7" } : null,
+    !answers["relationships-flow"]?.trim() && rollingAnswers[4] ? { field: "relationshipsFlow", sourceKind: "bench-note", sourceId: "engineering-rolling-5" } : null,
+    !answers.arrangement?.trim() && rollingAnswers[1] ? { field: "arrangement", sourceKind: "bench-note", sourceId: "engineering-rolling-2" } : null,
+    rollingAnswers[7] ? { field: "constraints", sourceKind: "bench-note", sourceId: "engineering-rolling-8" } : null,
+  ].filter((source): source is ConceptBriefSource => source !== null);
 }
 
 function articleFor(mode: IdeaVisualMode): "a" | "an" {
@@ -376,6 +420,10 @@ function articleFor(mode: IdeaVisualMode): "a" | "an" {
 
 function unique(values: string[]): string[] {
   return Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+}
+
+function joinBenchAnswers(values: Array<string | undefined>): string {
+  return unique(values.filter((value): value is string => Boolean(value))).join(" ").slice(0, 1_600).trim();
 }
 
 function createId(): string {

@@ -106,7 +106,7 @@ function isConceptBriefSource(value: unknown): value is ConceptBriefSource {
   return isRecord(value) &&
     typeof value.field === "string" &&
     value.field in SOURCE_FIELDS &&
-    (value.sourceKind === "project-field" || value.sourceKind === "timeline-event") &&
+    (value.sourceKind === "project-field" || value.sourceKind === "timeline-event" || value.sourceKind === "bench-note") &&
     shortText(value.sourceId);
 }
 
@@ -136,7 +136,7 @@ function isOutputType(value: unknown): value is ConceptGenerationRequest["output
 function isRepresentationStyle(
   value: unknown
 ): value is ConceptGenerationRequest["representationStyle"] {
-  return ["engineering-outline", "wireframe", "solid-concept"].includes(String(value));
+  return ["product-concept", "engineering-outline", "wireframe", "solid-concept"].includes(String(value));
 }
 
 function optionalText(value: unknown): boolean {

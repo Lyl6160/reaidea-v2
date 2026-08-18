@@ -4,38 +4,23 @@ import Image from "next/image";
 import { type ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { createProject } from "./lib/core/project";
 import { savePreferredName } from "./lib/core/inventorStorage";
-import { saveProject } from "./lib/core/storageEngine";
+
+const NEW_JOURNEY_SESSION_KEY = "reaidea.new-journey.v2";
 
 export default function Home() {
   const [preferredName, setPreferredName] = useState("");
-  const [observation, setObservation] = useState("");
-  const [error, setError] = useState("");
   const router = useRouter();
 
   function beginDiscovery() {
-    const cleanedObservation = observation.trim();
-
-    if (!cleanedObservation) {
-      setError("Please share the observation that brought you into the workshop.");
-      return;
-    }
-
-    const inventor = savePreferredName(preferredName);
-    const project = createProject({
-      ownerId: inventor.id,
-      originalObservation: cleanedObservation,
-    });
-
-    saveProject(project);
-    setError("");
+    savePreferredName(preferredName);
+    window.sessionStorage.setItem(NEW_JOURNEY_SESSION_KEY, "true");
     router.push("/workshop");
   }
 
   return (
     <main className="workshop-door">
-      <section className="workshop-scene" aria-labelledby="observation-title">
+      <section className="workshop-scene" aria-labelledby="welcome-title">
         <div className="artwork-layer" aria-hidden="true">
           <Image
             src="/images/reaidea-workshop-entrance.png"
@@ -52,57 +37,26 @@ export default function Home() {
           reAIdea and REV welcome the inventor into the engineering workshop.
         </p>
 
-        <aside className="name-station" aria-labelledby="name-station-title">
-          <div className="station-heading">
-            <span className="station-line" aria-hidden="true" />
-            <div>
-              <p>Workshop introduction</p>
-              <h2 id="name-station-title">Welcome.</h2>
-            </div>
-          </div>
-
-          <label className="field-label" htmlFor="preferred-name">
-            What would you like us to call you?
-            <span>Optional</span>
-          </label>
-          <input
-            id="preferred-name"
-            value={preferredName}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setPreferredName(event.target.value)
-            }
-            placeholder="Preferred name"
-            autoComplete="name"
-          />
-        </aside>
-
         <div className="observation-station">
           <header className="observation-heading">
-            <p>Original observation</p>
-            <h1 id="observation-title">What have you observed?</h1>
-            <span>Start with what you saw, heard, measured, or experienced.</span>
+            <p>WELCOME TO reAIdea</p>
+            <h1 id="welcome-title">Begin your invention journey.</h1>
+            <span>You can start describing your idea once you&apos;re inside.</span>
           </header>
 
           <div className="observation-field">
-            <label className="sr-only" htmlFor="observation">
-              Your observation
+            <label className="field-label" htmlFor="preferred-name">
+              What should REV call you?
+              <span>Optional</span>
             </label>
-            <textarea
-              id="observation"
-              value={observation}
-              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
-                setObservation(event.target.value);
-                if (error) setError("");
-              }}
-              placeholder="Describe what you have noticed in your own words..."
+            <input
+              id="preferred-name"
+              value={preferredName}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setPreferredName(event.target.value)}
+              placeholder="Your name"
+              autoComplete="name"
             />
           </div>
-
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
 
           <button type="button" onClick={beginDiscovery}>
             <span>Enter Workshop</span>
@@ -110,7 +64,7 @@ export default function Home() {
           </button>
 
           <p className="door-note">
-            Your first observation is preserved as the Project&apos;s starting point.
+            Your idea begins at the Inventor&apos;s Bench.
           </p>
         </div>
       </section>

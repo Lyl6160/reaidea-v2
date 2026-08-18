@@ -9,10 +9,10 @@ import {
 
 export const runtime = "nodejs";
 
-const MAX_REQUEST_LENGTH = 12_000_000;
+const MAX_REQUEST_LENGTH = 25_000_000;
 const MAX_REFINEMENT_LENGTH = 1_200;
 const MAX_SOURCE_ITEMS = 24;
-const MAX_IMAGE_BYTES = 8_000_000;
+const MAX_IMAGE_BYTES = 18_000_000;
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -57,7 +57,7 @@ function isConceptRefinementRequest(value: unknown): value is ConceptRefinementR
     !shortText(value.sourceCandidateId) || !Number.isInteger(value.sourceRevision) ||
     value.nextRevision !== Number(value.sourceRevision) + 1 ||
     !shortText(value.title) || value.visualMode !== "product" ||
-    value.representationStyle !== "engineering-outline" || value.outputType !== "image" ||
+    !["product-concept", "engineering-outline"].includes(String(value.representationStyle)) || value.outputType !== "image" ||
     value.briefVersion !== 1 || !isRecord(brief) || JSON.stringify(brief).length > 18_000 ||
     !boundedText(brief.originalIdea, 1_600) || !boundedText(brief.problemContext, 1_600) ||
     !boundedText(brief.proposedSolution, 1_600) || !boundedText(brief.operatingConcept, 1_600) ||
