@@ -1874,11 +1874,13 @@ HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. It 
 
 ## HP-24.38 — Home Intelligence + Workshop Information Routing
 
-**Status:** BUILD 1 ACCEPTED / PUSHED
+**Status:** BUILDS 1–2 ACCEPTED / PUSHED
 
 **Recorded:** 18 August 2026
 
 **Build 1 checkpoint:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
+
+**Build 2 checkpoint:** `27c44573378c99e4dae856beeda22597e33e06f3`
 
 **Current branch:** `sprint006-build24-36-engineering-concept-model`
 
@@ -1930,5 +1932,22 @@ This hold point is a product evolution identified through live walkthrough testi
 - Three existing image-optimization lint warnings remain non-blocking.
 
 Build 1 was pushed without a tag or merge. HP-24.37 remains in construction.
+
+### Build 2 Acceptance — Concept 01 Fidelity + Workshop Preview Integrity
+
+- Home information is deterministically separated into existing source-traced `ConceptBrief` fields; `Project.originalObservation` remains authoritative.
+- Geometry-first provider prompting is strengthened without changing the provider-independent request contract.
+- Concept 01 remains one product-concept call at `medium` quality using the configured provider and model.
+- Workshop and expanded benches use the same intact persisted image asset.
+- The central portrait-capable preview corrects severe downscaling and aspect distortion; human acceptance confirmed preview integrity.
+- Project schema, VisualDesignSnapshot, ConceptGeometry, safe 3D, and candidate persistence remain unchanged.
+- Known limitation: the provider still normalised the specified hexagonal sign head into a conventional octagonal STOP sign. GO became visible, but opposing-face construction remained insufficiently truthful despite the complete structured request.
+- Further blind prompt retries were stopped.
+
+### Approved Next Inspection Candidate
+
+**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing** may add one optional **Add a sketch, photo or file** control to Home within Tell REV Once. Architecture inspection is required before implementation. It must reuse existing upload, storage, Project timeline, and concept-reference paths; combine description and attachment in one Working Understanding; allow the meter to consider both sources; route relevant evidence to existing benches; preserve the original attachment as source evidence and REV interpretation as derived; keep Inventor's Bench optional; and avoid any parallel attachment system.
+
+Build 2 was pushed without a tag or merge. HP-24.37 remains in construction.
 
 Freeze blockers: NONE.

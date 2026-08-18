@@ -1,7 +1,7 @@
 # reAIdea Founder Journal — HP-24.38 Design Decision
 
 **Date:** 18 August 2026  
-**Status:** Build 1 accepted and pushed
+**Status:** Builds 1–2 accepted and pushed
 
 ## The Product Correction
 
@@ -94,3 +94,34 @@ Project schema and truth boundaries remain unchanged. The derived understanding 
 - Visual sizing, spacing, and graphics were intentionally not assessed in Build 1.
 - The current Home PC requires Node system CA support for provider HTTPS.
 - Three existing image-optimization lint warnings remain non-blocking.
+
+## Build 2 Closeout — Concept 01 Fidelity + Workshop Preview Integrity
+
+**Build commit:** `27c44573378c99e4dae856beeda22597e33e06f3`
+
+**Push:** Passed on `sprint006-build24-36-engineering-concept-model`
+
+Build 2 proved that the existing deterministic REV Working Understanding can separate the Home description into useful, source-traced `ConceptBrief` fields without creating another intelligence system or source of truth. `Project.originalObservation` remains authoritative; purpose/problem/benefit, operation/movement/power, functional elements, arrangement, user interaction, and constraints remain derived working interpretation with traceability to their recorded source.
+
+The product-concept provider prompt now treats stated geometry, parts, arrangement, labels, opposing faces, controls, illumination, dimensions, and proportions as required design features before professional presentation. Exact inventor-specified forms are immutable in the instruction and must override familiar commercial conventions. The provider-independent request contract, configured provider and model, and one-call `medium`-quality Concept 01 path remain unchanged.
+
+Workshop and expanded bench views now render the same intact persisted image asset. The central Workshop preview no longer imposes a severe 80-pixel cap or declares unknown generated images to be intrinsically square; a portrait-capable contained Next Image arrangement preserves the returned aspect ratio without cropping, stretching, or recompression. Human acceptance confirmed that the central preview is clear and that the expanded Prototype view uses the same sharp asset.
+
+Project schema and truth boundaries, VisualDesignSnapshot's non-authoritative boundary, ConceptGeometry, safe 3D, and candidate persistence remain unchanged.
+
+### Known Provider-Adherence Limitation
+
+The complete structured requirements reached the configured image provider, but it still normalised the requested hexagonal sign head into a conventional octagonal STOP sign. A second accepted test made GO visible but did not represent the opposing-face construction truthfully enough. This is provider non-adherence despite a complete request, not loss in Project truth, deterministic routing, `ConceptBrief`, or prompt assembly. Further blind prompt retries were stopped.
+
+## Approved Next Inspection Candidate
+
+**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing**
+
+- Home may gain one optional **Add a sketch, photo or file** control as part of Tell REV Once, never as a mandatory step or separate questionnaire.
+- REV should combine the description and attachment into one Working Understanding, and the Understanding Meter may consider both recorded sources.
+- Relevant evidence should route through existing Workshop benches.
+- Concept 01 may use an image as reference only through existing provider-independent boundaries.
+- The original attachment is source evidence; REV's interpretation remains derived.
+- Inventor's Bench remains optional for later additions or corrections.
+- Architecture inspection is required before implementation.
+- Existing upload, storage, Project timeline, and concept-reference paths must be reused; no parallel attachment system is permitted.

@@ -1,21 +1,21 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
+**Current safe checkpoint:** `27c44573378c99e4dae856beeda22597e33e06f3`
 
 **Branch:** `sprint006-build24-36-engineering-concept-model`
 
 **Current hold point:** HP-24.37 — IN CONSTRUCTION
 
-**Next proposed hold point:** HP-24.38 — Home Intelligence + Workshop Information Routing, Build 1 accepted
+**Next proposed hold point:** HP-24.38 Build 3 — Home Evidence Upload + Reference Routing, architecture inspection required
 
-**HP-24.38 implementation:** BUILD 1 ACCEPTED / PUSHED
+**HP-24.38 implementation:** BUILDS 1–2 ACCEPTED / PUSHED
 
 **Last governance update:** 2026-08-18
 
 ## Current Hold-Point Candidate
 
-**HP-24.38 — Home Intelligence + Workshop Information Routing** — BUILD 1 ACCEPTED / PUSHED
+**HP-24.38 — Home Intelligence + Workshop Information Routing** — BUILDS 1–2 ACCEPTED / PUSHED
 
 Protected previous foundation:
 
@@ -807,3 +807,21 @@ Home creates the authoritative Project exactly once and preserves the complete d
 - Visual sizing, spacing, and graphics were intentionally not assessed in Build 1.
 - The current Home PC requires Node system CA support for provider HTTPS.
 - Three existing image-optimization lint warnings remain non-blocking.
+
+## HP-24.38 Build 2 — Accepted and Pushed
+
+Build 2 is accepted and pushed at `27c44573378c99e4dae856beeda22597e33e06f3` on `sprint006-build24-36-engineering-concept-model`.
+
+Home information is deterministically separated into the existing source-traced `ConceptBrief` fields while `Project.originalObservation` remains authoritative. Geometry-first product-concept prompting was strengthened without changing the provider-independent request contract. Concept 01 remains one configured product-concept provider call at `medium` quality.
+
+Workshop and expanded bench views use the same persisted image asset. The central Workshop candidate area is portrait-capable and aspect-preserving; the previous severe downscaling and distortion are corrected. Human acceptance confirmed preview integrity and the same sharp asset in Prototype.
+
+Project schema, VisualDesignSnapshot, ConceptGeometry, safe 3D, and candidate persistence remain unchanged.
+
+### Known Provider-Adherence Limitation
+
+Although the complete structured requirements reached the configured provider, it still normalised the specified hexagonal sign head into a conventional octagonal STOP sign. GO became visible in the second test, but the opposing-face construction was not represented truthfully enough. Further blind prompt retries were stopped.
+
+### Approved Build 3 Inspection Candidate
+
+**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing** proposes one optional **Add a sketch, photo or file** Home control within Tell REV Once. Architecture inspection must precede implementation. The inspection must reuse existing upload, storage, Project timeline, and concept-reference paths; combine description and attachment into one Working Understanding; permit the meter to consider both sources; route relevant evidence to existing benches; and preserve the original attachment as source evidence while keeping REV interpretation derived. Inventor's Bench remains optional, image reference use must stay behind provider-independent boundaries, and no parallel attachment system may be created.
