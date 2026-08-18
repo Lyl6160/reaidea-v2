@@ -62,8 +62,9 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
           <Image
             src={selectedImageSource}
             alt={selectedImageAlt}
-            width={1024}
-            height={1024}
+            fill
+            sizes="(max-width: 900px) 100vw, 420px"
+            style={{ objectFit: "contain", objectPosition: "center" }}
             unoptimized
           />
           <span className="orientation-cue" aria-hidden="true">Z<br />↑<br />Y · X</span>
@@ -190,7 +191,7 @@ export default function ConceptPreview({ preview, candidate, candidateStale = fa
         .concept-preview-heading b { color: #779096; }
         .concept-field { height: 150px; margin: 8px 0; border: 1px solid rgba(102, 210, 224, .16); border-radius: 10px; overflow: hidden; background: radial-gradient(circle, rgba(53, 186, 204, .1), transparent 62%); }
         .concept-candidate-preview { position:relative; height:150px; margin:8px 0; border:1px solid rgba(102,210,224,.28); border-radius:10px; overflow:hidden; background:#0a1216; }
-        .concept-candidate-preview img { position:relative; z-index:1; width:100%; height:100%; object-fit:contain; }
+        .concept-candidate-preview img { z-index:1; }
         .technical-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(88,180,194,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(88,180,194,.08) 1px,transparent 1px); background-size:16px 16px; }
         .orientation-cue { position:absolute; z-index:2; right:7px; bottom:6px; color:rgba(139,242,244,.72); font:700 7px/1.05 monospace; text-align:center; }
         svg { width: 100%; height: 100%; }

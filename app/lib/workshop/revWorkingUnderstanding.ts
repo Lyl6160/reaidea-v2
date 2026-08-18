@@ -18,6 +18,18 @@ export type RevBenchWorkingContext = {
 export type RevWorkingUnderstanding = {
   sources: RevWorkingSource[];
   byBench: Record<WorkshopBenchId, RevBenchWorkingContext>;
+  conceptBrief: RevConceptBriefWorkingContext;
+};
+
+export type RevWorkingValue = { text: string; sourceIds: string[] };
+
+export type RevConceptBriefWorkingContext = {
+  proposedSolution: RevWorkingValue | null;
+  operatingConcept: RevWorkingValue | null;
+  functionalElements: RevWorkingValue | null;
+  arrangement: RevWorkingValue | null;
+  userInteraction: RevWorkingValue | null;
+  constraints: RevWorkingValue[];
 };
 
 export type WorkingBenchNote = { question: string; answer: string };
@@ -34,6 +46,17 @@ const categoryPatterns = {
 };
 
 type Category = keyof typeof categoryPatterns;
+
+const conceptFacetPatterns = {
+  purposeProblemBenefit: /\b(problem|purpose|benefit|help|helps|prevent|improve|solve|allow|enable|designed|intended|used to|so that|safer|easier)\b/i,
+  operationMovementPower: /\b(operate|operation|work|works|move|moves|moving|rotate|turn|fold|slide|open|close|adjust|power|powered|battery|electric|manual|motor|sensor|software|switch)\b/i,
+  componentsMaterialsAppearance: /\b(has|have|having|include|includes|including|consist|consists|consisting|feature|features|part|component|material|shape|size|tall|wide|long|small|large|mm|cm|metre|meter|inch|foot|feet|colour|color|steel|metal|aluminium|aluminum|plastic|timber|wood|fabric|glass|rubber|light|lights|illuminated|label|labels|face|faces|grip|handle|control|controls)\b/i,
+  arrangementProportionRelationship: /\b(arrange|arranged|arrangement|attach|attached|mount|mounted|connect|connected|above|below|behind|rear|front|side|opposing|between|inside|outside|around|perimeter|top|base|proportion|relationship|mm|cm|metre|meter|inch|foot|feet)\b/i,
+  userGripControlInteraction: /\b(user|people|person|child|adult|worker|driver|customer|operator|homeowner|inventor|hold|held|grip|handle|carry|portable|press|button|control|controls|interact|interaction)\b/i,
+  environmentSafetyConstraint: /\b(safe|safety|risk|weather|heat|weight|cost|limit|constraint|strong|strength|waterproof|outdoor|indoor|road|roadside|site|environment|portable)\b/i,
+};
+
+type ConceptFacet = keyof typeof conceptFacetPatterns;
 
 const benchCategories: Record<WorkshopBenchId, Category[]> = {
   knowledge: ["purpose", "user", "form", "build", "operation", "constraint", "difference"],
@@ -78,6 +101,24 @@ function categoriesFor(text: string): Category[] {
     .map(([category]) => category);
 }
 
+function conceptFacetsFor(text: string): ConceptFacet[] {
+  return (Object.entries(conceptFacetPatterns) as Array<[ConceptFacet, RegExp]>)
+    .filter(([, pattern]) => pattern.test(text))
+    .map(([facet]) => facet);
+}
+
+function workingValue(
+  facts: Array<{ text: string; sourceIds: string[]; conceptFacets: ConceptFacet[] }>,
+  facets: ConceptFacet[]
+): RevWorkingValue | null {
+  const matching = facts.filter((fact) => fact.conceptFacets.some((facet) => facets.includes(facet)));
+  if (!matching.length) return null;
+  return {
+    text: Array.from(new Set(matching.map((fact) => fact.text))).join(" "),
+    sourceIds: Array.from(new Set(matching.flatMap((fact) => fact.sourceIds))),
+  };
+}
+
 export function assessHomeUnderstanding(description: string) {
   const text = description.trim();
   const categories = categoriesFor(text);
@@ -96,14 +137,19 @@ export function assessHomeUnderstanding(description: string) {
 export function deriveRevWorkingUnderstanding(project: Project, notes: WorkingBenchNotes): RevWorkingUnderstanding {
   const sources: RevWorkingSource[] = [{ id: "project.originalObservation", kind: "original-observation", label: "Original Home description", text: project.originalObservation }];
   project.timeline.forEach((event) => {
-    const text = [event.title, event.description, event.subject, event.response].filter(Boolean).join(" — ");
+    const text = event.response?.trim() || event.description.trim();
     if (text.trim()) sources.push({ id: `timeline.${event.id}`, kind: "timeline", label: event.title, text });
   });
   Object.entries(notes).forEach(([benchId, benchNotes]) => {
-    benchNotes?.forEach((note, index) => sources.push({ id: `bench.${benchId}.${index}`, kind: "bench-note", label: `${benchId} bench note`, text: `${note.question} — ${note.answer}` }));
+    benchNotes?.forEach((note, index) => sources.push({ id: `bench.${benchId}.${index}`, kind: "bench-note", label: `${benchId} bench note: ${note.question}`, text: note.answer }));
   });
 
-  const facts = sources.flatMap((source) => statements(source.text).map((text) => ({ text, sourceIds: [source.id], categories: categoriesFor(text) })));
+  const facts = sources.flatMap((source) => statements(source.text).map((text) => ({
+    text,
+    sourceIds: [source.id],
+    categories: categoriesFor(text),
+    conceptFacets: conceptFacetsFor(text),
+  })));
   const byBench = Object.fromEntries((Object.keys(benchCategories) as WorkshopBenchId[]).map((benchId) => {
     const relevant = facts.filter((fact) => fact.categories.some((category) => benchCategories[benchId].includes(category)));
     const known = (relevant.length ? relevant : facts.slice(0, 2)).slice(0, 6).map(({ text, sourceIds }) => ({ text, sourceIds }));
@@ -113,5 +159,19 @@ export function deriveRevWorkingUnderstanding(project: Project, notes: WorkingBe
       : missingByBench[benchId].find(([category]) => !available.has(category))?.[1] ?? null;
     return [benchId, { known, prepared: [preparedByBench[benchId]], missingQuestion, sources }];
   })) as Record<WorkshopBenchId, RevBenchWorkingContext>;
-  return { sources, byBench };
+  const constraints = facts
+    .filter((fact) => fact.conceptFacets.includes("environmentSafetyConstraint"))
+    .map(({ text, sourceIds }) => ({ text, sourceIds }));
+  return {
+    sources,
+    byBench,
+    conceptBrief: {
+      proposedSolution: workingValue(facts, ["purposeProblemBenefit"]),
+      operatingConcept: workingValue(facts, ["operationMovementPower"]),
+      functionalElements: workingValue(facts, ["componentsMaterialsAppearance"]),
+      arrangement: workingValue(facts, ["arrangementProportionRelationship"]),
+      userInteraction: workingValue(facts, ["userGripControlInteraction"]),
+      constraints,
+    },
+  };
 }

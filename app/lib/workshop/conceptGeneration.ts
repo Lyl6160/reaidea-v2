@@ -12,6 +12,11 @@ import {
   getEngineeringDefinitionInputs,
   type EngineeringDefinitionArea,
 } from "./engineeringDefinition";
+import {
+  deriveRevWorkingUnderstanding,
+  type RevWorkingSource,
+  type RevWorkingValue,
+} from "./revWorkingUnderstanding";
 
 export type VisualModeSuggestion = {
   mode: IdeaVisualMode;
@@ -259,20 +264,26 @@ export function buildConceptGenerationFoundation(
   const rollingAnswers = rollingEngineeringNotes.map((note) => note.answer.trim().slice(0, 1_600));
   const inventorDescription = rollingInventorNotes[0]?.answer.trim().slice(0, 1_600) || project.originalObservation.slice(0, 1_600);
   const inventorDescriptionSource = rollingInventorNotes[0] ? "bench-note" : "project-field";
+  const workingUnderstanding = deriveRevWorkingUnderstanding(project, {
+    engineering: rollingEngineeringNotes,
+    knowledge: rollingInventorNotes,
+  });
+  const workingBrief = workingUnderstanding.conceptBrief;
   const rollingProposedSolution = rollingAnswers[0] ?? "";
   const rollingOperatingConcept = joinBenchAnswers([rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]]);
   const rollingFunctionalElements = joinBenchAnswers([rollingAnswers[3], rollingAnswers[1], rollingAnswers[2]]);
+  const derivedConstraints = workingBrief.constraints.map((value) => value.text);
   const brief: ConceptBrief = {
     originalIdea: project.originalObservation,
     problemContext,
-    proposedSolution: answers["proposed-solution"]?.trim() || rollingProposedSolution || inventorDescription,
-    operatingConcept: answers["operating-concept"]?.trim() || rollingOperatingConcept || inventorDescription,
-    functionalElements: answers["functional-elements"]?.trim() || rollingFunctionalElements || (inventorDescription ? "Main elements have not been specified by the inventor yet." : ""),
+    proposedSolution: answers["proposed-solution"]?.trim() || rollingProposedSolution || workingBrief.proposedSolution?.text || inventorDescription,
+    operatingConcept: answers["operating-concept"]?.trim() || rollingOperatingConcept || workingBrief.operatingConcept?.text || inventorDescription,
+    functionalElements: answers["functional-elements"]?.trim() || rollingFunctionalElements || workingBrief.functionalElements?.text || inventorDescription,
     ...(optionalAnswer(answers, "inputs-outputs", "inputsOutputs", rollingAnswers[6])),
     ...(optionalAnswer(answers, "relationships-flow", "relationshipsFlow", rollingAnswers[4])),
-    ...(optionalAnswer(answers, "user-interaction", "userInteraction")),
-    ...(optionalAnswer(answers, "arrangement", "arrangement", rollingAnswers[1])),
-    constraints: unique([...constraints, rollingAnswers[7] ?? ""]),
+    ...(optionalAnswer(answers, "user-interaction", "userInteraction", workingBrief.userInteraction?.text)),
+    ...(optionalAnswer(answers, "arrangement", "arrangement", rollingAnswers[1] || workingBrief.arrangement?.text)),
+    constraints: unique([...constraints, ...derivedConstraints, rollingAnswers[7] ?? ""]),
     assumptions: unique(project.engineeringState.currentAssumptions),
     ...(optionalAnswer(answers, "technical-uncertainty", "technicalUncertainty")),
   };
@@ -283,12 +294,17 @@ export function buildConceptGenerationFoundation(
       : [{ field: "problemContext", sourceKind: "project-field", sourceId: project.purpose.trim() ? "purpose" : "originalObservation" } as const]),
     ...definitionSourceTrace(definitionInputs),
     ...rollingBriefSourceTrace(answers, rollingAnswers),
-    ...(inventorDescription && !answers["proposed-solution"]?.trim() && !rollingProposedSolution
+    ...workingBriefSourceTrace(brief, answers, rollingAnswers, workingBrief, workingUnderstanding.sources),
+    ...(inventorDescription && !workingBrief.proposedSolution && !answers["proposed-solution"]?.trim() && !rollingProposedSolution
       ? [
           { field: "proposedSolution", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
-          { field: "operatingConcept", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
-          { field: "functionalElements", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const,
         ]
+      : []),
+    ...(inventorDescription && !workingBrief.operatingConcept && !answers["operating-concept"]?.trim() && !rollingOperatingConcept
+      ? [{ field: "operatingConcept", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const]
+      : []),
+    ...(inventorDescription && !workingBrief.functionalElements && !answers["functional-elements"]?.trim() && !rollingFunctionalElements
+      ? [{ field: "functionalElements", sourceKind: inventorDescriptionSource, sourceId: inventorDescriptionSource === "bench-note" ? "inventor-rolling-1" : "originalObservation" } as const]
       : []),
     ...(constraintEvent
       ? [{ field: "constraints", sourceKind: "timeline-event", sourceId: constraintEvent.id } as const]
@@ -339,6 +355,37 @@ export function buildConceptGenerationFoundation(
         }
       : null,
   };
+}
+
+function workingBriefSourceTrace(
+  brief: ConceptBrief,
+  answers: ReturnType<typeof assessEngineeringDefinition>["latestAnswers"],
+  rollingAnswers: string[],
+  workingBrief: ReturnType<typeof deriveRevWorkingUnderstanding>["conceptBrief"],
+  sources: RevWorkingSource[]
+): ConceptBriefSource[] {
+  const selected: Array<[keyof ConceptBrief, RevWorkingValue | RevWorkingValue[] | null, boolean]> = [
+    ["proposedSolution", workingBrief.proposedSolution, !answers["proposed-solution"]?.trim() && !rollingAnswers[0]],
+    ["operatingConcept", workingBrief.operatingConcept, !answers["operating-concept"]?.trim() && !joinBenchAnswers([rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]])],
+    ["functionalElements", workingBrief.functionalElements, !answers["functional-elements"]?.trim() && !joinBenchAnswers([rollingAnswers[3], rollingAnswers[1], rollingAnswers[2]])],
+    ["arrangement", workingBrief.arrangement, !answers.arrangement?.trim() && !rollingAnswers[1] && Boolean(brief.arrangement)],
+    ["userInteraction", workingBrief.userInteraction, !answers["user-interaction"]?.trim() && Boolean(brief.userInteraction)],
+    ["constraints", workingBrief.constraints, workingBrief.constraints.length > 0],
+  ];
+  const byId = new Map(sources.map((source) => [source.id, source]));
+  return selected.flatMap(([field, value, used]) => {
+    if (!used || !value) return [];
+    const values = Array.isArray(value) ? value : [value];
+    return Array.from(new Set(values.flatMap((item) => item.sourceIds))).flatMap((sourceId) => {
+      const source = byId.get(sourceId);
+      if (!source) return [];
+      return [{
+        field,
+        sourceKind: source.kind === "timeline" ? "timeline-event" as const : source.kind === "bench-note" ? "bench-note" as const : "project-field" as const,
+        sourceId: source.kind === "timeline" ? source.id.slice("timeline.".length) : source.kind === "bench-note" ? source.id.slice("bench.".length) : "originalObservation",
+      }];
+    });
+  });
 }
 
 function latestDefinitionInputs(project: Project) {

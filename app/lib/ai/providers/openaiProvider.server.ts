@@ -590,25 +590,30 @@ function buildImagePrompt(request: ConceptGenerationRequest, view: ConceptViewId
 function buildProductConceptPrompt(request: ConceptGenerationRequest): string {
   return [
     "REAIdea early product-concept instruction:",
-    `Create one polished product concept visualization for this invention: ${request.brief.originalIdea}`,
-    formatVisualDesignSnapshot(createVisualDesignSnapshot(request.brief)),
-    "HIGHEST COMPOSITION PRIORITY: Show the COMPLETE invention fully inside the frame before optimizing any other visual quality.",
+    "HIGHEST DESIGN-FIDELITY PRIORITY: Build the image from the required inventor-stated geometry, parts, arrangement, labels, opposing sides, controls, illumination, dimensions, and proportions below.",
+    "Every non-empty structured brief field is a required design feature. Do not replace an inventor-stated feature with a generic category equivalent, simplify it away, or let presentation styling override it.",
+    "Any inventor-specified shape or geometry is immutable. When a polygon or exact shape is stated, reproduce that geometry exactly, including its stated side count.",
+    "An unusual inventor-specified form must override familiar category conventions. Never normalise the invention into a standard commercial object merely because its label or purpose resembles one.",
+    "BEGIN REQUIRED INVENTOR DESIGN",
+    boundedBrief(request.brief),
+    "END REQUIRED INVENTOR DESIGN",
+    "Show the COMPLETE invention fully inside the frame before optimizing any other visual quality.",
     "Show the full object from its topmost feature to its lowest component or base. Do not crop, omit, or push any major component outside the image.",
     "Pull the camera back far enough to show the complete product at once. Centre the whole product and leave generous clear margin on every side.",
     "The complete invention should occupy approximately 60–70% of the image height. Do not use a close-up product shot or tight hero crop.",
     "Every major component described by the inventor must be visible where physically possible. Preserve their described arrangement and physical relationships.",
-    "If the invention has a meaningful reverse or alternate face, use a natural three-quarter viewpoint where practical so its depth and alternate-face relationship are understandable without duplicating or disconnecting the product.",
+    "If the invention has a meaningful reverse, alternate, or opposing face, use a physically plausible three-quarter or side-rear composition that visibly communicates the existence and construction of that separate face.",
+    "Preserve the stated labels and their correct face relationship. Do not place both labels on one surface, and do not merge, flatten, or omit the reverse surface.",
+    "If both labels cannot be fully readable from one physically plausible viewpoint, prioritise truthful physical construction and visible evidence of the alternate face rather than inventing impossible geometry.",
     "Treat the inventor data as the primary design source. Do not fabricate unsupported components, dimensions, functions, or engineering claims.",
-    "Render a believable physical product with realistic 3D form, professionally presented materials, detailed polished surfaces, and polished professional product-visualization quality.",
+    formatVisualDesignSnapshot(createVisualDesignSnapshot(request.brief)),
+    "SECONDARY PRESENTATION PRIORITY: After the required design is faithfully established, render it as a believable physical product with realistic 3D form and professional product-concept presentation.",
     "Use a clean light or white studio background, bright neutral lighting, restrained realistic shadows, and a centred three-quarter product viewpoint that clearly communicates form and depth.",
     "Avoid wide-angle distortion and dramatic camera angles. The complete-object framing rules outrank product-photography styling choices.",
     "Do not make a CAD drawing, engineering outline, technical sheet, orthographic plate, monochrome line-art image, hand sketch, patent illustration, cartoon, lifestyle scene, or advertising layout.",
     "Do not add captions, annotations, measurement callouts, UI text, floating labels, diagram notes, or decorative text overlays.",
     "Preserve text, symbols, button labels, product markings, and branding only when the inventor explicitly describes them as a physical part of the invention.",
     "Use neutral plausible visual treatment when exact materials or dimensions are unknown; do not imply those choices are established engineering facts.",
-    "BEGIN BOUNDED INVENTOR DATA",
-    boundedBrief(request.brief),
-    "END BOUNDED INVENTOR DATA",
     "Output exactly one complete, realistic early product-concept image.",
   ].join("\n");
 }
@@ -633,14 +638,14 @@ function buildProductConceptRefinementPrompt(request: ConceptRefinementRequest):
 
 function boundedBrief(brief: ConceptGenerationRequest["brief"]): string {
   return [
-    `Original invention description: ${brief.originalIdea}`,
-    `Proposed form: ${brief.proposedSolution}`,
-    `How it works: ${brief.operatingConcept}`,
-    `Main elements: ${brief.functionalElements}`,
-    brief.arrangement ? `Arrangement: ${brief.arrangement}` : "",
-    brief.relationshipsFlow ? `Relationships: ${brief.relationshipsFlow}` : "",
-    brief.userInteraction ? `User interaction: ${brief.userInteraction}` : "",
-    brief.constraints.length ? `Known constraints: ${brief.constraints.join("; ")}` : "",
+    `Authoritative original description: ${brief.originalIdea}`,
+    `Required purpose, problem, and intended benefit: ${brief.proposedSolution}`,
+    `Required operation, movement, and power: ${brief.operatingConcept}`,
+    `Required components, materials, dimensions, colours, and visible features: ${brief.functionalElements}`,
+    brief.arrangement ? `Required physical arrangement, proportions, and relationships: ${brief.arrangement}` : "",
+    brief.relationshipsFlow ? `Required functional relationships: ${brief.relationshipsFlow}` : "",
+    brief.userInteraction ? `Required user, grip, controls, and interaction: ${brief.userInteraction}` : "",
+    brief.constraints.length ? `Required environment, safety, and constraints: ${brief.constraints.join("; ")}` : "",
   ].filter(Boolean).join("\n");
 }
 
