@@ -1,21 +1,28 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `27c44573378c99e4dae856beeda22597e33e06f3`
+**Current safe checkpoint:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
-**Branch:** `sprint006-build24-36-engineering-concept-model`
+**Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.37 — IN CONSTRUCTION
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — GOVERNANCE ESTABLISHMENT
 
-**Next proposed hold point:** HP-24.38 Build 3 — Home Evidence Upload + Reference Routing, architecture inspection required
+**Next authorised construction step:** HP-24.39 Build 1 — Runtime Visual Foundation, blocked pending governance checkpoint review and commit
 
-**HP-24.38 implementation:** BUILDS 1–2 ACCEPTED / PUSHED
+**HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
-**Last governance update:** 2026-08-18
+**Last governance update:** 2026-08-19
 
 ## Current Hold-Point Candidate
 
-**HP-24.38 — Home Intelligence + Workshop Information Routing** — BUILDS 1–2 ACCEPTED / PUSHED
+**HP-24.39 — Home + Living Workshop Visual Integration** — GOVERNANCE ESTABLISHMENT ONLY
+
+Authoritative starting baseline:
+
+- `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
+- branch `sprint006-build24-39-home-workshop-visual-integration`
+
+Runtime implementation has not begun. The current authorised activity is limited to establishing the HP-24.39 governance boundary. Build 1 construction remains blocked until this governance checkpoint is reviewed and committed.
 
 Protected previous foundation:
 
@@ -822,6 +829,28 @@ Project schema, VisualDesignSnapshot, ConceptGeometry, safe 3D, and candidate pe
 
 Although the complete structured requirements reached the configured provider, it still normalised the specified hexagonal sign head into a conventional octagonal STOP sign. GO became visible in the second test, but the opposing-face construction was not represented truthfully enough. Further blind prompt retries were stopped.
 
-### Approved Build 3 Inspection Candidate
+### Build 3 Original Approved Direction — Historical
 
-**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing** proposes one optional **Add a sketch, photo or file** Home control within Tell REV Once. Architecture inspection must precede implementation. The inspection must reuse existing upload, storage, Project timeline, and concept-reference paths; combine description and attachment into one Working Understanding; permit the meter to consider both sources; route relevant evidence to existing benches; and preserve the original attachment as source evidence while keeping REV interpretation derived. Inventor's Bench remains optional, image reference use must stay behind provider-independent boundaries, and no parallel attachment system may be created.
+**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing** was authorised to add one optional **Add a sketch, photo or file** Home control within Tell REV Once. Its implementation reused existing upload, storage, Project timeline, and concept-reference boundaries; combined description and attachment in one Working Understanding; routed relevant evidence to existing benches; preserved the original attachment as source evidence and REV interpretation as derived; kept Inventor's Bench optional; retained image-reference use behind provider-independent boundaries; and created no parallel attachment system.
+
+## HP-24.38 Build 3 — Completed, Human Accepted, Committed and Pushed
+
+HP-24.38 Build 3 is completed, human accepted, committed and pushed at `957661e21317fa1421de909f97440d3c147b03e7` on `sprint006-build24-36-engineering-concept-model`.
+
+Build 3 established optional Home source-image evidence, deliberate visual understanding, reference-backed Concept generation, and REV Helm CLEAR / HOLD / BLOCK / unavailable safety controls while preserving one authoritative Project, inventor-authored `Project.originalObservation`, source-evidence and derived-interpretation boundaries, provider independence, candidate persistence, VisualDesignSnapshot, ConceptGeometry, and safe 3D.
+
+## Approved Visual-Direction Preservation — Completed, Committed and Pushed
+
+The approved Home and Living Workshop visual direction, authority assets, visual decision record, Workshop vision reference, and Founder Journal reference are preserved at `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`. The preservation checkpoint is committed and pushed on `sprint006-build24-36-engineering-concept-model`.
+
+This preservation commit authorises no runtime visual implementation by itself.
+
+## HP-24.39 — Active Authorised Hold Point
+
+**Title:** Home + Living Workshop Visual Integration
+
+**Construction branch:** `sprint006-build24-39-home-workshop-visual-integration`
+
+**Starting baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
+
+HP-24.39 is the active authorised hold point. Runtime implementation has not begun. Current authorised activity is governance establishment only. Build 1 — Runtime Visual Foundation is the next possible construction step, but it remains blocked until this governance checkpoint is reviewed and committed.

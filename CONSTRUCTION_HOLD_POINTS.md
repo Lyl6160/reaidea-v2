@@ -1874,13 +1874,15 @@ HP-24.36 — Inventor-Guided Concept Refinement is proposed and NOT STARTED. It 
 
 ## HP-24.38 — Home Intelligence + Workshop Information Routing
 
-**Status:** BUILDS 1–2 ACCEPTED / PUSHED
+**Status:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
 **Recorded:** 18 August 2026
 
 **Build 1 checkpoint:** `fbc9be3b1ae8c8c9b2e1863f93c90508b96bfb12`
 
 **Build 2 checkpoint:** `27c44573378c99e4dae856beeda22597e33e06f3`
+
+**Build 3 checkpoint:** `957661e21317fa1421de909f97440d3c147b03e7`
 
 **Current branch:** `sprint006-build24-36-engineering-concept-model`
 
@@ -1944,10 +1946,99 @@ Build 1 was pushed without a tag or merge. HP-24.37 remains in construction.
 - Known limitation: the provider still normalised the specified hexagonal sign head into a conventional octagonal STOP sign. GO became visible, but opposing-face construction remained insufficiently truthful despite the complete structured request.
 - Further blind prompt retries were stopped.
 
-### Approved Next Inspection Candidate
+### Build 3 Acceptance — Home Evidence Upload + Reference Routing
 
-**HP-24.38 Build 3 — Home Evidence Upload + Reference Routing** may add one optional **Add a sketch, photo or file** control to Home within Tell REV Once. Architecture inspection is required before implementation. It must reuse existing upload, storage, Project timeline, and concept-reference paths; combine description and attachment in one Working Understanding; allow the meter to consider both sources; route relevant evidence to existing benches; preserve the original attachment as source evidence and REV interpretation as derived; keep Inventor's Bench optional; and avoid any parallel attachment system.
+- One optional Home sketch/photo control remains part of Tell REV Once.
+- Original validated source-image bytes remain source evidence outside Project truth.
+- Visual interpretation remains derived, source-traced working context.
+- REV Helm CLEAR / HOLD / BLOCK / unavailable safety controls govern persistence and downstream use.
+- Reference-backed Concept generation remains behind provider-independent boundaries.
+- Inventor's Bench remains optional and no parallel attachment system exists.
+- Human safety and Concept acceptance passed.
 
-Build 2 was pushed without a tag or merge. HP-24.37 remains in construction.
+Build 3 was committed and pushed without a tag or merge. HP-24.38 is complete through its accepted Build 3 checkpoint.
 
 Freeze blockers: NONE.
+
+## HP-24.39 — Home + Living Workshop Visual Integration
+
+**Status:** GOVERNANCE ESTABLISHMENT — RUNTIME IMPLEMENTATION NOT STARTED
+
+**Authoritative baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
+
+**Construction branch:** `sprint006-build24-39-home-workshop-visual-integration`
+
+### Purpose
+
+Implement the approved Home REV environment and bright Living Workshop direction without changing HP-24.38 functional, safety, Project-truth, evidence, Concept, or provider boundaries.
+
+### Build 1 — Runtime Visual Foundation
+
+- Copy the approved Home authority byte-identically for runtime use.
+- Establish scoped visual tokens and accessible live `reAIdea` / `REV` identity.
+- Make no Home or Workshop behavioral restructuring.
+- Perform no Workshop visual conversion yet.
+
+### Build 2 — Home Environment and Doorway
+
+- Apply the approved wireframe REV Home environment.
+- Render live `reAIdea` identity with `AI` emphasis.
+- Render `REV`.
+- Render `REALISE • ENGINEER • VALIDATE`.
+- Identify REV as the AI Engineering Partner.
+- Preserve the quiet central live form.
+- Establish bright doorway continuity.
+- Preserve every Home safety and Project-entry boundary.
+
+### Build 3 — Living Workshop Environment
+
+- Evolve the CSS / HTML Workshop toward the approved bright north star.
+- Keep the Workshop dynamic rather than flattening it into an image.
+- Preserve central Project continuity.
+- Preserve all benches and user-controlled navigation.
+- Replace the conflicting simplified human-like REV representation with approved REV visual language.
+- Preserve Concept and candidate behavior.
+
+### Build 4 — Responsive, Accessibility and Acceptance Closeout
+
+- Verify desktop, laptop, tablet, and mobile treatment.
+- Control cropping and focal points.
+- Preserve keyboard and focus visibility.
+- Preserve contrast and readable status messages.
+- Preserve reduced-motion behavior.
+- Run production-build validation.
+- Run one final deliberately authorised CLEAR and Concept acceptance journey.
+- Complete the final log and Git audit.
+
+### Locked Exclusions
+
+- No human host from the branding reference.
+- No old dark Workshop doorway.
+- No rasterized replacement for accessible live wordmark text.
+- No illustrative Workshop content entering Project truth.
+- No automatic provider calls or retries for visual presentation.
+- No changes to HP-24.38 safety doctrine.
+- No flattening of functional UI into screenshots.
+
+### Hold Gates
+
+- Only one build may be constructed at a time.
+- Each build requires validation and checkpoint review before commit.
+- Each committed build requires explicit approval before push.
+- Later builds remain blocked until the preceding build is accepted.
+- Provider-backed testing is deferred until specifically authorised.
+- Final human visual acceptance is mandatory before HP-24.39 closeout.
+- Build 1 remains blocked until this governance checkpoint is reviewed and committed.
+
+### Approved Visual Authorities
+
+- Home REV Engineer — `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`
+- Living Workshop north star — `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`
+- Wall-branding reference — `B3E4B14553E8959E2B3B938D90518AEEB628F1E23769860995789515307E89FC`
+- Visual-direction decision — `EFF789CB8306003E939D732476B7D83921B9903E0393012A0B952227B61D910B`
+
+### Current Construction Decision
+
+HP-24.38 Build 3 is completed, human accepted, committed and pushed at `957661e21317fa1421de909f97440d3c147b03e7`. Approved visual-direction preservation is completed, committed and pushed at `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`.
+
+HP-24.39 runtime implementation has not begun. Governance establishment is the only authorised activity at this checkpoint. No Build 1 construction is authorised until this checkpoint is reviewed and committed.
