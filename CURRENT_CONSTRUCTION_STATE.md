@@ -5,9 +5,9 @@
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — GOVERNANCE ESTABLISHMENT
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 1 COMPLETE / COMMIT PENDING
 
-**Next authorised construction step:** HP-24.39 Build 1 — Runtime Visual Foundation, blocked pending governance checkpoint review and commit
+**Current authorised activity:** HP-24.39 Build 1 — Runtime Visual Foundation closeout and commit
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,14 +15,18 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — GOVERNANCE ESTABLISHMENT ONLY
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 1 COMPLETE / COMMIT PENDING
 
 Authoritative starting baseline:
 
 - `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 - branch `sprint006-build24-39-home-workshop-visual-integration`
 
-Runtime implementation has not begun. The current authorised activity is limited to establishing the HP-24.39 governance boundary. Build 1 construction remains blocked until this governance checkpoint is reviewed and committed.
+Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation construction is complete and provider-free validation passed.
+
+The runtime Home authority is byte-identical to the approved blueprint authority at SHA-256 `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`. The shared `ReAIdeaIdentity` foundation contains accessible live `reAIdea`, `REV`, `REALISE • ENGINEER • VALIDATE`, and `AI Engineering Partner` identity. The component remains unmounted, so there is no visible application change.
+
+Home integration has not begun. Workshop integration has not begun. Build 2 remains blocked until the Build 1 commit is reviewed, committed, pushed, and explicitly authorised. Builds 3–4 remain blocked. Provider-backed testing was not required or performed.
 
 Protected previous foundation:
 
@@ -853,4 +857,8 @@ This preservation commit authorises no runtime visual implementation by itself.
 
 **Starting baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
-HP-24.39 is the active authorised hold point. Runtime implementation has not begun. Current authorised activity is governance establishment only. Build 1 — Runtime Visual Foundation is the next possible construction step, but it remains blocked until this governance checkpoint is reviewed and committed.
+HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation construction is complete and provider-free validation passed.
+
+The approved Home runtime authority remains byte-identical at SHA-256 `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`. The unmounted shared identity foundation supplies accessible live `reAIdea`, `REV`, `REALISE • ENGINEER • VALIDATE`, and `AI Engineering Partner` wording through component-scoped styling. There is no visible application change.
+
+Home and Workshop integration have not begun. Build 2 remains blocked until the Build 1 commit is reviewed, committed, pushed, and explicitly authorised. Builds 3–4 remain blocked. Provider-backed testing was not required or performed. Build 1 has not yet been committed or pushed.

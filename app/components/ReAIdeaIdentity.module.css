@@ -1,0 +1,77 @@
+.identity {
+  display: inline-grid;
+  justify-items: center;
+  gap: clamp(0.22rem, 0.5vw, 0.42rem);
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: clamp(0.8rem, 2vw, 1.35rem) clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgba(99, 214, 238, 0.38);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, rgba(3, 13, 20, 0.9), rgba(7, 28, 37, 0.78));
+  color: #f2f8fa;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 0.75rem 2.5rem rgba(0, 0, 0, 0.28);
+}
+
+.identity p {
+  margin: 0;
+}
+
+.wordmark {
+  font-size: clamp(2rem, 5vw, 4.25rem);
+  font-weight: 650;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.ai {
+  color: #58d8f4;
+  font-weight: 850;
+  text-shadow: 0 0 0.75rem rgba(62, 190, 239, 0.56);
+}
+
+.rev {
+  color: #dcecf1;
+  font-size: clamp(0.78rem, 1.4vw, 1.05rem);
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+}
+
+.expansion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.32rem, 0.9vw, 0.72rem);
+  font-size: clamp(0.58rem, 1.15vw, 0.78rem);
+  font-weight: 780;
+  line-height: 1.4;
+  letter-spacing: clamp(0.08em, 0.28vw, 0.18em);
+}
+
+.realise {
+  color: #70ddf0;
+}
+
+.engineer {
+  color: #8ee6a3;
+}
+
+.validate {
+  color: #c4a4f4;
+}
+
+.separator {
+  color: rgba(220, 236, 241, 0.68);
+}
+
+.partner {
+  color: #d4e3e7;
+  font-size: clamp(0.68rem, 1.3vw, 0.9rem);
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+}
