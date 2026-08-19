@@ -920,6 +920,19 @@ The main construction branch has been returned with `git reset --keep` to the pu
 - Project, Concept, REV, bench labels, statuses, guidance, questions, navigation, save actions, and controls remain live accessible overlays.
 - Asset preservation does not begin Build 3 runtime implementation. Build 4 remains blocked.
 
+### Accepted REV Avatar
+
+- The [REV avatar](public/images/reaidea-rev-avatar-2026-08-19.png) was human accepted on 19 August 2026 and is preserved at `public/images/reaidea-rev-avatar-2026-08-19.png`.
+- SHA-256: `426E46C1B652C51D0C34508B86F9024B3748B9CCE5288D1A51B2A573931CA2C1`.
+- Size: 1,364,392 bytes.
+- Dimensions: 1295 × 1215 PNG.
+- Transparency: valid RGBA with genuine transparency; the image is not fully opaque.
+- Its byte-identical accepted archive copy is `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_REV_Avatar_Accepted_2026-08-19.png`.
+- The avatar is subordinate to the principal Living Workshop authority and supplies the live REV identity in the architectural header.
+- Its circular frame, `REV` label, and `AI Engineering Partner` wording remain accessible live HTML; no wording or UI is baked into the avatar.
+- Avatar preservation does not begin Build 3 runtime implementation. Build 4 remains blocked.
+- Project, Concept, provider, storage, safety, and behaviour boundaries remain unchanged.
+
 ### Existing Prototype 3D Audit
 
 - `app/workshop/Prototype3DViewer.tsx` was introduced by `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` and remains current and conditionally mounted through `RollingBenchFlow`.

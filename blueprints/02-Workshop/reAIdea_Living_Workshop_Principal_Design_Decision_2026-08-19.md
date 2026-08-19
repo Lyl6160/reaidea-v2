@@ -31,6 +31,21 @@ This neutral plate is subordinate to the principal north star. It preserves the 
 
 Project wording, Concept imagery and model, REV, bench labels, statuses, guidance, questions, navigation, save actions, and controls remain live accessible overlays. Preserving this asset does not begin Build 3 runtime implementation. Build 4 remains blocked.
 
+## Accepted subordinate REV avatar
+
+The [REV avatar](../../public/images/reaidea-rev-avatar-2026-08-19.png) was human accepted on 19 August 2026 and is preserved for later Build 3 runtime implementation.
+
+- SHA-256: `426E46C1B652C51D0C34508B86F9024B3748B9CCE5288D1A51B2A573931CA2C1`
+- Size: 1,364,392 bytes
+- Dimensions: 1295 × 1215 PNG
+- Transparency: valid RGBA with genuine transparency; the image is not fully opaque
+- Runtime path: `public/images/reaidea-rev-avatar-2026-08-19.png`
+- External archive: `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_REV_Avatar_Accepted_2026-08-19.png`
+
+The avatar is subordinate to the principal Living Workshop authority and supplies the live REV identity in the architectural header. Its circular frame, `REV` label, and `AI Engineering Partner` wording remain accessible live HTML; no wording or UI is baked into the avatar.
+
+Preserving this avatar does not begin Build 3 runtime implementation. Build 4 remains blocked. Project, Concept, provider, storage, safety, and behaviour boundaries remain unchanged.
+
 ## Rejected schematic implementation
 
 Commit `087778c91002bf0f9144cf77f3573311d967fa04` is rejected as the final user-facing visual design because its schematic CSS presentation does not satisfy this principal authority.
