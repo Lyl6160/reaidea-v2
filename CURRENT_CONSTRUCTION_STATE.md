@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
+**Current safe checkpoint:** `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 2 READY FOR COMMIT REVIEW
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 3 REOPENED / DESIGN CORRECTION
 
-**Current authorised construction step:** HP-24.39 Build 2 — Final Validation and Closeout
+**Current authorised construction step:** HP-24.39 Build 3 — Governance Correction and Corrected Implementation Planning; runtime reconstruction not started
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,18 +15,18 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 2 READY FOR COMMIT REVIEW
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 3 REOPENED / DESIGN CORRECTION
 
 Authoritative starting baseline:
 
 - `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 - branch `sprint006-build24-39-home-workshop-visual-integration`
 
-Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`.
+Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`.
 
-Build 2 — Home Environment and Doorway construction and available human visual validation are complete. Its scope remains limited to a presentation-only Home shell, the approved runtime Home authority, live wall identity, bright doorway continuity, and minimal wrapping of the existing live Home interface. Build 2 is ready for commit review.
+The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-Workshop implementation has not begun. Build 3 remains blocked until Build 2 is committed, pushed, and explicitly authorised. Build 4 retains the final deliberate CLEAR and Concept acceptance gate. Home behavior and all HP-24.38 safety, Project-entry, evidence, request, and retry boundaries remain unchanged.
+The construction branch is restored to the pushed Build 2 baseline. Build 3 is reopened and uncommitted. Runtime reconstruction has not begun under the corrected authority. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, is now the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). The required implementation is a hybrid of a project-neutral realistic environment and accessible live HTML controls and Project data. Build 4 remains blocked. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -857,9 +857,9 @@ This preservation commit authorises no runtime visual implementation by itself.
 
 **Starting baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
-HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`.
+HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`.
 
-Build 2 — Home Environment and Doorway construction and available human visual validation are complete. It remains limited to the presentation-only Home shell, approved runtime Home authority, live wall identity, bright doorway continuity, and minimal Home wrapping.
+Build 2 remains the accepted presentation-only Home shell, approved runtime Home authority, live wall identity, bright doorway continuity, and minimal Home wrapping.
 
 ### Build 2 Accepted Visual Results
 
@@ -888,6 +888,35 @@ There was no hidden retry, no Concept generate/refine/view request, no Workshop 
 
 The repeated failure is classified as an external/provider acceptance blocker, not a visual-layout defect. Live CLEAR-state visual confirmation is deferred and remains mandatory before final HP-24.39 closeout. No further provider testing is authorised during Build 2 closeout.
 
-### Build 2 Status
+### Revoked Build 3 CSS-Schematic Acceptance
 
-Build 2 construction and available human visual validation are complete. Build 2 is ready for commit review. Build 3 remains blocked until Build 2 is committed, pushed, and explicitly authorised. Build 4 retains the final deliberate CLEAR and Concept acceptance gate. HP-24.38 behavioral and safety boundaries remain unchanged.
+The earlier Build 3 CSS-schematic was committed locally as `087778c91002bf0f9144cf77f3573311d967fa04`, but human visual acceptance was revoked before push. It passed structural and responsive plumbing checks and may be consulted as a schematic reference only. It is preserved locally on `preservation/hp-24-39-build3-css-schematic-087778c` and externally under `C:\Users\User\Documents\reaidea-local-archives\HP24.39-Build3-rejected-css-schematic-2026-08-19-181941`.
+
+The main construction branch has been returned with `git reset --keep` to the pushed Build 2 checkpoint `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`. Build 3 is reopened and uncommitted. The rejected commit is not part of the construction branch and is not authorised for push.
+
+### Corrected Build 3 Visual Authority
+
+- The approved realistic Living Workshop north star is the principal and controlling user-facing authority, not loose inspiration. Implementation must correspond substantially to its realism, spatial composition, bench clarity, foreground console, central stage, and persistent Workshop experience.
+- The approved authority is a polished, bright, believable physical engineering Workshop with distinct functional benches around the same active Project.
+- Pure CSS geometry alone is insufficient for the approved realism. Build 3 may use a project-neutral realistic runtime visual foundation derived from the approved direction.
+- The exact north-star screenshot must not be flattened directly into runtime because it contains illustrative Project wording, STOP-sign imagery, statuses, recommendations, and technical content.
+- The intended architecture is hybrid: a realistic environment plus accessible live HTML controls and current application data.
+- Bench names, status, active and recommended state, Project wording, Concept imagery, REV guidance, navigation, and buttons remain live application content.
+- REV must appear naturally within the realistic Workshop rather than as an isolated schematic substitute.
+- All eight benches remain spatially visible. Selecting a bench focuses it without removing the others and changes the realistic foreground console to its live information and controls. The active Project remains visible, and the inventor retains a clear route to the complete Workshop overview.
+- Prototype reuses the existing live 3D model on the central stage when valid ConceptGeometry is available; surrounding benches remain visible and Prototype is not reduced to a static card.
+- Desktop preserves the realistic panoramic Workshop. Tablet and mobile preserve Workshop context through a clear overview, map, carousel, or comparable focused-station presentation, not an elongated schematic tower.
+- Walkthroughs assess bugs, usability, implementation differences, and correspondence with this authority. Plumbing and responsive stacking alone cannot establish visual acceptance or redefine the principal vision.
+- HP-24.38 safety, Project truth, Concept, evidence, provider, VisualDesignSnapshot, ConceptGeometry, and safe 3D boundaries remain unchanged.
+
+### Existing Prototype 3D Audit
+
+- `app/workshop/Prototype3DViewer.tsx` was introduced by `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` and remains current and conditionally mounted through `RollingBenchFlow`.
+- It is a React Three Fiber / Three.js WebGL viewer using `@react-three/fiber`, `@react-three/drei`, and `three`; no external 3D model or image-sequence asset is used.
+- `WorkshopShell` supplies the current or historically viewed Concept candidate's `ConceptGeometry`. Geometry is bounded, validated, explicitly non-authoritative, source-bound to the Concept candidate revision, and persisted with the existing Concept candidate outside Project truth.
+- The current viewer supports manual orbit rotation, zoom, reset, fit, and an optional bounded joint preview. It does not auto-spin and has no pause control.
+- Correct centre-stage integration must reuse one viewer and existing candidate geometry, preserve safe refusal and the truthful 2D fallback when geometry is unavailable, add an accessible pause/reduced-motion treatment if automatic rotation is introduced, and create no Project, safety, storage, or provider boundary change.
+
+### Current Build 3 Gate
+
+Governance correction and corrected implementation planning are complete at the working-tree level; runtime reconstruction has not begun. Provider-backed testing is not authorised. Home CLEAR visual confirmation remains deferred. Build 4 remains blocked until the corrected Build 3 is constructed, validated, human-accepted, committed, pushed, and separately authorised for progression.

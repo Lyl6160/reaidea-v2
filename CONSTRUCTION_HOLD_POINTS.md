@@ -1962,11 +1962,13 @@ Freeze blockers: NONE.
 
 ## HP-24.39 — Home + Living Workshop Visual Integration
 
-**Status:** GOVERNANCE ESTABLISHMENT — RUNTIME IMPLEMENTATION NOT STARTED
+**Status:** BUILD 3 REOPENED — REALISTIC LIVING WORKSHOP DESIGN CORRECTION
 
 **Authoritative baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
 **Construction branch:** `sprint006-build24-39-home-workshop-visual-integration`
+
+**Current accepted construction baseline:** `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`
 
 ### Purpose
 
@@ -1992,11 +1994,19 @@ Implement the approved Home REV environment and bright Living Workshop direction
 
 ### Build 3 — Living Workshop Environment
 
-- Evolve the CSS / HTML Workshop toward the approved bright north star.
-- Keep the Workshop dynamic rather than flattening it into an image.
+- Treat the existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png) and the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md) as the principal and controlling user-facing Workshop authority, not loose inspiration.
+- Build toward the approved realistic bright Living Workshop north star using a project-neutral realistic runtime visual foundation plus accessible live HTML controls and current application data.
+- Pure CSS geometry alone is not sufficient for the approved realism.
+- Do not flatten the exact north-star screenshot into runtime because its example Project wording, STOP-sign imagery, statuses, recommendations, and technical content are illustrative rather than current Project truth.
+- Keep bench names, status, active and recommended state, Project wording, Concept imagery, REV guidance, navigation, and buttons live and accessible.
+- Present REV naturally within the realistic Workshop.
+- Keep one persistent Workshop room: all eight benches remain visible, selection focuses one without removing the others, and the realistic foreground console changes to the selected bench's live information and controls.
+- Keep the active Project continuously visible and preserve a clear route back to the complete Workshop overview.
+- When Prototype has valid existing ConceptGeometry, reuse its live React Three Fiber model on the central stage with the other benches still visible; do not reduce Prototype to only a static card or duplicate the model path.
+- Preserve an accessible pause/reduced-motion treatment for any automatic model rotation.
+- Use a realistic panoramic Workshop on desktop and clear realistic overview/map/carousel treatments on tablet and mobile; do not turn the room into an elongated schematic tower.
 - Preserve central Project continuity.
 - Preserve all benches and user-controlled navigation.
-- Replace the conflicting simplified human-like REV representation with approved REV visual language.
 - Preserve Concept and candidate behavior.
 
 ### Build 4 — Responsive, Accessibility and Acceptance Closeout
@@ -2028,12 +2038,14 @@ Implement the approved Home REV environment and bright Living Workshop direction
 - Later builds remain blocked until the preceding build is accepted.
 - Provider-backed testing is deferred until specifically authorised.
 - Final human visual acceptance is mandatory before HP-24.39 closeout.
-- Build 1 remains blocked until this governance checkpoint is reviewed and committed.
+- The corrected Build 3 remains uncommitted and may proceed only after its reopened visual authority and bounded implementation plan are reviewed.
+- Build 4 remains blocked until the corrected Build 3 is constructed, validated, human-accepted, committed, pushed, and explicitly authorised for progression.
 
 ### Approved Visual Authorities
 
 - Home REV Engineer — `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`
-- Living Workshop north star — `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`
+- Principal Living Workshop north star — [immutable asset](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png) — `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`
+- Principal Living Workshop design decision — [19 August 2026](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md)
 - Wall-branding reference — `B3E4B14553E8959E2B3B938D90518AEEB628F1E23769860995789515307E89FC`
 - Visual-direction decision — `EFF789CB8306003E939D732476B7D83921B9903E0393012A0B952227B61D910B`
 
@@ -2041,4 +2053,6 @@ Implement the approved Home REV environment and bright Living Workshop direction
 
 HP-24.38 Build 3 is completed, human accepted, committed and pushed at `957661e21317fa1421de909f97440d3c147b03e7`. Approved visual-direction preservation is completed, committed and pushed at `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`.
 
-HP-24.39 runtime implementation has not begun. Governance establishment is the only authorised activity at this checkpoint. No Build 1 construction is authorised until this checkpoint is reviewed and committed.
+HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`.
+
+The CSS-schematic Build 3 commit `087778c91002bf0f9144cf77f3573311d967fa04` passed structural and responsive plumbing checks but was rejected as the final user-facing visual design before push because it does not satisfy the principal authority. It is preserved locally and externally as a plumbing and behavioural reference only. Future walkthroughs identify bugs, defects, usability problems, and implementation differences; they do not redefine the principal vision without another explicit human design decision. The construction branch has been restored to the pushed Build 2 checkpoint, and Build 3 is reopened and uncommitted under the corrected realistic hybrid authority above. Runtime reconstruction under that corrected authority has not begun. Provider-backed testing remains unauthorised, Home CLEAR visual confirmation remains deferred, and Build 4 remains blocked.
