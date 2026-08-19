@@ -125,3 +125,15 @@ The complete structured requirements reached the configured image provider, but 
 - Inventor's Bench remains optional for later additions or corrections.
 - Architecture inspection is required before implementation.
 - Existing upload, storage, Project timeline, and concept-reference paths must be reused; no parallel attachment system is permitted.
+
+## Approved Visual Direction Preserved
+
+After Build 3 acceptance, the Home and Living Workshop visual direction was preserved as a separate founder-approved authority. The [decision record](../blueprints/02-Workshop/reAIdea_Visual_Direction_Decision_2026-08-18.md) (`EFF789CB8306003E939D732476B7D83921B9903E0393012A0B952227B61D910B`) points to three immutable references:
+
+- [Home REV Engineer composition](../blueprints/02-Workshop/assets/reAIdea_Home_REV_Engineer_Approved_2026-08-18.png) — `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`;
+- [bright Living Workshop north star](../blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png) — `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`;
+- [Home wall-branding reference](../blueprints/02-Workshop/assets/reAIdea_Home_Wall_Branding_Reference_2026-08-19.png) — `B3E4B14553E8959E2B3B938D90518AEEB628F1E23769860995789515307E89FC`.
+
+The approved wireframe REV engineer remains the Home authority. The wall reference contributes only the exact `reAIdea` wordmark with its `AI` emphasis, `REALISE • ENGINEER • VALIDATE`, and REV's identity as the AI Engineering Partner; its human host and older dark doorway are excluded. Home must retain a quiet readable form area and open convincingly into the bright Workshop through continuous lighting, architecture, materials, floor path, footprints, and perspective.
+
+This preservation does not implement the interface. Runtime visual construction requires separate authorisation, and HP-24.38 behaviour, safety, Project truth, Concept, evidence, and provider boundaries remain unchanged.

@@ -102,6 +102,18 @@ The installed reference image shows the long-term direction: one active Project 
 
 The reference should guide architecture and experience without being treated as a claim that all visualized benches or specialist capabilities are already implemented.
 
+## Approved Home and Workshop Visual Direction
+
+The amended visual direction is preserved in the [approved decision record](./reAIdea_Visual_Direction_Decision_2026-08-18.md) (`EFF789CB8306003E939D732476B7D83921B9903E0393012A0B952227B61D910B`). Its immutable reference assets are:
+
+- [Home REV Engineer authority](./assets/reAIdea_Home_REV_Engineer_Approved_2026-08-18.png) — `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`;
+- [bright Living Workshop north star](./assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png) — `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`;
+- [Home wall-branding reference](./assets/reAIdea_Home_Wall_Branding_Reference_2026-08-19.png) — `B3E4B14553E8959E2B3B938D90518AEEB628F1E23769860995789515307E89FC`.
+
+The Home authority locks the approved wireframe REV engineer, clothing, badge, leather notebook, welcoming gesture, and quiet readable central form area. The wall reference governs wording and placement only: the exact `reAIdea` wordmark with its `AI` emphasis, `REALISE • ENGINEER • VALIDATE`, and REV as the AI Engineering Partner. Its human host and older dark Workshop doorway are excluded.
+
+The Home doorway must continue visually into, or closely mimic, the bright Living Workshop north star. Lighting, architecture, materials, floor path, footprints, and doorway perspective must make Home and Workshop feel like one connected place. Runtime implementation remains a separately authorised later build and must not alter HP-24.38 behaviour, safety, Project truth, Concept, evidence, or provider boundaries.
+
 ## HP-24.38 Proposed Product Direction
 
 HP-24.38 — Home Intelligence + Workshop Information Routing is proposed and not implemented. It evolves the experience around one locked rule:
