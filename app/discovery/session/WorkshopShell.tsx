@@ -16,6 +16,13 @@ import {
   type Project,
   type SpecialistContributionBenchId,
 } from "../../lib/core/project";
+import {
+  loadProjectSourceImage,
+  isValidSafetyReceipt,
+  parseSourceImageReference,
+  sourceImageToDataUrl,
+  type ProjectSourceImageRecord,
+} from "../../lib/core/projectSourceEvidenceStorage";
 import { recordConceptDecision } from "../../lib/workshop/conceptDecisions";
 import { deriveSharedConceptPreview } from "../../lib/workshop/conceptPreview";
 import {
@@ -67,8 +74,8 @@ import type {
   WorkshopBenchId,
   WorkshopState,
 } from "../../lib/workshop/workshopBrain";
-import { CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
-import { deriveRevWorkingUnderstanding } from "../../lib/workshop/revWorkingUnderstanding";
+import { assessWorkshop, CANONICAL_WORKSHOP_BENCHES } from "../../lib/workshop/workshopBrain";
+import { assessHomeUnderstanding, deriveRevWorkingUnderstanding } from "../../lib/workshop/revWorkingUnderstanding";
 
 type WorkshopShellProps = {
   project: Project;
@@ -91,6 +98,12 @@ type SpecialistEvidenceInput = {
   eventId: string;
   summary: string;
   source: string;
+};
+type SourceEvidenceView = {
+  reference: string;
+  status: "available" | "unavailable";
+  record?: ProjectSourceImageRecord;
+  objectUrl?: string;
 };
 
 const ENTRY_GENERATION_SESSION_KEY = "reaidea.entry-generation.v2";
@@ -123,9 +136,40 @@ function specialistContextLimitNote(
 }
 
 function sameStringSet(left: string[], right: string[]): boolean {
-  if (left.length !== right.length) return false;
+  const leftValues = new Set(left);
   const rightValues = new Set(right);
-  return left.every((value) => rightValues.has(value));
+  if (leftValues.size !== rightValues.size) return false;
+  return Array.from(leftValues).every((value) => rightValues.has(value));
+}
+
+async function attachSourceImageReference(
+  project: Project,
+  request: ConceptGenerationRequest
+): Promise<ConceptGenerationRequest> {
+  for (const reference of project.files) {
+    const evidenceId = parseSourceImageReference(reference);
+    if (!evidenceId) continue;
+    const sourceEvent = project.timeline.find(
+      (event) => event.type === "knowledge-input-recorded" && event.subject === reference
+    );
+    if (!sourceEvent) continue;
+    try {
+      const record = await loadProjectSourceImage(project.id, evidenceId);
+      if (!record || !isValidSafetyReceipt(record.safetyReceipt)) continue;
+      return {
+        ...request,
+        referenceImage: {
+          evidenceReference: reference,
+          sourceEventId: sourceEvent.id,
+          mediaType: record.mediaType,
+          dataUrl: await sourceImageToDataUrl(record),
+        },
+      };
+    } catch {
+      // Missing, corrupt, or unavailable evidence remains history but is not transmitted.
+    }
+  }
+  return request;
 }
 
 function hasValidConceptImageSet(candidate: ConceptCandidate): boolean {
@@ -421,7 +465,7 @@ function formatEngineeringActionBasis(
 
 export default function WorkshopShell({
   project,
-  workshop,
+  workshop: initialWorkshop,
   onProjectChange,
 }: WorkshopShellProps) {
   const showLegacyBenchPanels: boolean = false;
@@ -448,6 +492,8 @@ export default function WorkshopShell({
   const [conceptCandidateHistory, setConceptCandidateHistory] = useState<ConceptCandidate[]>([]);
   const [conceptGenerationState, setConceptGenerationState] = useState<"idle" | "generating" | "ready" | "failed" | "not-configured" | "unsupported">("idle");
   const [conceptGenerationMessage, setConceptGenerationMessage] = useState("");
+  const [sourceEvidenceViews, setSourceEvidenceViews] = useState<SourceEvidenceView[]>([]);
+  const [sourceEvidenceLoading, setSourceEvidenceLoading] = useState(true);
   const [conceptRefinementOpen, setConceptRefinementOpen] = useState(false);
   const [conceptRefinementDraft, setConceptRefinementDraft] = useState("");
   const [conceptRefinementState, setConceptRefinementState] = useState<"idle" | "refining" | "ready" | "failed">("idle");
@@ -468,6 +514,53 @@ export default function WorkshopShell({
   >({});
   const [specialistEvidenceError, setSpecialistEvidenceError] = useState("");
   const conceptStorageKey = useMemo(() => conceptKey(project), [project]);
+
+  useEffect(() => {
+    let active = true;
+    const objectUrls: string[] = [];
+    const references = project.files.filter((value) => parseSourceImageReference(value));
+    void Promise.all(references.map(async (reference): Promise<SourceEvidenceView> => {
+      const evidenceId = parseSourceImageReference(reference);
+      if (!evidenceId) return { reference, status: "unavailable" };
+      try {
+        const record = await loadProjectSourceImage(project.id, evidenceId);
+        if (!record) return { reference, status: "unavailable" };
+        const objectUrl = URL.createObjectURL(record.blob);
+        objectUrls.push(objectUrl);
+        return { reference, status: "available", record, objectUrl };
+      } catch {
+        return { reference, status: "unavailable" };
+      }
+    })).then((views) => {
+      if (active) {
+        setSourceEvidenceViews(views);
+        setSourceEvidenceLoading(false);
+      }
+      else objectUrls.forEach((url) => URL.revokeObjectURL(url));
+    });
+    return () => {
+      active = false;
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [project.id, project.files]);
+
+  const restoredVisualInterpretations = useMemo(
+    () => sourceEvidenceViews.flatMap((evidence) => evidence.record?.interpretation
+      ? [evidence.record.interpretation]
+      : []),
+    [sourceEvidenceViews]
+  );
+  const primaryVisualInterpretation = restoredVisualInterpretations[0];
+  const effectiveHomeAssessment = useMemo(
+    () => assessHomeUnderstanding(project.originalObservation, primaryVisualInterpretation),
+    [primaryVisualInterpretation, project.originalObservation]
+  );
+  const workshop = useMemo(
+    () => sourceEvidenceLoading
+      ? initialWorkshop
+      : assessWorkshop(project, primaryVisualInterpretation),
+    [initialWorkshop, primaryVisualInterpretation, project, sourceEvidenceLoading]
+  );
 
   const [conceptCreated, setConceptCreated] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -742,23 +835,41 @@ export default function WorkshopShell({
     () => assessEngineeringDefinition(project),
     [project]
   );
-  const visualModeSuggestion = useMemo(() => suggestVisualMode(project), [project]);
+  const visualModeSuggestion = useMemo(
+    () => suggestVisualMode(project, [], primaryVisualInterpretation),
+    [primaryVisualInterpretation, project]
+  );
   const selectedVisualMode = visualModeOverride ?? visualModeSuggestion.mode;
   const conceptGenerationFoundation = useMemo(
     () => buildConceptGenerationFoundation(
       project,
       confirmedVisualMode,
-      conceptWorkflowIdentity
+      conceptWorkflowIdentity,
+      [],
+      [],
+      restoredVisualInterpretations
     ),
-    [project, confirmedVisualMode, conceptWorkflowIdentity]
+    [project, confirmedVisualMode, conceptWorkflowIdentity, restoredVisualInterpretations]
   );
   const generatedConceptCandidateIsStale = useMemo(() => {
     if (!generatedConceptCandidate) return false;
     const currentRequest = conceptGenerationFoundation.request;
+    const activeSourceReference = sourceEvidenceViews.find((evidence) => evidence.status === "available")?.reference;
+    const activeSourceReferenceEventId = activeSourceReference
+      ? project.timeline.find(
+          (event) => event.type === "knowledge-input-recorded" && event.subject === activeSourceReference
+        )?.id
+      : undefined;
     return !currentRequest ||
       generatedConceptCandidate.visualMode !== currentRequest.visualMode ||
-      !sameStringSet(generatedConceptCandidate.sourceEventIds, currentRequest.sourceEventIds);
-  }, [conceptGenerationFoundation.request, generatedConceptCandidate]);
+      !sameStringSet(
+        generatedConceptCandidate.sourceEventIds,
+        [
+          ...currentRequest.sourceEventIds,
+          ...(activeSourceReferenceEventId ? [activeSourceReferenceEventId] : []),
+        ]
+      );
+  }, [conceptGenerationFoundation.request, generatedConceptCandidate, project, sourceEvidenceViews]);
   const hasEngineeringDesignBrief = engineeringDefinitionAssessment.addressedAreas.length > 0;
   const engineeringBriefText = Object.values(conceptGenerationFoundation.brief).flat().join(" ");
   const engineeringBriefIsStopGoSign = /\bstop\b/i.test(engineeringBriefText) && /\bgo\b/i.test(engineeringBriefText) && /\b(pole|shaft|sign)\b/i.test(engineeringBriefText);
@@ -1002,9 +1113,10 @@ export default function WorkshopShell({
     void workingUnderstandingRevision;
     return deriveRevWorkingUnderstanding(
       project,
-      Object.fromEntries(CANONICAL_WORKSHOP_BENCHES.map((bench) => [bench.id, readRollingBenchNotes(project.id, bench.id)]))
+      Object.fromEntries(CANONICAL_WORKSHOP_BENCHES.map((bench) => [bench.id, readRollingBenchNotes(project.id, bench.id)])),
+      restoredVisualInterpretations
     );
-  }, [project, workingUnderstandingRevision]);
+  }, [project, workingUnderstandingRevision, restoredVisualInterpretations]);
 
   function selectBench(id: WorkshopBenchId) {
     setSelectedId(id);
@@ -1169,22 +1281,26 @@ export default function WorkshopShell({
   }
 
   async function generateFirstRecognisableConcept(requestOverride?: ConceptGenerationRequest) {
-    const generationRequest = requestOverride ?? conceptGenerationFoundation.request;
-    if (!generationRequest || conceptGenerationInFlightRef.current) return;
+    const baseGenerationRequest = requestOverride ?? conceptGenerationFoundation.request;
+    if (!baseGenerationRequest || conceptGenerationInFlightRef.current) return;
 
-    if (generationRequest.visualMode !== "product" || generationRequest.outputType !== "image") {
-      setConceptGenerationState("unsupported");
-      setConceptGenerationMessage("Visual generation for this mode is coming next.");
-      return;
-    }
-
-    pendingConceptGenerationRequestRef.current = generationRequest;
     conceptGenerationInFlightRef.current = true;
     setConceptGenerationState("generating");
     setConceptGenerationMessage("");
     const generationStartedAt = performance.now();
 
     try {
+      const generationRequest = baseGenerationRequest.referenceImage
+        ? baseGenerationRequest
+        : await attachSourceImageReference(project, baseGenerationRequest);
+
+      if (generationRequest.visualMode !== "product" || generationRequest.outputType !== "image") {
+        setConceptGenerationState("unsupported");
+        setConceptGenerationMessage("Visual generation for this mode is coming next.");
+        return;
+      }
+
+      pendingConceptGenerationRequestRef.current = generationRequest;
       const response = await fetch("/api/concepts/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1216,6 +1332,9 @@ export default function WorkshopShell({
       setGeneratedConceptCandidate(candidate);
       setConceptCandidateHistory([candidate]);
       setConceptGenerationState("ready");
+      setConceptGenerationMessage(payload.referenceUsage === "unsupported"
+        ? "The reference image remains saved, but this provider created Concept 01 from your description only."
+        : "");
       pendingConceptGenerationRequestRef.current = null;
       setCandidateStorageStatus("candidate-saving");
       try {
@@ -1235,14 +1354,22 @@ export default function WorkshopShell({
 
   function retryFirstRecognisableConcept() {
     const failedRequest = pendingConceptGenerationRequestRef.current;
-    if (!failedRequest || conceptGenerationInFlightRef.current) return;
-    void generateFirstRecognisableConcept(failedRequest);
+    if (conceptGenerationInFlightRef.current) return;
+    if (failedRequest) {
+      void generateFirstRecognisableConcept(failedRequest);
+      return;
+    }
+    void createOrUpdateDesignModel("inventor-hero");
   }
 
   async function createOrUpdateDesignModel(intent: "inventor-hero" | "technical" = selectedId === "knowledge" ? "inventor-hero" : "technical") {
     const rollingEngineeringNotes = readRollingBenchNotes(project.id, "engineering");
     const rollingInventorNotes = readRollingBenchNotes(project.id, "knowledge");
-    const suggestedMode = suggestVisualMode(project, [...rollingInventorNotes, ...rollingEngineeringNotes]).mode;
+    const suggestedMode = suggestVisualMode(
+      project,
+      [...rollingInventorNotes, ...rollingEngineeringNotes],
+      primaryVisualInterpretation
+    ).mode;
     const selectedMode = confirmedVisualMode && confirmedVisualMode !== "unknown"
       ? confirmedVisualMode
       : visualModeOverride && visualModeOverride !== "unknown"
@@ -1254,7 +1381,14 @@ export default function WorkshopShell({
       return;
     }
     const visualMode = selectedMode;
-    const foundation = buildConceptGenerationFoundation(project, visualMode, conceptWorkflowIdentity, rollingEngineeringNotes, rollingInventorNotes);
+    const foundation = buildConceptGenerationFoundation(
+      project,
+      visualMode,
+      conceptWorkflowIdentity,
+      rollingEngineeringNotes,
+      rollingInventorNotes,
+      restoredVisualInterpretations
+    );
     if (!foundation.request) {
       setConceptGenerationState("failed");
       setConceptGenerationMessage(`Still needed: ${foundation.missingRequiredFields.map(missingConceptDetailLabel).join(", ")}.`);
@@ -1269,6 +1403,7 @@ export default function WorkshopShell({
 
   useEffect(() => {
     if (entryGenerationStartedRef.current) return;
+    if (sourceEvidenceLoading) return;
     if (window.sessionStorage.getItem(ENTRY_GENERATION_SESSION_KEY) !== project.id) return;
     entryGenerationStartedRef.current = true;
     window.sessionStorage.removeItem(ENTRY_GENERATION_SESSION_KEY);
@@ -1277,7 +1412,22 @@ export default function WorkshopShell({
     }, 0);
     // Home writes this marker only after the inventor explicitly enters with enough information.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.id]);
+  }, [project.id, sourceEvidenceLoading]);
+
+  const conceptRecoveryAvailable = effectiveHomeAssessment.ready &&
+    !sourceEvidenceLoading &&
+    candidateStorageStatus !== "loading" &&
+    !generatedConceptCandidate &&
+    conceptGenerationState !== "generating";
+
+  function recoverConcept01() {
+    if (!conceptRecoveryAvailable || conceptGenerationInFlightRef.current) return;
+    if (pendingConceptGenerationRequestRef.current) {
+      retryFirstRecognisableConcept();
+      return;
+    }
+    void createOrUpdateDesignModel("inventor-hero");
+  }
 
   async function refineCurrentConcept() {
     const currentCandidate = generatedConceptCandidate;
@@ -2726,6 +2876,11 @@ export default function WorkshopShell({
             {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
             {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
             <div className="workshop-floor-actions">
+              {conceptRecoveryAvailable && (
+                <button type="button" onClick={recoverConcept01}>
+                  {conceptGenerationState === "failed" ? "TRY AGAIN" : "CREATE CONCEPT 01"}
+                </button>
+              )}
               <button type="button" onClick={() => selectBench(recommendedBench.id)}>
                 GO TO {recommendedBench.label.toUpperCase()} BENCH
               </button>
@@ -2783,6 +2938,16 @@ export default function WorkshopShell({
             benchId={selectedBench.id}
             projectId={project.id}
             workingContext={revWorkingUnderstanding.byBench[selectedBench.id]}
+            sourceEvidence={sourceEvidenceViews.map((evidence) => ({
+              reference: evidence.reference,
+              status: evidence.status,
+              ...(evidence.record ? {
+                displayName: evidence.record.displayName,
+                width: evidence.record.width,
+                height: evidence.record.height,
+              } : {}),
+              ...(evidence.objectUrl ? { objectUrl: evidence.objectUrl } : {}),
+            }))}
             onWorkingNotesChange={() => setWorkingUnderstandingRevision((revision) => revision + 1)}
             externalNotes={selectedSpecialistBenchId ? rollingSpecialistNotes : undefined}
             onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
@@ -2844,6 +3009,9 @@ export default function WorkshopShell({
               }));
             }}
           />
+          {conceptGenerationState === "ready" && conceptGenerationMessage && (
+            <p className="first-concept-generation-status is-warning" role="status">{conceptGenerationMessage}</p>
+          )}
           </>
         )}
         {showLegacyBenchPanels && selectedBench?.id === "validation" && (

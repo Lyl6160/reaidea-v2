@@ -1,5 +1,6 @@
 import type {
   ConceptRefinementApiResponse,
+  ConceptGenerationErrorCode,
   ConceptRefinementRequest,
 } from "../../../lib/ai/types";
 import {
@@ -40,7 +41,7 @@ export async function POST(request: Request): Promise<Response> {
         error.code,
         error.message,
         error.retryable,
-        error.code === "not-configured" ? 503 : error.code === "unsupported-mode" ? 422 : 502
+        error.code === "not-configured" || error.code === "safety-unavailable" ? 503 : error.code === "unsupported-mode" || error.code === "safety-hold" || error.code === "safety-block" ? 422 : 502
       );
     }
     console.error("Concept refinement route failed with an unexpected error.");
@@ -97,7 +98,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function errorResponse(
-  code: "invalid-request" | "unsupported-mode" | "not-configured" | "provider-failure",
+  code: ConceptGenerationErrorCode,
   message: string,
   retryable: boolean,
   status: number

@@ -36,6 +36,11 @@ export type ConceptGenerationBenchNote = {
   answer: string;
 };
 
+export type DerivedVisualModeContext = {
+  factualSummary: string;
+  visualObservations: string[];
+};
+
 export type ConceptGenerationFoundation = {
   brief: ConceptBrief;
   sourceTrace: ConceptBriefSource[];
@@ -146,7 +151,8 @@ export function visualModeLabel(mode: IdeaVisualMode): string {
 
 export function suggestVisualMode(
   project: Project,
-  rollingEngineeringNotes: ConceptGenerationBenchNote[] = []
+  rollingEngineeringNotes: ConceptGenerationBenchNote[] = [],
+  derivedVisualContext?: DerivedVisualModeContext
 ): VisualModeSuggestion {
   const definition = assessEngineeringDefinition(project);
   const discoveryContext = latestDiscoveryResponses(project, ["purpose", "conditions"])
@@ -157,6 +163,12 @@ export function suggestVisualMode(
     ...Object.values(definition.latestAnswers),
     ...rollingEngineeringNotes.map((note) => note.answer),
     ...discoveryContext,
+    ...(derivedVisualContext
+      ? [
+          derivedVisualContext.factualSummary.slice(0, 280),
+          ...derivedVisualContext.visualObservations.slice(0, 8).map((item) => item.slice(0, 240)),
+        ]
+      : []),
   ].join("\n");
   const matches = Object.entries(MODE_SIGNALS).map(([mode, patterns]) => {
     const signals = patterns.flatMap((pattern) => {
@@ -243,7 +255,8 @@ export function buildConceptGenerationFoundation(
   confirmedVisualMode: IdeaVisualMode | null,
   identity: ConceptWorkflowIdentity,
   rollingEngineeringNotes: ConceptGenerationBenchNote[] = [],
-  rollingInventorNotes: ConceptGenerationBenchNote[] = []
+  rollingInventorNotes: ConceptGenerationBenchNote[] = [],
+  visualInterpretations: import("./revWorkingUnderstanding").RoutedVisualInterpretation[] = []
 ): ConceptGenerationFoundation {
   const definition = assessEngineeringDefinition(project);
   const definitionInputs = latestDefinitionInputs(project);
@@ -267,7 +280,7 @@ export function buildConceptGenerationFoundation(
   const workingUnderstanding = deriveRevWorkingUnderstanding(project, {
     engineering: rollingEngineeringNotes,
     knowledge: rollingInventorNotes,
-  });
+  }, visualInterpretations);
   const workingBrief = workingUnderstanding.conceptBrief;
   const rollingProposedSolution = rollingAnswers[0] ?? "";
   const rollingOperatingConcept = joinBenchAnswers([rollingAnswers[4], rollingAnswers[5], rollingAnswers[6]]);
@@ -381,8 +394,14 @@ function workingBriefSourceTrace(
       if (!source) return [];
       return [{
         field,
-        sourceKind: source.kind === "timeline" ? "timeline-event" as const : source.kind === "bench-note" ? "bench-note" as const : "project-field" as const,
-        sourceId: source.kind === "timeline" ? source.id.slice("timeline.".length) : source.kind === "bench-note" ? source.id.slice("bench.".length) : "originalObservation",
+        sourceKind: source.kind === "timeline" ? "timeline-event" as const
+          : source.kind === "bench-note" ? "bench-note" as const
+          : source.kind === "source-evidence-interpretation" ? "source-evidence-interpretation" as const
+          : "project-field" as const,
+        sourceId: source.kind === "timeline" ? source.id.slice("timeline.".length)
+          : source.kind === "bench-note" ? source.id.slice("bench.".length)
+          : source.kind === "source-evidence-interpretation" ? source.id
+          : "originalObservation",
       }];
     });
   });

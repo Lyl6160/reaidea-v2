@@ -97,13 +97,19 @@ function discoveryComplete(project: Project): boolean {
   return assessDiscovery(project).readyToAdvance;
 }
 
-export function assessWorkshop(project: Project): WorkshopState {
+export function assessWorkshop(
+  project: Project,
+  visualUnderstanding?: Parameters<typeof assessHomeUnderstanding>[1]
+): WorkshopState {
   const trace = summarizeEngineeringTrace(project);
   const engineeringDefined = hasMeaningfulEngineeringDefinition(project);
   const validationPlanned = hasValidationActivity(project);
   const validationCompleted = hasCompletedValidation(project);
   const discoveryReachedCheckpoint = discoveryComplete(project);
-  const homeDescriptionReady = assessHomeUnderstanding(project.originalObservation).ready;
+  const homeDescriptionReady = assessHomeUnderstanding(
+    project.originalObservation,
+    visualUnderstanding
+  ).ready;
   const hasEvidence = project.evidence.length > 0;
   const hasConstraints = project.engineeringState.currentConstraints.length > 0;
   const hasAssumptions = project.engineeringState.currentAssumptions.length > 0;

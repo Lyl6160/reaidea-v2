@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 import GenerationProgress from "./GenerationProgress";
 
@@ -26,6 +27,14 @@ type RollingBenchFlowProps = {
   benchId: WorkshopBenchId;
   projectId: string;
   workingContext?: RevBenchWorkingContext;
+  sourceEvidence?: Array<{
+    reference: string;
+    status: "available" | "unavailable";
+    displayName?: string;
+    width?: number;
+    height?: number;
+    objectUrl?: string;
+  }>;
   onWorkingNotesChange?: () => void;
   externalNotes?: BenchNote[];
   onSaveExternal?: (answer: string, question: string) => boolean;
@@ -214,6 +223,19 @@ function RevWorkingContextPanel({ context }: { context?: RevBenchWorkingContext 
   </section>;
 }
 
+function SourceEvidencePanel({ evidence }: { evidence?: RollingBenchFlowProps["sourceEvidence"] }) {
+  if (!evidence?.length) return null;
+  return <section className="source-evidence-panel" aria-label="Inventor source evidence">
+    <span>ORIGINAL VISUAL REFERENCE</span>
+    {evidence.map((item) => item.status === "available" && item.objectUrl && item.width && item.height
+      ? <figure key={item.reference}>
+          <Image src={item.objectUrl} alt="Inventor-supplied visual reference" width={item.width} height={item.height} unoptimized />
+          <figcaption><strong>{item.displayName ?? "Reference image"}</strong><small>Inventor-supplied source evidence · read only</small></figcaption>
+        </figure>
+      : <p key={item.reference}>The inventor supplied a visual reference, but it is unavailable in this browser. The historical Project record has been preserved.</p>)}
+  </section>;
+}
+
 export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   const { benchId, projectId } = props;
   const [localNotes, setLocalNotes] = useState<BenchNote[]>(() => {
@@ -322,6 +344,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
       <section className="rolling-bench-flow inventor-bench-v2" data-progress={inventorProgress} aria-label="Inventor's Bench work area">
         <header><div><span>ACTIVE BENCH</span><h2>Inventor&apos;s Bench</h2><p>Show REV your idea.</p></div><b>{inventorProgress.toUpperCase()}</b></header>
         <RevWorkingContextPanel context={props.workingContext} />
+        <SourceEvidencePanel evidence={props.sourceEvidence} />
         {props.modelReady && props.modelView && <section className="inventor-concept-stage" aria-label="Idea Evolving"><div><span>IDEA EVOLVING</span><strong>CONCEPT {String(props.currentRevision ?? 1).padStart(2, "0")}</strong></div>{props.modelView}</section>}
         {props.modelUpdating && <GenerationProgress kind={props.modelActionKind === "view" ? "view" : props.modelReady ? "refinement" : "first-generation"} status="working" />}
         {!props.modelUpdating && props.modelJustUpdated && <GenerationProgress kind={props.modelActionKind === "view" ? "view" : props.currentRevision && props.currentRevision > 1 ? "refinement" : "first-generation"} status="ready" />}
@@ -350,6 +373,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
       <section className="rolling-bench-flow prototype-rolling-flow" data-progress={progress} aria-label="Prototype Bench work area">
         <header><div><span>ACTIVE BENCH</span><h2>Prototype Bench</h2><p>Turn the current design into a working visual model and refine it until it matches what you have in mind.</p></div><b>{progress.toUpperCase()}</b></header>
         <RevWorkingContextPanel context={props.workingContext} />
+        <SourceEvidencePanel evidence={props.sourceEvidence} />
         {displayedModel && <div className="prototype-model-stage"><div className="prototype-model-toolbar"><strong>{viewingHistoricalRevision ? `VIEWING CONCEPT ${String(displayedRevision).padStart(2, "0")}` : `CONCEPT ${String(displayedRevision ?? 1).padStart(2, "0")} · CURRENT`}</strong><button type="button" onClick={() => setFullScreenOpen(true)}>VIEW FULL SCREEN</button></div>{representationSelector}{!showing3d && viewSelector}{!fullScreenOpen && displayedModel}</div>}
         {!props.conceptGeometry && <div className="prototype-3d-unavailable"><strong>3D model needs more design information.</strong><p>Add a few more design details in Engineering, then REV can build the 3D model.</p><button type="button" onClick={() => props.onGoToBench("engineering")}>OPEN ENGINEERING BENCH</button></div>}
         {fullScreenOpen && displayedModel && <div className="prototype-fullscreen" role="dialog" aria-modal="true" aria-label={`Concept ${String(displayedRevision ?? 1).padStart(2, "0")} full screen`}><div className="prototype-fullscreen-toolbar"><strong>{showing3d ? "3D MODEL" : viewingHistoricalRevision ? `VIEWING CONCEPT ${String(displayedRevision).padStart(2, "0")}` : `CONCEPT ${String(displayedRevision ?? 1).padStart(2, "0")} · CURRENT`}</strong><button type="button" onClick={() => setFullScreenOpen(false)}>CLOSE</button></div>{representationSelector}{!showing3d && viewSelector}<div className="prototype-fullscreen-model">{displayedModel}</div></div>}
@@ -378,6 +402,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     <section className="rolling-bench-flow" data-progress={progress} aria-label={`${flow.title} work area`}>
       <header><div><span>ACTIVE BENCH</span><h2>{flow.title}</h2><p>{flow.purpose}</p></div><b>{progress.toUpperCase()}</b></header>
       <RevWorkingContextPanel context={props.workingContext} />
+      <SourceEvidencePanel evidence={props.sourceEvidence} />
       {benchId === "engineering" && (
         <section className="engineering-visible-design" aria-label="Your Design">
           <div className="engineering-visible-design-heading">

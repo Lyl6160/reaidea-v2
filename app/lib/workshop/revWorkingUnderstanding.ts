@@ -3,7 +3,7 @@ import type { WorkshopBenchId } from "./workshopBrain";
 
 export type RevWorkingSource = {
   id: string;
-  kind: "original-observation" | "timeline" | "bench-note";
+  kind: "original-observation" | "timeline" | "bench-note" | "source-evidence-interpretation";
   label: string;
   text: string;
 };
@@ -34,13 +34,19 @@ export type RevConceptBriefWorkingContext = {
 
 export type WorkingBenchNote = { question: string; answer: string };
 export type WorkingBenchNotes = Partial<Record<WorkshopBenchId, WorkingBenchNote[]>>;
+export type RoutedVisualInterpretation = {
+  evidenceReference: string;
+  factualSummary: string;
+  visualObservations: string[];
+  uncertainties: string[];
+};
 
 const categoryPatterns = {
   purpose: /\b(problem|purpose|help|helps|prevent|improve|solve|allow|enable|designed|used to|so that)\b/i,
   user: /\b(user|people|person|child|adult|worker|driver|customer|operator|homeowner|inventor)\b/i,
   form: /\b(shape|size|tall|wide|long|small|large|mm|cm|metre|meter|inch|foot|feet|colour|color)\b/i,
   build: /\b(part|component|material|steel|metal|aluminium|aluminum|plastic|timber|wood|fabric|glass|rubber)\b/i,
-  operation: /\b(move|moves|moving|rotate|turn|fold|slide|open|close|adjust|power|battery|electric|manual|motor|sensor|software)\b/i,
+  operation: /\b(move|moves|moved|moving|rotate|rotates|rotated|rotating|turn|turns|turned|turning|present|presents|presented|presenting|fold|folds|folded|folding|slide|slides|slid|sliding|open|opens|opened|opening|close|closes|closed|closing|adjust|adjusts|adjusted|adjusting|power|powers|powered|powering|battery|electric|manual|motor|sensor|software)\b/i,
   constraint: /\b(safe|safety|risk|weather|heat|weight|cost|limit|strong|strength|waterproof|outdoor|indoor)\b/i,
   difference: /\b(different|better|faster|easier|cheaper|unique|unlike|improvement)\b/i,
 };
@@ -49,7 +55,7 @@ type Category = keyof typeof categoryPatterns;
 
 const conceptFacetPatterns = {
   purposeProblemBenefit: /\b(problem|purpose|benefit|help|helps|prevent|improve|solve|allow|enable|designed|intended|used to|so that|safer|easier)\b/i,
-  operationMovementPower: /\b(operate|operation|work|works|move|moves|moving|rotate|turn|fold|slide|open|close|adjust|power|powered|battery|electric|manual|motor|sensor|software|switch)\b/i,
+  operationMovementPower: /\b(operate|operates|operated|operating|operation|work|works|worked|working|move|moves|moved|moving|rotate|rotates|rotated|rotating|turn|turns|turned|turning|present|presents|presented|presenting|fold|folds|folded|folding|slide|slides|slid|sliding|open|opens|opened|opening|close|closes|closed|closing|adjust|adjusts|adjusted|adjusting|power|powers|powered|powering|battery|electric|manual|motor|sensor|software|switch|switches|switched|switching)\b/i,
   componentsMaterialsAppearance: /\b(has|have|having|include|includes|including|consist|consists|consisting|feature|features|part|component|material|shape|size|tall|wide|long|small|large|mm|cm|metre|meter|inch|foot|feet|colour|color|steel|metal|aluminium|aluminum|plastic|timber|wood|fabric|glass|rubber|light|lights|illuminated|label|labels|face|faces|grip|handle|control|controls)\b/i,
   arrangementProportionRelationship: /\b(arrange|arranged|arrangement|attach|attached|mount|mounted|connect|connected|above|below|behind|rear|front|side|opposing|between|inside|outside|around|perimeter|top|base|proportion|relationship|mm|cm|metre|meter|inch|foot|feet)\b/i,
   userGripControlInteraction: /\b(user|people|person|child|adult|worker|driver|customer|operator|homeowner|inventor|hold|held|grip|handle|carry|portable|press|button|control|controls|interact|interaction)\b/i,
@@ -91,6 +97,9 @@ const missingByBench: Record<WorkshopBenchId, Array<[Category, string]>> = {
   reality: [["constraint", "What real-world limit could most affect whether this succeeds?"], ["user", "Who needs to find this practical to use?"]],
 };
 
+const ENGINEERING_REFERENCE_ALIGNMENT_QUESTION = "Which parts of the reference image should REV keep or change?";
+const referenceRelationshipPattern = /\b(reference|image|photo|sketch)\b[\s\S]*\b(keep|keeps|kept|retain|retains|retained|use|uses|used|change|changes|changed|different|differ|same|match|matches|matched|copy|copies|copied|adapt|adapts|adapted)\b|\b(keep|keeps|kept|retain|retains|retained|use|uses|used|change|changes|changed|different|differ|same|match|matches|matched|copy|copies|copied|adapt|adapts|adapted)\b[\s\S]*\b(reference|image|photo|sketch)\b/i;
+
 function statements(text: string): string[] {
   return text.split(/(?<=[.!?])\s+|\n+/).map((value) => value.trim()).filter(Boolean);
 }
@@ -119,11 +128,19 @@ function workingValue(
   };
 }
 
-export function assessHomeUnderstanding(description: string) {
+export function assessHomeUnderstanding(
+  description: string,
+  visualInterpretation?: Pick<RoutedVisualInterpretation, "factualSummary" | "visualObservations">
+) {
   const text = description.trim();
-  const categories = categoriesFor(text);
-  const score = Math.min(100, Math.round(Math.min(text.length, 240) / 4.8) + categories.length * 8);
-  const ready = text.length >= 100 && categories.length >= 2 || text.length >= 180;
+  const visualText = visualInterpretation
+    ? [visualInterpretation.factualSummary, ...visualInterpretation.visualObservations].join(" ").trim()
+    : "";
+  const assessedText = [text, visualText].filter(Boolean).join(" ");
+  const categories = categoriesFor(assessedText);
+  const score = Math.min(100, Math.round(Math.min(assessedText.length, 240) / 4.8) + categories.length * 8);
+  const contentReady = assessedText.length >= 100 && categories.length >= 2 || assessedText.length >= 180;
+  const ready = Boolean(text) && contentReady;
   const helperQuestion = !categories.includes("purpose")
     ? "What problem should this invention solve?"
     : !categories.includes("operation")
@@ -134,7 +151,15 @@ export function assessHomeUnderstanding(description: string) {
   return { score, ready, helperQuestion };
 }
 
-export function deriveRevWorkingUnderstanding(project: Project, notes: WorkingBenchNotes): RevWorkingUnderstanding {
+export function deriveRevWorkingUnderstanding(
+  project: Project,
+  notes: WorkingBenchNotes,
+  visualInterpretations: RoutedVisualInterpretation[] = []
+): RevWorkingUnderstanding {
+  const sourceImageEvents = project.timeline.filter(
+    (event) => event.type === "knowledge-input-recorded" && event.subject?.startsWith("source-image:")
+  );
+  const sourceImageEventIds = new Set(sourceImageEvents.map((event) => `timeline.${event.id}`));
   const sources: RevWorkingSource[] = [{ id: "project.originalObservation", kind: "original-observation", label: "Original Home description", text: project.originalObservation }];
   project.timeline.forEach((event) => {
     const text = event.response?.trim() || event.description.trim();
@@ -143,20 +168,77 @@ export function deriveRevWorkingUnderstanding(project: Project, notes: WorkingBe
   Object.entries(notes).forEach(([benchId, benchNotes]) => {
     benchNotes?.forEach((note, index) => sources.push({ id: `bench.${benchId}.${index}`, kind: "bench-note", label: `${benchId} bench note: ${note.question}`, text: note.answer }));
   });
+  visualInterpretations.forEach((interpretation) => {
+    const text = [
+      interpretation.factualSummary,
+      ...interpretation.visualObservations,
+      ...interpretation.uncertainties.map((item) => `Visual uncertainty: ${item}`),
+    ].filter(Boolean).join("\n");
+    if (text) sources.push({
+      id: interpretation.evidenceReference,
+      kind: "source-evidence-interpretation",
+      label: "REV interpretation of inventor-supplied visual evidence",
+      text,
+    });
+  });
 
-  const facts = sources.flatMap((source) => statements(source.text).map((text) => ({
-    text,
-    sourceIds: [source.id],
-    categories: categoriesFor(text),
-    conceptFacets: conceptFacetsFor(text),
-  })));
+  const facts = sources.flatMap((source) => statements(source.text)
+    .filter((text) => !text.startsWith("Visual uncertainty:"))
+    .map((text) => {
+      const neutralSourceImageRecord = sourceImageEventIds.has(source.id);
+      return {
+        text,
+        sourceIds: [source.id],
+        sourceKind: source.kind,
+        categories: neutralSourceImageRecord ? [] : categoriesFor(text),
+        conceptFacets: neutralSourceImageRecord ? [] : conceptFacetsFor(text),
+      };
+    }));
+  const authoritativeFacts = facts.filter((fact) => {
+    if (fact.sourceKind === "original-observation" || fact.sourceKind === "bench-note") return true;
+    if (fact.sourceKind !== "timeline") return false;
+    const eventId = fact.sourceIds[0]?.slice("timeline.".length);
+    const event = project.timeline.find((item) => item.id === eventId);
+    return Boolean(event?.response?.trim()) && !sourceImageEventIds.has(fact.sourceIds[0]);
+  });
+  const authoritativeCategories = new Set(authoritativeFacts.flatMap((fact) => fact.categories));
+  const hasReferenceRelationship = Boolean(
+    notes.engineering?.some((note) => note.question === ENGINEERING_REFERENCE_ALIGNMENT_QUESTION && note.answer.trim()) ||
+    project.timeline.some((event) => event.subject === ENGINEERING_REFERENCE_ALIGNMENT_QUESTION && (event.response?.trim() || event.description.trim())) ||
+    authoritativeFacts.some((fact) => referenceRelationshipPattern.test(fact.text))
+  );
+  const hasDerivedVisualFormOrComponents = visualInterpretations.some((interpretation) =>
+    interpretation.visualObservations.some((observation) => observation.trim()) ||
+    [interpretation.factualSummary, ...interpretation.visualObservations].some((text) => {
+      const categories = categoriesFor(text);
+      const facets = conceptFacetsFor(text);
+      return categories.includes("form") || categories.includes("build") ||
+        facets.includes("componentsMaterialsAppearance") || facets.includes("arrangementProportionRelationship");
+    })
+  );
+  const sourceImageFact = sourceImageEvents.length > 0
+    ? [{
+        text: "The inventor supplied a visual reference.",
+        sourceIds: sourceImageEvents.map((event) => `timeline.${event.id}`),
+      }]
+    : [];
   const byBench = Object.fromEntries((Object.keys(benchCategories) as WorkshopBenchId[]).map((benchId) => {
     const relevant = facts.filter((fact) => fact.categories.some((category) => benchCategories[benchId].includes(category)));
-    const known = (relevant.length ? relevant : facts.slice(0, 2)).slice(0, 6).map(({ text, sourceIds }) => ({ text, sourceIds }));
+    const known = [
+      ...(relevant.length ? relevant : facts.slice(0, 2)).slice(0, 6).map(({ text, sourceIds }) => ({ text, sourceIds })),
+      ...sourceImageFact,
+    ].slice(0, 7);
     const available = new Set(relevant.flatMap((fact) => fact.categories));
+    const engineeringReferenceQuestion = benchId === "engineering" &&
+      sourceImageEvents.length > 0 &&
+      hasDerivedVisualFormOrComponents &&
+      authoritativeCategories.has("purpose") &&
+      authoritativeCategories.has("operation");
     const missingQuestion = benchId === "knowledge"
       ? (notes.knowledge?.length ? null : "What would you like to add or correct?")
-      : missingByBench[benchId].find(([category]) => !available.has(category))?.[1] ?? null;
+      : engineeringReferenceQuestion
+        ? (hasReferenceRelationship ? null : ENGINEERING_REFERENCE_ALIGNMENT_QUESTION)
+        : missingByBench[benchId].find(([category]) => !available.has(category))?.[1] ?? null;
     return [benchId, { known, prepared: [preparedByBench[benchId]], missingQuestion, sources }];
   })) as Record<WorkshopBenchId, RevBenchWorkingContext>;
   const constraints = facts

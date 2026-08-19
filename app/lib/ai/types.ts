@@ -65,9 +65,71 @@ export type ConceptBrief = {
 
 export type ConceptBriefSource = {
   field: keyof ConceptBrief;
-  sourceKind: "project-field" | "timeline-event" | "bench-note";
+  sourceKind: "project-field" | "timeline-event" | "bench-note" | "source-evidence-interpretation";
   sourceId: string;
 };
+
+export type VisualUnderstandingRequest = {
+  requestId: string;
+  evidenceReference: string;
+  mediaType: "image/png" | "image/jpeg" | "image/webp";
+  dataUrl: string;
+  inventorDescription?: string;
+};
+
+export type RevImageSafetyLimitation =
+  | "safety-only"
+  | "secure-storage-only"
+  | "lawful-transport-only"
+  | "training-only"
+  | "disabled-replica-only"
+  | "historical-study-only"
+  | "non-weapon-accessory-only"
+  | "containment-only"
+  | "shielding-only"
+  | "hazard-detection-only"
+  | "remote-handling-only"
+  | "emergency-response-only"
+  | "verified-hazard-input-required";
+
+export type RevImageSafetyReceipt = {
+  decision: "CLEAR";
+  imageDigest: string;
+  inventorContextDigest: string;
+  checkedAt: string;
+  policyVersion: 1;
+  limitations: RevImageSafetyLimitation[];
+};
+
+export type RevImageSafetyDecision =
+  | { decision: "CLEAR"; receipt: RevImageSafetyReceipt }
+  | { decision: "HOLD"; question: string }
+  | { decision: "BLOCK" }
+  | { decision: "unavailable"; retryable: boolean };
+
+export type ProviderImageSafetyReport = {
+  available: true;
+  flagged: boolean;
+  immediateBlock: boolean;
+  controlledRisk: "firearm" | "chemical-explosive" | "none";
+  factualSummary: string;
+  visualObservations: string[];
+  uncertainties: string[];
+};
+
+export type VisualUnderstandingResult = {
+  evidenceReference: string;
+  nonAuthoritative: true;
+  createdAt: string;
+  factualSummary: string;
+  visualObservations: string[];
+  uncertainties: string[];
+};
+
+export type VisualUnderstandingApiResponse =
+  | { safety: Extract<RevImageSafetyDecision, { decision: "CLEAR" }>; interpretation: VisualUnderstandingResult }
+  | { safety: Exclude<RevImageSafetyDecision, { decision: "CLEAR" }> }
+  | { error: { code: "invalid-request" | "not-configured" | "unsupported" | "provider-failure"; message: string; retryable: boolean } };
 
 export type ImageConceptOutput = {
   type: "image";
@@ -125,6 +187,13 @@ export type ConceptGenerationRequest = {
   sourceEventIds: string[];
   sourceTrace: ConceptBriefSource[];
   briefVersion: 1;
+  safetyLimitations?: RevImageSafetyLimitation[];
+  referenceImage?: {
+    evidenceReference: string;
+    sourceEventId: string;
+    mediaType: "image/png" | "image/jpeg" | "image/webp";
+    dataUrl: string;
+  };
 };
 
 export type ConceptRefinementRequest = {
@@ -141,6 +210,7 @@ export type ConceptRefinementRequest = {
   sourceEventIds: string[];
   sourceTrace: ConceptBriefSource[];
   briefVersion: 1;
+  safetyLimitations?: RevImageSafetyLimitation[];
   inventorRefinement: string;
   sourceVisualDesignSnapshot?: ConceptVisualDesignSnapshot;
   sourceImage: {
@@ -181,10 +251,16 @@ export type ConceptGenerationErrorCode =
   | "invalid-request"
   | "unsupported-mode"
   | "not-configured"
-  | "provider-failure";
+  | "provider-failure"
+  | "safety-hold"
+  | "safety-block"
+  | "safety-unavailable";
 
 export type ConceptGenerationApiResponse =
-  | { candidate: ConceptCandidate }
+  | {
+      candidate: ConceptCandidate;
+      referenceUsage?: "used" | "unsupported";
+    }
   | {
       error: {
         code: ConceptGenerationErrorCode;
@@ -199,7 +275,14 @@ export type ConceptViewAssetApiResponse =
   | Exclude<ConceptGenerationApiResponse, { candidate: ConceptCandidate }>;
 
 export interface ConceptGenerationProvider {
+  readonly supportsReferenceImages: boolean;
   generateConcept(request: ConceptGenerationRequest): Promise<ConceptCandidate>;
   refineConcept(request: ConceptRefinementRequest): Promise<ConceptCandidate>;
   generateViewAsset(request: ConceptViewAssetRequest): Promise<ConceptImageView>;
+}
+
+export interface VisualUnderstandingProvider {
+  readonly supportsVisualUnderstanding: boolean;
+  understandImage(request: VisualUnderstandingRequest): Promise<VisualUnderstandingResult>;
+  inspectImageSafety(request: VisualUnderstandingRequest): Promise<ProviderImageSafetyReport>;
 }

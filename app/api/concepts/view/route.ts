@@ -1,4 +1,4 @@
-import type { ConceptViewAssetApiResponse, ConceptViewAssetRequest } from "../../../lib/ai/types";
+import type { ConceptGenerationErrorCode, ConceptViewAssetApiResponse, ConceptViewAssetRequest } from "../../../lib/ai/types";
 import { ConceptGenerationServiceError, generateViewAsset } from "../../../lib/ai/aiService.server";
 
 export const runtime = "nodejs";
@@ -15,7 +15,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ view: await generateViewAsset(parsed) } satisfies ConceptViewAssetApiResponse);
   } catch (error) {
     if (error instanceof ConceptGenerationServiceError) {
-      return errorResponse(error.code, error.message, error.retryable, error.code === "not-configured" ? 503 : error.code === "unsupported-mode" ? 422 : 502);
+      return errorResponse(error.code, error.message, error.retryable, error.code === "not-configured" || error.code === "safety-unavailable" ? 503 : error.code === "unsupported-mode" || error.code === "safety-hold" || error.code === "safety-block" ? 422 : 502);
     }
     return errorResponse("provider-failure", "View generation could not complete.", true, 500);
   }
@@ -33,6 +33,6 @@ function isViewAssetRequest(value: unknown): value is ConceptViewAssetRequest {
 
 function shortText(value: unknown): value is string { return typeof value === "string" && value.trim().length > 0 && value.length <= 240; }
 function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
-function errorResponse(code: "invalid-request" | "unsupported-mode" | "not-configured" | "provider-failure", message: string, retryable: boolean, status: number): Response {
+function errorResponse(code: ConceptGenerationErrorCode, message: string, retryable: boolean, status: number): Response {
   return Response.json({ error: { code, message, retryable } } satisfies ConceptViewAssetApiResponse, { status });
 }

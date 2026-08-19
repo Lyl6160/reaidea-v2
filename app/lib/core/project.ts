@@ -260,6 +260,28 @@ export function createProject(input: CreateProjectInput): Project {
   };
 }
 
+export function recordHomeSourceImage(project: Project, reference: string): Project {
+  const cleanReference = reference.trim();
+  if (!cleanReference || project.files.includes(cleanReference)) return project;
+  const now = new Date().toISOString();
+  return {
+    ...project,
+    files: [...project.files, cleanReference],
+    timeline: [
+      ...project.timeline,
+      {
+        id: createId(),
+        type: "knowledge-input-recorded",
+        title: "Home reference image supplied",
+        description: "The inventor supplied a visual reference with the Home description.",
+        subject: cleanReference,
+        createdAt: now,
+      },
+    ],
+    updatedAt: now,
+  };
+}
+
 function createProjectName(observation: string): string {
   const firstSentence = observation.split(/[.!?]/)[0]?.trim() || "";
   const source = firstSentence || observation.trim();

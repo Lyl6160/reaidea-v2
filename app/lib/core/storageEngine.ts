@@ -41,9 +41,9 @@ const LEGACY_PROJECT_KEYS = [
   "reaidea-project-core",
 ];
 
-export function saveProject(project: Project): void {
+export function saveProject(project: Project): boolean {
   if (typeof window === "undefined") {
-    return;
+    return false;
   }
 
   try {
@@ -54,13 +54,28 @@ export function saveProject(project: Project): void {
     }
 
     window.dispatchEvent(new Event(STORAGE_EVENT));
+    return true;
   } catch (error) {
     console.error("Could not save the reAIdea Project.", error);
+    return false;
   }
 }
 
 export function loadProject(): Project | null {
   return parseProjectSnapshot(getProjectStorageSnapshot());
+}
+
+export function removeProjectIfCurrent(projectId: string): boolean {
+  if (typeof window === "undefined") return false;
+  const current = loadProject();
+  if (current?.id !== projectId) return false;
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+    window.dispatchEvent(new Event(STORAGE_EVENT));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function clearProject(): void {
