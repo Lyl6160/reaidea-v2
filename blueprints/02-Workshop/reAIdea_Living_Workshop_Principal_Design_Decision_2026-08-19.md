@@ -17,6 +17,20 @@ It supersedes any interpretation that the Workshop may ship as a flat, schematic
 
 Future walkthroughs identify bugs, defects, usability problems, and implementation differences. They do not replace or redefine this principal vision without explicit human approval.
 
+## Accepted subordinate runtime neutral plate
+
+The accepted [Living Workshop runtime neutral plate](../../public/images/reaidea-living-workshop-runtime-neutral-plate-2026-08-19.png) is preserved for later Build 3 runtime implementation.
+
+- SHA-256: `416D952ABAF3D2C5AD2B3F0A84E4F8F27CC07FFA590F1F394B48395A3DBEA491`
+- Size: 1,951,396 bytes
+- Dimensions: 1672 × 941 PNG
+- Runtime path: `public/images/reaidea-living-workshop-runtime-neutral-plate-2026-08-19.png`
+- External archive: `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_Living_Workshop_Runtime_Neutral_Plate_Accepted_2026-08-19.png`
+
+This neutral plate is subordinate to the principal north star. It preserves the realistic eight-bench room, central 3D presentation stage, and realistic foreground console without becoming a flattened substitute for live application truth.
+
+Project wording, Concept imagery and model, REV, bench labels, statuses, guidance, questions, navigation, save actions, and controls remain live accessible overlays. Preserving this asset does not begin Build 3 runtime implementation. Build 4 remains blocked.
+
 ## Rejected schematic implementation
 
 Commit `087778c91002bf0f9144cf77f3573311d967fa04` is rejected as the final user-facing visual design because its schematic CSS presentation does not satisfy this principal authority.

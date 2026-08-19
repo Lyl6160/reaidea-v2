@@ -909,6 +909,17 @@ The main construction branch has been returned with `git reset --keep` to the pu
 - Walkthroughs assess bugs, usability, implementation differences, and correspondence with this authority. Plumbing and responsive stacking alone cannot establish visual acceptance or redefine the principal vision.
 - HP-24.38 safety, Project truth, Concept, evidence, provider, VisualDesignSnapshot, ConceptGeometry, and safe 3D boundaries remain unchanged.
 
+### Accepted Runtime Neutral Plate
+
+- The accepted [Living Workshop runtime neutral plate](public/images/reaidea-living-workshop-runtime-neutral-plate-2026-08-19.png) is preserved at `public/images/reaidea-living-workshop-runtime-neutral-plate-2026-08-19.png`.
+- SHA-256: `416D952ABAF3D2C5AD2B3F0A84E4F8F27CC07FFA590F1F394B48395A3DBEA491`.
+- Size: 1,951,396 bytes.
+- Dimensions: 1672 × 941 PNG.
+- Its byte-identical accepted archive copy is `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_Living_Workshop_Runtime_Neutral_Plate_Accepted_2026-08-19.png`.
+- The plate is subordinate to the principal north star and preserves the realistic eight-bench room, central 3D stage, and foreground console.
+- Project, Concept, REV, bench labels, statuses, guidance, questions, navigation, save actions, and controls remain live accessible overlays.
+- Asset preservation does not begin Build 3 runtime implementation. Build 4 remains blocked.
+
 ### Existing Prototype 3D Audit
 
 - `app/workshop/Prototype3DViewer.tsx` was introduced by `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` and remains current and conditionally mounted through `RollingBenchFlow`.
