@@ -5,9 +5,9 @@
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 1 COMPLETE / COMMIT PENDING
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 2 READY FOR COMMIT REVIEW
 
-**Current authorised activity:** HP-24.39 Build 1 — Runtime Visual Foundation closeout and commit
+**Current authorised construction step:** HP-24.39 Build 2 — Final Validation and Closeout
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,18 +15,18 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 1 COMPLETE / COMMIT PENDING
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 2 READY FOR COMMIT REVIEW
 
 Authoritative starting baseline:
 
 - `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 - branch `sprint006-build24-39-home-workshop-visual-integration`
 
-Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation construction is complete and provider-free validation passed.
+Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`.
 
-The runtime Home authority is byte-identical to the approved blueprint authority at SHA-256 `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`. The shared `ReAIdeaIdentity` foundation contains accessible live `reAIdea`, `REV`, `REALISE • ENGINEER • VALIDATE`, and `AI Engineering Partner` identity. The component remains unmounted, so there is no visible application change.
+Build 2 — Home Environment and Doorway construction and available human visual validation are complete. Its scope remains limited to a presentation-only Home shell, the approved runtime Home authority, live wall identity, bright doorway continuity, and minimal wrapping of the existing live Home interface. Build 2 is ready for commit review.
 
-Home integration has not begun. Workshop integration has not begun. Build 2 remains blocked until the Build 1 commit is reviewed, committed, pushed, and explicitly authorised. Builds 3–4 remain blocked. Provider-backed testing was not required or performed.
+Workshop implementation has not begun. Build 3 remains blocked until Build 2 is committed, pushed, and explicitly authorised. Build 4 retains the final deliberate CLEAR and Concept acceptance gate. Home behavior and all HP-24.38 safety, Project-entry, evidence, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -857,8 +857,37 @@ This preservation commit authorises no runtime visual implementation by itself.
 
 **Starting baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
-HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation construction is complete and provider-free validation passed.
+HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`.
 
-The approved Home runtime authority remains byte-identical at SHA-256 `48E7DBABA287D61691CED8AF714E3CC1B1AFF4A3EA068B13F3A38DE58BDEEF82`. The unmounted shared identity foundation supplies accessible live `reAIdea`, `REV`, `REALISE • ENGINEER • VALIDATE`, and `AI Engineering Partner` wording through component-scoped styling. There is no visible application change.
+Build 2 — Home Environment and Doorway construction and available human visual validation are complete. It remains limited to the presentation-only Home shell, approved runtime Home authority, live wall identity, bright doorway continuity, and minimal Home wrapping.
 
-Home and Workshop integration have not begun. Build 2 remains blocked until the Build 1 commit is reviewed, committed, pushed, and explicitly authorised. Builds 3–4 remain blocked. Provider-backed testing was not required or performed. Build 1 has not yet been committed or pushed.
+### Build 2 Accepted Visual Results
+
+- Desktop default state: PASS
+- Desktop unchecked attachment state: PASS
+- Desktop unavailable state: PASS
+- Tablet at approximately 760 × 900: PASS
+- Mobile at approximately 390 × 844: PASS
+- Approved REV environment and bright doorway: PASS
+- Live unboxed `reAIdea` / REV wall identity: PASS
+- Wider, shorter form composition: PASS
+- Initial state fits without scrolling: PASS
+- Longer states retain natural scrolling: PASS
+- No human host or old dark doorway: PASS
+- No horizontal overflow observed: PASS
+
+### External Issues
+
+The visible `blockPopupsFunc` / `popups-script.js` issue originates from a Chrome extension. It is not an application-origin Build 2 error, and no repository workaround was added.
+
+### Provider-Backed CLEAR Limitation
+
+Three deliberate `/api/understanding/image` requests reached the server. Each returned HTTP 502, in 1846 ms, 1583 ms, and 1492 ms respectively. The three requests attempted six provider operations in total and produced the same safe diagnostic: `Visual-understanding provider failed. Error`.
+
+There was no hidden retry, no Concept generate/refine/view request, no Workshop entry, and no Project, evidence, or candidate persistence. The unavailable UI behaved correctly. The third request used a different valid reference image and did not change the failure boundary. The exact provider substage remains unprovable from the bounded diagnostic.
+
+The repeated failure is classified as an external/provider acceptance blocker, not a visual-layout defect. Live CLEAR-state visual confirmation is deferred and remains mandatory before final HP-24.39 closeout. No further provider testing is authorised during Build 2 closeout.
+
+### Build 2 Status
+
+Build 2 construction and available human visual validation are complete. Build 2 is ready for commit review. Build 3 remains blocked until Build 2 is committed, pushed, and explicitly authorised. Build 4 retains the final deliberate CLEAR and Concept acceptance gate. HP-24.38 behavioral and safety boundaries remain unchanged.
