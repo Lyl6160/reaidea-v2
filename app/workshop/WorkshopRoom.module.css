@@ -1,0 +1,1681 @@
+.workshopRoom {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  color: #f3f9fb;
+}
+
+.panorama {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1672 / 941;
+  overflow: visible;
+  border: 1px solid rgba(198, 218, 226, 0.42);
+  border-radius: 22px;
+  background: #12191d;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.48);
+}
+
+.workshopPlate {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.architecturalHeader {
+  position: absolute;
+  z-index: 5;
+  inset: 1.5% 2.1% auto;
+  min-height: 11.5%;
+  pointer-events: none;
+}
+
+.liveIdentity,
+.activeProject,
+.revIdentity {
+  position: absolute;
+  top: 0;
+}
+
+.liveIdentity {
+  left: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.liveIdentity strong {
+  color: #f4f7f8;
+  font: 800 clamp(20px, 2.3vw, 39px) / 0.92 Arial, sans-serif;
+  letter-spacing: -0.06em;
+  text-shadow: 0 2px 16px #000;
+}
+
+.liveIdentity .ai { color: #6ee3a4; }
+
+.liveIdentity small,
+.activeProject span,
+.activeProject small,
+.revIdentity small {
+  color: #c9d5d8;
+  font: 750 clamp(6px, 0.62vw, 10px) / 1.2 Arial, sans-serif;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px #000;
+}
+
+.activeProject {
+  left: 18%;
+  display: grid;
+  width: 28%;
+  max-width: 28%;
+  gap: 3px;
+  padding-left: 2%;
+  border-left: 1px solid rgba(210, 228, 232, 0.38);
+}
+
+.activeProject strong {
+  display: -webkit-box;
+  max-height: 2.3em;
+  overflow: hidden;
+  color: #fff;
+  font: 800 clamp(10px, 1.25vw, 20px) / 1.12 Arial, sans-serif;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 14px #000;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activeProject small { color: #75e29f; }
+
+.revIdentity {
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  transform: translateX(-50%);
+}
+
+.revPortrait {
+  position: relative;
+  display: grid;
+  width: clamp(50px, 5.3vw, 88px);
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid #dffaff;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(39, 143, 188, 0.42), rgba(2, 13, 24, 0.94));
+  box-shadow: 0 0 0 3px rgba(83, 207, 239, 0.17), 0 0 24px rgba(83, 207, 239, 0.58);
+}
+
+.revPortrait img {
+  width: 94%;
+  height: 94%;
+  object-fit: contain;
+  object-position: 50% 18%;
+}
+
+.revIdentity > strong {
+  margin-top: 4px;
+  color: #fff;
+  font: 900 clamp(8px, 0.8vw, 13px) / 1 Arial, sans-serif;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 9px #000;
+}
+
+.desktopBenchMap {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  pointer-events: none;
+}
+
+.benchPlaque {
+  position: absolute;
+  top: 20.2%;
+  display: grid;
+  min-width: 0;
+  min-height: clamp(32px, 3.15vw, 48px);
+  align-content: center;
+  gap: 2px;
+  padding: clamp(3px, 0.38vw, 6px);
+  border: 1px solid rgba(224, 214, 191, 0.5);
+  border-radius: 4px;
+  background: linear-gradient(145deg, rgba(30, 36, 38, 0.84), rgba(50, 53, 52, 0.68));
+  color: #f7fbfb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 -1px rgba(224, 189, 124, 0.2);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.benchPlaque:hover {
+  border-color: rgba(141, 228, 239, 0.88);
+  background: linear-gradient(145deg, rgba(15, 42, 49, 0.94), rgba(39, 61, 65, 0.85));
+}
+
+.benchPlaque:focus-visible,
+.compactBench:focus-visible,
+.consoleHeader button:focus-visible {
+  outline: 3px solid #f6d582;
+  outline-offset: 3px;
+}
+
+.benchPlaque[data-bench="knowledge"] { left: 1.5%; width: 12%; }
+.benchPlaque[data-bench="engineering"] { left: 15.4%; width: 14.1%; }
+.benchPlaque[data-bench="prototype"] { left: 30.3%; width: 10.7%; }
+.benchPlaque[data-bench="validation"] { left: 55.5%; width: 8.5%; }
+.benchPlaque[data-bench="patent"] { left: 64.7%; width: 8.1%; }
+.benchPlaque[data-bench="manufacturing"] { left: 73.5%; width: 9.2%; }
+.benchPlaque[data-bench="marketing"] { left: 83.2%; width: 8%; }
+.benchPlaque[data-bench="reality"] { left: 91.7%; width: 7.7%; }
+
+.benchName {
+  min-width: 0;
+  font: 900 clamp(6px, 0.65vw, 10px) / 1 Arial, sans-serif;
+  letter-spacing: 0.025em;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+.benchPlaque[data-bench="manufacturing"] .benchName {
+  font-size: clamp(5px, 0.54vw, 8px);
+  letter-spacing: 0;
+}
+
+.benchMarkers {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 4px;
+}
+
+.benchMarkers b {
+  overflow: hidden;
+  color: #aab8ba;
+  font: 850 clamp(4px, 0.42vw, 7px) / 1 Arial, sans-serif;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.benchPlaque[data-progress="green"] .benchMarkers > b:not(.activeMarker):not(.viewingMarker):not(.recommendedMarker) { color: #7ee5a2; }
+.benchPlaque[data-progress="yellow"] .benchMarkers > b:not(.activeMarker):not(.viewingMarker):not(.recommendedMarker) { color: #f1c56e; }
+.benchPlaque[data-progress="red"] .benchMarkers > b:not(.activeMarker):not(.viewingMarker):not(.recommendedMarker) { color: #f2968e; }
+
+.selected {
+  border-color: #76edff;
+  background: linear-gradient(145deg, rgba(6, 49, 63, 0.98), rgba(16, 91, 111, 0.9));
+  box-shadow: 0 0 0 1px rgba(118, 237, 255, 0.28), 0 0 18px rgba(61, 210, 242, 0.38);
+}
+
+.viewingDormant {
+  border-color: #91ccd5;
+  background: linear-gradient(145deg, rgba(16, 39, 46, 0.96), rgba(28, 62, 70, 0.88));
+  box-shadow: 0 0 0 1px rgba(145, 204, 213, 0.24), 0 0 14px rgba(87, 176, 190, 0.24);
+}
+
+.recommended:not(.selected) {
+  border-color: #d8aa56;
+  box-shadow: 0 0 0 1px rgba(216, 170, 86, 0.28), 0 0 22px rgba(216, 170, 86, 0.38);
+}
+
+.activeMarker { color: #8ef3ff !important; }
+.viewingMarker { color: #bce9ef !important; }
+.recommendedMarker { color: #f2c16b !important; }
+
+.centralStage {
+  position: absolute;
+  z-index: 4;
+  top: 33.5%;
+  left: 41.5%;
+  width: 17%;
+  min-width: 0;
+  color: #eafcff;
+}
+
+.prototypeStage {
+  top: 28%;
+  left: 34.5%;
+  width: 31%;
+}
+
+.stageHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #a8f4ff;
+  font: 900 clamp(5px, 0.55vw, 9px) / 1 Arial, sans-serif;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 8px #000;
+}
+
+.stageHeading small {
+  color: #d6b979;
+  font-size: 0.86em;
+}
+
+.stageContent { min-width: 0; }
+
+.stageContent > :global(.workshop-stage-empty) {
+  display: grid;
+  min-height: clamp(52px, 5vw, 78px);
+  align-content: center;
+  gap: 5px;
+  padding: clamp(6px, 0.65vw, 10px);
+  border: 1px solid rgba(139, 224, 233, 0.34);
+  border-radius: 6px;
+  background: rgba(8, 21, 25, 0.5);
+  box-shadow: 0 0 18px rgba(72, 211, 226, 0.11);
+  color: #c9f6fa;
+  text-align: center;
+}
+
+.stageContent > :global(.workshop-stage-empty) strong {
+  font: 900 clamp(6px, 0.56vw, 9px) / 1 Arial, sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.stageContent > :global(.workshop-stage-empty) span {
+  color: #adbec1;
+  font: 700 clamp(5px, 0.48vw, 8px) / 1.25 Arial, sans-serif;
+}
+
+.stageContent > :global(.concept-preview) {
+  width: 100%;
+  padding: 5px;
+  border-color: rgba(137, 233, 242, 0.36);
+  border-radius: 8px;
+  background: rgba(4, 15, 19, 0.72);
+  box-shadow: 0 0 24px rgba(77, 221, 236, 0.19);
+}
+
+.stageContent :global(.concept-preview-heading),
+.stageContent :global(.concept-preview-copy),
+.stageContent :global(.concept-preview > small) { display: none; }
+
+.stageContent :global(.concept-candidate-preview),
+.stageContent :global(.concept-field) {
+  height: clamp(85px, 10.5vw, 175px);
+  margin: 0;
+}
+
+.stageContent :global(.first-concept-generation-status) {
+  margin: 4px 0 0;
+  color: #b8cbcf;
+  font-size: clamp(5px, 0.5vw, 8px);
+  text-align: center;
+}
+
+.stageLoading {
+  display: grid;
+  min-height: clamp(150px, 18vw, 280px);
+  margin: 0;
+  place-items: center;
+  border: 1px solid rgba(111, 223, 239, 0.36);
+  background: rgba(4, 13, 20, 0.78);
+  color: #c5eaf0;
+  font-size: 11px;
+}
+
+.compactBenchSelector { display: none; }
+
+.foregroundConsole {
+  position: relative;
+  z-index: 8;
+  width: 100%;
+  margin: -56.28% 0 0;
+  padding: 56.28% 0 0;
+  container-type: inline-size;
+  pointer-events: none;
+}
+
+.consoleHeader {
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.consoleWorkingState {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.consoleStatus span {
+  color: #7be9f8;
+  font: 900 10px / 1 Arial, sans-serif;
+  letter-spacing: 0.11em;
+}
+
+.consoleWorkingState strong {
+  overflow: hidden;
+  color: #f4fbfc;
+  font: 900 clamp(9px, 0.78vw, 13px) / 1.15 Arial, sans-serif;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 5px #000, 0 0 8px #000;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.consoleStatus {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+}
+
+.consoleStatus span {
+  color: #ffaaa2;
+  font-size: clamp(7px, 0.55vw, 9px);
+  text-shadow: 0 1px 5px #000, 0 0 8px #000;
+}
+
+.consoleContent { min-width: 0; }
+
+.consoleContent > :global(.bench-readout),
+.consoleContent > :global(.prototype-focused-workspace) {
+  max-width: none;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.consoleContent > :global(.active-bench-workspace) {
+  display: block;
+}
+
+.consoleContent :global(.rolling-bench-flow) {
+  overflow: visible;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.consoleContent :global(.rolling-bench-flow > header) {
+  display: block;
+  padding: 6px 3%;
+  border: 0;
+  background: transparent;
+}
+
+.consoleContent :global(.rolling-bench-flow > header span),
+.consoleContent :global(.rolling-bench-flow > header h2),
+.consoleContent :global(.rolling-bench-flow > header > b) {
+  display: none;
+}
+
+.consoleContent :global(.rolling-bench-flow > header p) {
+  max-width: none;
+  margin: 0;
+  color: #bfd0d5;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.consoleContent :global(.rev-bench-reason) {
+  color: #cad7d9;
+}
+
+.consoleContent :global(.rev-next-move) {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(103, 216, 231, 0.24);
+}
+
+.consoleContent :global(.rev-next-move span),
+.consoleContent :global(.rev-next-move strong) {
+  display: block;
+}
+
+.consoleContent :global(.rev-next-move strong) {
+  margin-top: 5px;
+  color: #f1f7f8;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.consoleContent :global(.prototype-console-status),
+.consoleContent :global(.bench-console-status) {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(97, 210, 230, 0.2);
+  background: #081116;
+}
+
+.consoleContent :global(.console-design-status) {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.consoleContent :global(.console-design-status > strong) {
+  color: #d9f8fb;
+}
+
+.consoleContent :global(.console-design-status > span) {
+  color: #a9bec2;
+  line-height: 1.4;
+}
+
+.consoleContent :global(.console-design-status dl) {
+  display: grid;
+  gap: 5px;
+  margin: 3px 0 0;
+}
+
+.consoleContent :global(.console-design-status dl > div) {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 8px;
+}
+
+.consoleContent :global(.console-design-status dt),
+.consoleContent :global(.console-design-status dd) {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.consoleContent :global(.console-design-status dt) {
+  color: #7fd7e2;
+  font-weight: 800;
+}
+
+.consoleContent :global(.console-design-status dd) {
+  color: #d5e4e6;
+  text-align: right;
+}
+
+.consoleContent :global(.rev-question-supporting-copy) { display: none; }
+
+.consoleContent :global(.inventor-correction-layout) {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.consoleContent :global(.inventor-correction-toolbar) {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.consoleContent :global(.inventor-correction-toolbar label) {
+  color: #8cecf7;
+  font: 900 12px / 1.25 Arial, sans-serif;
+  letter-spacing: 0.045em;
+}
+
+.consoleContent :global(.inventor-correction-layout > textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid rgba(122, 215, 228, 0.5);
+  border-radius: 5px;
+  background: rgba(1, 11, 15, 0.84);
+  color: #f2fcfd;
+  font: 700 15px / 1.4 Arial, sans-serif;
+}
+
+.consoleContent :global(.inventor-correction-layout > textarea::placeholder) {
+  color: #a9bec2;
+  opacity: 1;
+}
+
+.consoleContent :global(.inventor-correction-layout > textarea:focus-visible) {
+  outline: 2px solid #8cecf7;
+  outline-offset: 1px;
+  border-color: #8cecf7;
+}
+
+.consoleContent :global(.inventor-boundary-copy) {
+  color: #a9bec2;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (min-width: 1101px) {
+  .consoleHeader {
+    position: absolute;
+    z-index: 14;
+    top: 31.65cqw;
+    left: 8.1%;
+    width: 81.2%;
+    min-height: 1.55cqw;
+    gap: 1.2cqw;
+    padding: 0 0.55cqw;
+    pointer-events: none;
+  }
+
+  .consoleWorkingState strong {
+    font-size: clamp(8px, 0.72cqw, 12px);
+    text-shadow: 0 1px 4px #000, 0 0 9px rgba(88, 222, 242, 0.28);
+  }
+
+  .consoleStatus span {
+    font-size: clamp(7px, 0.57cqw, 10px);
+  }
+
+  .silverConsoleControl {
+    position: absolute;
+    z-index: 16;
+    top: 48.22cqw;
+    left: 50.34%;
+    width: 18.85%;
+    height: 4.05cqw;
+    min-height: 42px;
+    margin: 0;
+    padding: 0.4cqw 1cqw;
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(4% 4%, 96% 2%, 100% 88%, 1% 100%);
+    background: linear-gradient(180deg, rgba(196, 211, 214, 0.22), rgba(38, 54, 59, 0.46));
+    box-shadow: inset 0 0 0 1px rgba(222, 244, 247, 0.2), inset 0 0 18px rgba(126, 231, 244, 0.12);
+    color: #eefcff;
+    font: 900 clamp(11px, 0.72cqw, 12px) / 1.1 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 5px #000;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .silverConsoleControl:hover {
+    background: linear-gradient(180deg, rgba(206, 230, 234, 0.34), rgba(43, 75, 83, 0.58));
+    box-shadow: inset 0 0 0 1px rgba(222, 249, 252, 0.38), inset 0 0 22px rgba(104, 229, 247, 0.2);
+  }
+
+  .silverConsoleControl:focus-visible {
+    outline: 3px solid #a9f5ff;
+    outline-offset: -5px;
+  }
+
+  .consoleContent,
+  .consoleContent > :global(.bench-readout),
+  .consoleContent > :global(.active-bench-workspace),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"]),
+  .consoleContent :global(.command-console-flow),
+  .consoleContent :global(.prototype-rolling-flow) {
+    position: static;
+    display: block;
+  }
+
+  .consoleContent > :global(.bench-readout) {
+    margin: 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"]) {
+    min-width: 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > header) {
+    padding: 14px 1.5% 6px;
+    border-top: 1px solid rgba(141, 150, 149, 0.18);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .rev-working-context) {
+    display: contents;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design),
+  .consoleContent :global(.command-console-flow > .bench-console-status),
+  .consoleContent :global(.prototype-rolling-flow > .prototype-console-status),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen) {
+    position: absolute;
+    z-index: 13;
+    min-width: 0;
+    overflow: hidden;
+    padding: clamp(10px, 0.72cqw, 12px);
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(165deg, rgba(2, 14, 19, 0.86), rgba(5, 29, 36, 0.74));
+    box-shadow: inset 0 0 0 1px rgba(139, 229, 241, 0.18), inset 0 0 20px rgba(69, 202, 220, 0.12);
+    color: #d9e8ea;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known) {
+    top: 34.02cqw;
+    left: 8.28%;
+    width: 16.82%;
+    height: 12.78cqw;
+    clip-path: polygon(2% 0, 98% 0, 100% 97%, 0 100%);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared) {
+    top: 34.04cqw;
+    left: 50.48%;
+    width: 17.82%;
+    height: 12.72cqw;
+    clip-path: polygon(1.5% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move) {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-content: stretch;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design),
+  .consoleContent :global(.command-console-flow > .bench-console-status),
+  .consoleContent :global(.prototype-rolling-flow > .prototype-console-status),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen) {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #55c8d8 rgba(4, 16, 21, 0.72);
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    touch-action: pan-y;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body) {
+    min-height: 0;
+    padding-right: 4px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body:focus-visible),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move:focus-visible),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design:focus-visible),
+  .consoleContent :global(.command-console-flow > .bench-console-status:focus-visible),
+  .consoleContent :global(.prototype-rolling-flow > .prototype-console-status:focus-visible),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen:focus-visible) {
+    outline: 2px solid #8defff;
+    outline-offset: -3px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body::-webkit-scrollbar),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move::-webkit-scrollbar),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design::-webkit-scrollbar),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen::-webkit-scrollbar) {
+    width: 8px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body::-webkit-scrollbar-track),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move::-webkit-scrollbar-track),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design::-webkit-scrollbar-track),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen::-webkit-scrollbar-track) {
+    background: rgba(4, 16, 21, 0.72);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-scroll-body::-webkit-scrollbar-thumb),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move::-webkit-scrollbar-thumb),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design::-webkit-scrollbar-thumb),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen::-webkit-scrollbar-thumb) {
+    border: 2px solid rgba(4, 16, 21, 0.72);
+    border-radius: 999px;
+    background: #55c8d8;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known > span),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared > span),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move > span),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .engineering-visible-design-heading > span),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen > span) {
+    display: block;
+    margin: 0 0 clamp(5px, 0.4cqw, 7px);
+    color: #8cecf7;
+    font: 900 clamp(12px, 0.76cqw, 13px) / 1.15 Arial, sans-serif;
+    letter-spacing: 0.045em;
+    line-height: 1.15;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(86, 220, 239, 0.24);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known ul) {
+    display: grid;
+    min-height: 0;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known li p) {
+    margin: 0;
+    color: #d5e0e2;
+    font-size: clamp(14px, 0.86cqw, 15px);
+    font-weight: 650;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known li small) {
+    margin-top: clamp(3px, 0.28cqw, 5px);
+    color: #a5bdc1;
+    font-size: clamp(10px, 0.64cqw, 11px);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-known li + li) {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(109, 211, 225, 0.18);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared .rev-screen-scroll-body > p) {
+    margin: 0;
+    color: #d5e2e4;
+    font-size: clamp(14px, 0.86cqw, 15px);
+    font-weight: 650;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-prepared .rev-screen-scroll-body > p + p) {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(109, 211, 225, 0.18);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-more) {
+    align-self: end;
+    margin: 4px 0 0;
+    color: #75c8d3;
+    font: 850 clamp(10px, 0.62cqw, 11px) / 1.2 Arial, sans-serif;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move) {
+    top: 34.34cqw;
+    left: 69.92%;
+    width: 19.02%;
+    height: 12.3cqw;
+    margin: 0;
+    clip-path: polygon(2% 0, 98% 1%, 100% 97%, 0 100%);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-next-move strong) {
+    align-self: center;
+    margin: 0;
+    color: #f0f7f8;
+    font-size: clamp(14px, 0.92cqw, 16px);
+    font-weight: 750;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 30px);
+    margin-top: 0;
+    padding: 16px 1.5% 8px;
+    border-top: 1px solid rgba(141, 150, 149, 0.28);
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation > div) {
+    min-width: 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation span) {
+    color: #6fdbe9;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 0.09em;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation ul) {
+    margin: 9px 0 0;
+    padding-left: 18px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation li),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation p) {
+    margin: 7px 0 0;
+    color: #c9d5d7;
+    font-size: 11px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-context-continuation small) {
+    color: #84999e;
+    font-size: 8px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .source-evidence-panel) {
+    padding-block: 8px;
+    border-top: 1px solid rgba(126, 149, 153, 0.24);
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .engineering-visible-design) {
+    top: 34.02cqw;
+    left: 25.58%;
+    display: grid;
+    width: 22.98%;
+    height: 12.78cqw;
+    align-content: center;
+    clip-path: polygon(1% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.prototype-rolling-flow > .prototype-console-status) {
+    top: 34.02cqw;
+    left: 25.58%;
+    display: grid;
+    width: 22.98%;
+    height: 12.78cqw;
+    align-content: start;
+    clip-path: polygon(1% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.command-console-flow > .bench-console-status) {
+    top: 34.02cqw;
+    left: 25.58%;
+    display: grid;
+    width: 22.98%;
+    height: 12.78cqw;
+    align-content: start;
+    clip-path: polygon(1% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .engineering-visible-design-heading) {
+    display: block;
+    margin: 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .engineering-visible-design-heading > small) {
+    display: none;
+  }
+
+  .consoleContent :global(.prototype-rolling-flow .engineering-visible-design-heading > small) {
+    display: none;
+  }
+
+  .consoleContent :global(.command-console-flow .engineering-visible-design-heading > small) {
+    display: none;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .first-concept-generation-status) {
+    margin: clamp(3px, 0.3cqw, 5px) 0 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #9ec4ca;
+    font-size: clamp(10px, 0.64cqw, 11px);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .consoleContent :global(.engineering-visible-design .console-design-status),
+  .consoleContent :global(.bench-console-status .console-design-status),
+  .consoleContent :global(.prototype-console-status .console-design-status) {
+    gap: clamp(4px, 0.34cqw, 6px);
+  }
+
+  .consoleContent :global(.engineering-visible-design .console-design-status > strong),
+  .consoleContent :global(.bench-console-status .console-design-status > strong),
+  .consoleContent :global(.prototype-console-status .console-design-status > strong) {
+    color: #e0fafc;
+    font-size: clamp(14px, 0.86cqw, 15px);
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .consoleContent :global(.engineering-visible-design .console-design-status > span),
+  .consoleContent :global(.bench-console-status .console-design-status > span),
+  .consoleContent :global(.prototype-console-status .console-design-status > span) {
+    font-size: clamp(13px, 0.8cqw, 14px);
+    line-height: 1.38;
+    text-align: center;
+  }
+
+  .consoleContent :global(.engineering-visible-design .console-design-status dl),
+  .consoleContent :global(.bench-console-status .console-design-status dl),
+  .consoleContent :global(.prototype-console-status .console-design-status dl) {
+    gap: clamp(3px, 0.25cqw, 4px);
+    margin-top: clamp(3px, 0.26cqw, 5px);
+  }
+
+  .consoleContent :global(.engineering-visible-design .console-design-status dt),
+  .consoleContent :global(.engineering-visible-design .console-design-status dd),
+  .consoleContent :global(.bench-console-status .console-design-status dt),
+  .consoleContent :global(.bench-console-status .console-design-status dd),
+  .consoleContent :global(.prototype-console-status .console-design-status dt),
+  .consoleContent :global(.prototype-console-status .console-design-status dd) {
+    font-size: clamp(10px, 0.66cqw, 11px);
+    line-height: 1.3;
+  }
+
+  .consoleContent :global(.prototype-console-status .prototype-representation-selector),
+  .consoleContent :global(.prototype-console-status .prototype-view-selector) {
+    gap: 5px;
+    margin-top: 5px;
+  }
+
+  .consoleContent :global(.prototype-console-status .prototype-representation-selector button),
+  .consoleContent :global(.prototype-console-status .prototype-view-selector button) {
+    min-height: 28px;
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > .rolling-bench-main) {
+    display: block;
+    padding: 0 1.5% 0;
+    border: 0;
+    border-top: 1px solid rgba(141, 150, 149, 0.25);
+    border-radius: 0;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-card) {
+    display: contents;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen) {
+    top: 48.16cqw;
+    left: 7.82%;
+    display: grid;
+    width: 40.92%;
+    height: 4.5cqw;
+    min-height: 50px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(7px, 0.6cqw, 10px);
+    padding: clamp(5px, 0.42cqw, 7px) clamp(9px, 0.75cqw, 12px);
+    clip-path: polygon(1% 2%, 99% 0, 100% 88%, 0 100%);
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen > span) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen h3) {
+    display: -webkit-box;
+    max-width: none;
+    margin: 0;
+    overflow: hidden;
+    color: #effbfc;
+    font-size: clamp(13px, 0.84cqw, 14px);
+    font-weight: 750;
+    line-height: 1.3;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen h3:last-child) {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen > .rev-question-helper),
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen label > span) {
+    display: none;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen label) {
+    display: block;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen textarea) {
+    display: block;
+    width: 100%;
+    min-height: 34px;
+    max-height: 34px;
+    resize: none;
+    padding: 7px 9px;
+    border: 1px solid rgba(122, 215, 228, 0.42);
+    border-radius: 2px;
+    background: rgba(1, 11, 15, 0.72);
+    color: #f2fcfd;
+    font: 700 clamp(12px, 0.78cqw, 13px) / 1.35 Arial, sans-serif;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen textarea:focus-visible) {
+    outline: 2px solid #8defff;
+    outline-offset: -2px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-primary-control) {
+    position: absolute;
+    z-index: 16;
+    top: 48.22cqw;
+    left: 70.45%;
+    width: 21.1%;
+    height: 4.05cqw;
+    min-height: 42px;
+    margin: 0;
+    padding: 0.4cqw 1cqw;
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(3% 3%, 97% 0, 100% 86%, 1% 100%);
+    background: linear-gradient(180deg, rgba(184, 143, 52, 0.48), rgba(74, 47, 10, 0.68));
+    box-shadow: inset 0 0 0 1px rgba(255, 222, 144, 0.22), inset 0 0 20px rgba(236, 177, 61, 0.14);
+    color: #fff4d2;
+    font: 900 clamp(11px, 0.72cqw, 12px) / 1.1 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 5px #000;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-primary-control:hover:not(:disabled)) {
+    background: linear-gradient(180deg, rgba(220, 176, 76, 0.62), rgba(92, 59, 14, 0.78));
+    box-shadow: inset 0 0 0 1px rgba(255, 231, 173, 0.34), inset 0 0 22px rgba(247, 190, 70, 0.22);
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-primary-control:focus-visible) {
+    outline: 3px solid #ffe49c;
+    outline-offset: -5px;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-primary-control:disabled) {
+    background: linear-gradient(180deg, rgba(119, 96, 47, 0.26), rgba(45, 36, 19, 0.48));
+    color: rgba(255, 239, 202, 0.54);
+    opacity: 1;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-secondary-action) {
+    margin: 14px 10px 0;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-supporting-copy) {
+    display: block;
+    margin: 14px 10px 0;
+    color: #afc1c5;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .bench-notepad) {
+    margin-top: 12px;
+    padding: 14px 10px;
+    border: 0;
+    border-top: 1px solid rgba(141, 150, 149, 0.22);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] > footer) {
+    padding: 8px 1.5% 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.command-console-flow > .rev-working-context),
+  .consoleContent :global(.command-console-flow .rev-question-card) {
+    display: contents;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known),
+  .consoleContent :global(.command-console-flow .rev-context-prepared),
+  .consoleContent :global(.command-console-flow .rev-next-move),
+  .consoleContent :global(.command-console-flow .rev-question-screen) {
+    position: absolute;
+    z-index: 13;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: clamp(10px, 0.72cqw, 12px);
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(165deg, rgba(2, 14, 19, 0.86), rgba(5, 29, 36, 0.74));
+    box-shadow: inset 0 0 0 1px rgba(139, 229, 241, 0.18), inset 0 0 20px rgba(69, 202, 220, 0.12);
+    color: #d9e8ea;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    scrollbar-color: #55c8d8 rgba(4, 16, 21, 0.72);
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    touch-action: pan-y;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known) {
+    top: 34.02cqw;
+    left: 8.28%;
+    display: grid;
+    width: 16.82%;
+    height: 12.78cqw;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    clip-path: polygon(2% 0, 98% 0, 100% 97%, 0 100%);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-prepared) {
+    top: 34.04cqw;
+    left: 50.48%;
+    display: grid;
+    width: 17.82%;
+    height: 12.72cqw;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    clip-path: polygon(1.5% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-next-move) {
+    top: 34.34cqw;
+    left: 69.92%;
+    display: grid;
+    width: 19.02%;
+    height: 12.3cqw;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    margin: 0;
+    clip-path: polygon(2% 0, 98% 1%, 100% 97%, 0 100%);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-screen-scroll-body) {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 4px;
+    overscroll-behavior: contain;
+    scrollbar-color: #55c8d8 rgba(4, 16, 21, 0.72);
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known > span),
+  .consoleContent :global(.command-console-flow .rev-context-prepared > span),
+  .consoleContent :global(.command-console-flow .rev-next-move > span),
+  .consoleContent :global(.command-console-flow .engineering-visible-design-heading > span),
+  .consoleContent :global(.command-console-flow .rev-question-screen > span) {
+    display: block;
+    margin: 0 0 clamp(5px, 0.4cqw, 7px);
+    color: #8cecf7;
+    font: 900 clamp(12px, 0.76cqw, 13px) / 1.15 Arial, sans-serif;
+    letter-spacing: 0.045em;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(86, 220, 239, 0.24);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known ul) {
+    display: grid;
+    min-height: 0;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known li p),
+  .consoleContent :global(.command-console-flow .rev-context-prepared .rev-screen-scroll-body > p) {
+    margin: 0;
+    color: #d5e2e4;
+    font-size: clamp(14px, 0.86cqw, 15px);
+    font-weight: 650;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known li small) {
+    margin-top: clamp(3px, 0.28cqw, 5px);
+    color: #a5bdc1;
+    font-size: clamp(10px, 0.64cqw, 11px);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-context-known li + li),
+  .consoleContent :global(.command-console-flow .rev-context-prepared .rev-screen-scroll-body > p + p) {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(109, 211, 225, 0.18);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-next-move strong) {
+    align-self: center;
+    margin: 0;
+    color: #f0f7f8;
+    font-size: clamp(14px, 0.92cqw, 16px);
+    font-weight: 750;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.command-console-flow > .rolling-bench-main) {
+    display: block;
+    padding: 0 1.5%;
+    border: 0;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen) {
+    top: 48.16cqw;
+    left: 7.82%;
+    display: grid;
+    width: 40.92%;
+    height: 4.5cqw;
+    min-height: 50px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(7px, 0.6cqw, 10px);
+    clip-path: polygon(1% 2%, 99% 0, 100% 88%, 0 100%);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen > span) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen h3) {
+    display: -webkit-box;
+    max-width: none;
+    margin: 0;
+    overflow: hidden;
+    color: #effbfc;
+    font-size: clamp(13px, 0.84cqw, 14px);
+    font-weight: 750;
+    line-height: 1.3;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen h3:last-child) {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen > p),
+  .consoleContent :global(.command-console-flow .rev-question-screen label > span) {
+    display: none;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen > .flow-success),
+  .consoleContent :global(.command-console-flow .rev-question-screen > .flow-error),
+  .consoleContent :global(.command-console-flow .rev-question-screen > small) {
+    display: block;
+    margin: 0;
+    color: #b9d0d3;
+    font: 700 clamp(10px, 0.66cqw, 11px) / 1.3 Arial, sans-serif;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen > .flow-success) {
+    color: #a9ebd2;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen > .flow-error) {
+    color: #ffc1b4;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen label) {
+    display: block;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .consoleContent :global(.command-console-flow .rev-question-screen textarea) {
+    display: block;
+    width: 100%;
+    min-height: 34px;
+    max-height: 34px;
+    resize: none;
+    padding: 7px 9px;
+    border: 1px solid rgba(122, 215, 228, 0.42);
+    border-radius: 2px;
+    background: rgba(1, 11, 15, 0.72);
+    color: #f2fcfd;
+    font: 700 clamp(12px, 0.78cqw, 13px) / 1.35 Arial, sans-serif;
+  }
+
+  .consoleContent :global(.command-console-flow .console-primary-control) {
+    position: absolute;
+    z-index: 16;
+    top: 48.22cqw;
+    left: 70.45%;
+    width: 21.1%;
+    height: 4.05cqw;
+    min-height: 42px;
+    margin: 0;
+    padding: 0.4cqw 1cqw;
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(3% 3%, 97% 0, 100% 86%, 1% 100%);
+    background: linear-gradient(180deg, rgba(184, 143, 52, 0.48), rgba(74, 47, 10, 0.68));
+    box-shadow: inset 0 0 0 1px rgba(255, 222, 144, 0.22), inset 0 0 20px rgba(236, 177, 61, 0.14);
+    color: #fff4d2;
+    font: 900 clamp(11px, 0.72cqw, 12px) / 1.1 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 5px #000;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.command-console-flow .console-primary-control:focus-visible) {
+    outline: 3px solid #ffe49c;
+    outline-offset: -5px;
+  }
+
+  .consoleContent :global(.command-console-flow .console-primary-control:hover:not(:disabled)) {
+    background: linear-gradient(180deg, rgba(220, 176, 76, 0.62), rgba(92, 59, 14, 0.78));
+  }
+
+  .consoleContent :global(.command-console-flow .console-primary-control:disabled) {
+    background: linear-gradient(180deg, rgba(119, 96, 47, 0.26), rgba(45, 36, 19, 0.48));
+    color: rgba(255, 239, 202, 0.54);
+    opacity: 1;
+  }
+
+  .consoleContent :global(.command-console-flow .console-inline-action) {
+    min-height: 30px;
+    padding: 5px 8px;
+    border: 1px solid rgba(121, 218, 231, 0.38);
+    border-radius: 3px;
+    background: rgba(4, 24, 30, 0.76);
+    color: #dffbff;
+    font: 800 10px / 1.2 Arial, sans-serif;
+  }
+
+  .consoleContent :global(.command-console-flow .console-inline-action:disabled) {
+    border-color: rgba(142, 167, 171, 0.24);
+    background: rgba(10, 21, 25, 0.66);
+    color: rgba(211, 225, 227, 0.62);
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .rev-question-screen) {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1px clamp(6px, 0.48cqw, 8px);
+    scrollbar-gutter: auto;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-correction-layout) {
+    height: auto;
+    grid-template-rows: 14px 24px;
+    align-content: start;
+    gap: 1px;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-correction-toolbar) {
+    gap: 6px;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-correction-toolbar label) {
+    min-width: 0;
+    overflow: hidden;
+    font-size: clamp(10px, 0.68cqw, 11px);
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-correction-toolbar .console-inline-action) {
+    flex: 0 0 auto;
+    height: 14px;
+    min-height: 14px;
+    margin: 0;
+    padding: 0 5px;
+    font-size: clamp(9px, 0.6cqw, 10px);
+    white-space: nowrap;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-correction-layout > textarea) {
+    width: 100%;
+    min-height: 24px;
+    max-height: 24px;
+    resize: none;
+    padding: 1px 9px;
+    border-radius: 2px;
+    font-size: clamp(14px, 0.9cqw, 15px);
+    line-height: 1.35;
+  }
+
+  .consoleContent :global(.inventor-bench-v2 .inventor-boundary-copy) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .consoleContent :global(.command-console-flow .bench-notepad),
+  .consoleContent :global(.command-console-flow .rev-question-card > small) {
+    display: block;
+    margin-top: 12px;
+    padding: 14px 10px;
+    border: 0;
+    border-top: 1px solid rgba(141, 150, 149, 0.22);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.caption {
+  margin: 12px 0 0;
+  color: #93a7ad;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .desktopBenchMap { display: none; }
+  .consoleContent :global(.rev-screen-more) { display: none; }
+  .activeProject { left: 21%; width: 28%; max-width: 28%; }
+  .centralStage { top: 31%; left: 38%; width: 24%; }
+  .prototypeStage { top: 25%; left: 30%; width: 40%; }
+
+  .compactBenchSelector {
+    position: relative;
+    z-index: 9;
+    isolation: isolate;
+    display: grid;
+    gap: 8px;
+    margin: 10px 0 0;
+    padding: 12px;
+    border: 1px solid rgba(92, 137, 151, 0.42);
+    border-radius: 12px;
+    background: rgba(8, 20, 27, 0.94);
+    pointer-events: auto;
+  }
+
+  .selectorHeading {
+    color: #8aeffa;
+    font: 900 9px / 1 Arial, sans-serif;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+
+  .compactBenchRail {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    max-width: 100%;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 2px 2px 8px;
+    pointer-events: auto;
+    scrollbar-color: #4e8897 #0b1920;
+    touch-action: pan-x;
+  }
+
+  .compactBench {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-width: 132px;
+    min-height: 58px;
+    flex: 0 0 132px;
+    align-content: center;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid #53676d;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #202d32, #111d22);
+    color: #f3f9fa;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: pan-x;
+  }
+
+  .compactBench .benchName { font-size: 10px; }
+  .compactBench .benchMarkers b { font-size: 7px; }
+
+  .foregroundConsole {
+    width: 100%;
+    margin: 12px 0 0;
+    padding: 12px;
+    border: 1px solid rgba(104, 151, 163, 0.42);
+    border-radius: 14px;
+    background: linear-gradient(160deg, rgba(15, 29, 35, 0.94), rgba(7, 19, 25, 0.97));
+    container-type: normal;
+    isolation: isolate;
+    pointer-events: auto;
+  }
+
+  .consoleContent,
+  .consoleContent > :global(.bench-readout),
+  .consoleContent > :global(.active-bench-workspace),
+  .consoleContent > :global(.prototype-focused-workspace),
+  .consoleContent :global(.workshop-floor-actions) {
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.workshop-floor-actions button),
+  .consoleContent :global(.console-primary-control),
+  .consoleContent :global(.console-inline-action) {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+
+  .consoleHeader {
+    width: 100%;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .silverConsoleControl {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 40px;
+    margin: 12px 0 0;
+    padding: 0 14px;
+    border: 1px solid rgba(120, 225, 238, 0.55);
+    border-radius: 7px;
+    background: rgba(9, 36, 43, 0.82);
+    color: #e8fcff;
+    font: 850 9px / 1 Arial, sans-serif;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+
+  .silverConsoleControl:focus-visible {
+    outline: 3px solid #f6d582;
+    outline-offset: 3px;
+  }
+}
+
+@media (max-width: 700px) {
+  .panorama { border-radius: 14px; }
+  .liveIdentity strong { font-size: clamp(14px, 5.5vw, 23px); }
+  .liveIdentity small { display: none; }
+
+  .activeProject {
+    top: 48px;
+    left: 2%;
+    max-width: 46%;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .activeProject strong { font-size: clamp(7px, 2.4vw, 11px); }
+  .activeProject small,
+  .activeProject span { font-size: 5px; }
+
+  .revIdentity {
+    left: auto;
+    right: 2%;
+    transform: none;
+  }
+
+  .revPortrait { width: clamp(36px, 11vw, 54px); }
+  .revIdentity > strong { font-size: 7px; }
+  .revIdentity small { max-width: 90px; font-size: 5px; text-align: center; }
+
+  .centralStage,
+  .prototypeStage { top: 31%; left: 34%; width: 32%; }
+  .stageHeading { display: none; }
+  .stageContent > :global(.concept-preview) { padding: 2px; }
+
+  .stageContent :global(.concept-candidate-preview),
+  .stageContent :global(.concept-field) { height: clamp(48px, 15vw, 72px); }
+
+  .stageContent > :global(.workshop-stage-empty) {
+    min-height: clamp(42px, 12vw, 62px);
+    padding: 4px;
+  }
+
+  .consoleHeader {
+    align-items: stretch;
+    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .consoleStatus { text-align: left; }
+
+  .foregroundConsole { width: 100%; }
+
+  .consoleContent > :global(.bench-readout),
+  .consoleContent > :global(.prototype-focused-workspace) {
+    margin-top: 12px;
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workshopRoom *,
+  .workshopRoom *::before,
+  .workshopRoom *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

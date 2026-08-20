@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`
+**Current safe checkpoint:** `9c7a039d06e78105d3bf647e6ba6c4105044a879`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 3 REOPENED / DESIGN CORRECTION
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — CORRECTED BUILD 3 UNDER CONSTRUCTION
 
-**Current authorised construction step:** HP-24.39 Build 3 — Governance Correction and Corrected Implementation Planning; runtime reconstruction not started
+**Current authorised construction step:** HP-24.39 Build 3 — corrected realistic Living Workshop runtime integration; construction in progress
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,7 +15,7 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 3 REOPENED / DESIGN CORRECTION
+**HP-24.39 — Home + Living Workshop Visual Integration** — CORRECTED BUILD 3 UNDER CONSTRUCTION
 
 Authoritative starting baseline:
 
@@ -26,7 +26,7 @@ Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch is restored to the pushed Build 2 baseline. Build 3 is reopened and uncommitted. Runtime reconstruction has not begun under the corrected authority. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, is now the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). The required implementation is a hybrid of a project-neutral realistic environment and accessible live HTML controls and Project data. Build 4 remains blocked. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch has advanced through the accepted neutral-plate and REV-avatar preservation checkpoints to `9c7a039d06e78105d3bf647e6ba6c4105044a879`. Corrected Build 3 runtime reconstruction is now actively under construction and remains unaccepted and uncommitted. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). The implementation is a hybrid of the accepted project-neutral realistic environment and accessible live HTML controls and Project data. Build 4 remains blocked. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -943,4 +943,36 @@ The main construction branch has been returned with `git reset --keep` to the pu
 
 ### Current Build 3 Gate
 
-Governance correction and corrected implementation planning are complete at the working-tree level; runtime reconstruction has not begun. Provider-backed testing is not authorised. Home CLEAR visual confirmation remains deferred. Build 4 remains blocked until the corrected Build 3 is constructed, validated, human-accepted, committed, pushed, and separately authorised for progression.
+Corrected Build 3 is human accepted for the tested no-candidate desktop, tablet, and mobile journey. It is ready for commit review but remains uncommitted. The accepted neutral plate remains the physical room while Project identity, REV, all eight bench labels and states, guidance, questions, navigation, and controls remain live application content.
+
+#### Accepted Desktop Walkthrough
+
+- The realistic persistent Living Workshop remains visible.
+- All eight canonical benches remain visible and ordered: Inventor → Engineering → Prototype → Testing → Patent / IP → Manufacturing → Marketing → Reality.
+- Every bench selects correctly. Selected available benches show their truthful active state; selected dormant benches show `VIEWING · DORMANT`.
+- Bench selection does not move the page viewport.
+- No detached, duplicated, or legacy workflow window appears below the physical console.
+- The foreground console uses four interactive command screens, the lower touchscreen, and live physical controls. Overflowing screen content uses internal scrolling without shrinking readable text.
+- `SHOW WORKSHOP FLOOR` works.
+- Inventor's `ADD OR CORRECT INFORMATION` input is immediately visible. `SAVE INFORMATION` enables with text, saves through the existing append-only working-note path, and reports success.
+- The saved inventor request to make the design look sleek remains non-authoritative Working Understanding and does not replace `Project.originalObservation`.
+- Workshop ASK REV remains honestly unavailable because no genuine Workshop ASK REV handler exists.
+- Prototype dormant routing truthfully reports that no design is saved. Testing and Reality remain truthfully dormant and expose no fake action.
+- Patent / IP, Manufacturing, and Marketing use the same console without detached views.
+
+#### Accepted Tablet and Mobile Walkthrough
+
+- Human review passed at approximately 760 × 900 and 390 × 844.
+- Workshop context remains visible, and the scaled room remains a visual overview.
+- The larger horizontal canonical bench selector below the room is the intended accessible touch navigation. It selects benches by touch and swipes horizontally to later benches.
+- Responsive console controls work, content uses natural vertical scrolling, and no horizontal page overflow occurs.
+
+#### Explicitly Deferred Acceptance
+
+1. Candidate-backed Concept and central Prototype 3D presentation could not be human-tested because the current Project has no saved candidate or validated geometry. Candidate-backed central 3D confirmation remains mandatory before final HP-24.39 closeout.
+2. Home CLEAR visual confirmation remains deferred pending provider availability.
+3. Build 4 final polish remains deferred: Active Project title truncation; console-edge and floor-boundary text spacing; a stronger disabled-gold-control appearance; responsive “Select a bench below” guidance; mobile primary-action presentation; Reality wording using “Engineering and Testing” rather than “Engineering and Validation”; and minor console alignment and spacing refinements.
+
+The Workshop remains one persistent eight-bench room. Selection strengthens one bench without removing the others, and the existing `RollingBenchFlow` remains the live foreground console rather than being duplicated. Prototype retains the one existing `Prototype3DViewer` mount and the current candidate's validated, non-authoritative `ConceptGeometry` boundary for future central-stage confirmation. Automatic presentation rotation is transient, exposes Pause/Resume, pauses on interaction, and starts paused for reduced-motion users. Missing or invalid geometry retains a truthful no-design or current Concept fallback.
+
+Build 3 remains uncommitted. Build 4 remains unstarted and blocked until Build 3 is committed, pushed, and separately authorised for progression. HP-24.38 Project truth, safety, receipt, Concept, evidence, provider, and persistence boundaries remain unchanged; no new Project, candidate, safety, storage, provider, fetch, retry, or persistence authority was introduced.

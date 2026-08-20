@@ -17,45 +17,81 @@ import {
 
 type Prototype3DViewerProps = {
   geometry: ConceptGeometry;
+  presentationMode?: "console" | "stage";
+  autoRotate?: boolean;
 };
 
-export default function Prototype3DViewer({ geometry }: Prototype3DViewerProps) {
+export default function Prototype3DViewer({ geometry, presentationMode = "console", autoRotate = false }: Prototype3DViewerProps) {
   const [fitRequest, setFitRequest] = useState(0);
   const [resetRequest, setResetRequest] = useState(0);
   const [jointPreview, setJointPreview] = useState(false);
+  const [rotationPaused, setRotationPaused] = useState(true);
+  const rotationPreferenceInitialisedRef = useRef(false);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const applyPreference = () => {
+      if (!rotationPreferenceInitialisedRef.current) {
+        setRotationPaused(!autoRotate || reducedMotion.matches);
+        rotationPreferenceInitialisedRef.current = true;
+      } else if (reducedMotion.matches) {
+        setRotationPaused(true);
+      }
+    };
+    applyPreference();
+    reducedMotion.addEventListener("change", applyPreference);
+    return () => reducedMotion.removeEventListener("change", applyPreference);
+  }, [autoRotate]);
+
+  const automaticRotationActive = autoRotate && !rotationPaused;
 
   if (!isValidConceptGeometry(geometry)) {
     return <p className="prototype-3d-unavailable">3D model not available yet.</p>;
   }
 
   return (
-    <section className="prototype-3d-viewer" aria-label="Interactive 3D model">
+    <section className={`prototype-3d-viewer${presentationMode === "stage" ? " is-stage" : ""}`} aria-label="Interactive 3D model">
       <div className="prototype-3d-instructions"><strong>3D MODEL</strong><span>DRAG TO ROTATE · SCROLL TO ZOOM</span></div>
       <div className="prototype-3d-canvas">
-        <Canvas camera={{ position: [3.8, 2.8, 5.2], fov: 38 }} dpr={[1, 1.75]} frameloop="demand" gl={{ antialias: true }}>
-          <color attach="background" args={["#eef2f3"]} />
+        <Canvas camera={{ position: [3.8, 2.8, 5.2], fov: 38 }} dpr={[1, 1.75]} frameloop={automaticRotationActive ? "always" : "demand"} gl={{ antialias: true, alpha: presentationMode === "stage" }}>
+          {presentationMode !== "stage" && <color attach="background" args={["#eef2f3"]} />}
           <ambientLight intensity={1.7} />
           <directionalLight position={[4, 8, 6]} intensity={2.4} />
           <directionalLight position={[-5, 3, -4]} intensity={1.1} />
           <Bounds fit clip observe margin={1.25}>
             <GeometryModel geometry={geometry} jointPreview={jointPreview} />
-            <ViewController fitRequest={fitRequest} resetRequest={resetRequest} />
+            <ViewController
+              fitRequest={fitRequest}
+              resetRequest={resetRequest}
+              autoRotate={automaticRotationActive}
+              onInteractionStart={() => setRotationPaused(true)}
+            />
           </Bounds>
         </Canvas>
       </div>
       <div className="prototype-3d-actions">
+        {autoRotate && (
+          <button type="button" aria-pressed={rotationPaused} onClick={() => setRotationPaused((paused) => !paused)}>
+            {rotationPaused ? "RESUME ROTATION" : "PAUSE ROTATION"}
+          </button>
+        )}
         <button type="button" onClick={() => setResetRequest((value) => value + 1)}>RESET VIEW</button>
         <button type="button" onClick={() => setFitRequest((value) => value + 1)}>FIT MODEL</button>
         {geometry.joints.length > 0 && <button type="button" onClick={() => setJointPreview((value) => !value)}>{jointPreview ? "RETURN JOINT" : "ROTATE JOINT"}</button>}
       </div>
       <style jsx>{`
-        .prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}
+        .prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(210px,1fr) auto;min-height:280px;border-color:rgba(112,230,244,.42);background:radial-gradient(circle at 50% 48%,rgba(53,155,185,.17),rgba(3,12,19,.72) 68%);box-shadow:0 0 30px rgba(65,214,236,.16)}.is-stage .prototype-3d-instructions{padding:7px 9px;font-size:8px}.is-stage .prototype-3d-canvas{min-height:210px}.is-stage .prototype-3d-actions{gap:5px;padding:7px 9px}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(90px,1fr) auto;min-height:150px}.is-stage .prototype-3d-instructions span{display:none}.is-stage .prototype-3d-canvas{min-height:90px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
       `}</style>
     </section>
   );
 }
 
-function ViewController({ fitRequest, resetRequest }: { fitRequest: number; resetRequest: number }) {
+function ViewController({ fitRequest, resetRequest, autoRotate, onInteractionStart }: {
+  fitRequest: number;
+  resetRequest: number;
+  autoRotate: boolean;
+  onInteractionStart: () => void;
+}) {
   const bounds = useBounds();
   const controls = useRef<React.ElementRef<typeof OrbitControls>>(null);
 
@@ -70,7 +106,7 @@ function ViewController({ fitRequest, resetRequest }: { fitRequest: number; rese
     bounds.refresh().fit().clip();
   }, [bounds, resetRequest]);
 
-  return <OrbitControls ref={controls} makeDefault enableDamping enablePan={false} minDistance={0.5} maxDistance={30} />;
+  return <OrbitControls ref={controls} makeDefault autoRotate={autoRotate} autoRotateSpeed={0.45} enableDamping enablePan={false} minDistance={0.5} maxDistance={30} onStart={onInteractionStart} />;
 }
 
 function GeometryModel({ geometry, jointPreview }: { geometry: ConceptGeometry; jointPreview: boolean }) {

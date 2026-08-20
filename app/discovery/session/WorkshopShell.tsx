@@ -287,182 +287,6 @@ function formatReadiness(readiness: Project["readiness"]): string {
   return readiness.replace("-", " ");
 }
 
-function summarizeUnderstanding(value: string): string {
-  const summary = value.split("\n")[0]?.trim() || value.trim();
-  return summary.length > 220 ? `${summary.slice(0, 217).trim()}...` : summary;
-}
-
-function formatTraceField(value: string): string {
-  return value
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/^./, (character) => character.toUpperCase());
-}
-
-function formatConceptSupportingEvidence(
-  decision: WorkshopState["trace"]["activeConceptReview"]
-): string {
-  if (!decision || decision.supportingEvidenceState === "none-explicitly-selected") {
-    return "No supporting evidence was explicitly selected for this decision.";
-  }
-
-  const available = decision.supportingEvidence.filter(
-    (reference) => reference.available
-  );
-  const unavailableCount = decision.supportingEvidence.length - available.length;
-
-  if (available.length === 0) {
-    return "Selected supporting evidence references are unavailable in the current Project.";
-  }
-
-  const selectedEvidence = available
-    .map((reference) => {
-      const validationOutcome = reference.validationOutcome
-        ? ` · outcome: ${reference.validationOutcome}`
-        : "";
-      return `${reference.summary} — ${reference.source}${validationOutcome}`;
-    })
-    .join("; ");
-  const selectedText = `The inventor recorded this evidence as supporting the decision: ${selectedEvidence}.`;
-
-  return unavailableCount > 0
-    ? `${selectedText} ${unavailableCount} selected evidence ${unavailableCount === 1 ? "reference is" : "references are"} unavailable in the current Project.`
-    : selectedText;
-}
-
-function formatEngineeringConclusionSupportingEvidence(
-  conclusion: WorkshopState["trace"]["currentEngineeringConclusions"][number]
-): string {
-  if (conclusion.supportingEvidenceState === "none-explicitly-selected") {
-    return "No supporting evidence was explicitly selected for this conclusion.";
-  }
-
-  const available = conclusion.supportingEvidence.filter(
-    (reference) => reference.available
-  );
-  const unavailableCount = conclusion.supportingEvidence.length - available.length;
-
-  if (available.length === 0) {
-    return "Selected supporting evidence references are unavailable in the current Project.";
-  }
-
-  const selectedEvidence = available
-    .map((reference) => {
-      const validationOutcome = reference.validationOutcome
-        ? ` · Validation outcome: ${reference.validationOutcome}`
-        : "";
-      return `${reference.summary} — ${reference.source}${validationOutcome}`;
-    })
-    .join("; ");
-  const selectedText = `The inventor recorded this evidence as supporting the conclusion: ${selectedEvidence}.`;
-
-  return unavailableCount > 0
-    ? `${selectedText} ${unavailableCount} selected evidence ${unavailableCount === 1 ? "reference is" : "references are"} unavailable in the current Project.`
-    : selectedText;
-}
-
-function formatEngineeringDirectionBasis(
-  direction: WorkshopState["trace"]["currentEngineeringDirections"][number]
-): string {
-  if (direction.basisState === "no-basis-recorded") {
-    return "No conclusion basis was explicitly recorded.";
-  }
-
-  const available = direction.basisConclusions.filter((basis) => basis.available);
-  const unavailableCount = direction.basisConclusions.length - available.length;
-
-  if (available.length === 0) {
-    return "A recorded conclusion basis is unavailable in the current Project.";
-  }
-
-  const basisText = available
-    .map((basis) =>
-      basis.conclusionStatus === "superseded"
-        ? `${basis.conclusion} (recorded basis; conclusion now superseded)`
-        : basis.conclusion
-    )
-    .join("; ");
-
-  return unavailableCount > 0
-    ? `${basisText}. ${unavailableCount} recorded conclusion basis ${unavailableCount === 1 ? "is" : "are"} unavailable in the current Project.`
-    : basisText;
-}
-
-function formatEngineeringActionResult(
-  result: WorkshopState["trace"]["adoptedEngineeringActions"][number]["results"][number]
-): string {
-  return result.result ?? "Recorded result detail is unavailable in the current Project.";
-}
-
-function formatProjectEvidenceSourceReference(
-  reference: WorkshopState["trace"]["projectEvidence"][number]["sourceReferences"][number]
-): string {
-  if (!reference.available) {
-    return "A recorded source reference is unavailable in the current Project.";
-  }
-
-  if (reference.eventType === "engineering-action-result-recorded") {
-    const result = reference.result ?? "Recorded action-result detail is unavailable.";
-    const action = reference.actionAvailable
-      ? ` Adopted action: ${reference.action}.`
-      : " The linked adopted action is unavailable in the current Project.";
-
-    return `Engineering action result: ${result}.${action}`;
-  }
-
-  return reference.title
-    ? `Recorded Project event: ${reference.title}.`
-    : "Recorded Project source event is available.";
-}
-
-function formatProjectEvidenceSourceProvenance(
-  evidence: WorkshopState["trace"]["projectEvidence"][number]
-): string {
-  if (evidence.sourceProvenance === "not-recorded") {
-    return "No explicit source timeline provenance was recorded for this evidence.";
-  }
-
-  const references = evidence.sourceReferences
-    .map(formatProjectEvidenceSourceReference)
-    .join(" ");
-
-  if (evidence.sourceProvenance === "recorded-partially-available") {
-    return `${references} Some recorded source references are unavailable.`;
-  }
-
-  if (evidence.sourceProvenance === "recorded-source-unavailable") {
-    return "Where this information came from is not available in the current Project.";
-  }
-
-  return references;
-}
-
-function formatEngineeringActionBasis(
-  action: WorkshopState["trace"]["adoptedEngineeringActions"][number]
-): string {
-  if (action.basisState === "no-basis-recorded") {
-    return "No engineering-direction basis was explicitly recorded.";
-  }
-
-  const available = action.basisDirections.filter((basis) => basis.available);
-  const unavailableCount = action.basisDirections.length - available.length;
-
-  if (available.length === 0) {
-    return "A recorded engineering-direction basis is unavailable in the current Project.";
-  }
-
-  const basisText = available
-    .map((basis) =>
-      basis.directionStatus === "superseded"
-        ? `${basis.direction} (recorded basis; direction now superseded)`
-        : basis.direction
-    )
-    .join("; ");
-
-  return unavailableCount > 0
-    ? `${basisText}. ${unavailableCount} recorded engineering-direction basis ${unavailableCount === 1 ? "is" : "are"} unavailable in the current Project.`
-    : basisText;
-}
-
 export default function WorkshopShell({
   project,
   workshop: initialWorkshop,
@@ -502,6 +326,7 @@ export default function WorkshopShell({
   const [conceptViewMessage, setConceptViewMessage] = useState("");
   const [viewedConceptRevision, setViewedConceptRevision] = useState<number | null>(null);
   const [prototypeConceptView, setPrototypeConceptView] = useState<ConceptViewId>("iso");
+  const [prototypeRepresentation, setPrototypeRepresentation] = useState<"2d" | "3d">("3d");
   const [specialistContributionDrafts, setSpecialistContributionDrafts] = useState<
     Partial<Record<SpecialistContributionBenchId, string>>
   >({});
@@ -639,7 +464,7 @@ export default function WorkshopShell({
       return 1;
     }
   });
-  const [engineeringPreviewLatestChange, setEngineeringPreviewLatestChange] = useState(() => {
+  const [, setEngineeringPreviewLatestChange] = useState(() => {
     if (typeof window === "undefined") return "";
     try {
       const saved = window.localStorage.getItem(conceptKey(project));
@@ -871,8 +696,6 @@ export default function WorkshopShell({
       );
   }, [conceptGenerationFoundation.request, generatedConceptCandidate, project, sourceEvidenceViews]);
   const hasEngineeringDesignBrief = engineeringDefinitionAssessment.addressedAreas.length > 0;
-  const engineeringBriefText = Object.values(conceptGenerationFoundation.brief).flat().join(" ");
-  const engineeringBriefIsStopGoSign = /\bstop\b/i.test(engineeringBriefText) && /\bgo\b/i.test(engineeringBriefText) && /\b(pole|shaft|sign)\b/i.test(engineeringBriefText);
   const previousConceptCandidate = conceptCandidateHistory.at(-2) ?? null;
   const viewedConceptCandidate = viewedConceptRevision === null
     ? generatedConceptCandidate
@@ -1053,6 +876,22 @@ export default function WorkshopShell({
   const compactConceptPreview = (
     <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} compact />
   );
+  const roomStageCandidate = selectedBench?.id === "prototype"
+    ? viewedConceptCandidate
+    : generatedConceptCandidate;
+  const roomConceptPreview = roomStageCandidate ? (
+    <ConceptPreview
+      preview={sharedConceptPreview}
+      candidate={roomStageCandidate}
+      candidateStale={generatedConceptCandidateIsStale}
+      selectedView={selectedBench?.id === "prototype" ? selectedPrototypeConceptView : "iso"}
+    />
+  ) : (
+    <div className="workshop-stage-empty" role="status">
+      <strong>NO DESIGN SAVED</strong>
+      <span>Concept 01 will appear here after it is created.</span>
+    </div>
+  );
   const recentDiscoveryResponses = useMemo(
     () =>
       project.timeline
@@ -1106,9 +945,6 @@ export default function WorkshopShell({
     })
   );
   const recommendedBench = getBench(workshop, workshop.recommendedBench) ?? workshop.benches[0];
-  const recommendedDefinition = CANONICAL_WORKSHOP_BENCHES.find(
-    (bench) => bench.id === recommendedBench.id
-  );
   const revWorkingUnderstanding = useMemo(() => {
     void workingUnderstandingRevision;
     return deriveRevWorkingUnderstanding(
@@ -1125,9 +961,6 @@ export default function WorkshopShell({
     setPrototypeBenchFocused(false);
     setSpecialistContributionError("");
     setSpecialistEvidenceError("");
-    window.setTimeout(() => {
-      workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 0);
   }
 
   function returnToWorkshop() {
@@ -2655,200 +2488,21 @@ export default function WorkshopShell({
     >
       {!prototypeBenchIsFocused && (
         <>
-      <header className="workshop-heading">
-        <div>
-          <p className="workshop-kicker">reAIdea · Living Workshop</p>
-          <h2>Living Engineering Workshop</h2>
-          <p className="workshop-project-name">{projectName}</p>
-        </div>
-      </header>
-
-      <section className="workshop-brief" aria-label="REV Workshop Brief">
-        <div className="workshop-brief-copy">
-          <p className="workshop-kicker">REV · Workshop Brief</p>
-          <p className="workshop-brief-partner">Your Workshop Partner · {workshop.summary}</p>
-          <h3>Recommended next: {recommendedBench.label}</h3>
-          <p className="workshop-brief-reason"><strong>Why:</strong> {recommendedBench.reason}</p>
-          {workshop.assertionGuidance && (
-            <div className="workshop-brief-trace" aria-label="Recorded engineering trace">
-              <p><strong>Recorded Project fact:</strong> {workshop.assertionGuidance.recordedFact}</p>
-              <p><strong>Source:</strong> {workshop.assertionGuidance.sourceFact}</p>
-              <p><strong>Validation:</strong> {workshop.assertionGuidance.validationFact}</p>
-              <p><strong>REV guidance:</strong> {workshop.assertionGuidance.guidance}</p>
-            </div>
-          )}
-          {workshop.trace.activeConceptDirection && (
-            <p className="workshop-brief-trace">
-              <strong>Recorded direction:</strong>{" "}
-              {workshop.trace.activeConceptDirection.outcome} Concept 02
-              {workshop.trace.activeConceptDirection.reason &&
-                ` · ${workshop.trace.activeConceptDirection.reason}`}
-            </p>
-          )}
-          {(workshop.trace.activeConceptDirection || workshop.trace.activeConceptReview) && (
-            <div className="workshop-brief-trace" aria-label="Concept supporting evidence">
-              {!workshop.trace.activeConceptDirection && workshop.trace.activeConceptReview && (
-                <p>
-                  <strong>Recorded review:</strong>{" "}
-                  {workshop.trace.activeConceptReview.outcome} Concept 01
-                </p>
-              )}
-              <p>
-                <strong>Supporting evidence:</strong>{" "}
-                {formatConceptSupportingEvidence(
-                  workshop.trace.activeConceptDirection ?? workshop.trace.activeConceptReview
-                )}
-              </p>
-            </div>
-          )}
-          {workshop.trace.projectEvidence.some(
-            (evidence) => evidence.sourceProvenance !== "not-recorded"
-          ) && (
-            <div className="workshop-brief-trace" aria-label="Where Project evidence came from">
-              <p><strong>Project evidence with a saved source:</strong></p>
-              {workshop.trace.projectEvidence
-                .filter((evidence) => evidence.sourceProvenance !== "not-recorded")
-                .map((evidence) => (
-                  <div key={evidence.evidenceId} className="workshop-brief-evidence-record">
-                    <p><strong>Evidence:</strong> {evidence.summary}</p>
-                    <p><strong>Recorded source:</strong> {evidence.source}</p>
-                    <p>
-                      <strong>Where it came from:</strong>{" "}
-                      {formatProjectEvidenceSourceProvenance(evidence)}
-                    </p>
-                  </div>
-                ))}
-            </div>
-          )}
-          {workshop.trace.currentEngineeringConclusions.length > 0 && (
-            <div className="workshop-brief-trace" aria-label="Current engineering conclusions">
-              <p><strong>What we have learned:</strong></p>
-              {workshop.trace.currentEngineeringConclusions.map((conclusion) => (
-                <div key={conclusion.id} className="workshop-brief-conclusion">
-                  <p><strong>Conclusion:</strong> {conclusion.conclusion}</p>
-                  {conclusion.reason && <p><strong>Reason:</strong> {conclusion.reason}</p>}
-                  <p>
-                    <strong>Supporting evidence:</strong>{" "}
-                    {formatEngineeringConclusionSupportingEvidence(conclusion)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-          {workshop.trace.currentEngineeringDirections.length > 0 && (
-            <div className="workshop-brief-trace" aria-label="Current engineering directions">
-              <p><strong>Current directions:</strong></p>
-              {workshop.trace.currentEngineeringDirections.map((direction) => (
-                <div key={direction.id} className="workshop-brief-direction">
-                  <p><strong>Direction:</strong> {direction.direction}</p>
-                  {direction.reason && <p><strong>Reason:</strong> {direction.reason}</p>}
-                  <p><strong>Based on:</strong> {formatEngineeringDirectionBasis(direction)}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          {workshop.trace.adoptedEngineeringActions.length > 0 && (
-            <div className="workshop-brief-trace" aria-label="Adopted engineering actions">
-              <p><strong>Adopted engineering actions:</strong></p>
-              {workshop.trace.adoptedEngineeringActions.map((action) => (
-                <div key={action.id} className="workshop-brief-action-record">
-                  <p><strong>Action:</strong> {action.action}</p>
-                  {action.reason && <p><strong>Reason:</strong> {action.reason}</p>}
-                  <p><strong>Based on:</strong> {formatEngineeringActionBasis(action)}</p>
-                  {action.results.length > 0 && (
-                    <>
-                      <p><strong>Recorded results:</strong></p>
-                      {action.results.map((result) => (
-                        <p key={result.eventId}>{formatEngineeringActionResult(result)}</p>
-                      ))}
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-          {workshop.trace.latestValidationResult && (
-            <p className="workshop-brief-trace">
-              <strong>Latest validation:</strong>{" "}
-              {workshop.trace.latestValidationResult.outcome}
-              {workshop.trace.latestValidationResult.changedFields.length > 0 &&
-                ` · changed ${workshop.trace.latestValidationResult.changedFields
-                  .map(formatTraceField)
-                  .join(", ")}`}
-            </p>
-          )}
-          <div className="workshop-brief-move">
-            <span>Next move</span>
-            <strong>{recommendedBench.nextMove}</strong>
-          </div>
-        </div>
-        <div className="workshop-brief-action">
-          <p>REV recommends next</p>
-          <strong>{recommendedBench.label}</strong>
-          {recommendedDefinition?.informational && (
-            <span className="workshop-brief-informational">Explore this area</span>
-          )}
-          <button type="button" onClick={() => selectBench(recommendedBench.id)}>
-            GO TO {recommendedBench.label.toUpperCase()} BENCH
-          </button>
-          {selectedBench && selectedBench.id !== recommendedBench.id && (
-            <small>Working at: {selectedBench.label}. You remain free to choose another bench.</small>
-          )}
-        </div>
-      </section>
-
-      <section className="project-core" aria-label="Active Project">
-        <div className="project-core-heading">
-          <div>
-            <p className="workshop-kicker">Active Project</p>
-            <h3>{projectName}</h3>
-          </div>
-          <span className="project-status">{formatReadiness(project.readiness)}</span>
-        </div>
-        <p className="project-understanding">
-          {summarizeUnderstanding(project.engineeringState.currentUnderstanding)}
-        </p>
-        <div className="project-signals">
-          <span>{project.evidence.length} evidence items</span>
-          <span>{project.engineeringState.currentConstraints.length} constraints</span>
-          <span>{project.engineeringState.currentAssumptions.length} assumptions</span>
-          <span>Next: {project.engineeringState.nextEngineeringStep}</span>
-        </div>
-      </section>
-
-      <div className="workshop-flow" aria-label="Workshop stages">
-        {[
-          { id: "knowledge" as WorkshopBenchId, label: "Inventor" },
-          { id: "engineering" as WorkshopBenchId, label: "Engineering" },
-          { id: "prototype" as WorkshopBenchId, label: "Prototype" },
-          { id: "validation" as WorkshopBenchId, label: "Testing" },
-          { id: "patent" as WorkshopBenchId, label: "Patent / IP" },
-          { id: "manufacturing" as WorkshopBenchId, label: "Manufacturing" },
-          { id: "marketing" as WorkshopBenchId, label: "Marketing" },
-          { id: "reality" as WorkshopBenchId, label: "Reality" },
-        ].map((stage, index, stages) => (
-          <span key={stage.id} className={stage.id === recommendedBench.id ? "is-recommended" : ""}>
-            <b>{stage.label}</b>
-            {index < stages.length - 1 && <i aria-hidden="true">→</i>}
-          </span>
-        ))}
-      </div>
-
       <WorkshopRoom
-        revMessage={selectedBench?.reason ?? recommendedBench.reason}
-        conceptPreview={<><ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} /><ConceptCandidateStorageStatusLine status={candidateStorageStatus} /></>}
+        projectName={projectName}
+        projectStatus={formatReadiness(project.readiness)}
+        conceptPreview={roomConceptPreview}
         benches={CANONICAL_WORKSHOP_BENCHES.flatMap(({ id, shortLabel, positionClass }) => {
           const bench = getBench(workshop, id);
           return bench ? [{ id, shortLabel, positionClass, state: bench.state, progress: presentationProgressForBench(id), selected: selectedBench?.id === id, recommended: recommendedBench.id === id }] : [];
         })}
-        hasCurrentDesign={Boolean(generatedConceptCandidate || hasEngineeringDesignBrief)}
-        stopGoDesign={engineeringBriefIsStopGoSign}
+        prototypeActive={selectedBench?.id === "prototype"}
+        prototypeGeometry={selectedBench?.id === "prototype" ? viewedConceptCandidate?.conceptGeometry : undefined}
+        prototypeRepresentation={prototypeRepresentation}
         onSelectBench={selectBench}
+        onReturnToOverview={returnToWorkshop}
         caption="One Project · every bench works from the same evolving idea."
-      />
-        </>
-      )}
-
+      >
       <div
         ref={workspaceRef}
         className={
@@ -2892,18 +2546,6 @@ export default function WorkshopShell({
         )}
         {selectedBench && !prototypeBenchIsFocused && (
           <>
-        <div className="readout-title">
-          <div>
-            <span className="readout-light" aria-hidden="true" />
-            <strong>WORKING AT · {selectedBench.label}</strong>
-          </div>
-          <span>{presentationProgressForBench(selectedBench.id).toUpperCase()} · ACTIVE</span>
-        </div>
-        <p>{selectedBench.reason}</p>
-        <div className="next-move">
-          <span>REV · NEXT MOVE</span>
-          <strong>{selectedBench.nextMove}</strong>
-        </div>
         {selectedBench.id === "validation" && (
           <div className="bench-guided-actions">
             {!discoveryAssessment.readyToAdvance ? (
@@ -2932,11 +2574,13 @@ export default function WorkshopShell({
         )}
         {selectedBench && (
           <>
-          <ConceptCandidateStorageStatusLine status={candidateStorageStatus} />
           <RollingBenchFlow
             key={selectedBench.id}
             benchId={selectedBench.id}
+            benchState={selectedBench.state}
             projectId={project.id}
+            benchReason={selectedBench.reason}
+            benchNextMove={selectedBench.nextMove}
             workingContext={revWorkingUnderstanding.byBench[selectedBench.id]}
             sourceEvidence={sourceEvidenceViews.map((evidence) => ({
               reference: evidence.reference,
@@ -2952,19 +2596,10 @@ export default function WorkshopShell({
             externalNotes={selectedSpecialistBenchId ? rollingSpecialistNotes : undefined}
             onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
             error={specialistContributionError}
+            modelStorageStatus={<ConceptCandidateStorageStatusLine status={candidateStorageStatus} />}
             modelView={generatedConceptCandidate ? (
               <ConceptPreview preview={sharedConceptPreview} candidate={selectedBench.id === "prototype" ? viewedConceptCandidate : generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} expanded selectedView={selectedBench.id === "prototype" ? selectedPrototypeConceptView : "iso"} />
-            ) : hasEngineeringDesignBrief ? (
-              <EngineeringDesignPreview
-                projectName={projectName}
-                proposedSolution={conceptGenerationFoundation.brief.proposedSolution}
-                operatingConcept={conceptGenerationFoundation.brief.operatingConcept}
-                functionalElements={conceptGenerationFoundation.brief.functionalElements}
-                arrangement={conceptGenerationFoundation.brief.arrangement ?? ""}
-                revision={engineeringPreviewRevision}
-                latestChange={engineeringPreviewLatestChange}
-              />
-            ) : selectedBench.id === "engineering" ? compactConceptPreview : undefined}
+            ) : undefined}
             modelReady={selectedBench.id === "knowledge" ? Boolean(generatedConceptCandidate) : Boolean(generatedConceptCandidate || hasEngineeringDesignBrief)}
             generatedModelReady={Boolean(generatedConceptCandidate && (candidateStorageStatus === "candidate-saved" || candidateStorageStatus === "candidate-restored"))}
             canCreateModel={false}
@@ -2990,6 +2625,8 @@ export default function WorkshopShell({
             availableViews={viewedConceptAvailableViews}
             selectedView={selectedPrototypeConceptView}
             conceptGeometry={selectedBench.id === "prototype" ? viewedConceptCandidate?.conceptGeometry : undefined}
+            prototypeRepresentation={prototypeRepresentation}
+            modelPresentedOnWorkshopStage={selectedBench.id === "prototype"}
             refinementDraft={conceptRefinementDraft}
             onRefinementDraftChange={setConceptRefinementDraft}
             onCreateModel={conceptGenerationState === "failed" ? retryFirstRecognisableConcept : () => void createOrUpdateDesignModel()}
@@ -2998,6 +2635,7 @@ export default function WorkshopShell({
             onBackToCurrent={() => setViewedConceptRevision(null)}
             onDeleteRevision={deleteHistoricalConceptRevision}
             onViewChange={setPrototypeConceptView}
+            onPrototypeRepresentationChange={setPrototypeRepresentation}
             onGoToBench={selectBench}
             onBack={returnToWorkshop}
             testingOutcome={validationEvidence.outcome}
@@ -4020,6 +3658,9 @@ export default function WorkshopShell({
           </div>
         )}
       </div>
+      </WorkshopRoom>
+        </>
+      )}
 
       <style jsx global>{`
         .living-workshop {
@@ -6911,74 +6552,6 @@ export default function WorkshopShell({
           .concept-refinement-heading { flex-direction:column; }
         }
       `}</style>
-    </section>
-  );
-}
-
-function EngineeringDesignPreview({
-  projectName,
-  proposedSolution,
-  operatingConcept,
-  functionalElements,
-  arrangement,
-  revision,
-  latestChange,
-}: {
-  projectName: string;
-  proposedSolution: string;
-  operatingConcept: string;
-  functionalElements: string;
-  arrangement: string;
-  revision: number;
-  latestChange: string;
-}) {
-  const designText = [projectName, proposedSolution, operatingConcept, functionalElements, arrangement].join(" ");
-  const isStopGoSign = /\bstop\b/i.test(designText) && /\bgo\b/i.test(designText) && /\b(pole|shaft|sign)\b/i.test(designText);
-
-  return (
-    <section className="engineering-inherited-model" aria-label={`Current Engineering design · revision ${revision}`}>
-      <div className="engineering-inherited-model-heading">
-        <span>CURRENT ENGINEERING DESIGN</span>
-        <strong>REVISION {revision}</strong>
-      </div>
-      {isStopGoSign ? (
-        <svg viewBox="0 0 720 430" role="img" aria-label="Illuminated rotating STOP and GO sign on one pole">
-          <defs>
-            <linearGradient id="inherited-model-bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#071217" />
-              <stop offset="1" stopColor="#102a32" />
-            </linearGradient>
-            <filter id="inherited-led-glow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-          </defs>
-          <rect width="720" height="430" fill="url(#inherited-model-bg)" />
-          <g opacity=".14" stroke="#78d4e2"><path d="M0 70H720M0 140H720M0 210H720M0 280H720M0 350H720" /><path d="M90 0V430M180 0V430M270 0V430M360 0V430M450 0V430M540 0V430M630 0V430" /></g>
-          <g transform="translate(210 30)">
-            <path d="M150 30 L230 62 L265 140 L230 218 L150 250 L70 218 L35 140 L70 62 Z" fill="#641d24" stroke="#8ceaf0" strokeWidth="5" />
-            <path d="M166 35 L246 69 L278 146 L244 224" fill="none" stroke="#4c9fae" strokeWidth="3" opacity=".7" />
-            <text x="150" y="153" textAnchor="middle" fill="#fff" fontFamily="Arial,sans-serif" fontSize="48" fontWeight="900">STOP</text>
-            <text x="282" y="151" fill="#98f5c0" fontFamily="Arial,sans-serif" fontSize="24" fontWeight="900">GO</text>
-            <g fill="#baffff" filter="url(#inherited-led-glow)">
-              {[55, 88, 121, 154, 187, 220].map((x) => <circle key={`top-${x}`} cx={x} cy={58 + Math.abs(137 - x) * .22} r="4" />)}
-              {[55, 88, 121, 154, 187, 220].map((x) => <circle key={`bottom-${x}`} cx={x} cy={222 - Math.abs(137 - x) * .22} r="4" />)}
-            </g>
-            <rect x="140" y="250" width="20" height="135" rx="8" fill="#467681" stroke="#a8edf1" strokeWidth="3" />
-            <ellipse cx="150" cy="386" rx="78" ry="12" fill="#071014" stroke="#3d7b87" strokeWidth="2" />
-            <path d="M150 263 C185 275 190 300 168 320" fill="none" stroke="#e7c778" strokeWidth="3" strokeDasharray="7 6" />
-            <path d="M171 312 L168 320 L160 316" fill="none" stroke="#e7c778" strokeWidth="3" />
-          </g>
-          <text x="22" y="28" fill="#82dce8" fontFamily="Arial,sans-serif" fontSize="12" fontWeight="800" letterSpacing="2">SAME EVOLVING DESIGN · ENGINEERING OUTLINE</text>
-          <text x="22" y="406" fill="#b9ced3" fontFamily="Arial,sans-serif" fontSize="11">One shaft · rotating sign head · STOP face · GO reverse face · illuminated intent</text>
-        </svg>
-      ) : (
-        <div className="engineering-design-brief-view">
-          <strong>{projectName}</strong>
-          <p>{proposedSolution || operatingConcept || "Engineering has begun defining the current design."}</p>
-          {functionalElements && <p><b>Main parts:</b> {functionalElements}</p>}
-          {arrangement && <p><b>Arrangement:</b> {arrangement}</p>}
-        </div>
-      )}
-      {latestChange && <p className="engineering-inherited-change"><strong>Latest change:</strong> {latestChange}</p>}
-      <small>Inherited from the current Engineering design · not a separate invention</small>
     </section>
   );
 }
