@@ -71,7 +71,12 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
       </div>
       <div className="prototype-3d-actions">
         {autoRotate && (
-          <button type="button" aria-pressed={rotationPaused} onClick={() => setRotationPaused((paused) => !paused)}>
+          <button
+            type="button"
+            aria-label={automaticRotationActive ? "Pause automatic Prototype model rotation" : "Resume automatic Prototype model rotation"}
+            aria-pressed={automaticRotationActive}
+            onClick={() => setRotationPaused((paused) => !paused)}
+          >
             {rotationPaused ? "RESUME ROTATION" : "PAUSE ROTATION"}
           </button>
         )}

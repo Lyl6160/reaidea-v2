@@ -2515,31 +2515,38 @@ export default function WorkshopShell({
       >
         {!selectedBench && (
           <>
-            <div className="readout-title">
-              <div>
-                <span className="readout-light" aria-hidden="true" />
-                <strong>WORKSHOP FLOOR</strong>
-              </div>
-              <span>NO BENCH SELECTED</span>
+            <div className="workshop-floor-screen workshop-floor-overview-screen" role="region" aria-label="Workshop Floor full overview">
+              <span>WORKSHOP FLOOR</span>
+              <strong>FULL OVERVIEW</strong>
             </div>
-            <p>Choose a bench when you are ready. REV recommends {recommendedBench.label}, but the Workshop remains yours to navigate.</p>
-            <div className="next-move">
-              <span>REV · RECOMMENDED NEXT MOVE</span>
+            <div className="workshop-floor-screen workshop-floor-status-screen" role="region" aria-label="Workshop Floor selection status">
+              <span>WORKSHOP STATUS</span>
+              <strong>NO BENCH SELECTED</strong>
+              <p>Choose a bench when you are ready. The Workshop remains yours to navigate.</p>
+            </div>
+            <div className="workshop-floor-screen workshop-floor-recommendation-screen" role="region" aria-label={`REV recommends ${recommendedBench.label}`}>
+              <span>REV RECOMMENDS</span>
+              <strong>{recommendedBench.label}</strong>
+            </div>
+            <div className="workshop-floor-screen workshop-floor-next-screen" role="region" aria-label="REV next move">
+              <span>REV · NEXT MOVE</span>
               <strong>{recommendedBench.nextMove}</strong>
             </div>
-            {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
-            {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
+            <div className="workshop-floor-touchscreen" role="region" aria-label="Workshop Floor controls">
+              {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
+              {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
+              <button type="button" disabled>
+                ASK REV · COMING LATER
+              </button>
+            </div>
             <div className="workshop-floor-actions">
               {conceptRecoveryAvailable && (
-                <button type="button" onClick={recoverConcept01}>
+                <button type="button" className="workshop-floor-gold-control" onClick={recoverConcept01}>
                   {conceptGenerationState === "failed" ? "TRY AGAIN" : "CREATE CONCEPT 01"}
                 </button>
               )}
-              <button type="button" onClick={() => selectBench(recommendedBench.id)}>
+              <button type="button" className="workshop-floor-silver-control" onClick={() => selectBench(recommendedBench.id)}>
                 GO TO {recommendedBench.label.toUpperCase()} BENCH
-              </button>
-              <button type="button" disabled>
-                ASK REV · COMING LATER
               </button>
             </div>
           </>
@@ -2547,27 +2554,14 @@ export default function WorkshopShell({
         {selectedBench && !prototypeBenchIsFocused && (
           <>
         {selectedBench.id === "validation" && (
-          <div className="bench-guided-actions">
+          <div className="bench-guided-actions testing-guided-actions">
             {!discoveryAssessment.readyToAdvance ? (
-              <button type="button" onClick={() => selectBench("knowledge")}>GO TO DISCOVERY</button>
+              <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING BENCH</button>
             ) : (
               <button type="button" onClick={() => document.getElementById("validation-check-question")?.focus()}>
                 CHOOSE WHAT TO CHECK
               </button>
             )}
-          </div>
-        )}
-        {selectedBench.id === "marketing" && (
-          <div className="bench-guided-actions">
-            <button type="button" onClick={() => selectBench("validation")}>REVIEW VALIDATION</button>
-            <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING</button>
-          </div>
-        )}
-        {selectedBench.id === "reality" && (
-          <div className="bench-guided-actions">
-            <button type="button" onClick={() => selectBench("validation")}>GO TO VALIDATION</button>
-            <button type="button" onClick={() => selectBench("engineering")}>GO TO ENGINEERING</button>
-            <button type="button" onClick={() => selectBench("marketing")}>GO TO MARKETING</button>
           </div>
         )}
           </>

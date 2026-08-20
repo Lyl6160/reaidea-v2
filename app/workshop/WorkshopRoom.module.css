@@ -5,6 +5,17 @@
   color: #f3f9fb;
 }
 
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .panorama {
   position: relative;
   width: 100%;
@@ -66,10 +77,11 @@
 }
 
 .activeProject {
+  right: 56%;
   left: 18%;
   display: grid;
-  width: 28%;
-  max-width: 28%;
+  width: auto;
+  max-width: none;
   gap: 3px;
   padding-left: 2%;
   border-left: 1px solid rgba(210, 228, 232, 0.38);
@@ -551,6 +563,54 @@
   line-height: 1.4;
 }
 
+.consoleContent :global(.workshop-floor-screen) {
+  min-width: 0;
+}
+
+.consoleContent :global(.workshop-floor-screen > span) {
+  display: block;
+  margin-bottom: 5px;
+  color: #7fddea;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.consoleContent :global(.workshop-floor-screen > strong) {
+  display: block;
+  color: #f0f7f8;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.consoleContent :global(.workshop-floor-screen > p) {
+  margin: 6px 0 0;
+  color: #c8d7da;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.consoleContent :global(.workshop-floor-touchscreen) {
+  min-width: 0;
+}
+
+.consoleContent :global(.workshop-floor-touchscreen > button) {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgba(170, 183, 185, 0.5);
+  border-radius: 7px;
+  background:
+    repeating-linear-gradient(135deg, rgba(205, 216, 218, 0.1) 0 6px, transparent 6px 12px),
+    linear-gradient(180deg, #465155, #273035);
+  color: #e1e7e8;
+  font: 850 11px / 1.2 Arial, sans-serif;
+  letter-spacing: 0.05em;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
 @media (min-width: 1101px) {
   .consoleHeader {
     position: absolute;
@@ -620,6 +680,199 @@
     margin: 0;
   }
 
+  .consoleContent > :global(.workshop-floor-guidance) {
+    display: contents;
+  }
+
+  .consoleContent :global(.workshop-floor-screen),
+  .consoleContent :global(.workshop-floor-touchscreen) {
+    position: absolute;
+    z-index: 13;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: clamp(10px, 0.72cqw, 12px) clamp(10px, 0.72cqw, 12px) clamp(12px, 0.9cqw, 15px);
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(165deg, rgba(2, 14, 19, 0.86), rgba(5, 29, 36, 0.74));
+    box-shadow: inset 0 0 0 1px rgba(139, 229, 241, 0.18), inset 0 0 20px rgba(69, 202, 220, 0.12);
+    color: #d9e8ea;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.workshop-floor-overview-screen) {
+    top: 34.02cqw;
+    left: 8.28%;
+    display: grid;
+    width: 16.82%;
+    height: 12.78cqw;
+    align-content: center;
+    clip-path: polygon(2% 0, 98% 0, 100% 97%, 0 100%);
+    text-align: center;
+  }
+
+  .consoleContent :global(.workshop-floor-status-screen) {
+    top: 34.02cqw;
+    left: 25.58%;
+    display: grid;
+    width: 22.98%;
+    height: 12.78cqw;
+    align-content: center;
+    clip-path: polygon(1% 0, 99% 0, 100% 98%, 0 100%);
+  }
+
+  .consoleContent :global(.workshop-floor-recommendation-screen) {
+    top: 34.04cqw;
+    left: 50.48%;
+    display: grid;
+    width: 17.82%;
+    height: 12.72cqw;
+    align-content: center;
+    clip-path: polygon(1.5% 0, 99% 0, 100% 98%, 0 100%);
+    text-align: center;
+  }
+
+  .consoleContent :global(.workshop-floor-next-screen) {
+    top: 34.34cqw;
+    left: 69.92%;
+    display: grid;
+    width: 19.02%;
+    height: 12.3cqw;
+    align-content: center;
+    clip-path: polygon(2% 0, 98% 1%, 100% 97%, 0 100%);
+  }
+
+  .consoleContent :global(.workshop-floor-screen > span) {
+    margin-bottom: clamp(5px, 0.4cqw, 7px);
+    font-size: clamp(12px, 0.76cqw, 13px);
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .consoleContent :global(.workshop-floor-screen > strong) {
+    font-size: clamp(14px, 0.92cqw, 16px);
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.workshop-floor-screen > p) {
+    margin-top: clamp(6px, 0.46cqw, 8px);
+    font-size: clamp(13px, 0.84cqw, 14px);
+    font-weight: 650;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .consoleContent :global(.workshop-floor-touchscreen) {
+    top: 48.16cqw;
+    left: 7.82%;
+    display: grid;
+    width: 40.92%;
+    height: 4.5cqw;
+    min-height: 50px;
+    align-items: center;
+    clip-path: polygon(1% 2%, 99% 0, 100% 88%, 0 100%);
+  }
+
+  .consoleContent :global(.workshop-floor-touchscreen > button) {
+    min-height: 32px;
+    border: 1px solid rgba(142, 167, 171, 0.24);
+    border-radius: 3px;
+    background: rgba(10, 21, 25, 0.66);
+    color: rgba(211, 225, 227, 0.72);
+    font: 850 clamp(11px, 0.72cqw, 12px) / 1.2 Arial, sans-serif;
+    letter-spacing: 0.04em;
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  .consoleContent :global(.workshop-floor-actions) {
+    display: contents;
+  }
+
+  .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control),
+  .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control) {
+    position: absolute;
+    z-index: 16;
+    top: 48.22cqw;
+    height: 4.05cqw;
+    min-height: 42px;
+    margin: 0;
+    padding: 0.4cqw 1cqw;
+    border: 0;
+    border-radius: 0;
+    font: 900 clamp(11px, 0.72cqw, 12px) / 1.1 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 5px #000;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control) {
+    left: 50.34%;
+    width: 18.85%;
+    clip-path: polygon(4% 4%, 96% 2%, 100% 88%, 1% 100%);
+    background: linear-gradient(180deg, rgba(196, 211, 214, 0.22), rgba(38, 54, 59, 0.46));
+    box-shadow: inset 0 0 0 1px rgba(222, 244, 247, 0.2), inset 0 0 18px rgba(126, 231, 244, 0.12);
+    color: #eefcff;
+  }
+
+  .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control) {
+    left: 70.45%;
+    width: 21.1%;
+    clip-path: polygon(3% 3%, 97% 0, 100% 86%, 1% 100%);
+    background: linear-gradient(180deg, rgba(184, 143, 52, 0.48), rgba(74, 47, 10, 0.68));
+    box-shadow: inset 0 0 0 1px rgba(255, 222, 144, 0.22), inset 0 0 20px rgba(236, 177, 61, 0.14);
+    color: #fff4d2;
+  }
+
+  .consoleContent :global(.workshop-floor-actions button:focus-visible),
+  .consoleContent :global(.workshop-floor-touchscreen > button:focus-visible) {
+    outline: 3px solid #ffe49c;
+    outline-offset: -5px;
+  }
+
+  .consoleContent :global(.testing-guided-actions) {
+    position: absolute;
+    z-index: 15;
+    top: 48.16cqw;
+    left: 7.82%;
+    display: grid;
+    width: 40.92%;
+    height: 4.5cqw;
+    min-height: 50px;
+    margin: 0;
+    padding: clamp(5px, 0.42cqw, 7px) clamp(9px, 0.75cqw, 12px);
+    border: 0;
+    clip-path: polygon(1% 2%, 99% 0, 100% 88%, 0 100%);
+    background: linear-gradient(165deg, rgba(2, 14, 19, 0.94), rgba(5, 29, 36, 0.9));
+    box-shadow: inset 0 0 0 1px rgba(139, 229, 241, 0.18), inset 0 0 20px rgba(69, 202, 220, 0.12);
+    pointer-events: auto;
+  }
+
+  .consoleContent :global(.testing-guided-actions > button) {
+    width: 100%;
+    min-height: 36px;
+    margin: 0;
+    padding: 5px 10px;
+    border: 1px solid rgba(121, 218, 231, 0.42);
+    border-radius: 3px;
+    background: rgba(4, 24, 30, 0.82);
+    color: #dffbff;
+    font: 900 clamp(11px, 0.76cqw, 13px) / 1.2 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .consoleContent :global(.testing-guided-actions > button:hover) {
+    background: rgba(10, 54, 65, 0.9);
+  }
+
+  .consoleContent :global(.testing-guided-actions > button:focus-visible) {
+    outline: 3px solid #a9f5ff;
+    outline-offset: -4px;
+  }
+
   .consoleContent :global(.rolling-bench-flow[data-bench="engineering"]) {
     min-width: 0;
   }
@@ -642,9 +895,10 @@
   .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-question-screen) {
     position: absolute;
     z-index: 13;
+    box-sizing: border-box;
     min-width: 0;
     overflow: hidden;
-    padding: clamp(10px, 0.72cqw, 12px);
+    padding: clamp(10px, 0.72cqw, 12px) clamp(10px, 0.72cqw, 12px) clamp(12px, 0.9cqw, 15px);
     border: 0;
     border-radius: 0;
     background: linear-gradient(165deg, rgba(2, 14, 19, 0.86), rgba(5, 29, 36, 0.74));
@@ -795,7 +1049,7 @@
 
   .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .rev-screen-more) {
     align-self: end;
-    margin: 4px 0 0;
+    margin: 4px 0 2px;
     color: #75c8d3;
     font: 850 clamp(10px, 0.62cqw, 11px) / 1.2 Arial, sans-serif;
     letter-spacing: 0.04em;
@@ -1099,9 +1353,14 @@
   }
 
   .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-primary-control:disabled) {
-    background: linear-gradient(180deg, rgba(119, 96, 47, 0.26), rgba(45, 36, 19, 0.48));
-    color: rgba(255, 239, 202, 0.54);
+    background:
+      repeating-linear-gradient(135deg, rgba(185, 194, 196, 0.13) 0 5px, transparent 5px 10px),
+      linear-gradient(180deg, rgba(83, 82, 71, 0.42), rgba(35, 39, 40, 0.72));
+    box-shadow: inset 0 0 0 2px rgba(191, 201, 203, 0.25), inset 0 0 20px rgba(22, 29, 31, 0.38);
+    color: #d7dfe0;
+    cursor: not-allowed;
     opacity: 1;
+    text-shadow: 0 1px 4px #000;
   }
 
   .consoleContent :global(.rolling-bench-flow[data-bench="engineering"] .console-secondary-action) {
@@ -1145,10 +1404,11 @@
   .consoleContent :global(.command-console-flow .rev-question-screen) {
     position: absolute;
     z-index: 13;
+    box-sizing: border-box;
     min-width: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: clamp(10px, 0.72cqw, 12px);
+    padding: clamp(10px, 0.72cqw, 12px) clamp(10px, 0.72cqw, 12px) clamp(12px, 0.9cqw, 15px);
     border: 0;
     border-radius: 0;
     background: linear-gradient(165deg, rgba(2, 14, 19, 0.86), rgba(5, 29, 36, 0.74));
@@ -1251,6 +1511,15 @@
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid rgba(109, 211, 225, 0.18);
+  }
+
+  .consoleContent :global(.command-console-flow .rev-screen-more) {
+    align-self: end;
+    margin: 4px 0 2px;
+    color: #75c8d3;
+    font: 850 clamp(10px, 0.62cqw, 11px) / 1.2 Arial, sans-serif;
+    letter-spacing: 0.04em;
+    text-align: center;
   }
 
   .consoleContent :global(.command-console-flow .rev-next-move strong) {
@@ -1386,9 +1655,14 @@
   }
 
   .consoleContent :global(.command-console-flow .console-primary-control:disabled) {
-    background: linear-gradient(180deg, rgba(119, 96, 47, 0.26), rgba(45, 36, 19, 0.48));
-    color: rgba(255, 239, 202, 0.54);
+    background:
+      repeating-linear-gradient(135deg, rgba(185, 194, 196, 0.13) 0 5px, transparent 5px 10px),
+      linear-gradient(180deg, rgba(83, 82, 71, 0.42), rgba(35, 39, 40, 0.72));
+    box-shadow: inset 0 0 0 2px rgba(191, 201, 203, 0.25), inset 0 0 20px rgba(22, 29, 31, 0.38);
+    color: #d7dfe0;
+    cursor: not-allowed;
     opacity: 1;
+    text-shadow: 0 1px 4px #000;
   }
 
   .consoleContent :global(.command-console-flow .console-inline-action) {
@@ -1490,7 +1764,8 @@
 @media (max-width: 1100px) {
   .desktopBenchMap { display: none; }
   .consoleContent :global(.rev-screen-more) { display: none; }
-  .activeProject { left: 21%; width: 28%; max-width: 28%; }
+  .consoleContent :global(.command-console-flow[data-bench-state="dormant"] .rev-question-screen) { display: none; }
+  .activeProject { right: 57%; left: 21%; width: auto; max-width: none; }
   .centralStage { top: 31%; left: 38%; width: 24%; }
   .prototypeStage { top: 25%; left: 30%; width: 40%; }
 
@@ -1509,10 +1784,18 @@
   }
 
   .selectorHeading {
+    display: grid;
+    gap: 5px;
     color: #8aeffa;
-    font: 900 9px / 1 Arial, sans-serif;
+    font: 900 12px / 1.15 Arial, sans-serif;
     letter-spacing: 0.1em;
     pointer-events: none;
+  }
+
+  .selectorHeading small {
+    color: #a9bdc2;
+    font-size: 9px;
+    letter-spacing: 0.07em;
   }
 
   .compactBenchRail {
@@ -1574,12 +1857,48 @@
   }
 
   .consoleContent :global(.workshop-floor-actions button),
+  .consoleContent :global(.bench-guided-actions button),
   .consoleContent :global(.console-primary-control),
   .consoleContent :global(.console-inline-action) {
     position: relative;
     z-index: 2;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border: 1px solid rgba(116, 215, 229, 0.58);
+    border-radius: 7px;
+    background: linear-gradient(180deg, rgba(20, 72, 84, 0.96), rgba(10, 40, 49, 0.98));
+    color: #effcff;
+    font: 850 11px / 1.2 Arial, sans-serif;
+    letter-spacing: 0.05em;
+    text-align: center;
     pointer-events: auto;
     touch-action: manipulation;
+  }
+
+  .consoleContent :global(.console-primary-control) {
+    width: 100%;
+    border-color: rgba(226, 184, 91, 0.72);
+    background: linear-gradient(180deg, rgba(142, 101, 30, 0.94), rgba(78, 50, 14, 0.98));
+    color: #fff4d2;
+  }
+
+  .consoleContent :global(.console-primary-control:disabled) {
+    border-color: rgba(170, 183, 185, 0.5);
+    background:
+      repeating-linear-gradient(135deg, rgba(205, 216, 218, 0.1) 0 6px, transparent 6px 12px),
+      linear-gradient(180deg, #465155, #273035);
+    color: #e1e7e8;
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  .consoleContent :global(.bench-guided-actions) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
   }
 
   .consoleHeader {
@@ -1592,7 +1911,7 @@
     position: relative;
     z-index: 2;
     width: 100%;
-    min-height: 40px;
+    min-height: 44px;
     margin: 12px 0 0;
     padding: 0 14px;
     border: 1px solid rgba(120, 225, 238, 0.55);
@@ -1619,7 +1938,9 @@
 
   .activeProject {
     top: 48px;
+    right: auto;
     left: 2%;
+    width: 46%;
     max-width: 46%;
     padding-left: 0;
     border-left: 0;

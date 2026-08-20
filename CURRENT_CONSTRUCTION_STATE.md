@@ -1,32 +1,32 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `9c7a039d06e78105d3bf647e6ba6c4105044a879`
+**Current safe checkpoint:** `6fbb55653f56662ad064cfb4d879997433641b8b`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — CORRECTED BUILD 3 UNDER CONSTRUCTION
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 4 HUMAN ACCEPTED / UNCOMMITTED
 
-**Current authorised construction step:** HP-24.39 Build 3 — corrected realistic Living Workshop runtime integration; construction in progress
+**Current authorised construction step:** HP-24.39 Build 4 — provider-free responsive polish and accessibility checkpoint; human accepted and ready for commit review
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
-**Last governance update:** 2026-08-19
+**Last governance update:** 2026-08-20
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — CORRECTED BUILD 3 UNDER CONSTRUCTION
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 4 HUMAN ACCEPTED / UNCOMMITTED
 
 Authoritative starting baseline:
 
 - `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 - branch `sprint006-build24-39-home-workshop-visual-integration`
 
-Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`.
+Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`. Corrected Build 3 — Realistic Living Workshop was human accepted, committed, and pushed at `6fbb55653f56662ad064cfb4d879997433641b8b`.
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch has advanced through the accepted neutral-plate and REV-avatar preservation checkpoints to `9c7a039d06e78105d3bf647e6ba6c4105044a879`. Corrected Build 3 runtime reconstruction is now actively under construction and remains unaccepted and uncommitted. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). The implementation is a hybrid of the accepted project-neutral realistic environment and accessible live HTML controls and Project data. Build 4 remains blocked. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch has advanced through the human-accepted, committed, and pushed corrected Build 3 checkpoint at `6fbb55653f56662ad064cfb4d879997433641b8b`. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 4 provider-free responsive polish and accessibility is human accepted and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance and Home CLEAR visual confirmation remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -857,7 +857,7 @@ This preservation commit authorises no runtime visual implementation by itself.
 
 **Starting baseline:** `687e8007d5bd6ee87fa8cbd3d087d744d43ca60f`
 
-HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`.
+HP-24.39 governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44`. Build 1 — Runtime Visual Foundation was committed and pushed at `c5ee68af3fcbda306792b6c164af696714e15392`. Build 2 — Home Environment and Doorway was committed and pushed at `05a6e49dd5afe5e0e54baf8d3109d018c1f4f979`. Corrected Build 3 — Realistic Living Workshop was human accepted, committed, and pushed at `6fbb55653f56662ad064cfb4d879997433641b8b`.
 
 Build 2 remains the accepted presentation-only Home shell, approved runtime Home authority, live wall identity, bright doorway continuity, and minimal Home wrapping.
 
@@ -918,7 +918,7 @@ The main construction branch has been returned with `git reset --keep` to the pu
 - Its byte-identical accepted archive copy is `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_Living_Workshop_Runtime_Neutral_Plate_Accepted_2026-08-19.png`.
 - The plate is subordinate to the principal north star and preserves the realistic eight-bench room, central 3D stage, and foreground console.
 - Project, Concept, REV, bench labels, statuses, guidance, questions, navigation, save actions, and controls remain live accessible overlays.
-- Asset preservation does not begin Build 3 runtime implementation. Build 4 remains blocked.
+- The earlier asset-preservation checkpoint did not itself begin runtime implementation. Corrected Build 3 now uses this byte-identical plate and is committed and pushed; Build 4 provider-free polish is active.
 
 ### Accepted REV Avatar
 
@@ -930,7 +930,7 @@ The main construction branch has been returned with `git reset --keep` to the pu
 - Its byte-identical accepted archive copy is `C:\Users\User\Documents\reaidea-local-archives\reAIdea-visual-direction-amended-2026-08-19\reAIdea_REV_Avatar_Accepted_2026-08-19.png`.
 - The avatar is subordinate to the principal Living Workshop authority and supplies the live REV identity in the architectural header.
 - Its circular frame, `REV` label, and `AI Engineering Partner` wording remain accessible live HTML; no wording or UI is baked into the avatar.
-- Avatar preservation does not begin Build 3 runtime implementation. Build 4 remains blocked.
+- The earlier avatar-preservation checkpoint did not itself begin runtime implementation. Corrected Build 3 now uses this byte-identical avatar and is committed and pushed; Build 4 provider-free polish is active.
 - Project, Concept, provider, storage, safety, and behaviour boundaries remain unchanged.
 
 ### Existing Prototype 3D Audit
@@ -938,12 +938,12 @@ The main construction branch has been returned with `git reset --keep` to the pu
 - `app/workshop/Prototype3DViewer.tsx` was introduced by `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` and remains current and conditionally mounted through `RollingBenchFlow`.
 - It is a React Three Fiber / Three.js WebGL viewer using `@react-three/fiber`, `@react-three/drei`, and `three`; no external 3D model or image-sequence asset is used.
 - `WorkshopShell` supplies the current or historically viewed Concept candidate's `ConceptGeometry`. Geometry is bounded, validated, explicitly non-authoritative, source-bound to the Concept candidate revision, and persisted with the existing Concept candidate outside Project truth.
-- The current viewer supports manual orbit rotation, zoom, reset, fit, and an optional bounded joint preview. It does not auto-spin and has no pause control.
-- Correct centre-stage integration must reuse one viewer and existing candidate geometry, preserve safe refusal and the truthful 2D fallback when geometry is unavailable, add an accessible pause/reduced-motion treatment if automatic rotation is introduced, and create no Project, safety, storage, or provider boundary change.
+- The current viewer supports manual orbit rotation, zoom, reset, fit, an optional bounded joint preview, and transient automatic stage rotation with a live Pause / Resume control. It starts paused for reduced-motion users and pauses when the user interacts with the model.
+- Centre-stage integration reuses one viewer and existing candidate geometry, preserves safe refusal and the truthful 2D fallback when geometry is unavailable, and creates no Project, safety, storage, or provider boundary change. Candidate-backed central 3D human acceptance remains deferred.
 
 ### Current Build 3 Gate
 
-Corrected Build 3 is human accepted for the tested no-candidate desktop, tablet, and mobile journey. It is ready for commit review but remains uncommitted. The accepted neutral plate remains the physical room while Project identity, REV, all eight bench labels and states, guidance, questions, navigation, and controls remain live application content.
+Corrected Build 3 is human accepted, committed, and pushed at `6fbb55653f56662ad064cfb4d879997433641b8b` for the tested no-candidate desktop, tablet, and mobile journey. The accepted neutral plate remains the physical room while Project identity, REV, all eight bench labels and states, guidance, questions, navigation, and controls remain live application content.
 
 #### Accepted Desktop Walkthrough
 
@@ -967,12 +967,28 @@ Corrected Build 3 is human accepted for the tested no-candidate desktop, tablet,
 - The larger horizontal canonical bench selector below the room is the intended accessible touch navigation. It selects benches by touch and swipes horizontally to later benches.
 - Responsive console controls work, content uses natural vertical scrolling, and no horizontal page overflow occurs.
 
+### Build 4 Provider-Free Polish and Accessibility Checkpoint
+
+Build 4 human visual acceptance passed for the bounded desktop, tablet, and mobile responsive-polish checkpoint. The work remains uncommitted and unpushed. It does not authorise provider-backed testing, a CLEAR journey, Concept generation, browser-storage mutation, fake candidate or geometry fixtures, or candidate-backed central 3D acceptance.
+
+- Workshop Floor content now operates entirely within the physical command console, with no detached application window below it.
+- The persistent eight-bench room and responsive horizontal selector remain the canonical bench navigation. All eight benches remain operable, and selecting a bench does not move the page viewport.
+- Detached Marketing and Reality guided-action rails were removed because they only duplicated canonical bench selection. User-facing `VALIDATION` wording is absent; the visible bench name remains `TESTING`.
+- Testing's unique `GO TO ENGINEERING BENCH` control remains integrated in its lower touchscreen and uses the existing in-place bench-selection path. No legacy `GO TO DISCOVERY` action remains.
+- Inventor `SAVE INFORMATION`, Engineering `SAVE & CONTINUE`, Prototype `OPEN ENGINEERING BENCH`, `SHOW WORKSHOP FLOOR`, and truthful disabled primary actions remain intact.
+- Mobile Reality human acceptance passed with `VIEWING · DORMANT` and `UNAVAILABLE · NO ACTION READY`. At tablet and mobile widths, the duplicate lower `BENCH STATUS` presentation is suppressed while the authoritative upper status screen and disabled primary action remain visible.
+- Responsive content uses natural scrolling without horizontal page overflow. Keyboard, touch, visible focus, reduced-motion, and semantic button behavior remain preserved.
+- Final validation passed: ESLint with zero errors and four pre-existing warnings, TypeScript no-emit, production build, and `git diff --check`.
+- The retained review log is `C:\Users\User\Documents\reaidea-local-archives\HP24.39-Build4-test-logs\BUILD4-visual-review-2026-08-20-155558.log`, SHA-256 `DBA6875D8F3A95A64E8B25980BD2889CD4C43F56A695CBCE5129157EA80992F4`, size 4,253 bytes.
+- That complete retained log contains 4 successful Home GETs, 24 successful Workshop GETs, five earlier image-understanding POSTs that each returned HTTP 502 during the dual provider safety-report stage, zero Concept generate/refine/view requests, and zero other API requests. Those five earlier requests attempted ten provider operations in total. The final responsive correction, validation, closeout, and preservation made no API or provider request and performed no hidden retry.
+- The retained `popups-script.js` console errors originate from the installed Chrome extension and remain external to reAIdea.
+
 #### Explicitly Deferred Acceptance
 
 1. Candidate-backed Concept and central Prototype 3D presentation could not be human-tested because the current Project has no saved candidate or validated geometry. Candidate-backed central 3D confirmation remains mandatory before final HP-24.39 closeout.
 2. Home CLEAR visual confirmation remains deferred pending provider availability.
-3. Build 4 final polish remains deferred: Active Project title truncation; console-edge and floor-boundary text spacing; a stronger disabled-gold-control appearance; responsive “Select a bench below” guidance; mobile primary-action presentation; Reality wording using “Engineering and Testing” rather than “Engineering and Validation”; and minor console alignment and spacing refinements.
+3. Build 4 is human accepted but remains uncommitted and unpushed pending a separately authorised commit checkpoint.
 
 The Workshop remains one persistent eight-bench room. Selection strengthens one bench without removing the others, and the existing `RollingBenchFlow` remains the live foreground console rather than being duplicated. Prototype retains the one existing `Prototype3DViewer` mount and the current candidate's validated, non-authoritative `ConceptGeometry` boundary for future central-stage confirmation. Automatic presentation rotation is transient, exposes Pause/Resume, pauses on interaction, and starts paused for reduced-motion users. Missing or invalid geometry retains a truthful no-design or current Concept fallback.
 
-Build 3 remains uncommitted. Build 4 remains unstarted and blocked until Build 3 is committed, pushed, and separately authorised for progression. HP-24.38 Project truth, safety, receipt, Concept, evidence, provider, and persistence boundaries remain unchanged; no new Project, candidate, safety, storage, provider, fetch, retry, or persistence authority was introduced.
+Build 3 is committed and pushed. Build 4 is human accepted, validation-complete, uncommitted, and unpushed. Candidate-backed central Prototype 3D confirmation and Home CLEAR visual confirmation remain deferred, and provider-backed testing remains unauthorised. HP-24.38 Project truth, safety, receipt, Concept, evidence, provider, and persistence boundaries remain unchanged; no new Project, candidate, safety, storage, provider, fetch, retry, or persistence authority is introduced.

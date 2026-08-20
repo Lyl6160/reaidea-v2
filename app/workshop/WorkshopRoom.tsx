@@ -103,6 +103,7 @@ export default function WorkshopRoom({
 
   return (
     <section className={styles.workshopRoom} aria-label="reAIdea Living Workshop">
+      <h1 className={styles.visuallyHidden}>reAIdea Living Workshop</h1>
       <div className={styles.panorama}>
         <Image
           src={workshopPlate}
@@ -118,9 +119,9 @@ export default function WorkshopRoom({
             <strong><span>re</span><span className={styles.ai}>AI</span><span>dea</span></strong>
             <small>Living Engineering Workshop</small>
           </div>
-          <div className={styles.activeProject}>
+          <div className={styles.activeProject} aria-label={`Active Project: ${projectName}. ${projectStatus}`}>
             <span>ACTIVE PROJECT</span>
-            <strong>{projectName}</strong>
+            <strong title={projectName}>{projectName}</strong>
             <small>{projectStatus}</small>
           </div>
           <div className={styles.revIdentity}>
@@ -158,7 +159,10 @@ export default function WorkshopRoom({
       </div>
 
       <nav className={styles.compactBenchSelector} aria-label="Workshop benches">
-        <span className={styles.selectorHeading}>WORKSHOP BENCHES</span>
+        <span className={styles.selectorHeading}>
+          SELECT A BENCH BELOW
+          <small>WORKSHOP BENCHES · SWIPE TO EXPLORE ALL EIGHT</small>
+        </span>
         <div className={styles.compactBenchRail}>
           {benches.map((bench) => (
             <BenchButton key={bench.id} bench={bench} compact onSelectBench={onSelectBench} />

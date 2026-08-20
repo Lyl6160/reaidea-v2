@@ -41,6 +41,10 @@ function scrollInstrumentRegion(event: KeyboardEvent<HTMLElement>) {
   }
 }
 
+function userFacingWorkshopCopy(value: string): string {
+  return value.replaceAll("Engineering and Validation", "Engineering and Testing");
+}
+
 type RollingBenchFlowProps = {
   benchId: WorkshopBenchId;
   benchState?: WorkshopBenchState;
@@ -357,12 +361,14 @@ function RevWorkingContextPanel({ context, benchReason, benchNextMove }: {
   const sourceById = new Map((context?.sources ?? []).map((source) => [source.id, source.label]));
   const knownFacts = context?.known ?? [];
   const preparedItems = context?.prepared ?? [];
+  const displayedBenchReason = benchReason ? userFacingWorkshopCopy(benchReason) : undefined;
+  const displayedBenchNextMove = benchNextMove ? userFacingWorkshopCopy(benchNextMove) : undefined;
   const knownScreenHasOverflow = knownFacts.length > 1 || knownFacts.some((fact) => fact.text.length > 90);
-  const preparedScreenHasOverflow = preparedItems.length > 1 || Boolean(benchReason) || preparedItems.some((item) => item.length > 90);
+  const preparedScreenHasOverflow = preparedItems.length > 1 || Boolean(displayedBenchReason) || preparedItems.some((item) => item.length > 90);
   return <section className="rev-working-context" aria-label="REV Working Understanding">
     <div className="rev-context-known"><span>WHAT REV ALREADY KNOWS</span><div className="rev-screen-scroll-body" role="region" aria-label="What REV already knows — scroll for complete information" tabIndex={0} onKeyDown={scrollInstrumentRegion}>{knownFacts.length ? <ul>{knownFacts.map((fact, index) => <li key={`${fact.text}-${index}`}><p>{fact.text}</p><small>Source: {fact.sourceIds.map((id) => sourceById.get(id) ?? id).join(", ")}</small></li>)}</ul> : <p>No relevant detail has been recorded yet.</p>}</div>{knownScreenHasOverflow && <small className="rev-screen-more" aria-hidden="true">MORE ↓</small>}</div>
-    <div className="rev-context-prepared"><span>WHAT REV PREPARED</span><div className="rev-screen-scroll-body" role="region" aria-label="What REV prepared — scroll for complete information" tabIndex={0} onKeyDown={scrollInstrumentRegion}>{preparedItems.map((item) => <p key={item}>{item}</p>)}{benchReason && <p className="rev-bench-reason">{benchReason}</p>}{preparedItems.length === 0 && !benchReason && <p>No prepared information is available yet.</p>}</div>{preparedScreenHasOverflow && <small className="rev-screen-more" aria-hidden="true">MORE ↓</small>}</div>
-    {benchNextMove && <div className="rev-next-move" role="region" aria-label="REV next move" tabIndex={0} onKeyDown={scrollInstrumentRegion}><span>REV · NEXT MOVE</span><strong>{benchNextMove}</strong>{benchNextMove.length > 90 && <small className="rev-screen-more" aria-hidden="true">MORE ↓</small>}</div>}
+    <div className="rev-context-prepared"><span>WHAT REV PREPARED</span><div className="rev-screen-scroll-body" role="region" aria-label="What REV prepared — scroll for complete information" tabIndex={0} onKeyDown={scrollInstrumentRegion}>{preparedItems.map((item) => <p key={item}>{item}</p>)}{displayedBenchReason && <p className="rev-bench-reason">{displayedBenchReason}</p>}{preparedItems.length === 0 && !displayedBenchReason && <p>No prepared information is available yet.</p>}</div>{preparedScreenHasOverflow && <small className="rev-screen-more" aria-hidden="true">MORE ↓</small>}</div>
+    {displayedBenchNextMove && <div className="rev-next-move" role="region" aria-label="REV next move" tabIndex={0} onKeyDown={scrollInstrumentRegion}><span>REV · NEXT MOVE</span><strong>{displayedBenchNextMove}</strong>{displayedBenchNextMove.length > 90 && <small className="rev-screen-more" aria-hidden="true">MORE ↓</small>}</div>}
   </section>;
 }
 
@@ -427,7 +433,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     benchId,
     state: benchState,
     progress,
-    reason: props.benchReason ?? "REV has not recorded a bench status yet.",
+    reason: userFacingWorkshopCopy(props.benchReason ?? "REV has not recorded a bench status yet."),
     descriptionRecorded: Boolean(originalObservation),
     conceptAvailable: currentConceptAvailable,
     modelReady: Boolean(props.modelReady),
@@ -556,13 +562,13 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
               {localError && <p className="flow-error" role="alert">{localError}</p>}
             </div>
             {!initialDescription
-              ? <button type="button" className="console-primary-control" onClick={createFirstConcept} disabled={props.modelUpdating || !draft.trim()}>BRING MY IDEA TO LIFE</button>
+              ? <button type="button" className="console-primary-control" onClick={createFirstConcept} disabled={props.modelUpdating || !draft.trim()} aria-label={!draft.trim() ? "Bring my idea to life unavailable until a description is added" : undefined}>{!draft.trim() ? "UNAVAILABLE · ADD A DESCRIPTION" : "BRING MY IDEA TO LIFE"}</button>
               : !props.modelReady
-                ? <button type="button" className="console-primary-control" onClick={saveInventorInformation} disabled={!draft.trim()}>SAVE INFORMATION</button>
+                ? <button type="button" className="console-primary-control" onClick={saveInventorInformation} disabled={!draft.trim()} aria-label={!draft.trim() ? "Save information unavailable until information is added" : undefined}>{!draft.trim() ? "UNAVAILABLE · ADD INFORMATION" : "SAVE INFORMATION"}</button>
                 : currentInventorReview === "unreviewed"
                   ? <button type="button" className="console-primary-control" onClick={() => { setReviewedInventorPresentation(inventorPresentation); setInventorReview("yes"); }}>YES — KEEP DEVELOPING</button>
                   : currentInventorReview === "change" || props.refinementDraft?.trim()
-                    ? <button type="button" className="console-primary-control" onClick={props.onUpdateModel} disabled={props.modelUpdating || !props.refinementDraft?.trim()}>UPDATE DESIGN</button>
+                    ? <button type="button" className="console-primary-control" onClick={props.onUpdateModel} disabled={props.modelUpdating || !props.refinementDraft?.trim()} aria-label={!props.modelUpdating && !props.refinementDraft?.trim() ? "Update design unavailable until a change is added" : undefined}>{props.modelUpdating ? "REV IS UPDATING YOUR DESIGN..." : !props.refinementDraft?.trim() ? "UNAVAILABLE · ADD A CHANGE" : "UPDATE DESIGN"}</button>
                     : contextualQuestion
                       ? <button type="button" className="console-primary-control" onClick={() => saveContextualAnswer(contextualQuestion.prompt)}>SAVE ANSWER</button>
                       : <button type="button" className="console-primary-control" onClick={() => props.onGoToBench("engineering")}>OPEN ENGINEERING BENCH</button>}
@@ -632,7 +638,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
                 ? <button type="button" className="console-primary-control" onClick={props.onBackToCurrent}>BACK TO CURRENT</button>
                 : props.conceptLimitReached
                   ? <button type="button" className="console-primary-control" onClick={() => props.onGoToBench("engineering")}>BACK TO ENGINEERING</button>
-                  : <button type="button" className="console-primary-control" onClick={props.onUpdateModel} disabled={props.modelUpdating || !props.refinementDraft?.trim()}>{props.modelUpdating ? "REV IS UPDATING YOUR DESIGN..." : "UPDATE MODEL"}</button>}
+                  : <button type="button" className="console-primary-control" onClick={props.onUpdateModel} disabled={props.modelUpdating || !props.refinementDraft?.trim()} aria-label={!props.modelUpdating && !props.refinementDraft?.trim() ? "Update model unavailable until a change is added" : undefined}>{props.modelUpdating ? "REV IS UPDATING YOUR DESIGN..." : !props.refinementDraft?.trim() ? "UNAVAILABLE · ADD A CHANGE" : "UPDATE MODEL"}</button>}
             {conceptAvailable && <small>{viewingHistoricalRevision ? "Viewing this revision does not change your Project or model history." : props.conceptLimitReached ? "Delete an older saved version if you want to keep refining this direction." : "This creates the next version of the same design."}</small>}
           </section>
           {conceptHistory.length > 0 && <aside id="prototype-concept-history" className="bench-notepad concept-history"><span>CONCEPT HISTORY</span>{conceptHistory.map((revision) => <article key={revision.candidateId} className={revision.revision === props.currentRevision ? "is-current" : ""}><div><strong>CONCEPT {String(revision.revision).padStart(2, "0")}</strong>{revision.revision === props.currentRevision && <b>CURRENT</b>}</div>{revision.changeNote && <p>{revision.changeNote}</p>}<div className="concept-history-actions"><button type="button" onClick={() => props.onViewRevision?.(revision.revision)} disabled={revision.revision === displayedRevision}>VIEW</button>{revision.revision !== props.currentRevision && <button type="button" onClick={() => setDeleteRevision(revision.revision)}>DELETE</button>}</div></article>)}{deleteRevision !== null && <div className="concept-delete-confirmation" role="alertdialog" aria-modal="true" aria-label={`Delete Concept ${String(deleteRevision).padStart(2, "0")}?`}><strong>Delete Concept {String(deleteRevision).padStart(2, "0")}?</strong><p>This removes this saved design version from Prototype history. It does not remove your Project information.</p><div><button type="button" onClick={() => setDeleteRevision(null)} disabled={deletingRevision}>CANCEL</button><button type="button" disabled={deletingRevision} onClick={async () => { setDeletingRevision(true); const deleted = await props.onDeleteRevision?.(deleteRevision); setDeletingRevision(false); if (deleted) setDeleteRevision(null); }}>DELETE CONCEPT</button></div></div>}</aside>}
@@ -644,7 +650,7 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   if (!flow || !currentQuestion) return null;
 
   return (
-    <section ref={consoleRootRef} className="rolling-bench-flow command-console-flow" data-bench={benchId} data-console-layout="physical" data-progress={progress} aria-label={`${flow.title} work area`}>
+    <section ref={consoleRootRef} className="rolling-bench-flow command-console-flow" data-bench={benchId} data-bench-state={benchState} data-console-layout="physical" data-progress={progress} aria-label={`${flow.title} work area`}>
       <RevWorkingContextPanel context={props.workingContext} benchReason={props.benchReason} benchNextMove={props.benchNextMove} />
       <BenchConsoleStatusScreen presentation={consoleStatus!} storageStatus={props.modelStorageStatus}>
         {benchId === "engineering" && props.modelUpdating && <GenerationProgress kind="generation" status="working" />}
@@ -664,14 +670,14 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
             {!benchIsDormant && benchId === "patent" && <div className="research-unavailable"><strong>SIMILAR PATENTS REV FOUND</strong><p>Live patent research is not yet available. REV will not invent results.</p></div>}
           </div>
           {benchIsDormant
-            ? <button type="button" className="console-primary-control" disabled>{flow.nextLabel ?? "NO ACTION READY"}</button>
+            ? <button type="button" className="console-primary-control" disabled aria-label={`${flow.title} action unavailable while this bench is dormant`}>UNAVAILABLE · {flow.nextLabel ?? "NO ACTION READY"}</button>
             : benchId === "validation" && props.testingOutcome === "not-supported"
               ? <button type="button" className="console-primary-control" onClick={() => props.onGoToBench("engineering")}>BACK TO ENGINEERING</button>
               : !complete
                 ? <button type="button" className="console-primary-control" onClick={save}>SAVE &amp; CONTINUE</button>
                 : flow.next
                   ? <button type="button" className="console-primary-control" onClick={benchId === "engineering" && !props.generatedModelReady ? props.onCreateModel : () => props.onGoToBench(flow.next!)} disabled={benchId === "engineering" && props.modelUpdating}>{benchId === "engineering" && props.generatedModelReady ? "OPEN PROTOTYPE" : flow.nextLabel ?? "CONTINUE"}</button>
-                  : <button type="button" className="console-primary-control" disabled>NO ACTION READY</button>}
+                  : <button type="button" className="console-primary-control" disabled aria-label={`${flow.title} has no action ready`}>UNAVAILABLE · NO ACTION READY</button>}
         </section>
         {notes.length > 0 && <aside className="bench-notepad"><span>{flow.summary}</span>{benchId === "reality" && <><h3>WHAT LOOKS STRONG</h3><h3>WHAT STILL NEEDS ATTENTION</h3></>}{notes.map((note, index) => <article key={`${note.question}-${index}`}><strong>REV asked:</strong><p>{note.question}</p><strong>You said:</strong><p>{note.answer}</p></article>)}</aside>}
       </div>
