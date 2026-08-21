@@ -612,127 +612,449 @@
 }
 
 @media (min-width: 1101px) {
+  .desktopBenchMap {
+    container-type: inline-size;
+  }
+
   .benchPlaque {
-    --hud-accent: #78dce8;
-    --hud-name: #eef8fa;
-    top: 15.2%;
-    min-height: clamp(42px, 3.15vw, 50px);
-    padding: clamp(4px, 0.45vw, 7px);
+    --ribbon-illumination: 8%;
+    --ribbon-state: #7de7f2;
+    top: var(--bench-sign-top);
+    left: var(--bench-sign-left);
+    width: var(--bench-sign-width);
+    height: var(--bench-sign-height);
+    min-height: 0;
+    box-sizing: border-box;
+    align-content: stretch;
+    gap: 0;
+    padding: 0;
     overflow: visible;
     border: 0;
     border-radius: 0;
     background: transparent;
-    color: var(--hud-name);
     box-shadow: none;
     isolation: isolate;
   }
 
-  .benchPlaque::before,
-  .benchPlaque::after {
-    position: absolute;
-    left: 50%;
-    content: "";
-    color: var(--hud-accent);
+  .benchPlaque[data-bench="knowledge"] {
+    --bench-sign-top: 23.061%;
+    --bench-sign-left: 3.589%;
+    --bench-sign-width: 9.33%;
+    --bench-sign-height: 3.826%;
+    --bench-ribbon-gap: 0.876cqw;
+    --bench-ribbon-width: 11.423cqw;
+    --bench-ribbon-height: 2.033cqw;
+  }
+
+  .benchPlaque[data-bench="knowledge"] .benchStatusLine {
+    left: calc(50% + 1.15cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      perspective(50cqw)
+      rotateY(8deg)
+      rotateZ(-0.9deg)
+      scaleX(0.97);
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+  }
+
+  .benchPlaque[data-bench="knowledge"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="knowledge"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="engineering"] {
+    --bench-sign-top: 22.954%;
+    --bench-sign-left: 17.344%;
+    --bench-sign-width: 9.33%;
+    --bench-sign-height: 3.719%;
+    --bench-ribbon-gap: 0.926cqw;
+    --bench-ribbon-width: 11.244cqw;
+    --bench-ribbon-height: 1.854cqw;
+  }
+
+  .benchPlaque[data-bench="engineering"] .benchStatusLine {
+    left: calc(50% - 0.26cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
     pointer-events: none;
   }
 
-  .benchPlaque::before {
-    bottom: 4px;
-    width: min(64%, 86px);
-    height: 1px;
-    transform: translateX(-50%);
-    background: linear-gradient(90deg, transparent, currentColor 20% 80%, transparent);
-    box-shadow: 0 0 5px currentColor;
-    opacity: 0.58;
+  .benchPlaque[data-bench="engineering"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
   }
 
-  .benchPlaque::after {
-    bottom: -24px;
-    width: 18px;
-    height: 28px;
-    transform: translateX(-50%);
-    background:
-      radial-gradient(circle at 50% 4px, currentColor 0 2.25px, transparent 2.75px),
-      linear-gradient(currentColor, currentColor) 50% 8px / 1px 18px no-repeat;
-    filter: drop-shadow(0 0 4px currentColor);
-    opacity: 0.82;
+  .benchPlaque[data-bench="engineering"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="prototype"] {
+    --bench-sign-top: 23.592%;
+    --bench-sign-left: 30.622%;
+    --bench-sign-width: 8.074%;
+    --bench-sign-height: 2.976%;
+    --bench-ribbon-gap: 0.807cqw;
+    --bench-ribbon-width: 9.33cqw;
+    --bench-ribbon-height: 1.854cqw;
+  }
+
+  .benchPlaque[data-bench="prototype"] .benchStatusLine {
+    left: calc(50% - 1.30cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(-0.75deg);
+    transform-origin: 50% 50%;
+  }
+
+  .benchPlaque[data-bench="prototype"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="prototype"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="validation"] {
+    --bench-sign-top: 24.123%;
+    --bench-sign-left: 55.203%;
+    --bench-sign-width: 6.459%;
+    --bench-sign-height: 2.444%;
+    --bench-ribbon-gap: 0.796cqw;
+    --bench-ribbon-width: 7.775cqw;
+    --bench-ribbon-height: 1.734cqw;
+  }
+
+  .benchPlaque[data-bench="validation"] .benchStatusLine {
+    left: calc(50% - 1.65cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(0.8deg);
+  }
+
+  .benchPlaque[data-bench="validation"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="validation"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="patent"] {
+    --bench-sign-top: 23.804%;
+    --bench-sign-left: 64.234%;
+    --bench-sign-width: 6.1%;
+    --bench-sign-height: 2.869%;
+    --bench-ribbon-gap: 0.797cqw;
+    --bench-ribbon-width: 7.237cqw;
+    --bench-ribbon-height: 1.794cqw;
+  }
+
+  .benchPlaque[data-bench="patent"] .benchStatusLine {
+    left: calc(50% - 1.52cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(0.8deg);
+  }
+
+  .benchPlaque[data-bench="patent"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="patent"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="manufacturing"] {
+    --bench-sign-top: 23.486%;
+    --bench-sign-left: 73.146%;
+    --bench-sign-width: 6.041%;
+    --bench-sign-height: 3.188%;
+    --bench-ribbon-gap: 0.897cqw;
+    --bench-ribbon-width: 7.656cqw;
+    --bench-ribbon-height: 1.854cqw;
+  }
+
+  .benchPlaque[data-bench="manufacturing"] .benchStatusLine {
+    left: calc(50% - 2.16cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(0.7deg);
+  }
+
+  .benchPlaque[data-bench="manufacturing"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="manufacturing"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="marketing"] {
+    --bench-sign-top: 23.486%;
+    --bench-sign-left: 81.998%;
+    --bench-sign-width: 5.742%;
+    --bench-sign-height: 3.401%;
+    --bench-ribbon-gap: 0.927cqw;
+    --bench-ribbon-width: 7.356cqw;
+    --bench-ribbon-height: 1.914cqw;
+  }
+
+  .benchPlaque[data-bench="marketing"] .benchStatusLine {
+    left: calc(50% - 2.06cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(1deg);
+  }
+
+  .benchPlaque[data-bench="marketing"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="marketing"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
+  }
+
+  .benchPlaque[data-bench="reality"] {
+    --bench-sign-top: 23.379%;
+    --bench-sign-left: 90.789%;
+    --bench-sign-width: 6.22%;
+    --bench-sign-height: 3.826%;
+    --bench-ribbon-gap: 0.897cqw;
+    --bench-ribbon-width: 8.074cqw;
+    --bench-ribbon-height: 2.033cqw;
+  }
+
+  .benchPlaque[data-bench="reality"] .benchStatusLine {
+    left: calc(50% - 1.48cqw);
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform:
+      translateX(-50%)
+      rotateZ(1.8deg);
+  }
+
+  .benchPlaque[data-bench="reality"].selected.recommended .benchStatusLine {
+    outline: 0;
+    box-shadow: none;
+  }
+
+  .benchPlaque[data-bench="reality"] .benchStatusLine b {
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.62),
+      0 0 3px color-mix(in srgb, var(--ribbon-state) 18%, transparent);
   }
 
   .benchPlaque:hover,
   .benchPlaque.selected,
   .benchPlaque.viewingDormant,
   .benchPlaque.recommended:not(.selected) {
-    border-color: transparent;
+    border: 0;
     background: transparent;
     box-shadow: none;
   }
 
-  .benchPlaque .benchName {
-    color: var(--hud-name);
-    font-size: clamp(7px, 0.72vw, 12px);
-    letter-spacing: 0.06em;
-    text-shadow: 0 1px 5px #000, 0 0 7px color-mix(in srgb, var(--hud-accent) 36%, transparent);
+  .benchPlaque .benchNameText {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
-  .benchPlaque[data-bench="manufacturing"] .benchName {
-    font-size: clamp(6px, 0.61vw, 10px);
+  .benchPlaque .benchStatusLine {
+    position: absolute;
+    top: calc(100% + var(--bench-ribbon-gap));
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    display: flex;
+    width: var(--bench-ribbon-width);
+    height: clamp(22px, var(--bench-ribbon-height), 34px);
+    box-sizing: border-box;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: clamp(1px, 0.1vw, 2px);
+    margin: 0;
+    margin-inline: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 1px;
+    outline: 1px solid rgba(190, 151, 86, 0.46);
+    outline-offset: -1px;
+    background:
+      radial-gradient(ellipse at 50% 52%, color-mix(in srgb, var(--ribbon-state) var(--ribbon-illumination), transparent), transparent 76%),
+      linear-gradient(180deg, rgba(10, 15, 17, 0.92), rgba(15, 18, 19, 0.86));
+    box-shadow:
+      inset 0 1px var(--ribbon-state),
+      inset 0 2px 4px color-mix(in srgb, var(--ribbon-state) 18%, transparent),
+      inset 0 0 7px color-mix(in srgb, var(--ribbon-state) 8%, transparent);
+    line-height: 1;
+    pointer-events: none;
+    text-align: center;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .benchPlaque .benchStatusLine b {
+    position: static;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    color: var(--ribbon-state);
+    font-size: clamp(9px, 0.82cqw, 15px);
+    font-weight: 700;
     letter-spacing: 0.025em;
+    line-height: 1;
+    text-shadow: 0 1px 2px #000, 0 0 4px color-mix(in srgb, var(--ribbon-state) 28%, transparent);
+    text-overflow: clip;
+    white-space: nowrap;
   }
 
-  .benchPlaque .benchMarkers b {
-    text-shadow: 0 1px 4px #000, 0 0 5px rgba(0, 0, 0, 0.72);
+  .benchPlaque[data-bench="manufacturing"] .benchStatusLine b {
+    font-size: clamp(9px, 0.74cqw, 13px);
+    letter-spacing: 0.01em;
+  }
+
+  .benchPlaque.selected .benchStatusLine .recommendedMarker,
+  .benchPlaque.viewingDormant .benchStatusLine .recommendedMarker {
+    display: none;
+  }
+
+  .benchPlaque .benchStatusLine .viewingMarker {
+    font-size: 0;
+  }
+
+  .benchPlaque .benchStatusLine .viewingMarker::after {
+    content: "DORMANT";
+    font-size: clamp(9px, 0.82cqw, 15px);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .benchPlaque[data-progress="green"] { --ribbon-state: #7ee5a2; }
+  .benchPlaque[data-progress="yellow"] { --ribbon-state: #f1c56e; }
+  .benchPlaque[data-progress="red"] { --ribbon-state: #f2968e; }
+
+  .benchPlaque[data-state="available"] {
+    --ribbon-state: #7de7f2;
   }
 
   .benchPlaque[data-state="dormant"] {
-    --hud-accent: #71878c;
-    --hud-name: #b7c3c5;
+    --ribbon-state: #d78983;
   }
 
-  .benchPlaque.selected {
-    --hud-accent: #9af5ff;
-    --hud-name: #ffffff;
+  .benchPlaque[data-state="available"] .benchStatusLine > b:not(.activeMarker):not(.viewingMarker):not(.recommendedMarker) {
+    color: #7de7f2;
   }
 
-  .benchPlaque.viewingDormant {
-    --hud-accent: #91ccd5;
-    --hud-name: #d9f0f3;
-  }
-
-  .benchPlaque.recommended:not(.selected) {
-    --hud-accent: #efc36d;
-    --hud-name: #fff6df;
+  .benchPlaque[data-state="dormant"] .benchStatusLine > b:not(.activeMarker):not(.viewingMarker):not(.recommendedMarker) {
+    color: #d78983;
   }
 
   .benchPlaque:hover:not(:disabled) {
-    --hud-accent: #a7f6ff;
-    --hud-name: #ffffff;
+    --ribbon-illumination: 12%;
   }
 
-  .benchPlaque:hover:not(:disabled)::before,
-  .benchPlaque:hover:not(:disabled)::after,
-  .benchPlaque.selected::before,
-  .benchPlaque.selected::after,
-  .benchPlaque.recommended::before,
-  .benchPlaque.recommended::after {
-    opacity: 1;
+  .benchPlaque.selected {
+    --ribbon-illumination: 15%;
+    --ribbon-state: #8ef3ff;
+  }
+
+  .benchPlaque.viewingDormant {
+    --ribbon-illumination: 13%;
+    --ribbon-state: #bce9ef;
+  }
+
+  .benchPlaque.recommended:not(.selected) {
+    --ribbon-illumination: 14%;
+    --ribbon-state: #f2c16b;
+  }
+
+  .benchPlaque.selected.recommended .benchStatusLine {
+    outline-color: rgba(242, 193, 107, 0.68);
+    box-shadow:
+      inset 0 1px var(--ribbon-state),
+      inset 0 -1px rgba(242, 193, 107, 0.74),
+      inset 0 2px 4px color-mix(in srgb, var(--ribbon-state) 18%, transparent),
+      inset 0 0 7px color-mix(in srgb, var(--ribbon-state) 8%, transparent);
   }
 
   .benchPlaque:focus-visible {
-    --hud-accent: #f6d582;
-    --hud-name: #ffffff;
+    --ribbon-illumination: 16%;
+    --ribbon-state: #f6d582;
     outline: none;
   }
 
-  .benchPlaque:focus-visible .benchName {
+  .benchPlaque:focus-visible .benchStatusLine b {
     text-decoration: underline;
     text-decoration-color: #f6d582;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
-  }
-
-  .benchPlaque:focus-visible::before,
-  .benchPlaque:focus-visible::after {
-    opacity: 1;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1px;
   }
 
   .consoleHeader {

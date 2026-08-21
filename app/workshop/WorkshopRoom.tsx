@@ -5,7 +5,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import revAvatar from "../../public/images/reaidea-rev-avatar-2026-08-19.png";
-import workshopPlate from "../../public/images/reaidea-living-workshop-runtime-neutral-plate-2026-08-19.png";
+import workshopPlate from "../../public/images/reaidea-living-workshop-runtime-names-only-plate-2026-08-21.png";
 import { isValidConceptGeometry, type ConceptGeometry } from "../lib/geometry/conceptGeometry";
 import type { WorkshopBenchId, WorkshopBenchState } from "../lib/workshop/workshopBrain";
 
@@ -67,8 +67,8 @@ function BenchButton({ bench, compact, onSelectBench }: {
       aria-pressed={bench.selected}
       aria-label={`${bench.shortLabel}. ${stateLabel(bench.state)}${viewingDormant ? ". Viewing dormant bench" : bench.selected ? ". Active bench" : ""}${bench.recommended ? ". REV recommends" : ""}`}
     >
-      <span className={styles.benchName}>{bench.shortLabel}</span>
-      <span className={styles.benchMarkers}>
+      <span className={`${styles.benchName} ${styles.benchNameText}`}>{bench.shortLabel}</span>
+      <span className={`${styles.benchMarkers} ${styles.benchStatusLine}`}>
         {viewingDormant ? <b className={styles.viewingMarker}>VIEWING · DORMANT</b> : bench.selected && <b className={styles.activeMarker}>ACTIVE</b>}
         {bench.recommended && <b className={styles.recommendedMarker}>REV RECOMMENDS</b>}
         {!bench.selected && !bench.recommended && <b>{stateLabel(bench.state)}</b>}

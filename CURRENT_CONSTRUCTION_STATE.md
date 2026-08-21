@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `6545c71b7096858f977b7d563416111cd4bc190d`
+**Current safe checkpoint:** `f8a0d07ac60ea513c275a895de8552be4e6b3ce5`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 6B HUMAN ACCEPTED / UNCOMMITTED
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 7 HUMAN ACCEPTED / UNCOMMITTED
 
-**Current authorised construction step:** HP-24.39 Build 6B — Workshop perspective reconciliation through the accepted bench locator HUD and single tilted REV Living Intelligence Surface; human accepted locally and ready for commit review
+**Current authorised construction step:** HP-24.39 Build 7 — permanent baked bench names with calibrated transparent live desktop status wording; human accepted locally and ready for commit review
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,7 +15,7 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 6B HUMAN ACCEPTED / UNCOMMITTED
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 7 HUMAN ACCEPTED / UNCOMMITTED
 
 Authoritative starting baseline:
 
@@ -26,7 +26,7 @@ Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch has advanced through the human-accepted, committed, and pushed Build 5 checkpoint at `6545c71b7096858f977b7d563416111cd4bc190d`; local and configured upstream parity were confirmed before Build 6 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 6B resolves the false perspective between the raster Workshop architecture and live overlays through the accepted camera-facing bench locator HUD and one calibrated tilted REV Living Intelligence Surface; it is human accepted locally and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, candidate-gated Discovery canonical-save acceptance, and dedicated responsive Build 6B human acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch has advanced through the human-accepted, committed, and pushed Build 6 checkpoint at `f8a0d07ac60ea513c275a895de8552be4e6b3ce5`; local and configured upstream parity were confirmed before Build 7 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 7 replaces the runtime Workshop plate with the accepted names-only sibling and places calibrated transparent live desktop status wording beneath the permanent baked bench names. It is human accepted locally and remains uncommitted and unpushed. The accepted Build 6 tilted REV Living Intelligence Surface remains unchanged. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, candidate-gated Discovery canonical-save acceptance, and dedicated responsive Build 7 human acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -1042,7 +1042,7 @@ Build 5 is human accepted, committed, and pushed at `6545c71b7096858f977b7d56341
 
 ### Build 6B — Workshop Perspective Reconciliation
 
-Build 6B is human accepted locally and remains uncommitted and unpushed. Its objective is to resolve the false perspective between the raster Workshop architecture and live interface overlays without changing the Workshop image, Project behavior, providers, candidates, geometry, storage, or truth boundaries.
+Build 6B's accepted implementation was committed and pushed as the Build 6 checkpoint at `f8a0d07ac60ea513c275a895de8552be4e6b3ce5`. Its objective is to resolve the false perspective between the raster Workshop architecture and live interface overlays without changing Project behavior, providers, candidates, geometry, storage, or truth boundaries.
 
 #### Rejected Approaches
 
@@ -1099,4 +1099,72 @@ Build 6B is human accepted locally and remains uncommitted and unpushed. Its obj
 
 - `app/workshop/WorkshopRoom.module.css`
 - `app/workshop/WorkshopRoom.tsx`
+- `CURRENT_CONSTRUCTION_STATE.md`
+
+### Build 7 — Permanent Bench Names and Live Status Integration
+
+Build 7 is human accepted locally and remains uncommitted and unpushed. It replaces the runtime-neutral Workshop plate with a versioned names-only sibling so each workstation owns one permanent baked bench name while current application state remains live, accessible, and independently rendered beneath it.
+
+#### Names-Only Replacement Plate
+
+- `WorkshopRoom` now imports `public/images/reaidea-living-workshop-runtime-names-only-plate-2026-08-21.png` as the displayed Workshop plate.
+- The plate remains exactly `1672 × 941` PNG and preserves the accepted Workshop architecture, eight workstation locations, central platform, door, image bounds, and calibrated Build 6 console geometry.
+- Its SHA-256 is `2AA90F87294ECA2E4B8F3D7FBBBFB859BF5CA30ECE591ED9DF0E19623CA9BB69`.
+- Permanent baked names are `INVENTOR`, `ENGINEERING`, `PROTOTYPE`, `TESTING`, `PATENT / IP`, `MANUFACTURING`, `MARKETING`, and `REALITY`.
+- The previous neutral plate remains untouched as an earlier versioned asset; the names-only plate is a new sibling rather than an overwrite.
+
+#### Live Desktop Status Wording
+
+- The existing semantic bench button remains the stable rectangular pointer target and retains its `aria-pressed`, keyboard, disabled, focus, selection, recommendation, progress, and complete accessible-name behavior.
+- `benchNameText` keeps the live semantic bench name available to the button and to compact layouts. At desktop it is removed from visual layout so it does not duplicate or displace the permanent baked name.
+- `benchStatusLine` owns only the current live presentation state beneath the baked name: `ACTIVE`, `REV RECOMMENDS`, `DORMANT`, or `AVAILABLE`, according to the existing state and presentation-priority rules.
+- Selected, recommended, available, dormant, viewing-dormant, and red/yellow/green progress truth remains unchanged. No Project, provider, candidate, storage, routing, or bench-state authority changed.
+- Every desktop status uses a transparent background with no live bezel, border, outline, box shadow, mask, clip-path, or opaque ribbon. A subtle one-pixel dark shadow and restrained state-coloured glow preserve legibility without recreating a physical panel.
+- Live status wording is pointer-inert. The full accepted safe-screen button remains the interactive and focusable control.
+
+#### Final Per-Bench Desktop Calibration
+
+All values below are local to `@media (min-width: 1101px)`. `left` values are applied to the complete live status region; the status text is not independently positioned.
+
+| Bench | Horizontal status position | Final transform | Vertical gap token |
+| --- | --- | --- | --- |
+| Inventor | `calc(50% + 1.15cqw)` | `translateX(-50%) perspective(50cqw) rotateY(8deg) rotateZ(-0.9deg) scaleX(0.97)` | `0.876cqw` |
+| Engineering | `calc(50% - 0.26cqw)` | `translateX(-50%)` | `0.926cqw` |
+| Prototype | `calc(50% - 1.30cqw)` | `translateX(-50%) rotateZ(-0.75deg)` | `0.807cqw` |
+| Testing | `calc(50% - 1.65cqw)` | `translateX(-50%) rotateZ(0.8deg)` | `0.796cqw` |
+| Patent / IP | `calc(50% - 1.52cqw)` | `translateX(-50%) rotateZ(0.8deg)` | `0.797cqw` |
+| Manufacturing | `calc(50% - 2.16cqw)` | `translateX(-50%) rotateZ(0.7deg)` | `0.897cqw` |
+| Marketing | `calc(50% - 2.06cqw)` | `translateX(-50%) rotateZ(1deg)` | `0.927cqw` |
+| Reality | `calc(50% - 1.48cqw)` | `translateX(-50%) rotateZ(1.8deg)` | `0.897cqw` |
+
+- Inventor additionally uses `transform-origin: 50% 50%` and `transform-style: preserve-3d`; Prototype uses `transform-origin: 50% 50%` without a Y-axis projection.
+- Manufacturing is the accepted local LED-to-text clearance reference. Final per-bench vertical acceptance uses each workstation's own illuminated strip rather than a page-wide baseline.
+- Horizontal positions were calibrated against each workstation's own illuminated side rails. Rotations follow each local lower illuminated strip rather than sharing a synthetic room-wide angle.
+
+#### Human Acceptance
+
+- The names-only replacement plate and permanent baked names were accepted.
+- Transparent live status treatment was accepted for all eight benches.
+- Inventor, Engineering, Prototype, Testing, Patent / IP, Manufacturing, Marketing, and Reality were independently centred and aligned to their local illuminated workstation geometry.
+- Manufacturing was accepted as the LED-clearance reference, with the remaining vertical calibrations judged against each bench's own strip-to-text clearance.
+- Current live status colours, wording, selection, recommendation, progress, hover, focus, semantic hit targets, tab order, and compact-layout behavior remain intact.
+- No provider, candidate, ConceptGeometry, Project, browser-storage, or routing mutation occurred during Build 7 acceptance.
+
+#### Build 6 Console Preservation
+
+- The accepted Build 6 `.consoleScreenPlane` projection, shared tilted REV Living Intelligence Surface, glass treatment, grid, reflection, scan, inputs, controls, and responsive fallback remain unchanged.
+- The accepted console CSS slice remains SHA-256 `ab1acee09a1cd66dddf4f3bfc1470cd1a8ec757d4efc0b6f14dfcd1cdf2eb0b7`.
+- Build 7 changes only the Workshop plate reference, bench semantic class boundaries, and desktop bench-name/status presentation.
+
+#### Responsive Boundary
+
+- Build 7's baked-name and calibrated transparent-status treatment begins only at `@media (min-width: 1101px)`.
+- At `1100px` and below, the existing compact selector cards retain visible live names and complete live status presentation, backgrounds, borders, scrolling, touch targets, and navigation.
+- Dedicated responsive human acceptance remains deferred because Build 7 did not change the protected `1100px`-and-below presentation path.
+
+#### Current Build 7 File Boundary
+
+- `app/workshop/WorkshopRoom.module.css`
+- `app/workshop/WorkshopRoom.tsx`
+- `public/images/reaidea-living-workshop-runtime-names-only-plate-2026-08-21.png`
 - `CURRENT_CONSTRUCTION_STATE.md`
