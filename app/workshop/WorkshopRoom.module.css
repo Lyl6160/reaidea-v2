@@ -612,6 +612,129 @@
 }
 
 @media (min-width: 1101px) {
+  .benchPlaque {
+    --hud-accent: #78dce8;
+    --hud-name: #eef8fa;
+    top: 15.2%;
+    min-height: clamp(42px, 3.15vw, 50px);
+    padding: clamp(4px, 0.45vw, 7px);
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--hud-name);
+    box-shadow: none;
+    isolation: isolate;
+  }
+
+  .benchPlaque::before,
+  .benchPlaque::after {
+    position: absolute;
+    left: 50%;
+    content: "";
+    color: var(--hud-accent);
+    pointer-events: none;
+  }
+
+  .benchPlaque::before {
+    bottom: 4px;
+    width: min(64%, 86px);
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, currentColor 20% 80%, transparent);
+    box-shadow: 0 0 5px currentColor;
+    opacity: 0.58;
+  }
+
+  .benchPlaque::after {
+    bottom: -24px;
+    width: 18px;
+    height: 28px;
+    transform: translateX(-50%);
+    background:
+      radial-gradient(circle at 50% 4px, currentColor 0 2.25px, transparent 2.75px),
+      linear-gradient(currentColor, currentColor) 50% 8px / 1px 18px no-repeat;
+    filter: drop-shadow(0 0 4px currentColor);
+    opacity: 0.82;
+  }
+
+  .benchPlaque:hover,
+  .benchPlaque.selected,
+  .benchPlaque.viewingDormant,
+  .benchPlaque.recommended:not(.selected) {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .benchPlaque .benchName {
+    color: var(--hud-name);
+    font-size: clamp(7px, 0.72vw, 12px);
+    letter-spacing: 0.06em;
+    text-shadow: 0 1px 5px #000, 0 0 7px color-mix(in srgb, var(--hud-accent) 36%, transparent);
+  }
+
+  .benchPlaque[data-bench="manufacturing"] .benchName {
+    font-size: clamp(6px, 0.61vw, 10px);
+    letter-spacing: 0.025em;
+  }
+
+  .benchPlaque .benchMarkers b {
+    text-shadow: 0 1px 4px #000, 0 0 5px rgba(0, 0, 0, 0.72);
+  }
+
+  .benchPlaque[data-state="dormant"] {
+    --hud-accent: #71878c;
+    --hud-name: #b7c3c5;
+  }
+
+  .benchPlaque.selected {
+    --hud-accent: #9af5ff;
+    --hud-name: #ffffff;
+  }
+
+  .benchPlaque.viewingDormant {
+    --hud-accent: #91ccd5;
+    --hud-name: #d9f0f3;
+  }
+
+  .benchPlaque.recommended:not(.selected) {
+    --hud-accent: #efc36d;
+    --hud-name: #fff6df;
+  }
+
+  .benchPlaque:hover:not(:disabled) {
+    --hud-accent: #a7f6ff;
+    --hud-name: #ffffff;
+  }
+
+  .benchPlaque:hover:not(:disabled)::before,
+  .benchPlaque:hover:not(:disabled)::after,
+  .benchPlaque.selected::before,
+  .benchPlaque.selected::after,
+  .benchPlaque.recommended::before,
+  .benchPlaque.recommended::after {
+    opacity: 1;
+  }
+
+  .benchPlaque:focus-visible {
+    --hud-accent: #f6d582;
+    --hud-name: #ffffff;
+    outline: none;
+  }
+
+  .benchPlaque:focus-visible .benchName {
+    text-decoration: underline;
+    text-decoration-color: #f6d582;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .benchPlaque:focus-visible::before,
+  .benchPlaque:focus-visible::after {
+    opacity: 1;
+  }
+
   .consoleHeader {
     position: absolute;
     z-index: 14;
@@ -1750,6 +1873,204 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
+  }
+
+  .consoleScreenPlane {
+    position: absolute;
+    z-index: 12;
+    inset: 0;
+    isolation: isolate;
+    pointer-events: none;
+    transform: perspective(29cqw) rotateX(13deg);
+    transform-origin: 50% 100%;
+  }
+
+  .consoleScreenPlane::before,
+  .consoleScreenPlane::after {
+    position: absolute;
+    z-index: 0;
+    top: 27.73cqw;
+    left: 4.315%;
+    box-sizing: border-box;
+    width: 91.37%;
+    height: 24.82cqw;
+    border-radius: 3px;
+    content: "";
+    pointer-events: none;
+  }
+
+  .consoleScreenPlane::before {
+    border: 1px solid rgba(112, 229, 242, 0.66);
+    border-bottom: 2px solid rgba(235, 188, 82, 0.68);
+    background:
+      radial-gradient(circle at 21.7% 13.5%, rgba(139, 239, 250, 0.62) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 50.6% 13.5%, rgba(139, 239, 250, 0.62) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 73% 13.5%, rgba(139, 239, 250, 0.62) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 21.7% 76%, rgba(139, 239, 250, 0.46) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 50.6% 76%, rgba(139, 239, 250, 0.46) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 73% 76%, rgba(139, 239, 250, 0.46) 0 1.5px, transparent 2px),
+      linear-gradient(112deg, transparent 8%, rgba(214, 232, 236, 0.1) 23%, transparent 38%) 0 0 / 100% 34% no-repeat,
+      repeating-linear-gradient(90deg, rgba(137, 224, 235, 0.03) 0 1px, transparent 1px 3.8cqw),
+      repeating-linear-gradient(180deg, rgba(137, 224, 235, 0.03) 0 1px, transparent 1px 2.55cqw),
+      linear-gradient(180deg, rgba(23, 55, 66, 0.95), rgba(16, 44, 54, 0.96) 48%, rgba(11, 32, 41, 0.98));
+    box-shadow:
+      0 -10px 30px rgba(93, 221, 238, 0.12),
+      0 0 20px rgba(67, 208, 228, 0.18),
+      inset 0 1px rgba(215, 242, 246, 0.18),
+      inset 0 -2px rgba(242, 198, 103, 0.14);
+  }
+
+  .consoleScreenPlane::after {
+    z-index: 1;
+    background: linear-gradient(180deg, transparent, rgba(151, 235, 245, 0.02), rgba(151, 235, 245, 0.13), transparent) 0 -3cqw / 100% 3cqw no-repeat;
+    opacity: 0.56;
+    animation: consoleSurfaceScan 11s linear infinite;
+  }
+
+  .consoleScreenPlane:has(:global(.rolling-bench-flow[data-bench-state="active"]))::before {
+    border-color: rgba(132, 239, 250, 0.82);
+    border-bottom-color: rgba(242, 196, 92, 0.78);
+    box-shadow:
+      0 -10px 30px rgba(93, 221, 238, 0.16),
+      0 0 24px rgba(67, 208, 228, 0.24),
+      inset 0 1px rgba(225, 249, 252, 0.24),
+      inset 0 -2px rgba(242, 198, 103, 0.18);
+  }
+
+  .consoleScreenPlane,
+  .consoleScreenPlane * {
+    font-style: normal;
+  }
+
+  .consoleScreenPlane .consoleHeader {
+    color: #eff9fb;
+  }
+
+  .consoleScreenPlane .consoleStatus span {
+    color: #8cecf7;
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-screen),
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-touchscreen),
+  .consoleScreenPlane .consoleContent :global(.testing-guided-actions),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-context-known),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-context-prepared),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-next-move),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .engineering-visible-design),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .bench-console-status),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .prototype-console-status),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-question-screen) {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    clip-path: none;
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-status-screen),
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-recommendation-screen),
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-next-screen),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-context-prepared),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-next-move),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .engineering-visible-design),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .bench-console-status),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow > .prototype-console-status) {
+    border-left: 1px solid rgba(126, 229, 242, 0.26);
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-touchscreen),
+  .consoleScreenPlane .consoleContent :global(.testing-guided-actions),
+  .consoleScreenPlane .consoleContent :global(.rolling-bench-flow.command-console-flow .rev-question-screen) {
+    border-top: 1px solid rgba(126, 235, 247, 0.34);
+    background: linear-gradient(180deg, rgba(40, 145, 163, 0.055), rgba(7, 28, 36, 0.12));
+    box-shadow: 0 -9px 18px rgba(67, 210, 230, 0.07);
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-screen > span),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-context-known > span),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-context-prepared > span),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-next-move > span),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .engineering-visible-design-heading > span) {
+    color: #87edf8;
+    text-shadow: 0 0 9px rgba(93, 221, 238, 0.22);
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-recommendation-screen > span) {
+    color: #f0ca78;
+    text-shadow: 0 0 9px rgba(239, 194, 98, 0.22);
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-screen > strong),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-next-move strong),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-question-screen h3) {
+    color: #f2fafb;
+    font-weight: 800;
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-screen > p),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-context-known li p),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-context-prepared .rev-screen-scroll-body > p) {
+    color: #c7d9dd;
+    font-weight: 680;
+  }
+
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .rev-next-move strong) {
+    text-shadow: 0 0 10px rgba(131, 232, 244, 0.16);
+  }
+
+  .consoleScreenPlane .silverConsoleControl,
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control),
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .console-primary-control) {
+    border: 1px solid rgba(151, 225, 234, 0.34);
+    border-radius: 2px;
+    clip-path: none;
+    box-shadow: inset 0 1px rgba(224, 244, 247, 0.12), 0 0 10px rgba(75, 205, 223, 0.08);
+  }
+
+  .consoleScreenPlane .silverConsoleControl,
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control) {
+    background: linear-gradient(180deg, rgba(151, 183, 190, 0.24), rgba(28, 58, 67, 0.4));
+    color: #eef9fb;
+  }
+
+  .consoleScreenPlane .silverConsoleControl:hover,
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control:hover) {
+    background: linear-gradient(180deg, rgba(171, 213, 221, 0.32), rgba(34, 75, 85, 0.5));
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .console-primary-control) {
+    border-color: rgba(240, 198, 105, 0.44);
+    background: linear-gradient(180deg, rgba(188, 144, 49, 0.44), rgba(77, 50, 13, 0.58));
+    color: #fff3d0;
+    box-shadow: inset 0 1px rgba(255, 230, 169, 0.14), 0 0 10px rgba(226, 170, 57, 0.09);
+  }
+
+  .consoleScreenPlane .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control:hover),
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .console-primary-control:hover:not(:disabled)) {
+    background: linear-gradient(180deg, rgba(215, 171, 69, 0.54), rgba(93, 61, 16, 0.68));
+  }
+
+  .consoleScreenPlane .consoleContent :global(.command-console-flow .console-primary-control:disabled) {
+    border-color: rgba(174, 192, 195, 0.28);
+    background:
+      repeating-linear-gradient(135deg, rgba(185, 194, 196, 0.1) 0 5px, transparent 5px 10px),
+      linear-gradient(180deg, rgba(73, 81, 80, 0.4), rgba(27, 39, 42, 0.6));
+    box-shadow: inset 0 0 0 1px rgba(191, 201, 203, 0.16);
+    color: #cbd6d8;
+  }
+
+  @keyframes consoleSurfaceScan {
+    from { background-position: 0 -3cqw; }
+    to { background-position: 0 24.82cqw; }
+  }
+}
+
+@media (min-width: 1101px) and (prefers-reduced-motion: reduce) {
+  .consoleScreenPlane::after {
+    animation: none;
+    opacity: 0;
   }
 }
 

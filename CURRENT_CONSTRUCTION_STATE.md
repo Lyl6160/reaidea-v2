@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `b5859811c85f6060ed23befab3c0cf7a91bde971`
+**Current safe checkpoint:** `6545c71b7096858f977b7d563416111cd4bc190d`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 5 HUMAN ACCEPTED / UNCOMMITTED
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 6B HUMAN ACCEPTED / UNCOMMITTED
 
-**Current authorised construction step:** HP-24.39 Build 5 — Canonical Rolling Answer Continuity; human accepted locally and ready for commit review
+**Current authorised construction step:** HP-24.39 Build 6B — Workshop perspective reconciliation through the accepted bench locator HUD and single tilted REV Living Intelligence Surface; human accepted locally and ready for commit review
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -15,7 +15,7 @@
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 5 HUMAN ACCEPTED / UNCOMMITTED
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 6B HUMAN ACCEPTED / UNCOMMITTED
 
 Authoritative starting baseline:
 
@@ -26,7 +26,7 @@ Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch has advanced through the human-accepted, committed, and pushed Build 4 checkpoint at `b5859811c85f6060ed23befab3c0cf7a91bde971`; local and configured upstream parity were confirmed before Build 5 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 5 Canonical Rolling Answer Continuity is human accepted locally and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, and candidate-gated Discovery canonical-save acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch has advanced through the human-accepted, committed, and pushed Build 5 checkpoint at `6545c71b7096858f977b7d563416111cd4bc190d`; local and configured upstream parity were confirmed before Build 6 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 6B resolves the false perspective between the raster Workshop architecture and live overlays through the accepted camera-facing bench locator HUD and one calibrated tilted REV Living Intelligence Surface; it is human accepted locally and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, candidate-gated Discovery canonical-save acceptance, and dedicated responsive Build 6B human acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -995,7 +995,7 @@ Build 3 and Build 4 are committed and pushed. Candidate-backed central Prototype
 
 ### Build 5 — Canonical Rolling Answer Continuity
 
-Build 5 is human accepted locally and remains uncommitted and unpushed. Its objective is Canonical Rolling Answer Continuity: eligible answers in the accepted rolling Inventor and Engineering console now use the existing canonical Project writers exactly once, while provisional notes and all candidate and visual state retain their existing non-authoritative boundaries.
+Build 5 is human accepted, committed, and pushed at `6545c71b7096858f977b7d563416111cd4bc190d`. Its objective is Canonical Rolling Answer Continuity: eligible answers in the accepted rolling Inventor and Engineering console use the existing canonical Project writers exactly once, while provisional notes and all candidate and visual state retain their existing non-authoritative boundaries.
 
 #### Production Changes
 
@@ -1038,4 +1038,65 @@ Build 5 is human accepted locally and remains uncommitted and unpushed. Its obje
 
 - `app/discovery/session/WorkshopShell.tsx`
 - `app/workshop/RollingBenchFlow.tsx`
+- `CURRENT_CONSTRUCTION_STATE.md`
+
+### Build 6B — Workshop Perspective Reconciliation
+
+Build 6B is human accepted locally and remains uncommitted and unpushed. Its objective is to resolve the false perspective between the raster Workshop architecture and live interface overlays without changing the Workshop image, Project behavior, providers, candidates, geometry, storage, or truth boundaries.
+
+#### Rejected Approaches
+
+- Independent per-element perspective transforms failed because each transformed element received its own local projection and vanishing behavior instead of sharing one believable plane.
+- Physical code-native plaque masks and per-bench polygons failed because the baked workstation sign housings are themselves near-frontal and cannot simultaneously align with the curved workstation planes beneath them.
+- Generated image-edit candidates were rejected and never entered the repository.
+- The upright console HUD was rejected because its camera-facing field did not occupy the physical console plane. Its glass, emitter, and exclusively associated leaf overrides were removed completely before Build 6B.
+- The first tilted Build 6B calibration, `perspective(78cqw) rotateX(13deg)`, was rejected because its far edge was too wide, its near corners finished too far inward, and the cyan perimeter crossed the gold console rails.
+- Every failed code candidate and uncalibrated projection was removed or replaced completely before the accepted implementation was frozen.
+
+#### Accepted Bench HUD Treatment
+
+- Bench labels are transparent, camera-facing HUD locator annotations rather than physical workstation screens.
+- No opaque live plaque, mask, physical bezel, card shadow, clip-path geometry, or perspective simulation remains.
+- Each desktop label retains its bench name and compact truthful state, with a locator dot, short stem, fine HUD underline, and restrained selected or recommended emphasis.
+- Selected, recommended, active, available, dormant, and red/yellow/green progress truth remains unchanged.
+- The baked workstation displays remain untouched and visually neutral beneath the annotations.
+- This treatment is desktop-only. The accepted compact selector cards, touch targets, and horizontal navigation at `1100px` and below are unchanged.
+
+#### Accepted Single Tilted REV Living Intelligence Surface
+
+- One shared `.consoleScreenPlane` wrapper inside `.foregroundConsole` contains the working-state header, console content, four information regions, overview content and controls, REV working information, bench/model status, next move, testing guidance, canonical question/input lane, messages, `SHOW WORKSHOP FLOOR`, and active secondary or primary actions.
+- Exactly one shared parent projection, `perspective(29cqw) rotateX(13deg)`, places that complete interface inside the physical console bezel. No descendant receives a perspective or transform, so text, dividers, inputs, scrolling regions, and controls share one projection centre and one plane.
+- The calibrated visible corners are upper-left `12.598%, 33.505cqw`, upper-right `87.402%, 33.505cqw`, lower-left `5.600%, 52.748cqw`, and lower-right `94.400%, 52.748cqw`.
+- The projected cyan perimeter remains inside the gold/silver chassis, leaving a continuous visible physical bezel and presenting the screen as recessed into the console.
+- One continuous smoked blue/silver glass surface runs from approximately `#173742` to `#0B2029`. It uses a very faint technical grid, soft upper silver reflection, restrained interface-node dots, crisp cyan perimeter and dividers, and a warm-gold lower energy edge.
+- Individual information regions retain their content, truthful state, horizontal slots, focus behavior, and internal scrolling without separate opaque cards, physical bezels, local projections, or floating-window treatment.
+- The lower canonical question/input lane retains its cyan emphasis. Near-white primary text, pale blue-grey secondary text, cyan headings, authoritative red/yellow/green state colors, and gold recommendation or primary-action emphasis remain legible and truthful.
+- One restrained 11-second scan is the only new animation. It is non-interactive and is disabled under `prefers-reduced-motion`.
+- The projection and advanced surface treatment begin only at the desktop boundary `@media (min-width: 1101px)`. The existing flat tablet/mobile console, compact selectors, touch targets, scrolling, and navigation at `1100px` and below are unchanged.
+
+#### Human Acceptance
+
+- The full Workshop overview was verified.
+- Engineering HUD-label selection and active/recommended state presentation were verified.
+- The accepted tilted surface geometry was browser-verified in both the Workshop overview and active Engineering views; both reuse identical screen geometry.
+- The active Engineering surface was verified with canonical status, scrollable content, REV next move, question/input, and secondary and primary actions visible on the same plane.
+- The final cyan screen edge remains inside the continuous gold/silver bezel, and the Workshop remains visible around and through the shared glass surface.
+- No provider, candidate, geometry, browser-storage, or Project mutation occurred during acceptance.
+
+#### Automated Verification
+
+- `npm run lint` passed with zero errors and four pre-existing warnings.
+- `npx tsc --noEmit` passed.
+- `npm run build` passed with all 13 static pages generated.
+- `git diff --check` passed.
+
+#### Existing Deferred Debt
+
+- `REV · NEXT MOVE` and the exact canonical Engineering question still originate from independent reasoning paths and can differ. Build 6B does not alter that behavior.
+- Dedicated responsive human acceptance remains deferred. The existing code paths at `1100px` and below were not changed.
+
+#### Current Build 6B File Boundary
+
+- `app/workshop/WorkshopRoom.module.css`
+- `app/workshop/WorkshopRoom.tsx`
 - `CURRENT_CONSTRUCTION_STATE.md`

@@ -171,18 +171,20 @@ export default function WorkshopRoom({
       </nav>
 
       <section className={styles.foregroundConsole} aria-label={selectedBench ? `${selectedBench.shortLabel} foreground console` : "Workshop foreground console"}>
-        <header className={styles.consoleHeader}>
-          <div className={styles.consoleWorkingState}>
-            <strong>{selectedBench ? `${selectedBenchIsDormant ? "VIEWING" : "WORKING AT"} · ${selectedBench.shortLabel}` : "WORKSHOP FLOOR · FULL OVERVIEW"}</strong>
-          </div>
-          <div className={styles.consoleStatus}>
-            <span>{selectedBench ? selectedBenchIsDormant ? "VIEWING · DORMANT" : `${selectedBench.progress.toUpperCase()} · ACTIVE` : `PROJECT · ${projectStatus.toUpperCase()}`}</span>
-          </div>
-        </header>
-        {selectedBench && (
-          <button type="button" className={styles.silverConsoleControl} onClick={onReturnToOverview}>SHOW WORKSHOP FLOOR</button>
-        )}
-        <div className={styles.consoleContent}>{children}</div>
+        <div className={styles.consoleScreenPlane}>
+          <header className={styles.consoleHeader}>
+            <div className={styles.consoleWorkingState}>
+              <strong>{selectedBench ? `${selectedBenchIsDormant ? "VIEWING" : "WORKING AT"} · ${selectedBench.shortLabel}` : "WORKSHOP FLOOR · FULL OVERVIEW"}</strong>
+            </div>
+            <div className={styles.consoleStatus}>
+              <span>{selectedBench ? selectedBenchIsDormant ? "VIEWING · DORMANT" : `${selectedBench.progress.toUpperCase()} · ACTIVE` : `PROJECT · ${projectStatus.toUpperCase()}`}</span>
+            </div>
+          </header>
+          {selectedBench && (
+            <button type="button" className={styles.silverConsoleControl} onClick={onReturnToOverview}>SHOW WORKSHOP FLOOR</button>
+          )}
+          <div className={styles.consoleContent}>{children}</div>
+        </div>
       </section>
 
       <p className={styles.caption}>{caption}</p>
