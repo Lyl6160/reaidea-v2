@@ -1,21 +1,21 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `6fbb55653f56662ad064cfb4d879997433641b8b`
+**Current safe checkpoint:** `b5859811c85f6060ed23befab3c0cf7a91bde971`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 4 HUMAN ACCEPTED / UNCOMMITTED
+**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 5 HUMAN ACCEPTED / UNCOMMITTED
 
-**Current authorised construction step:** HP-24.39 Build 4 — provider-free responsive polish and accessibility checkpoint; human accepted and ready for commit review
+**Current authorised construction step:** HP-24.39 Build 5 — Canonical Rolling Answer Continuity; human accepted locally and ready for commit review
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
-**Last governance update:** 2026-08-20
+**Last governance update:** 2026-08-21
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 4 HUMAN ACCEPTED / UNCOMMITTED
+**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 5 HUMAN ACCEPTED / UNCOMMITTED
 
 Authoritative starting baseline:
 
@@ -26,7 +26,7 @@ Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch has advanced through the human-accepted, committed, and pushed corrected Build 3 checkpoint at `6fbb55653f56662ad064cfb4d879997433641b8b`. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 4 provider-free responsive polish and accessibility is human accepted and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance and Home CLEAR visual confirmation remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch has advanced through the human-accepted, committed, and pushed Build 4 checkpoint at `b5859811c85f6060ed23befab3c0cf7a91bde971`; local and configured upstream parity were confirmed before Build 5 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 5 Canonical Rolling Answer Continuity is human accepted locally and remains uncommitted and unpushed. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, and candidate-gated Discovery canonical-save acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
 
 Protected previous foundation:
 
@@ -969,7 +969,7 @@ Corrected Build 3 is human accepted, committed, and pushed at `6fbb55653f56662ad
 
 ### Build 4 Provider-Free Polish and Accessibility Checkpoint
 
-Build 4 human visual acceptance passed for the bounded desktop, tablet, and mobile responsive-polish checkpoint. The work remains uncommitted and unpushed. It does not authorise provider-backed testing, a CLEAR journey, Concept generation, browser-storage mutation, fake candidate or geometry fixtures, or candidate-backed central 3D acceptance.
+Build 4 human visual acceptance passed for the bounded desktop, tablet, and mobile responsive-polish checkpoint. It was committed and pushed at `b5859811c85f6060ed23befab3c0cf7a91bde971`, with local and configured upstream parity confirmed before Build 5. It does not authorise provider-backed testing, a CLEAR journey, Concept generation, browser-storage mutation, fake candidate or geometry fixtures, or candidate-backed central 3D acceptance.
 
 - Workshop Floor content now operates entirely within the physical command console, with no detached application window below it.
 - The persistent eight-bench room and responsive horizontal selector remain the canonical bench navigation. All eight benches remain operable, and selecting a bench does not move the page viewport.
@@ -987,8 +987,55 @@ Build 4 human visual acceptance passed for the bounded desktop, tablet, and mobi
 
 1. Candidate-backed Concept and central Prototype 3D presentation could not be human-tested because the current Project has no saved candidate or validated geometry. Candidate-backed central 3D confirmation remains mandatory before final HP-24.39 closeout.
 2. Home CLEAR visual confirmation remains deferred pending provider availability.
-3. Build 4 is human accepted but remains uncommitted and unpushed pending a separately authorised commit checkpoint.
+3. Build 4 is human accepted, committed, and pushed at `b5859811c85f6060ed23befab3c0cf7a91bde971`.
 
 The Workshop remains one persistent eight-bench room. Selection strengthens one bench without removing the others, and the existing `RollingBenchFlow` remains the live foreground console rather than being duplicated. Prototype retains the one existing `Prototype3DViewer` mount and the current candidate's validated, non-authoritative `ConceptGeometry` boundary for future central-stage confirmation. Automatic presentation rotation is transient, exposes Pause/Resume, pauses on interaction, and starts paused for reduced-motion users. Missing or invalid geometry retains a truthful no-design or current Concept fallback.
 
-Build 3 is committed and pushed. Build 4 is human accepted, validation-complete, uncommitted, and unpushed. Candidate-backed central Prototype 3D confirmation and Home CLEAR visual confirmation remain deferred, and provider-backed testing remains unauthorised. HP-24.38 Project truth, safety, receipt, Concept, evidence, provider, and persistence boundaries remain unchanged; no new Project, candidate, safety, storage, provider, fetch, retry, or persistence authority is introduced.
+Build 3 and Build 4 are committed and pushed. Candidate-backed central Prototype 3D confirmation and Home CLEAR visual confirmation remain deferred, and provider-backed testing remains unauthorised. HP-24.38 Project truth, safety, receipt, Concept, evidence, provider, and persistence boundaries remain unchanged; no new Project, candidate, safety, storage, provider, fetch, retry, or persistence authority was introduced by Build 4.
+
+### Build 5 — Canonical Rolling Answer Continuity
+
+Build 5 is human accepted locally and remains uncommitted and unpushed. Its objective is Canonical Rolling Answer Continuity: eligible answers in the accepted rolling Inventor and Engineering console now use the existing canonical Project writers exactly once, while provisional notes and all candidate and visual state retain their existing non-authoritative boundaries.
+
+#### Production Changes
+
+- `WorkshopShell` supplies the exact current Discovery and Engineering-definition prompts to the rolling console.
+- Eligible answers reuse the existing `recordDiscoveryAnswer` and `recordEngineeringDefinitionAnswer` writers.
+- Successful writes follow the existing `onProjectChange` → `saveProject` → storage-subscription path, so Workshop assessment, REV recommendation, Engineering State, Project Review, timeline, and refresh continuity can respond from canonical Project truth.
+- Canonical writes bypass competing browser-local rolling-note storage. General bench notes, provisional inventor corrections, visual-change requests, Concept feedback and refinement text, candidates and candidate history, `VisualDesignSnapshot`, `ConceptGeometry`, and 3D presentation remain non-authoritative.
+- A synchronous Project-, bench-, and question-specific guard prevents duplicate activation from producing a second canonical write. Failed writes clear the guard and remain retryable.
+- Existing specialist contribution paths are unchanged. No schema, storage namespace, authority layer, provider, candidate, visual, navigation, Workshop visibility, responsive-layout, or accessibility boundary changed.
+
+#### Automated Verification
+
+- `npm run lint` passed with zero errors and four pre-existing warnings.
+- `npx tsc --noEmit` passed.
+- `npm run build` passed with all 13 static pages generated.
+- `git diff --check` passed.
+
+#### Human Acceptance
+
+- An Engineering canonical answer saved successfully and displayed `Answer recorded in the Project.`
+- Engineering status became recorded/green, and the input and working-detail counts advanced.
+- The canonical Engineering question advanced from `What do you think your idea should do?` to `How do you think your idea makes that happen?`.
+- Refresh preserved the canonical state and did not ask for the saved answer again.
+- No provider or candidate generation occurred. Workshop visibility and navigation remained intact.
+- Inventor's no-candidate `ADD OR CORRECT INFORMATION` path remained visibly non-authoritative and did not change the original observation.
+
+#### Deferred Acceptance
+
+- The Discovery canonical save is candidate-gated and provider-dependent for the current no-candidate Project. Its human test is deferred until an authorised, naturally candidate-backed journey.
+- The Discovery route is not dead or broken: it is conditionally reachable after a candidate exists and the inventor accepts the current presentation with `YES — KEEP DEVELOPING` while a canonical Discovery question remains.
+- No fixture, browser-storage alteration, replacement Project, or provider-backed workaround was used for this checkpoint.
+
+#### Observed Pre-existing Debt
+
+- `REV · NEXT MOVE` comes from broad `workshopBrain` bench guidance, while the active canonical question comes from the Engineering-definition assessment.
+- Their wording can differ. Build 5 exposed the distinction more clearly by placing the canonical question in the rolling console, but it did not introduce the dual-source architecture or the broad next-move wording.
+- No correction to that wording or architecture is included in Build 5.
+
+#### Current Build 5 File Boundary
+
+- `app/discovery/session/WorkshopShell.tsx`
+- `app/workshop/RollingBenchFlow.tsx`
+- `CURRENT_CONSTRUCTION_STATE.md`

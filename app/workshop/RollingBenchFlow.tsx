@@ -63,6 +63,9 @@ type RollingBenchFlowProps = {
   onWorkingNotesChange?: () => void;
   externalNotes?: BenchNote[];
   onSaveExternal?: (answer: string, question: string) => boolean;
+  onSaveCanonical?: (answer: string, question: string) =>
+    | { status: "recorded"; message: string }
+    | { status: "invalid"; reason: string };
   error?: string;
   modelStorageStatus?: ReactNode;
   modelView?: ReactNode;
@@ -466,6 +469,14 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
     }
     if (props.onSaveExternal) {
       if (!props.onSaveExternal(draft.trim(), currentQuestion.prompt)) return;
+    } else if (props.onSaveCanonical) {
+      const result = props.onSaveCanonical(draft.trim(), currentQuestion.prompt);
+      if (result.status === "invalid") {
+        setLocalStatus("");
+        setLocalError(result.reason);
+        return;
+      }
+      setLocalStatus(result.message);
     } else {
       const next = [...notes, { question: currentQuestion.prompt, answer: draft.trim() }];
       setLocalNotes(next);
@@ -502,6 +513,19 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
   function saveContextualAnswer(question: string) {
     if (!draft.trim()) {
       setLocalError("Add your answer before continuing.");
+      return;
+    }
+    if (props.onSaveCanonical) {
+      const result = props.onSaveCanonical(draft.trim(), question);
+      if (result.status === "invalid") {
+        setLocalStatus("");
+        setLocalError(result.reason);
+        return;
+      }
+      setLocalStatus(result.message);
+      setDraft("");
+      setLocalError("");
+      props.onProgressChange?.(3, 3);
       return;
     }
     const next = saveLocalNote(question, draft);
@@ -665,7 +689,8 @@ export default function RollingBenchFlow(props: RollingBenchFlowProps) {
               ? <><span>BENCH STATUS</span><h3>{props.benchReason ?? `${flow.title} is not ready yet.`}</h3></>
               : complete
                 ? <><span>REV</span><h3>{flow.completion}</h3></>
-                : <><span>REV ASKS · QUESTION {notes.length + 1} OF {flow.questions.length}</span><h3>{currentQuestion.prompt}</h3>{currentQuestion.helper && <p className="rev-question-helper">{currentQuestion.helper}</p>}<label><span>YOUR ANSWER</span><textarea value={draft} onChange={(event) => { setDraft(event.target.value); setLocalError(""); }} rows={6} placeholder="Write your answer in your own words." /></label>{benchId === "validation" && notes.length === 4 && <div className="testing-outcomes"><button type="button" className={props.testingOutcome === "supported" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("supported")}>WORKED</button><button type="button" className={props.testingOutcome === "inconclusive" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("inconclusive")}>STILL UNSURE</button><button type="button" className={props.testingOutcome === "not-supported" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("not-supported")}>NEEDS IMPROVEMENT</button></div>}{(localError || props.error) && <p className="flow-error" role="alert">{localError || props.error}</p>}</>}
+                : <><span>REV ASKS · QUESTION {notes.length + 1} OF {flow.questions.length}</span><h3>{currentQuestion.prompt}</h3>{currentQuestion.helper && <p className="rev-question-helper">{currentQuestion.helper}</p>}<label><span>YOUR ANSWER</span><textarea value={draft} onChange={(event) => { setDraft(event.target.value); setLocalError(""); setLocalStatus(""); }} rows={6} placeholder="Write your answer in your own words." /></label>{benchId === "validation" && notes.length === 4 && <div className="testing-outcomes"><button type="button" className={props.testingOutcome === "supported" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("supported")}>WORKED</button><button type="button" className={props.testingOutcome === "inconclusive" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("inconclusive")}>STILL UNSURE</button><button type="button" className={props.testingOutcome === "not-supported" ? "selected" : ""} onClick={() => props.onTestingOutcomeChange?.("not-supported")}>NEEDS IMPROVEMENT</button></div>}{(localError || props.error) && <p className="flow-error" role="alert">{localError || props.error}</p>}</>}
+            {localStatus && <p className="flow-success" role="status">{localStatus}</p>}
             {!benchIsDormant && benchId === "patent" && <p className="legal-note">This is an early check only. It is not legal advice or a patent decision.</p>}
             {!benchIsDormant && benchId === "patent" && <div className="research-unavailable"><strong>SIMILAR PATENTS REV FOUND</strong><p>Live patent research is not yet available. REV will not invent results.</p></div>}
           </div>

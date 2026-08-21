@@ -80,7 +80,7 @@ import { assessHomeUnderstanding, deriveRevWorkingUnderstanding } from "../../li
 type WorkshopShellProps = {
   project: Project;
   workshop: WorkshopState;
-  onProjectChange: (project: Project) => void;
+  onProjectChange: (project: Project) => boolean;
 };
 
 type ConceptReview = "unreviewed" | "accepted" | "refine" | "rethink";
@@ -299,6 +299,7 @@ export default function WorkshopShell({
   const pendingConceptGenerationRequestRef = useRef<ConceptGenerationRequest | null>(null);
   const conceptRefinementInFlightRef = useRef(false);
   const entryGenerationStartedRef = useRef(false);
+  const lastCanonicalRollingSaveRef = useRef("");
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
   const [selectedId, setSelectedId] = useState<WorkshopBenchId | null>(null);
@@ -1048,6 +1049,55 @@ export default function WorkshopShell({
     onProjectChange(result.project);
     setSpecialistContributionError("");
     return true;
+  }
+
+  function recordRollingCanonicalAnswer(answer: string, prompt: string):
+    | { status: "recorded"; message: string }
+    | { status: "invalid"; reason: string } {
+    const cleanedAnswer = answer.trim();
+    if (!cleanedAnswer) return { status: "invalid", reason: "Add your answer before continuing." };
+
+    if (selectedBench?.id === "knowledge") {
+      const question = discoveryAssessment.nextQuestion;
+      if (!question || question.prompt !== prompt) {
+        return { status: "invalid", reason: "That Discovery question is no longer the current Project question." };
+      }
+      const saveKey = `${project.id}:knowledge:${question.id}`;
+      if (lastCanonicalRollingSaveRef.current === saveKey) {
+        return { status: "invalid", reason: "That answer is already being recorded in the Project." };
+      }
+      lastCanonicalRollingSaveRef.current = saveKey;
+      const saved = onProjectChange(recordDiscoveryAnswer(project, question, cleanedAnswer));
+      if (!saved) {
+        lastCanonicalRollingSaveRef.current = "";
+        return { status: "invalid", reason: "REV couldn't record that Discovery answer in the Project." };
+      }
+      return { status: "recorded", message: "Answer recorded in the Project." };
+    }
+
+    if (selectedBench?.id === "engineering") {
+      const question = engineeringDefinitionAssessment.nextQuestion;
+      if (!question || question.prompt !== prompt) {
+        return { status: "invalid", reason: "That Engineering question is no longer the current Project question." };
+      }
+      const saveKey = `${project.id}:engineering:${question.id}`;
+      if (lastCanonicalRollingSaveRef.current === saveKey) {
+        return { status: "invalid", reason: "That answer is already being recorded in the Project." };
+      }
+      lastCanonicalRollingSaveRef.current = saveKey;
+      const result = recordEngineeringDefinitionAnswer(project, question, cleanedAnswer);
+      if (result.status === "invalid") {
+        lastCanonicalRollingSaveRef.current = "";
+        return { status: "invalid", reason: result.reason };
+      }
+      if (!onProjectChange(result.project)) {
+        lastCanonicalRollingSaveRef.current = "";
+        return { status: "invalid", reason: "REV couldn't record that Engineering answer in the Project." };
+      }
+      return { status: "recorded", message: "Answer recorded in the Project." };
+    }
+
+    return { status: "invalid", reason: "This note is not attached to a canonical Project question." };
   }
 
   function submitSpecialistEvidence() {
@@ -2575,7 +2625,14 @@ export default function WorkshopShell({
             projectId={project.id}
             benchReason={selectedBench.reason}
             benchNextMove={selectedBench.nextMove}
-            workingContext={revWorkingUnderstanding.byBench[selectedBench.id]}
+            workingContext={{
+              ...revWorkingUnderstanding.byBench[selectedBench.id],
+              missingQuestion: selectedBench.id === "knowledge"
+                ? discoveryAssessment.nextQuestion?.prompt ?? null
+                : selectedBench.id === "engineering"
+                  ? engineeringDefinitionAssessment.nextQuestion?.prompt ?? null
+                  : revWorkingUnderstanding.byBench[selectedBench.id].missingQuestion,
+            }}
             sourceEvidence={sourceEvidenceViews.map((evidence) => ({
               reference: evidence.reference,
               status: evidence.status,
@@ -2589,6 +2646,7 @@ export default function WorkshopShell({
             onWorkingNotesChange={() => setWorkingUnderstandingRevision((revision) => revision + 1)}
             externalNotes={selectedSpecialistBenchId ? rollingSpecialistNotes : undefined}
             onSaveExternal={selectedSpecialistBenchId ? recordRollingSpecialistAnswer : undefined}
+            onSaveCanonical={selectedBench.id === "knowledge" || selectedBench.id === "engineering" ? recordRollingCanonicalAnswer : undefined}
             error={specialistContributionError}
             modelStorageStatus={<ConceptCandidateStorageStatusLine status={candidateStorageStatus} />}
             modelView={generatedConceptCandidate ? (
