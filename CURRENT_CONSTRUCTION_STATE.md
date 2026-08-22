@@ -1,21 +1,21 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe checkpoint:** `f8a0d07ac60ea513c275a895de8552be4e6b3ce5`
+**Current safe committed checkpoint:** `67ee470738f0d8d12a5fd6b10d09e7b126567c76`
 
 **Branch:** `sprint006-build24-39-home-workshop-visual-integration`
 
-**Current hold point:** HP-24.39 — HOME + LIVING WORKSHOP VISUAL INTEGRATION — BUILD 7 HUMAN ACCEPTED / UNCOMMITTED
+**Current hold point:** HP-24.39 Build 8 — Full-Screen 3D Restoration — FOUNDER BROWSER ACCEPTED 23 AUGUST 2026 / COMMIT AUTHORISED
 
-**Current authorised construction step:** HP-24.39 Build 7 — permanent baked bench names with calibrated transparent live desktop status wording; human accepted locally and ready for commit review
+**Current authorised construction step:** HP-24.39 Build 8 — restore a portal-backed accessible full-screen presentation for the existing central-stage interactive Prototype 3D model
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
-**Last governance update:** 2026-08-21
+**Last governance update:** 2026-08-22
 
 ## Current Hold-Point Candidate
 
-**HP-24.39 — Home + Living Workshop Visual Integration** — BUILD 7 HUMAN ACCEPTED / UNCOMMITTED
+**HP-24.39 Build 8 — Full-Screen 3D Restoration** — FOUNDER BROWSER ACCEPTED 23 AUGUST 2026 / COMMIT AUTHORISED
 
 Authoritative starting baseline:
 
@@ -26,7 +26,9 @@ Governance was committed and pushed at `f49ccefe5d827906aa92909ce862a1f47e232a44
 
 The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91002bf0f9144cf77f3573311d967fa04` is preserved on `preservation/hp-24-39-build3-css-schematic-087778c` and in the external rejected-schematic archive, but it is not accepted as the final user-facing Build 3 and must not be pushed from the construction branch.
 
-The construction branch has advanced through the human-accepted, committed, and pushed Build 6 checkpoint at `f8a0d07ac60ea513c275a895de8552be4e6b3ce5`; local and configured upstream parity were confirmed before Build 7 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 7 replaces the runtime Workshop plate with the accepted names-only sibling and places calibrated transparent live desktop status wording beneath the permanent baked bench names. It is human accepted locally and remains uncommitted and unpushed. The accepted Build 6 tilted REV Living Intelligence Surface remains unchanged. Candidate-backed central Prototype 3D human acceptance, Home CLEAR visual confirmation, candidate-gated Discovery canonical-save acceptance, and dedicated responsive Build 7 human acceptance remain deferred. Provider-backed testing is not authorised. Home behavior and all HP-24.38 safety, Project-entry, evidence, Concept, provider, request, and retry boundaries remain unchanged.
+The construction branch advanced through the human-accepted, committed, and pushed Build 7 checkpoint at `67ee470738f0d8d12a5fd6b10d09e7b126567c76`; local and configured upstream parity were confirmed before Build 8 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 7 replaced the runtime Workshop plate with the accepted names-only sibling and placed calibrated transparent live desktop status wording beneath the permanent baked bench names. Build 8 restores VIEW FULL SCREEN for the existing central-stage interactive Prototype 3D model through one portal-backed accessible modal while retaining exactly one Three.js Canvas. Founder browser acceptance passed on 23 August 2026. Its exact file boundary is `app/workshop/Prototype3DViewer.tsx` and `CURRENT_CONSTRUCTION_STATE.md`. No ConceptGeometry, VisualDesignSnapshot, candidate persistence/history, generation, provider, Project, browser-storage, routing, Build 6 console, Workshop plate, or Build 7 bench-sign change is included. Provider-backed testing is not authorised.
+
+Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D functionality passed with exactly one Canvas throughout inline and modal presentation. Desktop `1440 × 1000`, compact `1100 × 900`, narrow portrait `390 × 844`, and landscape `844 × 390` all passed; reduced-motion behaviour passed; provider, application API, and external requests were zero. The accepted `app/workshop/Prototype3DViewer.tsx` SHA-256 is `396873F6543BB040F32FC94F4B40CE845225CD06535EB5320C662667180C1C5B`. This acceptance approves the full-screen 3D foundation only; it does not accept the old Workshop visual design or the disposable test geometry.
 
 Protected previous foundation:
 
@@ -1103,7 +1105,7 @@ Build 6B's accepted implementation was committed and pushed as the Build 6 check
 
 ### Build 7 — Permanent Bench Names and Live Status Integration
 
-Build 7 is human accepted locally and remains uncommitted and unpushed. It replaces the runtime-neutral Workshop plate with a versioned names-only sibling so each workstation owns one permanent baked bench name while current application state remains live, accessible, and independently rendered beneath it.
+Build 7 was human accepted, committed, and pushed at `67ee470738f0d8d12a5fd6b10d09e7b126567c76`. It replaces the runtime-neutral Workshop plate with a versioned names-only sibling so each workstation owns one permanent baked bench name while current application state remains live, accessible, and independently rendered beneath it.
 
 #### Names-Only Replacement Plate
 

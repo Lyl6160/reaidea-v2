@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Bounds, OrbitControls, useBounds } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
@@ -26,7 +27,12 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
   const [resetRequest, setResetRequest] = useState(0);
   const [jointPreview, setJointPreview] = useState(false);
   const [rotationPaused, setRotationPaused] = useState(true);
+  const [fullScreenOpen, setFullScreenOpen] = useState(false);
+  const [portalRoot, setPortalRoot] = useState<HTMLDivElement | null>(null);
   const rotationPreferenceInitialisedRef = useRef(false);
+  const fullScreenButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -43,14 +49,150 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
     return () => reducedMotion.removeEventListener("change", applyPreference);
   }, [autoRotate]);
 
+  useEffect(() => {
+    if (!fullScreenOpen || !portalRoot) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const backgroundState = Array.from(document.body.children)
+      .filter((element): element is HTMLElement => element instanceof HTMLElement && element !== portalRoot)
+      .map((element) => ({
+        element,
+        inert: element.inert,
+        ariaHidden: element.getAttribute("aria-hidden"),
+      }));
+
+    document.body.style.overflow = "hidden";
+    backgroundState.forEach(({ element }) => {
+      element.inert = true;
+      element.setAttribute("aria-hidden", "true");
+    });
+
+    const focusClose = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      window.cancelAnimationFrame(focusClose);
+      document.body.style.overflow = previousOverflow;
+      backgroundState.forEach(({ element, inert, ariaHidden }) => {
+        element.inert = inert;
+        if (ariaHidden === null) element.removeAttribute("aria-hidden");
+        else element.setAttribute("aria-hidden", ariaHidden);
+      });
+      portalRoot.remove();
+      window.requestAnimationFrame(() => {
+        document.querySelector<HTMLButtonElement>('[data-prototype3d-fullscreen-trigger="true"]')?.focus();
+      });
+    };
+  }, [fullScreenOpen, portalRoot]);
+
   const automaticRotationActive = autoRotate && !rotationPaused;
 
   if (!isValidConceptGeometry(geometry)) {
     return <p className="prototype-3d-unavailable">3D model not available yet.</p>;
   }
 
+  function openFullScreen() {
+    const root = document.createElement("div");
+    root.dataset.prototype3dPortal = "true";
+    document.body.appendChild(root);
+    setPortalRoot(root);
+    setFitRequest((value) => value + 1);
+    setFullScreenOpen(true);
+  }
+
+  function closeFullScreen() {
+    setFitRequest((value) => value + 1);
+    setFullScreenOpen(false);
+  }
+
+  function containDialogFocus(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeFullScreen();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ) ?? []).filter((element) => !element.hasAttribute("hidden"));
+    if (focusable.length === 0) {
+      event.preventDefault();
+      dialogRef.current?.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  const surface = (
+    <Prototype3DSurface
+      geometry={geometry}
+      presentationMode={fullScreenOpen ? "console" : presentationMode}
+      autoRotateEnabled={autoRotate}
+      automaticRotationActive={automaticRotationActive}
+      rotationPaused={rotationPaused}
+      jointPreview={jointPreview}
+      fitRequest={fitRequest}
+      resetRequest={resetRequest}
+      fullScreen={fullScreenOpen}
+      fullScreenButtonRef={fullScreenButtonRef}
+      onToggleRotation={() => setRotationPaused((paused) => !paused)}
+      onInteractionStart={() => setRotationPaused(true)}
+      onReset={() => setResetRequest((value) => value + 1)}
+      onFit={() => setFitRequest((value) => value + 1)}
+      onToggleJoint={() => setJointPreview((value) => !value)}
+      onOpenFullScreen={openFullScreen}
+    />
+  );
+
+  if (fullScreenOpen) {
+    if (!portalRoot) return null;
+    return createPortal(
+      <div className="prototype-3d-modal-backdrop">
+        <div ref={dialogRef} className="prototype-3d-modal" role="dialog" aria-modal="true" aria-labelledby="prototype-3d-modal-title" tabIndex={-1} onKeyDown={containDialogFocus}>
+          <header className="prototype-3d-modal-header">
+            <h2 id="prototype-3d-modal-title">Prototype 3D model</h2>
+            <button ref={closeButtonRef} type="button" onClick={closeFullScreen}>CLOSE</button>
+          </header>
+          <div className="prototype-3d-modal-content">{surface}</div>
+        </div>
+        <style jsx>{`
+          .prototype-3d-modal-backdrop{position:fixed;z-index:2147483647;inset:0;box-sizing:border-box;display:grid;min-width:0;min-height:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(2,8,11,.98)}.prototype-3d-modal{display:grid;grid-template-rows:auto minmax(0,1fr);width:min(1280px,100%);height:100%;min-width:0;min-height:0;margin:auto;overflow:hidden;border:1px solid rgba(112,230,244,.58);border-radius:12px;background:#071014;box-shadow:0 24px 80px rgba(0,0,0,.7)}.prototype-3d-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;border-bottom:1px solid rgba(94,198,211,.34);background:#10191d}.prototype-3d-modal-header h2{margin:0;color:#e9fbff;font:900 clamp(16px,2vw,24px)/1.2 Arial,sans-serif;letter-spacing:.04em}.prototype-3d-modal-header button{min-width:96px;min-height:44px;padding:0 16px;border:1px solid rgba(105,217,233,.7);border-radius:7px;background:#173b45;color:#e9fbff;font:850 12px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-modal-header button:focus-visible{outline:3px solid #f4d27d;outline-offset:3px}.prototype-3d-modal-content{min-width:0;min-height:0;overflow:hidden;padding:12px}.prototype-3d-modal-content :global(.prototype-3d-viewer){min-height:0;border:0;box-shadow:none}.prototype-3d-modal-content :global(.prototype-3d-actions button){min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-modal-backdrop{padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}.prototype-3d-modal{border-radius:8px}.prototype-3d-modal-header{padding:9px 10px}.prototype-3d-modal-header h2{font-size:15px}.prototype-3d-modal-header button{min-width:84px;min-height:44px;padding:0 12px}.prototype-3d-modal-content{padding:7px}}@media(max-height:520px) and (orientation:landscape){.prototype-3d-modal-backdrop{padding:6px}.prototype-3d-modal-header{padding:6px 10px}.prototype-3d-modal-header button{min-height:40px}.prototype-3d-modal-content{padding:5px}}
+        `}</style>
+      </div>,
+      portalRoot
+    );
+  }
+
+  return surface;
+}
+
+function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, automaticRotationActive, rotationPaused, jointPreview, fitRequest, resetRequest, fullScreen, fullScreenButtonRef, onToggleRotation, onInteractionStart, onReset, onFit, onToggleJoint, onOpenFullScreen }: {
+  geometry: ConceptGeometry;
+  presentationMode: "console" | "stage";
+  autoRotateEnabled: boolean;
+  automaticRotationActive: boolean;
+  rotationPaused: boolean;
+  jointPreview: boolean;
+  fitRequest: number;
+  resetRequest: number;
+  fullScreen: boolean;
+  fullScreenButtonRef: React.RefObject<HTMLButtonElement | null>;
+  onToggleRotation: () => void;
+  onInteractionStart: () => void;
+  onReset: () => void;
+  onFit: () => void;
+  onToggleJoint: () => void;
+  onOpenFullScreen: () => void;
+}) {
   return (
-    <section className={`prototype-3d-viewer${presentationMode === "stage" ? " is-stage" : ""}`} aria-label="Interactive 3D model">
+    <section className={`prototype-3d-viewer${presentationMode === "stage" ? " is-stage" : ""}${fullScreen ? " is-full-screen" : ""}`} aria-label="Interactive 3D model">
       <div className="prototype-3d-instructions"><strong>3D MODEL</strong><span>DRAG TO ROTATE · SCROLL TO ZOOM</span></div>
       <div className="prototype-3d-canvas">
         <Canvas camera={{ position: [3.8, 2.8, 5.2], fov: 38 }} dpr={[1, 1.75]} frameloop={automaticRotationActive ? "always" : "demand"} gl={{ antialias: true, alpha: presentationMode === "stage" }}>
@@ -64,28 +206,29 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
               fitRequest={fitRequest}
               resetRequest={resetRequest}
               autoRotate={automaticRotationActive}
-              onInteractionStart={() => setRotationPaused(true)}
+              onInteractionStart={onInteractionStart}
             />
           </Bounds>
         </Canvas>
       </div>
       <div className="prototype-3d-actions">
-        {autoRotate && (
+        {autoRotateEnabled && (
           <button
             type="button"
             aria-label={automaticRotationActive ? "Pause automatic Prototype model rotation" : "Resume automatic Prototype model rotation"}
             aria-pressed={automaticRotationActive}
-            onClick={() => setRotationPaused((paused) => !paused)}
+            onClick={onToggleRotation}
           >
             {rotationPaused ? "RESUME ROTATION" : "PAUSE ROTATION"}
           </button>
         )}
-        <button type="button" onClick={() => setResetRequest((value) => value + 1)}>RESET VIEW</button>
-        <button type="button" onClick={() => setFitRequest((value) => value + 1)}>FIT MODEL</button>
-        {geometry.joints.length > 0 && <button type="button" onClick={() => setJointPreview((value) => !value)}>{jointPreview ? "RETURN JOINT" : "ROTATE JOINT"}</button>}
+        <button type="button" onClick={onReset}>RESET VIEW</button>
+        <button type="button" onClick={onFit}>FIT MODEL</button>
+        {geometry.joints.length > 0 && <button type="button" onClick={onToggleJoint}>{jointPreview ? "RETURN JOINT" : "ROTATE JOINT"}</button>}
+        {!fullScreen && <button ref={fullScreenButtonRef} data-prototype3d-fullscreen-trigger="true" type="button" onClick={onOpenFullScreen}>VIEW FULL SCREEN</button>}
       </div>
       <style jsx>{`
-        .prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(210px,1fr) auto;min-height:280px;border-color:rgba(112,230,244,.42);background:radial-gradient(circle at 50% 48%,rgba(53,155,185,.17),rgba(3,12,19,.72) 68%);box-shadow:0 0 30px rgba(65,214,236,.16)}.is-stage .prototype-3d-instructions{padding:7px 9px;font-size:8px}.is-stage .prototype-3d-canvas{min-height:210px}.is-stage .prototype-3d-actions{gap:5px;padding:7px 9px}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(90px,1fr) auto;min-height:150px}.is-stage .prototype-3d-instructions span{display:none}.is-stage .prototype-3d-canvas{min-height:90px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
+        :global(#workshop-central-stage:has(.prototype-3d-viewer)){z-index:9}.prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(210px,1fr) auto;min-height:280px;border-color:rgba(112,230,244,.42);background:radial-gradient(circle at 50% 48%,rgba(53,155,185,.17),rgba(3,12,19,.72) 68%);box-shadow:0 0 30px rgba(65,214,236,.16)}.is-stage .prototype-3d-instructions{padding:7px 9px;font-size:8px}.is-stage .prototype-3d-canvas{min-height:210px}.is-stage .prototype-3d-actions{gap:5px;padding:7px 9px}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}.prototype-3d-viewer.is-full-screen{grid-template-rows:auto minmax(0,1fr) auto;min-height:0}.is-full-screen .prototype-3d-canvas{min-height:0}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(90px,1fr) auto;min-height:150px}.is-stage .prototype-3d-instructions span{display:none}.is-stage .prototype-3d-canvas{min-height:90px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}.prototype-3d-viewer.is-full-screen{min-height:0}.is-full-screen .prototype-3d-instructions{padding:8px 10px;font-size:9px}.is-full-screen .prototype-3d-instructions span{display:block}.is-full-screen .prototype-3d-actions{gap:7px;padding:8px 10px}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 12px;font-size:10px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
       `}</style>
     </section>
   );
@@ -102,7 +245,14 @@ function ViewController({ fitRequest, resetRequest, autoRotate, onInteractionSta
 
   useEffect(() => {
     if (fitRequest === 0) return;
-    bounds.refresh().fit().clip();
+    let fitFrame = 0;
+    const layoutFrame = window.requestAnimationFrame(() => {
+      fitFrame = window.requestAnimationFrame(() => bounds.refresh().fit().clip());
+    });
+    return () => {
+      window.cancelAnimationFrame(layoutFrame);
+      window.cancelAnimationFrame(fitFrame);
+    };
   }, [bounds, fitRequest]);
 
   useEffect(() => {
