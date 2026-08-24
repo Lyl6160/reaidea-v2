@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `321631b2c6650eebd1339e4b268bf96597e0913f`
+**Current safe committed checkpoint:** `49e4ad2588f10d190deefa70d48bb8119fe72b21`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.40 Build 1E-S — Creation Intent Safety Gate
+**Current hold point:** HP-24.40 Build 1E-A — Home Creation Theatre
 
-**Current authorised construction step:** HP-24.40 Build 1E-S safety checkpoint
+**Current authorised construction step:** HP-24.40 Build 1E-A checkpoint
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -63,6 +63,13 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - A provider-free, server-side creation-intent preflight now occurs before Project creation. Text and image-assisted submissions must both CLEAR before Project or approved image evidence persists; the generation route repeats the intent preflight as defence in depth, while reference-image and generated-output safety gates remain preserved.
 - HOLD asks one safe purpose question; BLOCK gives the approved refusal; unavailable fails closed. An unchanged or whitespace-only denied context stays disabled; a substantive revision needs a new deliberate assessment. Denial creates no Project, evidence, receipt, candidate, geometry, or Workshop navigation.
 - Fixtures use synthetic, non-procedural content only. No live hazardous prompt, provider operation, or browser test occurred. Production still requires authentication, Project authorization, rate limiting, and object-level access control.
+
+## HP-24.40 Build 1E-A — Home Creation Theatre
+
+- Real transaction phases drive the Creation Theatre; editable controls are replaced only while the transaction is active. It contains no timer, countdown, percentage, or simulated progress.
+- Its invention-neutral decorative scaffold is not geometry or a completed invention. An actual candidate appears only after validation; Visual Concept and Interactive 3D statuses follow real state, and only validated geometry may show `AVAILABLE`.
+- All eight meaningful Core Creation emblems and reduced-motion support are preserved. No provider operation, Project path, or persistence behaviour changed.
+- Founder accepted the desktop visual direction. Exact final responsive browser captures remain a future live-verification item. Build 1E-B centre-podium geometry reveal remains unimplemented.
 
 Protected previous foundation:
 

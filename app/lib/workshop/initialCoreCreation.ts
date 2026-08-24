@@ -9,7 +9,7 @@ export type InitialCoreCreationResult =
   | { kind: "success"; candidate: ConceptCandidate }
   | { kind: "failure"; message: string; receipt: InitialCoreCreationReceipt; retryPersistence?: () => Promise<InitialCoreCreationResult> };
 
-export type InitialCoreCreationPhase = "reading" | "saving" | "generating" | "building" | "opening";
+export type InitialCoreCreationPhase = "reading" | "saving" | "generating" | "checking-geometry" | "building" | "opening";
 export type InitialCoreCreationUiPhase = InitialCoreCreationPhase | "idle" | "failed";
 
 export type InitialCoreCreationTransactionResult =
@@ -20,14 +20,15 @@ type InitialCoreCreationDependencies = {
   fetchConcept?: (request: ConceptGenerationRequest) => Promise<{ status: number; payload: ConceptGenerationApiResponse }>;
   persistCandidate?: (projectId: string, candidate: ConceptCandidate) => Promise<boolean>;
   persistReceipt?: (receipt: InitialCoreCreationReceipt) => Promise<boolean>;
-  onPhase?: (phase: Extract<InitialCoreCreationPhase, "generating" | "building">) => void;
+  onPhase?: (phase: Extract<InitialCoreCreationPhase, "generating" | "checking-geometry" | "building">) => void;
+  onCandidateValidated?: (candidate: ConceptCandidate) => void;
 };
 
 type InitialCoreCreationTransactionDependencies = {
   saveProject: () => Promise<Project | null>;
   createConcept: (
     project: Project,
-    onPhase: (phase: Extract<InitialCoreCreationPhase, "generating" | "building">) => void
+    onPhase: (phase: Extract<InitialCoreCreationPhase, "generating" | "checking-geometry" | "building">) => void
   ) => Promise<InitialCoreCreationResult>;
   onPhase?: (phase: InitialCoreCreationPhase) => void;
 };
@@ -81,9 +82,11 @@ export async function runInitialCoreCreation(
     const diagnostic = error?.diagnostic;
     return fail(project.id, creating, diagnostic?.category ?? "provider-failure", error?.message ?? "Concept generation could not complete.", error?.retryable ?? true, dependencies, diagnostic?.providerOperationAttempts ?? "unknown", response.status, diagnostic?.modelIdentifier);
   }
-  dependencies.onPhase?.("building");
+  dependencies.onPhase?.("checking-geometry");
   const candidate = bindConceptGeometry(response.payload.candidate);
   if (!isValidInitialCandidate(candidate, request)) return fail(project.id, creating, "candidate-validation", "Concept generation returned an invalid result.", true, dependencies, 1, response.status);
+  dependencies.onCandidateValidated?.(candidate);
+  dependencies.onPhase?.("building");
   const persistCandidate = dependencies.persistCandidate ?? persistCurrentConceptCandidate;
   if (await persistCandidate(project.id, candidate)) return { kind: "success", candidate };
   const retryPersistence = async (): Promise<InitialCoreCreationResult> => {

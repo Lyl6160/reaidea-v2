@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import HomeVisualShell from "./components/HomeVisualShell";
+import HomeCreationTheatre from "./components/HomeCreationTheatre";
 import { createProject, recordHomeSourceImage, type Project, type ProjectOriginIntent } from "./lib/core/project";
 import { savePreferredName } from "./lib/core/inventorStorage";
 import { loadProject, saveProject } from "./lib/core/storageEngine";
@@ -23,7 +24,7 @@ import {
   type InitialCoreCreationResult,
 } from "./lib/workshop/initialCoreCreation";
 import { persistInitialCoreCreationReceipt, restoreInitialCoreCreationReceipt } from "./lib/workshop/conceptCandidateStorage";
-import type { RevImageSafetyReceipt, VisualUnderstandingApiResponse, VisualUnderstandingResult } from "./lib/ai/types";
+import type { ConceptCandidate, RevImageSafetyReceipt, VisualUnderstandingApiResponse, VisualUnderstandingResult } from "./lib/ai/types";
 
 const BLOCKED_IMAGE_MESSAGE = "REV can’t use that image. Choose another image or continue without one.";
 
@@ -172,6 +173,7 @@ export default function Home() {
   const [, setHelpingQuestion] = useState("");
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<ValidatedSourceImage | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageBusy, setImageBusy] = useState(false);
   const [imageInvalid, setImageInvalid] = useState(false);
   const [visualInterpretation, setVisualInterpretation] = useState<VisualUnderstandingResult | null>(null);
@@ -183,6 +185,7 @@ export default function Home() {
   const [initialProject, setInitialProject] = useState<Project | null>(null);
   const [creationPhase, setCreationPhase] = useState<InitialCoreCreationPhase | "idle" | "failed">("idle");
   const [retryPersistence, setRetryPersistence] = useState<(() => Promise<InitialCoreCreationResult>) | null>(null);
+  const [validatedCandidate, setValidatedCandidate] = useState<ConceptCandidate | null>(null);
   const [preflightActive, setPreflightActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePreviewUrlRef = useRef("");
@@ -197,12 +200,13 @@ export default function Home() {
     normalizeBlockedContext(description) === blockedInventorContext;
   const readyToStart = understanding.ready && !blockedContextActive;
   const creationActive = preflightActive || isInitialCoreCreationActive(creationPhase);
-  const currentWorkflowStage = creationPhase === "reading" || creationPhase === "generating" ? 1 : creationPhase === "building" ? 2 : creationPhase === "opening" ? 3 : understanding.ready ? 0 : -1;
+  const currentWorkflowStage = creationPhase === "reading" || creationPhase === "generating" ? 1 : creationPhase === "checking-geometry" || creationPhase === "building" ? 2 : creationPhase === "opening" ? 3 : understanding.ready ? 0 : -1;
   const liveCreationStatus = preflightActive ? "REV IS CONFIRMING CREATION SAFETY"
     : creationPhase === "reading" ? "REV IS READING YOUR SKETCH"
     : creationPhase === "saving" ? "REV IS SAVING YOUR PROJECT"
       : creationPhase === "generating" ? "REV IS CREATING CONCEPT 01"
-        : creationPhase === "building" ? "REV IS SECURING YOUR CREATION"
+        : creationPhase === "checking-geometry" ? "REV IS CHECKING CREATION GEOMETRY"
+          : creationPhase === "building" ? "REV IS SECURING YOUR CREATION"
           : creationPhase === "opening" ? "OPENING YOUR WORKSHOP"
             : creationPhase === "failed" ? "CREATION PAUSED"
               : understanding.ready ? "READY TO BEGIN" : "WAITING FOR DETAIL";
@@ -249,6 +253,7 @@ export default function Home() {
   function revokeImagePreview() {
     if (imagePreviewUrlRef.current) URL.revokeObjectURL(imagePreviewUrlRef.current);
     imagePreviewUrlRef.current = "";
+    setImagePreviewUrl("");
   }
 
   async function selectImage(file: File | undefined) {
@@ -267,6 +272,7 @@ export default function Home() {
       revokeImagePreview();
       const objectUrl = URL.createObjectURL(validated.blob);
       imagePreviewUrlRef.current = objectUrl;
+      setImagePreviewUrl(objectUrl);
       setSelectedImage(validated);
       setImageInvalid(false);
       setVisualUnderstandingMessage("START WITH REV to check and understand this image.");
@@ -449,6 +455,7 @@ export default function Home() {
     try {
       setError("");
       setRetryPersistence(null);
+      setValidatedCandidate(null);
       setPreflightActive(true);
       const intent = await assessCreationIntent(completeDescription);
       if (intent.decision !== "CLEAR") {
@@ -458,6 +465,8 @@ export default function Home() {
         return;
       }
       if (submittedImage) {
+        setPreflightActive(false);
+        setCreationPhase("reading");
         returnedImageUnderstanding = visualInterpretation && imageSafetyReceipt && imageSafetyState === "CLEAR"
           ? { interpretation: visualInterpretation, safetyReceipt: imageSafetyReceipt }
           : await understandSelectedImage(submittedImage, completeDescription);
@@ -466,7 +475,6 @@ export default function Home() {
           return;
         }
       }
-      setPreflightActive(false);
       const result = await runInitialCoreCreationTransaction({
         onPhase: setCreationPhase,
         saveProject: async () => {
@@ -493,7 +501,7 @@ export default function Home() {
               setInitialProject(projectWithEvidence);
             }
           }
-          return runInitialCoreCreation(projectWithEvidence, interpretation, { onPhase });
+          return runInitialCoreCreation(projectWithEvidence, interpretation, { onPhase, onCandidateValidated: setValidatedCandidate });
         },
       });
       if (result.kind === "success") {
@@ -520,6 +528,18 @@ export default function Home() {
     <HomeVisualShell>
       <section className="entry" aria-labelledby="home-title" aria-busy={creationActive}>
         <p className="sr-only" role="status" aria-live="polite">{creationActive ? liveCreationStatus : ""}</p>
+        {creationActive ? (
+          <HomeCreationTheatre
+            phase={creationPhase}
+            preflightActive={preflightActive}
+            description={description}
+            originIntent={originIntent}
+            imagePreviewUrl={imagePreviewUrl || undefined}
+            imageName={selectedImage?.displayName}
+            interpretation={visualInterpretation}
+            candidate={validatedCandidate}
+          />
+        ) : <>
         <div className="console-regions">
           <section className="project-region" aria-labelledby="home-title">
             <header className="region-heading">
@@ -600,6 +620,7 @@ export default function Home() {
             ))}
           </ul>
         </section>
+        </>}
       </section>
       <style jsx>{`
         .entry{box-sizing:border-box;width:min(100%,98rem);margin-top:-1rem;font-size:clamp(14px,.82vw,16px);line-height:1.42;color:#edf5f7}

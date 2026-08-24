@@ -17,17 +17,20 @@ const candidate: ConceptCandidate = {
 async function runFixtures(): Promise<void> {
 let receiptCount = 0;
 let requestCount = 0;
+let validatedCandidateId = "";
 const corePhases: string[] = [];
 const success = await runInitialCoreCreation(project, undefined, {
   persistReceipt: async () => { receiptCount += 1; return true; },
   fetchConcept: async (request) => { requestCount += 1; return { status: 200, payload: { candidate: { ...candidate, conceptFamilyId: request.conceptFamilyId, revision: request.revision } } }; },
   persistCandidate: async () => true,
   onPhase: (phase) => corePhases.push(phase),
+  onCandidateValidated: (validated) => { validatedCandidateId = validated.candidateId; },
 });
 assert.equal(success.kind, "success");
 assert.equal(requestCount, 1);
 assert.equal(receiptCount, 1);
-assert.deepEqual(corePhases, ["generating", "building"]);
+assert.equal(validatedCandidateId, "fixture-candidate");
+assert.deepEqual(corePhases, ["generating", "checking-geometry", "building"]);
 
 let projectSaves = 0;
 let conceptCreations = 0;
@@ -47,7 +50,7 @@ assert.equal(transaction.kind, "success");
 assert.equal(projectSaves, 1);
 assert.equal(conceptCreations, 1);
 assert.deepEqual(transactionPhases, ["saving", "generating", "building", "opening"]);
-for (const phase of ["reading", "saving", "generating", "building", "opening"] as const) assert.equal(isInitialCoreCreationActive(phase), true);
+for (const phase of ["reading", "saving", "generating", "checking-geometry", "building", "opening"] as const) assert.equal(isInitialCoreCreationActive(phase), true);
 assert.equal(isInitialCoreCreationActive("idle"), false);
 assert.equal(isInitialCoreCreationActive("failed"), false);
 
