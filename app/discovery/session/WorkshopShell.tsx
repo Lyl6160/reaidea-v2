@@ -106,7 +106,6 @@ type SourceEvidenceView = {
   objectUrl?: string;
 };
 
-const ENTRY_GENERATION_SESSION_KEY = "reaidea.entry-generation.v2";
 const MIN_ACTION_FEEDBACK_MS = 450;
 
 async function holdActionFeedback(startedAt: number): Promise<void> {
@@ -298,7 +297,6 @@ export default function WorkshopShell({
   const conceptGenerationInFlightRef = useRef(false);
   const pendingConceptGenerationRequestRef = useRef<ConceptGenerationRequest | null>(null);
   const conceptRefinementInFlightRef = useRef(false);
-  const entryGenerationStartedRef = useRef(false);
   const lastCanonicalRollingSaveRef = useRef("");
   const [patentBenchFocused, setPatentBenchFocused] = useState(false);
   const [prototypeBenchFocused, setPrototypeBenchFocused] = useState(false);
@@ -1285,17 +1283,12 @@ export default function WorkshopShell({
   }
 
   useEffect(() => {
-    if (entryGenerationStartedRef.current) return;
-    if (sourceEvidenceLoading) return;
-    if (window.sessionStorage.getItem(ENTRY_GENERATION_SESSION_KEY) !== project.id) return;
-    entryGenerationStartedRef.current = true;
-    window.sessionStorage.removeItem(ENTRY_GENERATION_SESSION_KEY);
-    window.setTimeout(() => {
-      void createOrUpdateDesignModel("inventor-hero");
-    }, 0);
-    // Home writes this marker only after the inventor explicitly enters with enough information.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.id, sourceEvidenceLoading]);
+    // Build 1D intentionally retires the one-shot auto-generation hand-off. A legacy
+    // marker is cleared without a provider call; persisted candidates still restore above.
+    if (window.sessionStorage.getItem("reaidea.entry-generation.v2") === project.id) {
+      window.sessionStorage.removeItem("reaidea.entry-generation.v2");
+    }
+  }, [project.id]);
 
   const conceptRecoveryAvailable = effectiveHomeAssessment.ready &&
     !sourceEvidenceLoading &&
@@ -1374,7 +1367,6 @@ export default function WorkshopShell({
     setConceptRefinementState("refining");
     setConceptRefinementMessage("");
     // Event-handler timing keeps brief progress feedback visible; it is not render output.
-    // eslint-disable-next-line react-hooks/purity
     const refinementStartedAt = performance.now();
     try {
       const response = await fetch("/api/concepts/refine", {

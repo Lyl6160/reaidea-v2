@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `615d39312a51b3fe52981a903f877a73db0a3911`
+**Current safe committed checkpoint:** `df1c2db54d005ff6a00e6a600f6c979c8447fe0c`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.40 Build 1C — Truthful Responsive Home Foundation
+**Current hold point:** HP-24.40 Build 1D — Initial Creation Transaction Plumbing
 
-**Current authorised construction step:** HP-24.40 Build 1C checkpoint closeout; HP-24.40 Build 1D remains unimplemented
+**Current authorised construction step:** HP-24.40 Build 1D checkpoint closeout
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -38,7 +38,25 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - Approved panoramic scene SHA-256: `F5DC0F8BCA331B3137E04F155AEDF9A94CCD7F2A5F1F4062B15950EB02B496E2`.
 - Approved friendly REV SHA-256: `B385D98AAB0038940512D4780EA72CFD89CDB0921C10F651BA8BD5067DC49070`.
 - `app/workshop/Prototype3DViewer.tsx` remains protected at SHA-256 `396873F6543BB040F32FC94F4B40CE845225CD06535EB5320C662667180C1C5B`.
-- Build 1D is not implemented. Generation currently begins after Workshop navigation through the one-shot marker. The failed live provider attempt produced no Concept 01, candidate, `VisualDesignSnapshot`, or persisted partial asset. Do not use `TRY AGAIN` until Build 1D architecture and provider diagnostics are addressed.
+- Build 1D is implemented and accepted only for its initial creation transaction plumbing. It replaces the Workshop-entry marker with save Project → generate → validate → persist → navigate → restore. Failure remains safely on Home, preserves canonical Project truth, and requires an explicit retry. It does not accept the final Workshop reveal, Visual Concept quality, centre-podium presentation, or Interactive 3D.
+
+## HP-24.40 Build 1D — Initial Creation Transaction Plumbing
+
+### Accepted and verified
+
+- Founder live acceptance covers text-only and image-assisted initial creation. One deliberate `START WITH REV` freezes the submitted description, origin intent and reference, saves one canonical Project, then carries returned image understanding directly into Concept 01 creation without a second action or duplicate Project.
+- Candidate validation and durable candidate persistence completed before navigation; Workshop restored Concept 01 after navigation. Browser refresh restored the same persisted candidate and triggered no generation request.
+- The Home working state reports actual saving, sketch-reading, Concept 01 creation, persistence and Workshop-opening operations; controls remain locked while work is active. Failure remains safely on Home and retry requires a deliberate inventor action.
+- The successful transaction uses the configured `gpt-image-1` model. Candidate history remains non-authoritative browser persistence; no raw prompt, credential, image payload, raw provider response, or raw provider exception is persisted. Successful operational receipts clear only after verified candidate persistence; failed receipts remain safe and operational.
+- `npm run dev:system-ca -- --webpack -p 3000` and `npm run start:system-ca` provide repeatable secure Windows development startup with Node `--use-system-ca`. They do not disable TLS validation, alter machine settings or `.env.local`, add dependencies, or change the configured model.
+
+### Still pending
+
+- Polished Visual Concept quality.
+- Prominent centre-stage presentation.
+- Genuine validated Interactive 3D on the podium.
+- The complete founder surprise/reveal.
+- Provider-backed smallest-question interpretation (Build 1E).
 
 Protected previous foundation:
 

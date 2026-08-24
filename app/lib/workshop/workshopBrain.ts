@@ -135,10 +135,14 @@ export function assessWorkshop(
       state: engineeringDefined ? "ready" : "available",
       reason: engineeringDefined
         ? "We know enough about the idea and its limits to start useful engineering work."
-        : "We know some things about the idea, but important details are still missing.",
+        : homeDescriptionReady
+          ? "REV has accepted the starting description for Core Creation. Engineering detail can be refined from the saved Concept 01."
+          : "We know some things about the idea, but important details are still missing.",
       nextMove: engineeringDefined
         ? "Develop the idea and find out what still may not work."
-        : "Add more detail about the problem, when it happens, and any limits.",
+        : homeDescriptionReady
+          ? "Review the current Concept 01, then add only the detail that helps improve it."
+          : "Add more detail about the problem, when it happens, and any limits.",
       fedBy: ["knowledge"],
     },
     {

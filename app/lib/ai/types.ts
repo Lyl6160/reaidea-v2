@@ -256,6 +256,25 @@ export type ConceptGenerationErrorCode =
   | "safety-block"
   | "safety-unavailable";
 
+export type ConceptCreationFailureCategory =
+  | ConceptGenerationErrorCode
+  | "network"
+  | "candidate-validation"
+  | "local-persistence"
+  | "request-construction"
+  | "interrupted";
+
+/** Safe operational metadata only. It deliberately excludes prompts, images and provider payloads. */
+export type ConceptCreationDiagnostic = {
+  correlationId: string;
+  category: ConceptCreationFailureCategory;
+  httpStatus?: number;
+  providerOperationAttempts: number | "unknown";
+  modelIdentifier?: string;
+  occurredAt: string;
+  retryable: boolean;
+};
+
 export type ConceptGenerationApiResponse =
   | {
       candidate: ConceptCandidate;
@@ -266,6 +285,7 @@ export type ConceptGenerationApiResponse =
         code: ConceptGenerationErrorCode;
         message: string;
         retryable: boolean;
+        diagnostic?: ConceptCreationDiagnostic;
       };
     };
 

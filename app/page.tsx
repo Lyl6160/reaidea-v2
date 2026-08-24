@@ -4,21 +4,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import HomeVisualShell from "./components/HomeVisualShell";
-import { createProject, recordHomeSourceImage, type ProjectOriginIntent } from "./lib/core/project";
+import { createProject, recordHomeSourceImage, type Project, type ProjectOriginIntent } from "./lib/core/project";
 import { savePreferredName } from "./lib/core/inventorStorage";
-import { loadProject, removeProjectIfCurrent, saveProject } from "./lib/core/storageEngine";
+import { loadProject, saveProject } from "./lib/core/storageEngine";
 import {
   createSourceImageReference,
-  deleteProjectSourceImage,
   saveProjectSourceImage,
   sourceImageToDataUrl,
   validateSourceImage,
   type ValidatedSourceImage,
 } from "./lib/core/projectSourceEvidenceStorage";
 import { assessHomeUnderstanding } from "./lib/workshop/revWorkingUnderstanding";
+import {
+  runInitialCoreCreation,
+  runInitialCoreCreationTransaction,
+  isInitialCoreCreationActive,
+  type InitialCoreCreationPhase,
+  type InitialCoreCreationResult,
+} from "./lib/workshop/initialCoreCreation";
+import { persistInitialCoreCreationReceipt, restoreInitialCoreCreationReceipt } from "./lib/workshop/conceptCandidateStorage";
 import type { RevImageSafetyReceipt, VisualUnderstandingApiResponse, VisualUnderstandingResult } from "./lib/ai/types";
 
-const ENTRY_GENERATION_SESSION_KEY = "reaidea.entry-generation.v2";
 const BLOCKED_IMAGE_MESSAGE = "REV can’t use that image. Choose another image or continue without one.";
 
 const HOME_WORKFLOW_STAGES = [
@@ -135,11 +141,16 @@ interface ImageUnderstandingAttempt {
   controller: AbortController;
 }
 
+type ClearedImageUnderstanding = {
+  interpretation: VisualUnderstandingResult;
+  safetyReceipt: RevImageSafetyReceipt;
+};
+
 export default function Home() {
   const [preferredName] = useState("");
   const [originIntent, setOriginIntent] = useState<ProjectOriginIntent | null>(null);
   const [description, setDescription] = useState("");
-  const [helpingQuestion, setHelpingQuestion] = useState("");
+  const [, setHelpingQuestion] = useState("");
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<ValidatedSourceImage | null>(null);
   const [imageBusy, setImageBusy] = useState(false);
@@ -147,9 +158,12 @@ export default function Home() {
   const [visualInterpretation, setVisualInterpretation] = useState<VisualUnderstandingResult | null>(null);
   const [imageSafetyState, setImageSafetyState] = useState<"unchecked" | "checking" | "CLEAR" | "HOLD" | "BLOCK" | "unavailable">("unchecked");
   const [imageSafetyReceipt, setImageSafetyReceipt] = useState<RevImageSafetyReceipt | null>(null);
-  const [visualUnderstandingState, setVisualUnderstandingState] = useState<"idle" | "working" | "ready" | "failed" | "unsupported">("idle");
+  const [, setVisualUnderstandingState] = useState<"idle" | "working" | "ready" | "failed" | "unsupported">("idle");
   const [visualUnderstandingMessage, setVisualUnderstandingMessage] = useState("");
   const [blockedInventorContext, setBlockedInventorContext] = useState("");
+  const [initialProject, setInitialProject] = useState<Project | null>(null);
+  const [creationPhase, setCreationPhase] = useState<InitialCoreCreationPhase | "idle" | "failed">("idle");
+  const [retryPersistence, setRetryPersistence] = useState<(() => Promise<InitialCoreCreationResult>) | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePreviewUrlRef = useRef("");
   const imageUnderstandingAttemptRef = useRef<ImageUnderstandingAttempt | null>(null);
@@ -161,13 +175,16 @@ export default function Home() {
   );
   const blockedContextActive = Boolean(blockedInventorContext) &&
     normalizeBlockedContext(description) === blockedInventorContext;
-  const effectiveReady = understanding.ready && (
-    !selectedImage || (imageSafetyState === "CLEAR" && imageSafetyReceipt !== null)
-  ) && !blockedContextActive;
-  const assessmentComplete = selectedImage
-    ? visualUnderstandingState === "ready"
-    : Boolean(helpingQuestion);
-  const readyToContinue = effectiveReady && assessmentComplete;
+  const readyToStart = understanding.ready && !blockedContextActive;
+  const creationActive = isInitialCoreCreationActive(creationPhase);
+  const currentWorkflowStage = creationPhase === "reading" || creationPhase === "generating" ? 1 : creationPhase === "building" ? 2 : creationPhase === "opening" ? 3 : understanding.ready ? 0 : -1;
+  const liveCreationStatus = creationPhase === "reading" ? "REV IS READING YOUR SKETCH"
+    : creationPhase === "saving" ? "REV IS SAVING YOUR PROJECT"
+      : creationPhase === "generating" ? "REV IS CREATING CONCEPT 01"
+        : creationPhase === "building" ? "REV IS SECURING YOUR CREATION"
+          : creationPhase === "opening" ? "OPENING YOUR WORKSHOP"
+            : creationPhase === "failed" ? "CREATION PAUSED"
+              : understanding.ready ? "READY TO BEGIN" : "WAITING FOR DETAIL";
 
   useEffect(() => {
     return () => {
@@ -176,6 +193,36 @@ export default function Home() {
       attempt?.controller.abort();
       if (imagePreviewUrlRef.current) URL.revokeObjectURL(imagePreviewUrlRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    const project = loadProject();
+    if (!project) return;
+    void restoreInitialCoreCreationReceipt(project.id).then((receipt) => {
+      if (!receipt) return;
+      setInitialProject(project);
+      setOriginIntent(project.originIntent ?? null);
+      setDescription(project.originalObservation);
+      setCreationPhase("failed");
+      if (receipt.status === "creating") {
+        const occurredAt = new Date().toISOString();
+        void persistInitialCoreCreationReceipt({
+          ...receipt,
+          status: "failed",
+          updatedAt: occurredAt,
+          diagnostic: {
+            correlationId: receipt.correlationId,
+            category: "interrupted",
+            providerOperationAttempts: "unknown",
+            occurredAt,
+            retryable: true,
+          },
+        }).catch(() => undefined);
+      }
+      setError(receipt.status === "creating"
+        ? "Concept creation was interrupted. Start another creation attempt when you are ready."
+        : "REV could not complete Concept 01. You can deliberately start another creation attempt.");
+    }).catch(() => undefined);
   }, []);
 
   function revokeImagePreview() {
@@ -201,7 +248,7 @@ export default function Home() {
       imagePreviewUrlRef.current = objectUrl;
       setSelectedImage(validated);
       setImageInvalid(false);
-      setVisualUnderstandingMessage("ASK REV to check and understand this image.");
+      setVisualUnderstandingMessage("START WITH REV to check and understand this image.");
     } catch (validationError) {
       revokeImagePreview();
       setSelectedImage(null);
@@ -245,27 +292,23 @@ export default function Home() {
     attempt?.controller.abort();
   }
 
-  async function askRev() {
-    setError("");
-    if (!selectedImage) {
-      if (blockedContextActive) return;
-      setHelpingQuestion(understanding.helperQuestion);
-      return;
-    }
-    if (visualUnderstandingState === "working") return;
+  async function understandSelectedImage(
+    image: ValidatedSourceImage,
+    inventorDescription: string
+  ): Promise<ClearedImageUnderstanding | null> {
     if (!navigator.onLine) {
       markImageUnavailable();
-      return;
+      return null;
     }
     setHelpingQuestion("");
     setVisualUnderstandingState("working");
     setImageSafetyState("checking");
     setVisualUnderstandingMessage("");
-    const evidenceReference = createSourceImageReference(selectedImage.evidenceId);
+    const evidenceReference = createSourceImageReference(image.evidenceId);
     const attempt: ImageUnderstandingAttempt = {
       token: globalThis.crypto.randomUUID(),
-      evidenceId: selectedImage.evidenceId,
-      inventorContext: normalizeAttemptContext(description),
+      evidenceId: image.evidenceId,
+      inventorContext: normalizeAttemptContext(inventorDescription),
       controller: new AbortController(),
     };
     imageUnderstandingAttemptRef.current = attempt;
@@ -283,8 +326,8 @@ export default function Home() {
     };
     window.addEventListener("offline", handleOffline);
     try {
-      const dataUrl = await sourceImageToDataUrl(selectedImage);
-      if (!isCurrentAttempt()) return;
+      const dataUrl = await sourceImageToDataUrl(image);
+      if (!isCurrentAttempt()) return null;
       const response = await fetch("/api/understanding/image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -292,28 +335,28 @@ export default function Home() {
         body: JSON.stringify({
           requestId: attempt.token,
           evidenceReference,
-          mediaType: selectedImage.mediaType,
+          mediaType: image.mediaType,
           dataUrl,
-          ...(description.trim() ? { inventorDescription: description.trim() } : {}),
+          ...(inventorDescription.trim() ? { inventorDescription: inventorDescription.trim() } : {}),
         }),
       });
       const payload = await response.json() as VisualUnderstandingApiResponse;
-      if (!isCurrentAttempt()) return;
+      if (!isCurrentAttempt()) return null;
       if (!response.ok || "error" in payload) {
         markImageUnavailable();
-        return;
+        return null;
       }
       if (payload.safety.decision === "BLOCK") {
         revokeImagePreview();
         setSelectedImage(null);
         setVisualInterpretation(null);
         setImageSafetyReceipt(null);
-        setBlockedInventorContext(normalizeBlockedContext(description));
+        setBlockedInventorContext(normalizeBlockedContext(inventorDescription));
         setImageSafetyState("BLOCK");
         setVisualUnderstandingState("failed");
         setVisualUnderstandingMessage(BLOCKED_IMAGE_MESSAGE);
         setHelpingQuestion("");
-        return;
+        return null;
       }
       if (payload.safety.decision === "HOLD") {
         setVisualInterpretation(null);
@@ -322,11 +365,11 @@ export default function Home() {
         setVisualUnderstandingState("idle");
         setVisualUnderstandingMessage("");
         setHelpingQuestion(payload.safety.question);
-        return;
+        return null;
       }
       if (payload.safety.decision === "unavailable") {
         markImageUnavailable();
-        return;
+        return null;
       }
       if (!("interpretation" in payload)) throw new Error("REV did not return a cleared interpretation.");
       if (payload.interpretation.evidenceReference !== evidenceReference) {
@@ -336,60 +379,88 @@ export default function Home() {
       setImageSafetyReceipt(payload.safety.receipt);
       setImageSafetyState("CLEAR");
       setVisualUnderstandingState("ready");
-      const nextUnderstanding = assessHomeUnderstanding(description, payload.interpretation);
+      const nextUnderstanding = assessHomeUnderstanding(inventorDescription, payload.interpretation);
       setHelpingQuestion(nextUnderstanding.ready ? "" : nextUnderstanding.helperQuestion);
+      return { interpretation: payload.interpretation, safetyReceipt: payload.safety.receipt };
     } catch {
-      if (!isCurrentAttempt()) return;
+      if (!isCurrentAttempt()) return null;
       markImageUnavailable();
+      return null;
     } finally {
       window.removeEventListener("offline", handleOffline);
       if (isCurrentAttempt()) imageUnderstandingAttemptRef.current = null;
     }
   }
 
-  async function enterWorkshop() {
+  async function startWithRev() {
     const completeDescription = description.trim();
-    if (blockedContextActive || !originIntent || !understanding.ready || !completeDescription || imageBusy || imageInvalid || (selectedImage && (!imageSafetyReceipt || imageSafetyState !== "CLEAR")) || projectCreationStartedRef.current) return;
+    const submittedImage = selectedImage;
+    const submittedOriginIntent = originIntent;
+    if (blockedContextActive || !submittedOriginIntent || !understanding.ready || !completeDescription || imageBusy || imageInvalid || projectCreationStartedRef.current) return;
     projectCreationStartedRef.current = true;
-    let persistedEvidence: { projectId: string; evidenceId: string } | null = null;
-    let createdProjectId = "";
+    let persistedProject: Project | null = initialProject;
+    let returnedImageUnderstanding: ClearedImageUnderstanding | null = null;
     try {
-      const inventor = savePreferredName(preferredName);
-      let project = createProject({ ownerId: inventor.id, originalObservation: completeDescription, originIntent });
-      createdProjectId = project.id;
-      let evidenceReference = "";
-      if (selectedImage) {
-        if (!imageSafetyReceipt) throw new Error("Image safety clearance is missing.");
-        const evidence = await saveProjectSourceImage(project.id, selectedImage, visualInterpretation ?? undefined, imageSafetyReceipt, completeDescription);
-        persistedEvidence = { projectId: project.id, evidenceId: evidence.evidenceId };
-        evidenceReference = createSourceImageReference(evidence.evidenceId);
-        project = recordHomeSourceImage(project, evidenceReference);
+      setError("");
+      setRetryPersistence(null);
+      const result = await runInitialCoreCreationTransaction({
+        onPhase: setCreationPhase,
+        saveProject: async () => {
+          if (persistedProject) return persistedProject;
+          const inventor = savePreferredName(preferredName);
+          const project = createProject({ ownerId: inventor.id, originalObservation: completeDescription, originIntent: submittedOriginIntent });
+          if (!saveProject(project) || loadProject()?.id !== project.id) throw new Error("Project save failed.");
+          persistedProject = project;
+          setInitialProject(project);
+          return project;
+        },
+        ...(submittedImage && !(visualInterpretation && imageSafetyReceipt && imageSafetyState === "CLEAR")
+          ? { understandReference: async () => {
+            returnedImageUnderstanding = await understandSelectedImage(submittedImage, completeDescription);
+            return returnedImageUnderstanding?.interpretation ?? null;
+          } }
+          : {}),
+        createConcept: async (project, returnedInterpretation, onPhase) => {
+          const interpretation = returnedInterpretation ?? visualInterpretation ?? undefined;
+          let projectWithEvidence = project;
+          if (submittedImage) {
+            const safetyReceipt = returnedImageUnderstanding?.safetyReceipt ?? imageSafetyReceipt;
+            if (!interpretation || !safetyReceipt) throw new Error("Image safety clearance is missing.");
+            const evidenceReference = createSourceImageReference(submittedImage.evidenceId);
+            if (!project.files.includes(evidenceReference)) {
+              await saveProjectSourceImage(project.id, submittedImage, interpretation, safetyReceipt, completeDescription);
+              projectWithEvidence = recordHomeSourceImage(project, evidenceReference);
+              if (!saveProject(projectWithEvidence) || !loadProject()?.files.includes(evidenceReference)) throw new Error("Project source-image verification failed.");
+              persistedProject = projectWithEvidence;
+              setInitialProject(projectWithEvidence);
+            }
+          }
+          return runInitialCoreCreation(projectWithEvidence, interpretation, { onPhase });
+        },
+      });
+      if (result.kind === "success") {
+        router.push("/workshop");
+        return;
       }
-      if (!saveProject(project)) throw new Error("Project save failed.");
-      const savedProject = loadProject();
-      if (
-        savedProject?.id !== project.id ||
-        (evidenceReference && !savedProject.files.includes(evidenceReference))
-      ) throw new Error("Project verification failed.");
-      window.sessionStorage.setItem(ENTRY_GENERATION_SESSION_KEY, project.id);
-      router.push("/workshop");
+      if (result.kind === "stopped") {
+        setCreationPhase("failed");
+        return;
+      }
+      setCreationPhase("failed");
+      setError(result.message);
+      if (result.retryPersistence) setRetryPersistence(() => result.retryPersistence!);
     } catch {
-      if (createdProjectId) removeProjectIfCurrent(createdProjectId);
-      if (persistedEvidence) {
-        try {
-          await deleteProjectSourceImage(persistedEvidence.projectId, persistedEvidence.evidenceId);
-        } catch {
-          // The exact new record is the only permitted rollback target.
-        }
-      }
+      setCreationPhase("failed");
+      setError(persistedProject ? "REV could not continue this creation. Your Project remains saved; start another creation attempt when ready." : "REV could not save your Project before creation began. No creation request was made.");
+    } finally {
       projectCreationStartedRef.current = false;
-      setError("REV couldn't start your Project. Please try again.");
     }
   }
 
   return (
     <HomeVisualShell>
-      <section className="entry" aria-labelledby="home-title">
+      <section className="entry" aria-labelledby="home-title" aria-busy={creationActive}>
+        <p className="sr-only" role="status" aria-live="polite">{creationActive ? liveCreationStatus : ""}</p>
         <div className="console-regions">
           <section className="project-region" aria-labelledby="home-title">
             <header className="region-heading">
@@ -401,7 +472,7 @@ export default function Home() {
               <div className="origin-options">
                 {ORIGIN_INTENTS.map((intent) => (
                   <label key={intent.value} className={originIntent === intent.value ? "is-selected" : ""}>
-                    <input type="radio" name="origin-intent" value={intent.value} checked={originIntent === intent.value} onChange={() => setOriginIntent(intent.value)} />
+                    <input type="radio" name="origin-intent" value={intent.value} checked={originIntent === intent.value} onChange={() => setOriginIntent(intent.value)} disabled={creationActive} />
                     <OriginIntentIcon kind={intent.icon} />
                     <span>{intent.label}</span>
                   </label>
@@ -412,18 +483,18 @@ export default function Home() {
             <section className="workflow" aria-labelledby="workflow-heading">
               <div className="workflow-heading">
                 <span id="workflow-heading">REV CREATION READINESS</span>
-                <small>{understanding.ready ? "READY TO BEGIN" : "WAITING FOR DETAIL"}</small>
+                <small>{liveCreationStatus}</small>
               </div>
-              <div className={`journey-bar${understanding.ready ? " is-active" : ""}`} aria-hidden="true">
+              <div className={`journey-bar${currentWorkflowStage >= 0 ? " is-active" : ""}`} aria-hidden="true">
                 {HOME_WORKFLOW_STAGES.map((stage) => <span key={stage} />)}
               </div>
               <ol>
                 {HOME_WORKFLOW_STAGES.map((stage, index) => {
-                  const current = index === 0 && understanding.ready;
+                  const current = index === currentWorkflowStage;
                   return (
                     <li key={stage} className={current ? "is-current" : ""} aria-current={current ? "step" : undefined}>
                       <span>{stage}</span>
-                      <small>{index === 0 ? current ? "READY TO BEGIN" : "WAITING FOR DETAIL" : "NOT STARTED"}</small>
+                      <small>{current ? liveCreationStatus : index === 0 ? "WAITING FOR DETAIL" : "NOT STARTED"}</small>
                     </li>
                   );
                 })}
@@ -438,25 +509,20 @@ export default function Home() {
 
             <label className="description-field" htmlFor="idea-description">
               <span className="sr-only">Your complete idea</span>
-              <textarea id="idea-description" value={description} onChange={(event) => { const nextDescription = event.target.value; const contextChanged = Boolean(blockedInventorContext) && normalizeBlockedContext(nextDescription) !== blockedInventorContext; if (imageUnderstandingAttemptRef.current && normalizeAttemptContext(nextDescription) !== imageUnderstandingAttemptRef.current.inventorContext) invalidateImageUnderstandingAttempt(); setDescription(nextDescription); setHelpingQuestion(""); setError(""); if (contextChanged) { setBlockedInventorContext(""); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage(selectedImage ? "ASK REV to check and understand this image." : ""); } if (selectedImage) { setVisualInterpretation(null); setImageSafetyReceipt(null); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage("ASK REV to check and understand this image."); } }} rows={5} placeholder="Describe your idea in plain language. What should it do, and what matters most to you?" />
+              <textarea id="idea-description" value={description} onChange={(event) => { const nextDescription = event.target.value; const contextChanged = Boolean(blockedInventorContext) && normalizeBlockedContext(nextDescription) !== blockedInventorContext; if (imageUnderstandingAttemptRef.current && normalizeAttemptContext(nextDescription) !== imageUnderstandingAttemptRef.current.inventorContext) invalidateImageUnderstandingAttempt(); setDescription(nextDescription); setHelpingQuestion(""); setError(""); if (contextChanged) { setBlockedInventorContext(""); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage(selectedImage ? "START WITH REV to check and understand this image." : ""); } if (selectedImage) { setVisualInterpretation(null); setImageSafetyReceipt(null); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage("START WITH REV to check and understand this image."); } }} rows={5} placeholder="Describe your idea in plain language. What should it do, and what matters most to you?" disabled={creationActive} />
             </label>
 
             <div className="console-action">
-              <input ref={fileInputRef} className="file-input" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void selectImage(event.target.files?.[0])} />
-              <button type="button" className="secondary add-image" onClick={() => fileInputRef.current?.click()} disabled={imageBusy}>{selectedImage ? "CHANGE PHOTO" : imageBusy ? "CHECKING IMAGE..." : "ADD PHOTO OR SKETCH"}</button>
-              {selectedImage && <button type="button" className="secondary remove-image" onClick={removeImage} disabled={imageBusy}>REMOVE</button>}
-              {blockedContextActive && (!selectedImage || imageSafetyState === "CLEAR" || imageSafetyState === "BLOCK") ? null : selectedImage && imageSafetyState !== "CLEAR" ? (
-                <button type="button" className="start-button" onClick={() => void askRev()} disabled={imageBusy || imageInvalid || imageSafetyState === "checking"}>{imageSafetyState === "checking" ? "REV IS REVIEWING…" : "START WITH REV"}</button>
-              ) : readyToContinue ? (
-                <button type="button" className="start-button" onClick={() => void enterWorkshop()} disabled={!originIntent || imageBusy || imageInvalid}>START WITH REV <span aria-hidden="true">→</span></button>
-              ) : (
-                <button type="button" className="start-button" onClick={() => void askRev()} disabled={!originIntent || (!selectedImage && !understanding.ready) || imageBusy || imageInvalid || visualUnderstandingState === "working"}>{visualUnderstandingState === "working" ? "REV IS REVIEWING…" : "START WITH REV"}</button>
-              )}
+              <input ref={fileInputRef} className="file-input" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void selectImage(event.target.files?.[0])} disabled={creationActive} />
+              <button type="button" className="secondary add-image" onClick={() => fileInputRef.current?.click()} disabled={imageBusy || creationActive}>{selectedImage ? "CHANGE PHOTO" : imageBusy ? "CHECKING IMAGE..." : "ADD PHOTO OR SKETCH"}</button>
+              {selectedImage && <button type="button" className="secondary remove-image" onClick={removeImage} disabled={imageBusy || creationActive}>REMOVE</button>}
+              <button type="button" className="start-button" onClick={() => void startWithRev()} disabled={!originIntent || !readyToStart || imageBusy || imageInvalid || creationActive}>{creationActive ? liveCreationStatus : creationPhase === "failed" ? "START ANOTHER CREATION ATTEMPT" : "START WITH REV"} <span aria-hidden="true">→</span></button>
             </div>
 
             {visualInterpretation && <section className="visual-understanding" aria-label="REV visual understanding"><span>WHAT REV CAN SEE</span><p>{visualInterpretation.factualSummary}</p><small>Derived from the attached visual reference · not Project truth</small></section>}
             {visualUnderstandingMessage && <p className="visual-understanding-message" role="status">{visualUnderstandingMessage.replace("ASK REV", "START WITH REV")}</p>}
             {error && <p className="error" role="alert">{error}</p>}
+            {retryPersistence && <button type="button" className="secondary" onClick={() => void retryPersistence().then((result) => { if (result.kind === "success") router.push("/workshop"); })}>TRY SAVING CONCEPT 01 AGAIN</button>}
           </section>
         </div>
 

@@ -7,6 +7,7 @@ import type {
 } from "../../../lib/ai/types";
 import {
   ConceptGenerationServiceError,
+  configuredConceptImageModel,
   generateConcept,
 } from "../../../lib/ai/aiService.server";
 
@@ -19,32 +20,32 @@ const MAX_LIST_ITEMS = 12;
 const MAX_SOURCE_ITEMS = 24;
 
 export async function POST(request: Request): Promise<Response> {
+  let parsed: unknown;
   try {
     const rawBody = await request.text();
     if (!rawBody || rawBody.length > MAX_REQUEST_LENGTH) {
       logRouteValidation(undefined, false, 400);
-      return errorResponse("invalid-request", "The concept request is invalid or too large.", false, 400);
+      return errorResponse("invalid-request", "The concept request is invalid or too large.", false, 400, "unavailable", 0);
     }
 
-    let parsed: unknown;
     try {
       parsed = JSON.parse(rawBody);
     } catch {
       logRouteValidation(undefined, false, 400);
-      return errorResponse("invalid-request", "The concept request is not valid JSON.", false, 400);
+      return errorResponse("invalid-request", "The concept request is not valid JSON.", false, 400, "unavailable", 0);
     }
 
     if (!isConceptGenerationRequest(parsed)) {
       logRouteValidation(parsed, hasReferenceImage(parsed), 400);
-      return errorResponse("invalid-request", "The concept request is incomplete or invalid.", false, 400);
+      return errorResponse("invalid-request", "The concept request is incomplete or invalid.", false, 400, requestIdFrom(parsed), 0);
     }
     if (parsed.visualMode === "unknown") {
       logRouteValidation(parsed, Boolean(parsed.referenceImage), 400);
-      return errorResponse("invalid-request", "Confirm a visual mode before generation.", false, 400);
+      return errorResponse("invalid-request", "Confirm a visual mode before generation.", false, 400, requestIdFrom(parsed), 0);
     }
     if (parsed.visualMode !== "product" || parsed.outputType !== "image") {
       logRouteValidation(parsed, Boolean(parsed.referenceImage), 422, "unsupported-mode");
-      return errorResponse("unsupported-mode", "Visual generation for this mode is coming next.", false, 422);
+      return errorResponse("unsupported-mode", "Visual generation for this mode is coming next.", false, 422, requestIdFrom(parsed), 0);
     }
 
     const result = await generateConcept(parsed);
@@ -55,11 +56,14 @@ export async function POST(request: Request): Promise<Response> {
         error.code,
         error.message,
         error.retryable,
-        error.code === "not-configured" || error.code === "safety-unavailable" ? 503 : error.code === "unsupported-mode" || error.code === "safety-hold" || error.code === "safety-block" ? 422 : 502
+        error.code === "not-configured" || error.code === "safety-unavailable" ? 503 : error.code === "unsupported-mode" || error.code === "safety-hold" || error.code === "safety-block" ? 422 : 502,
+        requestIdFrom(parsed),
+        error.diagnostic?.providerOperationAttempts ?? "unknown",
+        error.diagnostic?.modelIdentifier
       );
     }
     console.error("Concept generation route failed with an unexpected error.");
-    return errorResponse("provider-failure", "Concept generation could not complete.", true, 500);
+    return errorResponse("provider-failure", "Concept generation could not complete.", true, 500, requestIdFrom(parsed), "unknown");
   }
 }
 
@@ -223,10 +227,17 @@ function errorResponse(
   code: ConceptGenerationErrorCode,
   message: string,
   retryable: boolean,
-  status: number
+  status: number,
+  correlationId: string,
+  providerOperationAttempts: number | "unknown",
+  modelIdentifier = configuredConceptImageModel()
 ): Response {
   return Response.json(
-    { error: { code, message, retryable } } satisfies ConceptGenerationApiResponse,
+    { error: { code, message, retryable, diagnostic: { correlationId, category: code, httpStatus: status, providerOperationAttempts, modelIdentifier, occurredAt: new Date().toISOString(), retryable } } } satisfies ConceptGenerationApiResponse,
     { status }
   );
+}
+
+function requestIdFrom(value: unknown): string {
+  return isRecord(value) && shortText(value.requestId) ? value.requestId : "unavailable";
 }

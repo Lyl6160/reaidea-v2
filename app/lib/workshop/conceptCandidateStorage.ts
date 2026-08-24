@@ -1,4 +1,4 @@
-import type { ConceptCandidate } from "../ai/types";
+import type { ConceptCandidate, ConceptCreationDiagnostic } from "../ai/types";
 import { isValidConceptGeometry } from "../geometry/conceptGeometry";
 
 const DATABASE_NAME = "reaidea-workshop-concepts";
@@ -8,11 +8,21 @@ const MAX_PERSISTED_IMAGE_BYTES = 18_000_000;
 const MAX_PERSISTED_VIEW_SET_BYTES = MAX_PERSISTED_IMAGE_BYTES * 3;
 export const MAX_RETAINED_CONCEPT_CANDIDATES = 5;
 
+export type InitialCoreCreationReceipt = {
+  projectId: string;
+  status: "creating" | "failed";
+  correlationId: string;
+  startedAt: string;
+  updatedAt: string;
+  diagnostic?: ConceptCreationDiagnostic;
+};
+
 type StoredConceptCandidate = {
-  version: 1 | 2;
+  version: 1 | 2 | 3;
   projectId: string;
   candidate?: ConceptCandidate;
   candidates?: ConceptCandidate[];
+  initialCreationReceipt?: InitialCoreCreationReceipt;
 };
 
 export async function restoreConceptCandidateHistory(projectId: string): Promise<ConceptCandidate[]> {
@@ -37,6 +47,36 @@ export async function restoreCurrentConceptCandidate(
   return history.at(-1) ?? null;
 }
 
+export async function restoreInitialCoreCreationReceipt(projectId: string): Promise<InitialCoreCreationReceipt | null> {
+  if (!projectId.trim() || typeof indexedDB === "undefined") return null;
+  const database = await openDatabase();
+  try {
+    const stored = await requestResult<StoredConceptCandidate | undefined>(
+      database.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(projectId)
+    );
+    return stored?.projectId === projectId && isInitialCoreCreationReceipt(stored.initialCreationReceipt, projectId)
+      ? stored.initialCreationReceipt
+      : null;
+  } finally {
+    database.close();
+  }
+}
+
+export async function persistInitialCoreCreationReceipt(receipt: InitialCoreCreationReceipt): Promise<boolean> {
+  if (!isInitialCoreCreationReceipt(receipt, receipt.projectId) || typeof indexedDB === "undefined") return false;
+  const database = await openDatabase();
+  try {
+    const transaction = database.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const existing = await requestResult<StoredConceptCandidate | undefined>(store.get(receipt.projectId));
+    store.put({ ...existing, version: 3, projectId: receipt.projectId, initialCreationReceipt: receipt } satisfies StoredConceptCandidate);
+    await transactionComplete(transaction);
+    return true;
+  } finally {
+    database.close();
+  }
+}
+
 export async function persistConceptCandidateHistory(
   projectId: string,
   candidates: ConceptCandidate[]
@@ -55,7 +95,8 @@ export async function persistConceptCandidateHistory(
   const database = await openDatabase();
   try {
     const transaction = database.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).put({ version: 2, projectId, candidates } satisfies StoredConceptCandidate);
+    // A completed write is the durable success boundary: it also clears a prior operational receipt.
+    transaction.objectStore(STORE_NAME).put({ version: 3, projectId, candidates } satisfies StoredConceptCandidate);
     await transactionComplete(transaction);
     return true;
   } finally {
@@ -145,6 +186,18 @@ function isPersistableCandidate(value: unknown): value is ConceptCandidate {
   ) return false;
   const estimatedBytes = imageDataUrlBytes(value.output.dataUrl);
   return estimatedBytes !== null && estimatedBytes <= MAX_PERSISTED_IMAGE_BYTES;
+}
+
+export function isInitialCoreCreationReceipt(value: unknown, projectId?: string): value is InitialCoreCreationReceipt {
+  if (!isRecord(value) || value.status !== "creating" && value.status !== "failed") return false;
+  if (!nonEmptyString(value.projectId) || (projectId && value.projectId !== projectId) || !nonEmptyString(value.correlationId) || !nonEmptyString(value.startedAt) || !nonEmptyString(value.updatedAt)) return false;
+  if (value.diagnostic === undefined) return value.status === "creating";
+  const diagnostic = value.diagnostic;
+  return isRecord(diagnostic) && diagnostic.correlationId === value.correlationId && nonEmptyString(diagnostic.occurredAt) && typeof diagnostic.retryable === "boolean" &&
+    (typeof diagnostic.providerOperationAttempts === "number" || diagnostic.providerOperationAttempts === "unknown") &&
+    (diagnostic.httpStatus === undefined || typeof diagnostic.httpStatus === "number") &&
+    (diagnostic.modelIdentifier === undefined || nonEmptyString(diagnostic.modelIdentifier)) &&
+    ["invalid-request", "unsupported-mode", "not-configured", "provider-failure", "safety-hold", "safety-block", "safety-unavailable", "network", "candidate-validation", "local-persistence", "request-construction", "interrupted"].includes(String(diagnostic.category));
 }
 
 function isVisualDesignSnapshot(value: unknown): boolean {

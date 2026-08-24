@@ -2,6 +2,7 @@ import "server-only";
 
 import type {
   ConceptCandidate,
+  ConceptCreationDiagnostic,
   ConceptGenerationErrorCode,
   ConceptGenerationRequest,
   ConceptImageView,
@@ -18,11 +19,18 @@ export class ConceptGenerationServiceError extends Error {
   constructor(
     readonly code: ConceptGenerationErrorCode,
     message: string,
-    readonly retryable: boolean
+    readonly retryable: boolean,
+    readonly diagnostic?: Pick<ConceptCreationDiagnostic, "providerOperationAttempts" | "modelIdentifier">
   ) {
     super(message);
     this.name = "ConceptGenerationServiceError";
   }
+}
+
+const DEFAULT_CONCEPT_IMAGE_MODEL = "gpt-image-2";
+
+export function configuredConceptImageModel(): string {
+  return process.env.OPENAI_IMAGE_MODEL?.trim() || DEFAULT_CONCEPT_IMAGE_MODEL;
 }
 
 export class VisualUnderstandingServiceError extends Error {
@@ -126,7 +134,8 @@ export async function generateConcept(
     throw new ConceptGenerationServiceError(
       "unsupported-mode",
       "Visual generation for this mode is coming next.",
-      false
+      false,
+      { providerOperationAttempts: 0, modelIdentifier: configuredConceptImageModel() }
     );
   }
 
@@ -136,7 +145,8 @@ export async function generateConcept(
     throw new ConceptGenerationServiceError(
       "not-configured",
       "Concept generation is not configured.",
-      false
+      false,
+      { providerOperationAttempts: 0, modelIdentifier: configuredConceptImageModel() }
     );
   }
 
@@ -168,7 +178,12 @@ export async function generateConcept(
       ...(safeRequest.referenceImage ? { referenceUsage: "used" as const } : {}),
     };
   } catch (error) {
-    if (error instanceof ConceptGenerationServiceError) throw error;
+    if (error instanceof ConceptGenerationServiceError) {
+      throw new ConceptGenerationServiceError(error.code, error.message, error.retryable, {
+        providerOperationAttempts: diagnostic.attemptedProviderOperations,
+        modelIdentifier: configuredConceptImageModel(),
+      });
+    }
     logConceptDiagnostic(
       diagnostic,
       request.referenceImage ? "reference-image-edit" : "candidate-validation",
@@ -179,7 +194,8 @@ export async function generateConcept(
     throw new ConceptGenerationServiceError(
       "provider-failure",
       "Concept generation could not complete.",
-      true
+      true,
+      { providerOperationAttempts: diagnostic.attemptedProviderOperations, modelIdentifier: configuredConceptImageModel() }
     );
   }
 }
