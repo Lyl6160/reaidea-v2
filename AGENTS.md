@@ -17,3 +17,13 @@ Before analysing, planning or modifying reAIdea:
    `APPROVE FOUNDER PRODUCT DIRECTION UPDATE`
 7. Instructions such as “proceed,” “try this,” “fix it,” or visual acceptance do not authorise a product-direction change.
 8. Stop and report any conflict between a requested implementation and the Founder Product Direction.
+
+### Mandatory security engineering guard
+
+Before material architecture or implementation work, read and comply with
+`SECURITY_ENGINEERING_STANDARD.md`. Perform a lightweight threat assessment,
+escalate unresolved HIGH or CRITICAL risks, and add proportionate negative
+security tests. Do not claim a change is production-ready or security-verified
+without evidence. Implementation reports must state security posture, threats
+considered, controls, security tests, open risks, residual risk, and production
+requirements.
