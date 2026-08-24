@@ -71,6 +71,14 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - All eight meaningful Core Creation emblems and reduced-motion support are preserved. No provider operation, Project path, or persistence behaviour changed.
 - Founder accepted the desktop visual direction. Exact final responsive browser captures remain a future live-verification item. Build 1E-B centre-podium geometry reveal remains unimplemented.
 
+## HP-24.40 Build 1E-B1 — Typed Initial Geometry Plan and Persistence
+
+- A candidate-owned, versioned, non-authoritative `InitialGeometryPlan` now leaves the Project schema unchanged. The portable-signage profile requires both traffic-control and portable-operation evidence; unrelated or ambiguous products do not activate it.
+- Inventor evidence, cleared interpretation, and REV working assumptions remain distinct. Default dimensions, materials, finishes, colours, and representational ranges are labelled working assumptions rather than approvals or certifications.
+- The local parent-relative graph models the base, optional wheels and stabilisers, pole sections, circular housing approximation, STOP/GO face markings, perimeter lights, optional remote, and a bounded vertical-axis sign joint. Plan validation is bounded and its component IDs must exactly reconcile with emitted geometry.
+- Geometry source must match candidate family ID, candidate ID, and revision. Malformed or mismatched geometry cannot persist as available; a valid Visual Concept survives unavailable geometry. Persistence and reload verification complete before creation reports success, and legacy candidates remain readable.
+- No additional provider operation occurred. `Prototype3DViewer` remains unchanged. Build 1E-B2 Workshop podium presentation remains unimplemented. Production security risks remain: authentication, object authorization, rate limiting, and secure server-side storage are required before release.
+
 Protected previous foundation:
 
 - `62bb4e6`

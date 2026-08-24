@@ -1,5 +1,6 @@
 import type { ConceptCandidate, ConceptVisualDesignSnapshot } from "../ai/types";
 import { assertConceptGeometry, type ConceptGeometry, type ConceptGeometryComponent, type ConceptGeometryMarking, type GeometryPoint2 } from "./conceptGeometry";
+import { buildGeometryFromInitialPlan } from "./initialGeometryPlan";
 
 export const CONCEPT_GEOMETRY_BUILDER_VERSION = 2;
 export type ConceptGeometryAvailability = "available" | "insufficient-data" | "unsupported-geometry" | "invalid-snapshot";
@@ -12,6 +13,13 @@ type ComponentKind = "head" | "pole" | "led";
 const ALIASES: Record<ComponentKind, string[]> = { head: ["sign head", "sign", "head", "panel", "display", "placard", "board"], pole: ["pole", "post", "mast", "stand", "support"], led: ["led perimeter", "leds", "led", "lights", "light"] };
 
 export function bindConceptGeometry(candidate: ConceptCandidate): ConceptCandidate {
+  if (candidate.initialGeometryPlan) {
+    const result = buildGeometryFromInitialPlan(candidate, candidate.initialGeometryPlan);
+    if (result.geometry) return { ...candidate, conceptGeometry: result.geometry, conceptGeometryStatus: "available" };
+    const { conceptGeometry: _staleGeometry, ...withoutStaleGeometry } = candidate;
+    void _staleGeometry;
+    return { ...withoutStaleGeometry, conceptGeometryStatus: result.blocker?.code === "unsupported-profile" ? "unsupported-geometry" : "invalid-snapshot" };
+  }
   if (!candidate.visualDesignSnapshot || !["product", "machine"].includes(candidate.visualMode)) return candidate;
   const result = buildConceptGeometry(candidate, candidate.visualDesignSnapshot);
   if (result.status === "available") return { ...candidate, conceptGeometry: result.geometry, conceptGeometryStatus: "available" };

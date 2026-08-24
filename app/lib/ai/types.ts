@@ -242,9 +242,36 @@ export type ConceptCandidate = {
   sourceCandidateId?: string;
   inventorRefinement?: string;
   visualDesignSnapshot?: ConceptVisualDesignSnapshot;
+  initialGeometryPlan?: InitialGeometryPlan;
   conceptGeometry?: ConceptGeometry;
   conceptGeometryStatus?: "available" | "insufficient-data" | "unsupported-geometry" | "invalid-snapshot";
   disclaimer: string;
+};
+
+export type InitialGeometryDatum = {
+  id: string;
+  label: string;
+  value: string | number | boolean;
+  unit?: "mm" | "degrees" | "count";
+  status: "inventor-evidence" | "interpreted" | "working-assumption";
+  basis: "accepted-description" | "cleared-image-interpretation" | "rev-portable-signage-profile";
+  blocksGeometry: boolean;
+  inventorConfirmationDesirable: boolean;
+};
+
+export type InitialGeometryBlocker = {
+  code: "unsupported-profile" | "insufficient-form" | "invalid-plan" | "invalid-geometry";
+  safeMessage: string;
+};
+
+/** Non-authoritative, candidate-owned construction input; it never replaces inventor evidence. */
+export type InitialGeometryPlan = {
+  version: 1;
+  nonAuthoritative: true;
+  profile: "portable-signage";
+  parameters: InitialGeometryDatum[];
+  componentIds: string[];
+  blocker?: InitialGeometryBlocker;
 };
 
 export type ConceptGenerationErrorCode =

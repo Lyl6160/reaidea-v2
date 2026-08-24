@@ -1,9 +1,10 @@
 import type { ConceptCandidate, ConceptCreationDiagnostic, ConceptGenerationApiResponse, ConceptGenerationRequest, VisualUnderstandingResult } from "../ai/types";
 import { bindConceptGeometry } from "../geometry/buildConceptGeometry";
+import { buildInitialGeometryPlan } from "../geometry/initialGeometryPlan";
 import type { Project } from "../core/project";
 import { isValidSafetyReceipt, loadProjectSourceImage, parseSourceImageReference, sourceImageToDataUrl } from "../core/projectSourceEvidenceStorage";
 import { buildConceptGenerationFoundation, createConceptWorkflowIdentity, suggestVisualMode } from "./conceptGeneration";
-import { persistCurrentConceptCandidate, persistInitialCoreCreationReceipt, type InitialCoreCreationReceipt } from "./conceptCandidateStorage";
+import { persistCurrentConceptCandidate, persistInitialCoreCreationReceipt, restoreCurrentConceptCandidate, type InitialCoreCreationReceipt } from "./conceptCandidateStorage";
 
 export type InitialCoreCreationResult =
   | { kind: "success"; candidate: ConceptCandidate }
@@ -19,6 +20,7 @@ export type InitialCoreCreationTransactionResult =
 type InitialCoreCreationDependencies = {
   fetchConcept?: (request: ConceptGenerationRequest) => Promise<{ status: number; payload: ConceptGenerationApiResponse }>;
   persistCandidate?: (projectId: string, candidate: ConceptCandidate) => Promise<boolean>;
+  restoreCandidate?: (projectId: string) => Promise<ConceptCandidate | null>;
   persistReceipt?: (receipt: InitialCoreCreationReceipt) => Promise<boolean>;
   onPhase?: (phase: Extract<InitialCoreCreationPhase, "generating" | "checking-geometry" | "building">) => void;
   onCandidateValidated?: (candidate: ConceptCandidate) => void;
@@ -82,18 +84,29 @@ export async function runInitialCoreCreation(
     const diagnostic = error?.diagnostic;
     return fail(project.id, creating, diagnostic?.category ?? "provider-failure", error?.message ?? "Concept generation could not complete.", error?.retryable ?? true, dependencies, diagnostic?.providerOperationAttempts ?? "unknown", response.status, diagnostic?.modelIdentifier);
   }
+  if (!isValidInitialCandidate(response.payload.candidate, request)) return fail(project.id, creating, "candidate-validation", "Concept generation returned an invalid result.", true, dependencies, 1, response.status);
   dependencies.onPhase?.("checking-geometry");
-  const candidate = bindConceptGeometry(response.payload.candidate);
-  if (!isValidInitialCandidate(candidate, request)) return fail(project.id, creating, "candidate-validation", "Concept generation returned an invalid result.", true, dependencies, 1, response.status);
+  const plan = buildInitialGeometryPlan(project, visualInterpretation);
+  const candidate = bindConceptGeometry({ ...response.payload.candidate, initialGeometryPlan: plan });
+  if (!isValidInitialCandidate(candidate, request) || !geometryBindingMatchesCandidate(candidate)) return fail(project.id, creating, "candidate-validation", "Concept generation returned an invalid result.", true, dependencies, 1, response.status);
   dependencies.onCandidateValidated?.(candidate);
   dependencies.onPhase?.("building");
   const persistCandidate = dependencies.persistCandidate ?? persistCurrentConceptCandidate;
-  if (await persistCandidate(project.id, candidate)) return { kind: "success", candidate };
+  const restoreCandidate = dependencies.restoreCandidate ?? restoreCurrentConceptCandidate;
+  if (await persistCandidate(project.id, candidate) && await confirmsPersistedCandidate(project.id, candidate, restoreCandidate)) return { kind: "success", candidate };
   const retryPersistence = async (): Promise<InitialCoreCreationResult> => {
-    if (await persistCandidate(project.id, candidate)) return { kind: "success", candidate };
+    if (await persistCandidate(project.id, candidate) && await confirmsPersistedCandidate(project.id, candidate, restoreCandidate)) return { kind: "success", candidate };
     return fail(project.id, creating, "local-persistence", "Concept 01 was created but could not be saved in this browser.", true, dependencies, 1, response.status);
   };
   return fail(project.id, creating, "local-persistence", "Concept 01 was created but could not be saved in this browser.", true, dependencies, 1, response.status, undefined, retryPersistence);
+}
+
+async function confirmsPersistedCandidate(projectId: string, candidate: ConceptCandidate, restoreCandidate: (projectId: string) => Promise<ConceptCandidate | null>): Promise<boolean> {
+  const restored = await restoreCandidate(projectId);
+  return restored?.candidateId === candidate.candidateId && restored.conceptFamilyId === candidate.conceptFamilyId && restored.revision === candidate.revision &&
+    restored.conceptGeometryStatus === candidate.conceptGeometryStatus &&
+    restored.initialGeometryPlan?.version === candidate.initialGeometryPlan?.version &&
+    geometryBindingMatchesCandidate(restored);
 }
 
 async function fail(projectId: string, creating: InitialCoreCreationReceipt, category: ConceptCreationDiagnostic["category"], message: string, retryable: boolean, dependencies: InitialCoreCreationDependencies, providerOperationAttempts: number | "unknown", httpStatus?: number, modelIdentifier?: string, retryPersistence?: () => Promise<InitialCoreCreationResult>): Promise<InitialCoreCreationResult> {
@@ -123,4 +136,10 @@ async function attachSourceImageReference(project: Project, request: ConceptGene
 
 function isValidInitialCandidate(candidate: ConceptCandidate, request: ConceptGenerationRequest): boolean {
   return candidate.conceptFamilyId === request.conceptFamilyId && candidate.revision === request.revision && candidate.output.type === "image" && Boolean(candidate.output.dataUrl) && Boolean(candidate.output.altText);
+}
+
+function geometryBindingMatchesCandidate(candidate: ConceptCandidate): boolean {
+  if (!candidate.conceptGeometry) return candidate.conceptGeometryStatus !== "available";
+  const source = candidate.conceptGeometry.source;
+  return Boolean(source && source.conceptFamilyId === candidate.conceptFamilyId && source.candidateId === candidate.candidateId && source.revision === candidate.revision);
 }

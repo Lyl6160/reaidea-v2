@@ -1,5 +1,6 @@
 import type { ConceptCandidate, ConceptCreationDiagnostic } from "../ai/types";
 import { isValidConceptGeometry } from "../geometry/conceptGeometry";
+import { validateInitialGeometryPlan } from "../geometry/initialGeometryPlan";
 
 const DATABASE_NAME = "reaidea-workshop-concepts";
 const DATABASE_VERSION = 1;
@@ -111,7 +112,7 @@ export async function persistCurrentConceptCandidate(
   return persistConceptCandidateHistory(projectId, [candidate]);
 }
 
-function isPersistableCandidate(value: unknown): value is ConceptCandidate {
+export function isPersistableCandidate(value: unknown): value is ConceptCandidate {
   if (
     !isRecord(value) ||
     value.status !== "generated" ||
@@ -180,12 +181,24 @@ function isPersistableCandidate(value: unknown): value is ConceptCandidate {
     (value.sourceCandidateId !== undefined && !nonEmptyString(value.sourceCandidateId)) ||
     (value.inventorRefinement !== undefined && !nonEmptyString(value.inventorRefinement)) ||
     (value.visualDesignSnapshot !== undefined && !isVisualDesignSnapshot(value.visualDesignSnapshot)) ||
-    (value.conceptGeometry !== undefined && !isValidConceptGeometry(value.conceptGeometry)) ||
+    (value.initialGeometryPlan !== undefined && !validateInitialGeometryPlan(value.initialGeometryPlan)) ||
+    (value.conceptGeometry !== undefined && (!isValidConceptGeometry(value.conceptGeometry) || !geometryMatchesCandidate(value.conceptGeometry, value) || !geometryMatchesPlan(value.conceptGeometry, value.initialGeometryPlan))) ||
     (value.conceptGeometryStatus !== undefined && !["available", "insufficient-data", "unsupported-geometry", "invalid-snapshot"].includes(String(value.conceptGeometryStatus))) ||
     (value.conceptGeometryStatus === "available" && value.conceptGeometry === undefined)
   ) return false;
   const estimatedBytes = imageDataUrlBytes(value.output.dataUrl);
   return estimatedBytes !== null && estimatedBytes <= MAX_PERSISTED_IMAGE_BYTES;
+}
+
+function geometryMatchesCandidate(geometry: { source?: { conceptFamilyId: string; candidateId: string; revision: number } }, candidate: Record<string, unknown>): boolean {
+  const source = geometry.source;
+  return Boolean(source && source.conceptFamilyId === candidate.conceptFamilyId && source.candidateId === candidate.candidateId && source.revision === candidate.revision);
+}
+
+function geometryMatchesPlan(geometry: { components: Array<{ id: string }> }, plan: unknown): boolean {
+  if (plan === undefined) return true;
+  if (!validateInitialGeometryPlan(plan) || plan.blocker) return false;
+  return plan.componentIds.length === geometry.components.length && plan.componentIds.every((id) => geometry.components.some((component) => component.id === id));
 }
 
 export function isInitialCoreCreationReceipt(value: unknown, projectId?: string): value is InitialCoreCreationReceipt {

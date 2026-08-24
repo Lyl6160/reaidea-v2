@@ -18,11 +18,13 @@ async function runFixtures(): Promise<void> {
 let receiptCount = 0;
 let requestCount = 0;
 let validatedCandidateId = "";
+let persistedCandidate: ConceptCandidate | null = null;
 const corePhases: string[] = [];
 const success = await runInitialCoreCreation(project, undefined, {
   persistReceipt: async () => { receiptCount += 1; return true; },
   fetchConcept: async (request) => { requestCount += 1; return { status: 200, payload: { candidate: { ...candidate, conceptFamilyId: request.conceptFamilyId, revision: request.revision } } }; },
-  persistCandidate: async () => true,
+  persistCandidate: async (_projectId, saved) => { persistedCandidate = saved; return true; },
+  restoreCandidate: async () => persistedCandidate,
   onPhase: (phase) => corePhases.push(phase),
   onCandidateValidated: (validated) => { validatedCandidateId = validated.candidateId; },
 });
@@ -30,6 +32,8 @@ assert.equal(success.kind, "success");
 assert.equal(requestCount, 1);
 assert.equal(receiptCount, 1);
 assert.equal(validatedCandidateId, "fixture-candidate");
+assert(persistedCandidate);
+assert.equal((persistedCandidate as ConceptCandidate).conceptGeometryStatus, "available");
 assert.deepEqual(corePhases, ["generating", "checking-geometry", "building"]);
 
 let projectSaves = 0;
@@ -64,7 +68,8 @@ let failedReceipt = "";
 const failed = await runInitialCoreCreation(project, undefined, {
   persistReceipt: async (receipt) => { failedReceipt = receipt.status; return true; },
   fetchConcept: async () => ({ status: 502, payload: { error: { code: "provider-failure", message: "Concept generation could not complete.", retryable: true } } }),
-  persistCandidate: async () => true,
+  persistCandidate: async (_projectId, saved) => { persistedCandidate = saved; return true; },
+  restoreCandidate: async () => persistedCandidate,
 });
 assert.equal(failed.kind, "failure");
 assert.equal(failedReceipt, "failed");
@@ -73,7 +78,8 @@ let persistenceCalls = 0;
 const persistenceFailure = await runInitialCoreCreation(project, undefined, {
   persistReceipt: async () => true,
   fetchConcept: async (request) => ({ status: 200, payload: { candidate: { ...candidate, conceptFamilyId: request.conceptFamilyId, revision: request.revision } } }),
-  persistCandidate: async () => { persistenceCalls += 1; return persistenceCalls > 1; },
+  persistCandidate: async (_projectId, saved) => { persistedCandidate = saved; persistenceCalls += 1; return persistenceCalls > 1; },
+  restoreCandidate: async () => persistedCandidate,
 });
 assert.equal(persistenceFailure.kind, "failure");
 assert.ok(persistenceFailure.kind === "failure" && persistenceFailure.retryPersistence);

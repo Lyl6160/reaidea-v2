@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import type { ConceptCandidate, ConceptVisualDesignSnapshot } from "../ai/types";
 import { buildConceptGeometry, CONCEPT_GEOMETRY_BUILDER_VERSION } from "./buildConceptGeometry";
 import { isValidConceptGeometry } from "./conceptGeometry";
+import { buildGeometryFromInitialPlan, buildInitialGeometryPlan, validateInitialGeometryPlan } from "./initialGeometryPlan";
 
 function snapshot(shape: string): ConceptVisualDesignSnapshot {
   return {
@@ -52,5 +53,35 @@ assert.equal(vaguePolygon.status, "insufficient-data");
 const missingDimensions = snapshot("hexagonal");
 missingDimensions.proportions = [];
 assert.equal(buildConceptGeometry(candidate, missingDimensions).status, "insufficient-data");
+
+const stopGoPlan = buildInitialGeometryPlan({ originalObservation: "I want a portable illuminated STOP/GO traffic sign that one person can operate safely beside the road. It must rotate remotely, remain stable outdoors, be visible in daylight and at night, and last a full work shift." });
+assert.equal(stopGoPlan.blocker, undefined);
+assert(stopGoPlan.componentIds.includes("base"));
+assert(stopGoPlan.componentIds.includes("sign-housing"));
+assert(stopGoPlan.componentIds.includes("remote-control"));
+assert(stopGoPlan.parameters.some((item) => item.status === "inventor-evidence"));
+assert(stopGoPlan.parameters.filter((item) => item.status === "working-assumption").every((item) => item.basis === "rev-portable-signage-profile" && item.inventorConfirmationDesirable));
+const planned = buildGeometryFromInitialPlan(candidate, stopGoPlan);
+assert(planned.geometry);
+if (planned.geometry) {
+  assert.equal(planned.geometry.components.find(({ id }) => id === "sign-housing")?.vertices?.length, 24);
+  assert.deepEqual(planned.geometry.joints[0]?.axis, [0, 1, 0]);
+  assert.equal(planned.geometry.joints[0]?.maxAngle, 180);
+  assert.equal(planned.geometry.components.find(({ id }) => id === "lower-pole")?.parentId, "base");
+  assert.equal(planned.geometry.components.find(({ id }) => id === "sign-housing")?.parentId, "lower-pole");
+  assert.equal(planned.geometry.components.find(({ id }) => id === "wheel-left")?.parentId, "base");
+  assert(planned.geometry.components.filter(({ id }) => id.startsWith("perimeter-light-")).every(({ parentId }) => parentId === "sign-housing"));
+  assert.deepEqual(planned.geometry.components.find(({ id }) => id === "sign-housing")?.markings?.map(({ face }) => face), ["front", "back"]);
+  assert.deepEqual([...stopGoPlan.componentIds].sort(), planned.geometry.components.map(({ id }) => id).sort());
+  assert(isValidConceptGeometry(planned.geometry));
+}
+const unsupportedPlan = buildInitialGeometryPlan({ originalObservation: "A better lawn mower." });
+assert.equal(unsupportedPlan.blocker?.code, "unsupported-profile");
+for (const input of ["Portable shop sign.", "A fixed traffic light.", "Generic sign.", "Portable box device.", "Gun safe and firearm storage.", "Chemical containment cabinet.", "An illuminated garden product.", "Traffic device for a car park."]) assert.equal(buildInitialGeometryPlan({ originalObservation: input }).blocker?.code, "unsupported-profile", input);
+for (const input of ["A portable STOP-GO sign for roadside deployment.", "A MOBILE stop / go traffic-control sign for road workers."]) assert.equal(buildInitialGeometryPlan({ originalObservation: input }).blocker, undefined, input);
+assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: Array.from({ length: 65 }, () => stopGoPlan.parameters[0]) }), false);
+assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, componentIds: ["base", "base"] }), false);
+assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: [{ ...stopGoPlan.parameters[0], status: "working-assumption", basis: "accepted-description" }] }), false);
+assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: [{ ...stopGoPlan.parameters[0], label: "x".repeat(121) }] }), false);
 
 console.log("Geometry fidelity fixtures: PASS");

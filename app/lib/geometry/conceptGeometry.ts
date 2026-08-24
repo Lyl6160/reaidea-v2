@@ -141,7 +141,7 @@ function isDimensions(primitive: ConceptGeometryPrimitive, value: unknown): bool
 }
 
 function isValidPolygon(value: unknown): value is GeometryPoint2[] {
-  if (!Array.isArray(value) || value.length < 3 || value.length > 16) return false;
+  if (!Array.isArray(value) || value.length < 3 || value.length > 32) return false;
   if (!value.every((point) => Array.isArray(point) && point.length === 2 && point.every((part) => finiteNumber(part) && Math.abs(part) <= MAX_DIMENSION_MM))) return false;
   const vertices = value as GeometryPoint2[];
   if (vertices.some((point, index) => samePoint(point, vertices[(index + 1) % vertices.length]))) return false;
