@@ -7,6 +7,11 @@ export type ProjectReadiness =
 
 export type ProjectStatus = "active";
 
+export type ProjectOriginIntent =
+  | "developing"
+  | "evaluating"
+  | "both";
+
 export type ValidationOutcome =
   | "confirmed"
   | "refined"
@@ -193,6 +198,7 @@ export type Project = {
   projectName: string;
   ownerId: string;
   originalObservation: string;
+  originIntent?: ProjectOriginIntent;
   purpose: string;
   status: ProjectStatus;
   readiness: ProjectReadiness;
@@ -211,6 +217,7 @@ export type Project = {
 export type CreateProjectInput = {
   ownerId: string;
   originalObservation: string;
+  originIntent: ProjectOriginIntent;
 };
 
 export function createProject(input: CreateProjectInput): Project {
@@ -228,6 +235,7 @@ export function createProject(input: CreateProjectInput): Project {
     projectName,
     ownerId: input.ownerId,
     originalObservation,
+    originIntent: input.originIntent,
     purpose: "",
     status: "active",
     readiness: "observation",

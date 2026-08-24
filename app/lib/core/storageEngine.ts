@@ -4,6 +4,7 @@ import type {
   EngineeringAssertionKind,
   EngineeringAssertionStatus,
   Project,
+  ProjectOriginIntent,
   ProjectDecision,
   ProjectDecisionCategory,
   ProjectEngineeringAction,
@@ -177,8 +178,13 @@ function isValidStoredProject(value: unknown): value is StoredProject {
 }
 
 function normalizeProject(project: StoredProject): Project {
+  const { originIntent, ...legacySafeProject } = project;
+
   return {
-    ...project,
+    ...legacySafeProject,
+    ...(isProjectOriginIntent(originIntent)
+      ? { originIntent }
+      : {}),
     decisions: normalizeProjectDecisions(project.decisions),
     engineeringState: {
       ...project.engineeringState,
@@ -349,6 +355,10 @@ function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent
       ? { specialistBenchId: event.specialistBenchId }
       : {}),
   }));
+}
+
+function isProjectOriginIntent(value: unknown): value is ProjectOriginIntent {
+  return value === "developing" || value === "evaluating" || value === "both";
 }
 
 function engineeringStateFields(value: unknown[]): EngineeringStateField[] {

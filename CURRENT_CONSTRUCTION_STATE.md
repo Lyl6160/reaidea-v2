@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `67ee470738f0d8d12a5fd6b10d09e7b126567c76`
+**Current safe committed checkpoint:** `615d39312a51b3fe52981a903f877a73db0a3911`
 
-**Branch:** `sprint006-build24-39-home-workshop-visual-integration`
+**Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.39 Build 8 — Full-Screen 3D Restoration — FOUNDER BROWSER ACCEPTED 23 AUGUST 2026 / COMMIT AUTHORISED
+**Current hold point:** HP-24.40 Build 1C — Truthful Responsive Home Foundation
 
-**Current authorised construction step:** HP-24.39 Build 8 — restore a portal-backed accessible full-screen presentation for the existing central-stage interactive Prototype 3D model
+**Current authorised construction step:** HP-24.40 Build 1C checkpoint closeout; HP-24.40 Build 1D remains unimplemented
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -29,6 +29,16 @@ The earlier CSS-schematic Build 3 acceptance is revoked. Local commit `087778c91
 The construction branch advanced through the human-accepted, committed, and pushed Build 7 checkpoint at `67ee470738f0d8d12a5fd6b10d09e7b126567c76`; local and configured upstream parity were confirmed before Build 8 began. The existing approved [Living Workshop north star](blueprints/02-Workshop/assets/reAIdea_Workshop_Visual_North_Star_Approved_2026-08-18.png), verified at `03F296EB2900760C016B6E10799EA34A32B94CF6BC372DD7AC8F1BD4C6C3940D`, remains the principal and controlling user-facing Workshop authority under the [principal design decision](blueprints/02-Workshop/reAIdea_Living_Workshop_Principal_Design_Decision_2026-08-19.md). Build 7 replaced the runtime Workshop plate with the accepted names-only sibling and placed calibrated transparent live desktop status wording beneath the permanent baked bench names. Build 8 restores VIEW FULL SCREEN for the existing central-stage interactive Prototype 3D model through one portal-backed accessible modal while retaining exactly one Three.js Canvas. Founder browser acceptance passed on 23 August 2026. Its exact file boundary is `app/workshop/Prototype3DViewer.tsx` and `CURRENT_CONSTRUCTION_STATE.md`. No ConceptGeometry, VisualDesignSnapshot, candidate persistence/history, generation, provider, Project, browser-storage, routing, Build 6 console, Workshop plate, or Build 7 bench-sign change is included. Provider-backed testing is not authorised.
 
 Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D functionality passed with exactly one Canvas throughout inline and modal presentation. Desktop `1440 × 1000`, compact `1100 × 900`, narrow portrait `390 × 844`, and landscape `844 × 390` all passed; reduced-motion behaviour passed; provider, application API, and external requests were zero. The accepted `app/workshop/Prototype3DViewer.tsx` SHA-256 is `396873F6543BB040F32FC94F4B40CE845225CD06535EB5320C662667180C1C5B`. This acceptance approves the full-screen 3D foundation only; it does not accept the old Workshop visual design or the disposable test geometry.
+
+## HP-24.40 Build 1C — Truthful Responsive Home Foundation
+
+- Founder accepted the desktop Home structure and visual direction. Responsive refinement is implemented and technically verified; final founder responsive visual review remains pending on the home display.
+- New canonical `Project.originIntent` values are `developing`, `evaluating`, and `both`. Legacy Projects without `originIntent` remain valid, and invalid persisted values normalize away without inventing a choice.
+- The deterministic Home creation-readiness gate keeps short title-level descriptions insufficient and makes meaningful functional descriptions ready for REV. `START WITH REV` uses that same canonical readiness result. Typing and intent selection do not invoke a provider.
+- Approved panoramic scene SHA-256: `F5DC0F8BCA331B3137E04F155AEDF9A94CCD7F2A5F1F4062B15950EB02B496E2`.
+- Approved friendly REV SHA-256: `B385D98AAB0038940512D4780EA72CFD89CDB0921C10F651BA8BD5067DC49070`.
+- `app/workshop/Prototype3DViewer.tsx` remains protected at SHA-256 `396873F6543BB040F32FC94F4B40CE845225CD06535EB5320C662667180C1C5B`.
+- Build 1D is not implemented. Generation currently begins after Workshop navigation through the one-shot marker. The failed live provider attempt produced no Concept 01, candidate, `VisualDesignSnapshot`, or persisted partial asset. Do not use `TRY AGAIN` until Build 1D architecture and provider diagnostics are addressed.
 
 Protected previous foundation:
 

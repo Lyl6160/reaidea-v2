@@ -138,10 +138,25 @@ export function assessHomeUnderstanding(
     : "";
   const assessedText = [text, visualText].filter(Boolean).join(" ");
   const categories = categoriesFor(assessedText);
+  const conceptFacets = conceptFacetsFor(assessedText);
+  const wordCount = assessedText.match(/\b[\p{L}\p{N}][\p{L}\p{N}'’-]*\b/gu)?.length ?? 0;
+  const hasPurposeOrProblem = categories.includes("purpose") ||
+    conceptFacets.includes("purposeProblemBenefit") ||
+    /\b(i|we) (want|need)\b|\b(should|must|meant to|intended to|in order to)\b|\bso (a|an|the|people|someone|users?|workers?|operators?)\b/i.test(assessedText);
+  const hasFunctionalOrContextDetail = categories.some((category) =>
+    category === "user" || category === "operation" || category === "constraint"
+  ) || conceptFacets.some((facet) =>
+    facet === "operationMovementPower" ||
+    facet === "userGripControlInteraction" ||
+    facet === "environmentSafetyConstraint"
+  );
   const score = Math.min(100, Math.round(Math.min(assessedText.length, 240) / 4.8) + categories.length * 8);
-  const contentReady = assessedText.length >= 100 && categories.length >= 2 || assessedText.length >= 180;
+  const contentReady = assessedText.length >= 50 &&
+    wordCount >= 8 &&
+    hasPurposeOrProblem &&
+    hasFunctionalOrContextDetail;
   const ready = Boolean(text) && contentReady;
-  const helperQuestion = !categories.includes("purpose")
+  const helperQuestion = !hasPurposeOrProblem
     ? "What problem should this invention solve?"
     : !categories.includes("operation")
       ? "How should the invention work when someone uses it?"
