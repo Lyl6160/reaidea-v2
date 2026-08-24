@@ -146,6 +146,25 @@ type ClearedImageUnderstanding = {
   safetyReceipt: RevImageSafetyReceipt;
 };
 
+type CreationIntentResponse =
+  | { decision: "CLEAR"; limitations: string[] }
+  | { decision: "HOLD"; message: string; question: string }
+  | { decision: "BLOCK"; message: string }
+  | { decision: "unavailable"; message: string };
+
+const CREATION_INTENT_UNAVAILABLE_MESSAGE = "REV couldn’t confirm the creation safety boundary. No concept was created.";
+const CREATION_INTENT_HOLD_MESSAGE = "REV needs to confirm the safety purpose before creating anything.";
+const CREATION_INTENT_BLOCK_MESSAGE = "REV can’t help design, modify or improve weapons or explosive materials. I can help with safe storage, decommissioning, compliance, detection or protective systems.";
+
+function isCreationIntentResponse(value: unknown): value is CreationIntentResponse {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const payload = value as Record<string, unknown>;
+  if (payload.decision === "CLEAR") return Array.isArray(payload.limitations) && payload.limitations.every((item) => typeof item === "string");
+  if (payload.decision === "HOLD") return typeof payload.message === "string" && typeof payload.question === "string";
+  if (payload.decision === "BLOCK" || payload.decision === "unavailable") return typeof payload.message === "string";
+  return false;
+}
+
 export default function Home() {
   const [preferredName] = useState("");
   const [originIntent, setOriginIntent] = useState<ProjectOriginIntent | null>(null);
@@ -164,6 +183,7 @@ export default function Home() {
   const [initialProject, setInitialProject] = useState<Project | null>(null);
   const [creationPhase, setCreationPhase] = useState<InitialCoreCreationPhase | "idle" | "failed">("idle");
   const [retryPersistence, setRetryPersistence] = useState<(() => Promise<InitialCoreCreationResult>) | null>(null);
+  const [preflightActive, setPreflightActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePreviewUrlRef = useRef("");
   const imageUnderstandingAttemptRef = useRef<ImageUnderstandingAttempt | null>(null);
@@ -176,9 +196,10 @@ export default function Home() {
   const blockedContextActive = Boolean(blockedInventorContext) &&
     normalizeBlockedContext(description) === blockedInventorContext;
   const readyToStart = understanding.ready && !blockedContextActive;
-  const creationActive = isInitialCoreCreationActive(creationPhase);
+  const creationActive = preflightActive || isInitialCoreCreationActive(creationPhase);
   const currentWorkflowStage = creationPhase === "reading" || creationPhase === "generating" ? 1 : creationPhase === "building" ? 2 : creationPhase === "opening" ? 3 : understanding.ready ? 0 : -1;
-  const liveCreationStatus = creationPhase === "reading" ? "REV IS READING YOUR SKETCH"
+  const liveCreationStatus = preflightActive ? "REV IS CONFIRMING CREATION SAFETY"
+    : creationPhase === "reading" ? "REV IS READING YOUR SKETCH"
     : creationPhase === "saving" ? "REV IS SAVING YOUR PROJECT"
       : creationPhase === "generating" ? "REV IS CREATING CONCEPT 01"
         : creationPhase === "building" ? "REV IS SECURING YOUR CREATION"
@@ -277,13 +298,33 @@ export default function Home() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function markImageUnavailable() {
+  function markImageUnavailable(inventorDescription?: string) {
     setVisualInterpretation(null);
     setImageSafetyReceipt(null);
     setImageSafetyState("unavailable");
     setVisualUnderstandingState("failed");
     setVisualUnderstandingMessage("REV couldn’t check this image. Try again, or remove it to continue without the image.");
     setHelpingQuestion("");
+    if (inventorDescription !== undefined) {
+      setBlockedInventorContext(normalizeBlockedContext(inventorDescription));
+      setError(CREATION_INTENT_UNAVAILABLE_MESSAGE);
+    }
+  }
+
+  async function assessCreationIntent(inventorDescription: string): Promise<CreationIntentResponse> {
+    try {
+      const response = await fetch("/api/creation-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: inventorDescription }),
+      });
+      const payload = await response.json() as unknown;
+      if (!isCreationIntentResponse(payload)) return { decision: "unavailable", message: CREATION_INTENT_UNAVAILABLE_MESSAGE };
+      if (payload.decision === "CLEAR" && !response.ok) return { decision: "unavailable", message: CREATION_INTENT_UNAVAILABLE_MESSAGE };
+      return payload;
+    } catch {
+      return { decision: "unavailable", message: CREATION_INTENT_UNAVAILABLE_MESSAGE };
+    }
   }
 
   function invalidateImageUnderstandingAttempt() {
@@ -297,7 +338,7 @@ export default function Home() {
     inventorDescription: string
   ): Promise<ClearedImageUnderstanding | null> {
     if (!navigator.onLine) {
-      markImageUnavailable();
+      markImageUnavailable(inventorDescription);
       return null;
     }
     setHelpingQuestion("");
@@ -322,7 +363,7 @@ export default function Home() {
       if (!isCurrentAttempt()) return;
       imageUnderstandingAttemptRef.current = null;
       attempt.controller.abort();
-      markImageUnavailable();
+      markImageUnavailable(inventorDescription);
     };
     window.addEventListener("offline", handleOffline);
     try {
@@ -343,7 +384,7 @@ export default function Home() {
       const payload = await response.json() as VisualUnderstandingApiResponse;
       if (!isCurrentAttempt()) return null;
       if (!response.ok || "error" in payload) {
-        markImageUnavailable();
+        markImageUnavailable(inventorDescription);
         return null;
       }
       if (payload.safety.decision === "BLOCK") {
@@ -355,6 +396,7 @@ export default function Home() {
         setImageSafetyState("BLOCK");
         setVisualUnderstandingState("failed");
         setVisualUnderstandingMessage(BLOCKED_IMAGE_MESSAGE);
+        setError(CREATION_INTENT_BLOCK_MESSAGE);
         setHelpingQuestion("");
         return null;
       }
@@ -362,13 +404,15 @@ export default function Home() {
         setVisualInterpretation(null);
         setImageSafetyReceipt(null);
         setImageSafetyState("HOLD");
+        setBlockedInventorContext(normalizeBlockedContext(inventorDescription));
         setVisualUnderstandingState("idle");
         setVisualUnderstandingMessage("");
+        setError(`${CREATION_INTENT_HOLD_MESSAGE} ${payload.safety.question}`);
         setHelpingQuestion(payload.safety.question);
         return null;
       }
       if (payload.safety.decision === "unavailable") {
-        markImageUnavailable();
+        markImageUnavailable(inventorDescription);
         return null;
       }
       if (!("interpretation" in payload)) throw new Error("REV did not return a cleared interpretation.");
@@ -384,7 +428,7 @@ export default function Home() {
       return { interpretation: payload.interpretation, safetyReceipt: payload.safety.receipt };
     } catch {
       if (!isCurrentAttempt()) return null;
-      markImageUnavailable();
+      markImageUnavailable(inventorDescription);
       return null;
     } finally {
       window.removeEventListener("offline", handleOffline);
@@ -396,13 +440,33 @@ export default function Home() {
     const completeDescription = description.trim();
     const submittedImage = selectedImage;
     const submittedOriginIntent = originIntent;
-    if (blockedContextActive || !submittedOriginIntent || !understanding.ready || !completeDescription || imageBusy || imageInvalid || projectCreationStartedRef.current) return;
+    if (blockedContextActive || !submittedOriginIntent || !understanding.ready || !completeDescription || imageBusy || imageInvalid || projectCreationStartedRef.current || preflightActive) return;
     projectCreationStartedRef.current = true;
-    let persistedProject: Project | null = initialProject;
+    const priorProjectMatchesSubmission = initialProject &&
+      normalizeBlockedContext(initialProject.originalObservation) === normalizeBlockedContext(completeDescription);
+    let persistedProject: Project | null = priorProjectMatchesSubmission ? initialProject : null;
     let returnedImageUnderstanding: ClearedImageUnderstanding | null = null;
     try {
       setError("");
       setRetryPersistence(null);
+      setPreflightActive(true);
+      const intent = await assessCreationIntent(completeDescription);
+      if (intent.decision !== "CLEAR") {
+        setBlockedInventorContext(normalizeBlockedContext(completeDescription));
+        setCreationPhase("failed");
+        setError(intent.decision === "HOLD" ? `${intent.message} ${intent.question}` : intent.message);
+        return;
+      }
+      if (submittedImage) {
+        returnedImageUnderstanding = visualInterpretation && imageSafetyReceipt && imageSafetyState === "CLEAR"
+          ? { interpretation: visualInterpretation, safetyReceipt: imageSafetyReceipt }
+          : await understandSelectedImage(submittedImage, completeDescription);
+        if (!returnedImageUnderstanding) {
+          setCreationPhase("failed");
+          return;
+        }
+      }
+      setPreflightActive(false);
       const result = await runInitialCoreCreationTransaction({
         onPhase: setCreationPhase,
         saveProject: async () => {
@@ -414,14 +478,8 @@ export default function Home() {
           setInitialProject(project);
           return project;
         },
-        ...(submittedImage && !(visualInterpretation && imageSafetyReceipt && imageSafetyState === "CLEAR")
-          ? { understandReference: async () => {
-            returnedImageUnderstanding = await understandSelectedImage(submittedImage, completeDescription);
-            return returnedImageUnderstanding?.interpretation ?? null;
-          } }
-          : {}),
-        createConcept: async (project, returnedInterpretation, onPhase) => {
-          const interpretation = returnedInterpretation ?? visualInterpretation ?? undefined;
+        createConcept: async (project, onPhase) => {
+          const interpretation = returnedImageUnderstanding?.interpretation ?? undefined;
           let projectWithEvidence = project;
           if (submittedImage) {
             const safetyReceipt = returnedImageUnderstanding?.safetyReceipt ?? imageSafetyReceipt;
@@ -453,6 +511,7 @@ export default function Home() {
       setCreationPhase("failed");
       setError(persistedProject ? "REV could not continue this creation. Your Project remains saved; start another creation attempt when ready." : "REV could not save your Project before creation began. No creation request was made.");
     } finally {
+      setPreflightActive(false);
       projectCreationStartedRef.current = false;
     }
   }

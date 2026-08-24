@@ -25,19 +25,17 @@ type InitialCoreCreationDependencies = {
 
 type InitialCoreCreationTransactionDependencies = {
   saveProject: () => Promise<Project | null>;
-  understandReference?: () => Promise<VisualUnderstandingResult | null>;
   createConcept: (
     project: Project,
-    interpretation: VisualUnderstandingResult | undefined,
     onPhase: (phase: Extract<InitialCoreCreationPhase, "generating" | "building">) => void
   ) => Promise<InitialCoreCreationResult>;
   onPhase?: (phase: InitialCoreCreationPhase) => void;
 };
 
 /**
- * Keeps the deliberately initiated Home transaction contiguous. The interpretation
- * result is handed directly to concept creation so a React state update can never
- * become a second-action gate.
+ * Runs only after Home has completed its pre-Project safety gates. This keeps the
+ * displayed saving phase truthful: a canonical Project is never saved for a
+ * denied or unresolved submission.
  */
 export async function runInitialCoreCreationTransaction(
   dependencies: InitialCoreCreationTransactionDependencies
@@ -46,14 +44,7 @@ export async function runInitialCoreCreationTransaction(
   const project = await dependencies.saveProject();
   if (!project) return { kind: "stopped" };
 
-  let interpretation: VisualUnderstandingResult | undefined;
-  if (dependencies.understandReference) {
-    dependencies.onPhase?.("reading");
-    interpretation = await dependencies.understandReference() ?? undefined;
-    if (!interpretation) return { kind: "stopped" };
-  }
-
-  const result = await dependencies.createConcept(project, interpretation, (phase) => dependencies.onPhase?.(phase));
+  const result = await dependencies.createConcept(project, (phase) => dependencies.onPhase?.(phase));
   if (result.kind === "success") dependencies.onPhase?.("opening");
   return result;
 }

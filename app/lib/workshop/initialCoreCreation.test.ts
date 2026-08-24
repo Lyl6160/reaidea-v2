@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import type { ConceptCandidate, VisualUnderstandingResult } from "../ai/types";
+import type { ConceptCandidate } from "../ai/types";
 import { createProject } from "../core/project";
 import { isInitialCoreCreationActive, runInitialCoreCreation, runInitialCoreCreationTransaction } from "./initialCoreCreation";
 
@@ -12,15 +12,6 @@ const project = createProject({
 
 const candidate: ConceptCandidate = {
   candidateId: "fixture-candidate", conceptFamilyId: "", revision: 1, title: "STOP/GO sign", visualMode: "product", representationStyle: "product-concept", status: "generated", createdAt: new Date().toISOString(), sourceBriefVersion: 1, sourceBriefHash: "fixture", sourceEventIds: project.timeline.map((event) => event.id), output: { type: "image", dataUrl: "data:image/png;base64,AA==", mediaType: "image/png", altText: "Fixture concept" }, disclaimer: "Fixture only.",
-};
-
-const interpretation: VisualUnderstandingResult = {
-  evidenceReference: "source-image:fixture-image",
-  nonAuthoritative: true,
-  createdAt: new Date().toISOString(),
-  factualSummary: "A wheeled STOP/GO sign with stabilisers, pole and remote.",
-  visualObservations: ["wheeled base"],
-  uncertainties: [],
 };
 
 async function runFixtures(): Promise<void> {
@@ -39,16 +30,13 @@ assert.equal(receiptCount, 1);
 assert.deepEqual(corePhases, ["generating", "building"]);
 
 let projectSaves = 0;
-let imageReads = 0;
 let conceptCreations = 0;
 const transactionPhases: string[] = [];
 const transaction = await runInitialCoreCreationTransaction({
   saveProject: async () => { projectSaves += 1; return project; },
-  understandReference: async () => { imageReads += 1; return interpretation; },
-  createConcept: async (savedProject, returnedInterpretation, onPhase) => {
+  createConcept: async (savedProject, onPhase) => {
     conceptCreations += 1;
     assert.equal(savedProject.id, project.id);
-    assert.equal(returnedInterpretation, interpretation);
     onPhase("generating");
     onPhase("building");
     return { kind: "success", candidate };
@@ -57,21 +45,17 @@ const transaction = await runInitialCoreCreationTransaction({
 });
 assert.equal(transaction.kind, "success");
 assert.equal(projectSaves, 1);
-assert.equal(imageReads, 1);
 assert.equal(conceptCreations, 1);
-assert.deepEqual(transactionPhases, ["saving", "reading", "generating", "building", "opening"]);
+assert.deepEqual(transactionPhases, ["saving", "generating", "building", "opening"]);
 for (const phase of ["reading", "saving", "generating", "building", "opening"] as const) assert.equal(isInitialCoreCreationActive(phase), true);
 assert.equal(isInitialCoreCreationActive("idle"), false);
 assert.equal(isInitialCoreCreationActive("failed"), false);
 
-let failedProjectSaves = 0;
 const stoppedTransaction = await runInitialCoreCreationTransaction({
-  saveProject: async () => { failedProjectSaves += 1; return project; },
-  understandReference: async () => null,
-  createConcept: async () => { throw new Error("Creation must not run after image understanding fails."); },
+  saveProject: async () => null,
+  createConcept: async () => { throw new Error("Creation must not run without a saved Project."); },
 });
 assert.equal(stoppedTransaction.kind, "stopped");
-assert.equal(failedProjectSaves, 1);
 
 let failedReceipt = "";
 const failed = await runInitialCoreCreation(project, undefined, {

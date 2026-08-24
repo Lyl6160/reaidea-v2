@@ -13,7 +13,14 @@ import type {
   RevImageSafetyDecision,
 } from "./types";
 import { OpenAIConceptGenerationProvider } from "./providers/openaiProvider.server";
-import { decideRevImageSafety, inferRevSafetyLimitations } from "./revImageSafetyPolicy.server";
+import {
+  CREATION_INTENT_BLOCK_MESSAGE,
+  CREATION_INTENT_HOLD_MESSAGE,
+  decideRevImageSafety,
+  inferRevSafetyLimitations,
+  preflightCreationIntent,
+  type RevCreationIntentDecision,
+} from "./revImageSafetyPolicy.server";
 
 export class ConceptGenerationServiceError extends Error {
   constructor(
@@ -52,6 +59,14 @@ interface ConceptDiagnosticTrace {
   hasReference: boolean;
   attemptedProviderOperations: number;
 }
+
+type InitialConceptProvider = Pick<OpenAIConceptGenerationProvider, "supportsReferenceImages" | "generateConcept" | "inspectImageSafety">;
+
+export type InitialConceptGenerationDependencies = {
+  /** Test seam only; runtime uses the configured server-only provider. */
+  apiKey?: string;
+  createProvider?: (apiKey: string) => InitialConceptProvider;
+};
 
 export async function understandVisualEvidence(
   request: VisualUnderstandingRequest
@@ -122,7 +137,8 @@ export async function generateViewAsset(request: ConceptViewAssetRequest): Promi
 }
 
 export async function generateConcept(
-  request: ConceptGenerationRequest
+  request: ConceptGenerationRequest,
+  dependencies: InitialConceptGenerationDependencies = {}
 ): Promise<{ candidate: ConceptCandidate; referenceUsage?: "used" | "unsupported" }> {
   const diagnostic: ConceptDiagnosticTrace = {
     requestId: request.requestId,
@@ -139,7 +155,13 @@ export async function generateConcept(
     );
   }
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  const safetyContext = conceptSafetyContext(request);
+  const creationIntent = preflightCreationIntent(safetyContext);
+  if (creationIntent.decision !== "CLEAR") {
+    throw creationIntentError(creationIntent);
+  }
+
+  const apiKey = dependencies.apiKey ?? process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     console.error("Concept generation is not configured: OPENAI_API_KEY is missing.");
     throw new ConceptGenerationServiceError(
@@ -151,9 +173,10 @@ export async function generateConcept(
   }
 
   try {
-    const provider = new OpenAIConceptGenerationProvider(apiKey);
-    const safetyContext = conceptSafetyContext(request);
-    let safeRequest = request;
+    const provider = dependencies.createProvider?.(apiKey) ?? new OpenAIConceptGenerationProvider(apiKey);
+    let safeRequest: ConceptGenerationRequest = creationIntent.limitations.length
+      ? { ...request, safetyLimitations: creationIntent.limitations }
+      : request;
     if (request.referenceImage) {
       const safety = await inspectSafety(provider, request.referenceImage.dataUrl, request.referenceImage.mediaType, safetyContext, diagnostic, "reference-safety");
       if (safety.decision !== "CLEAR") {
@@ -235,7 +258,7 @@ export async function refineConcept(
 }
 
 async function inspectSafety(
-  provider: OpenAIConceptGenerationProvider,
+  provider: InitialConceptProvider,
   dataUrl: string,
   mediaType: "image/png" | "image/jpeg" | "image/webp",
   inventorDescription: string,
@@ -259,7 +282,7 @@ async function inspectSafety(
 }
 
 async function approveCandidateOutput(
-  provider: OpenAIConceptGenerationProvider,
+  provider: InitialConceptProvider,
   candidate: ConceptCandidate,
   inventorDescription: string,
   limitations?: import("./types").RevImageSafetyLimitation[],
@@ -281,7 +304,7 @@ async function approveCandidateOutput(
 }
 
 async function requireSafeOutput(
-  provider: OpenAIConceptGenerationProvider,
+  provider: InitialConceptProvider,
   dataUrl: string,
   mediaType: "image/png" | "image/jpeg" | "image/webp",
   inventorDescription: string,
@@ -330,6 +353,16 @@ function safetyError(decision: Exclude<RevImageSafetyDecision, { decision: "CLEA
   if (decision.decision === "HOLD") return new ConceptGenerationServiceError("safety-hold", message, false);
   if (decision.decision === "BLOCK") return new ConceptGenerationServiceError("safety-block", message, false);
   return new ConceptGenerationServiceError("safety-unavailable", message, decision.retryable);
+}
+
+function creationIntentError(decision: Exclude<RevCreationIntentDecision, { decision: "CLEAR" }>): ConceptGenerationServiceError {
+  if (decision.decision === "HOLD") {
+    return new ConceptGenerationServiceError("safety-hold", `${CREATION_INTENT_HOLD_MESSAGE} ${decision.question}`, false, { providerOperationAttempts: 0, modelIdentifier: configuredConceptImageModel() });
+  }
+  if (decision.decision === "BLOCK") {
+    return new ConceptGenerationServiceError("safety-block", CREATION_INTENT_BLOCK_MESSAGE, false, { providerOperationAttempts: 0, modelIdentifier: configuredConceptImageModel() });
+  }
+  return new ConceptGenerationServiceError("safety-unavailable", "REV couldn’t confirm the creation safety boundary. No concept was created.", false, { providerOperationAttempts: 0, modelIdentifier: configuredConceptImageModel() });
 }
 
 function conceptSafetyContext(request: Pick<ConceptGenerationRequest, "brief">): string {

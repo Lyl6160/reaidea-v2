@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `df1c2db54d005ff6a00e6a600f6c979c8447fe0c`
+**Current safe committed checkpoint:** `321631b2c6650eebd1339e4b268bf96597e0913f`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.40 Build 1D — Initial Creation Transaction Plumbing
+**Current hold point:** HP-24.40 Build 1E-S — Creation Intent Safety Gate
 
-**Current authorised construction step:** HP-24.40 Build 1D checkpoint closeout
+**Current authorised construction step:** HP-24.40 Build 1E-S safety checkpoint
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -57,6 +57,12 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - Genuine validated Interactive 3D on the podium.
 - The complete founder surprise/reveal.
 - Provider-backed smallest-question interpretation (Build 1E).
+
+## HP-24.40 Build 1E-S — Creation Intent Safety Gate
+
+- A provider-free, server-side creation-intent preflight now occurs before Project creation. Text and image-assisted submissions must both CLEAR before Project or approved image evidence persists; the generation route repeats the intent preflight as defence in depth, while reference-image and generated-output safety gates remain preserved.
+- HOLD asks one safe purpose question; BLOCK gives the approved refusal; unavailable fails closed. An unchanged or whitespace-only denied context stays disabled; a substantive revision needs a new deliberate assessment. Denial creates no Project, evidence, receipt, candidate, geometry, or Workshop navigation.
+- Fixtures use synthetic, non-procedural content only. No live hazardous prompt, provider operation, or browser test occurred. Production still requires authentication, Project authorization, rate limiting, and object-level access control.
 
 Protected previous foundation:
 

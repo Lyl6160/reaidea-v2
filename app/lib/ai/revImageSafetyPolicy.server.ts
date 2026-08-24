@@ -12,6 +12,8 @@ import type {
 export const REV_IMAGE_SAFETY_POLICY_VERSION = 1 as const;
 export const FIREARM_INTENT_QUESTION = "What are you trying to design or improve using this reference?";
 export const HAZARD_INTENT_QUESTION = "Is the goal to contain an existing hazard, or to create or strengthen the reaction?";
+export const CREATION_INTENT_HOLD_MESSAGE = "REV needs to confirm the safety purpose before creating anything.";
+export const CREATION_INTENT_BLOCK_MESSAGE = "REV can’t help design, modify or improve weapons or explosive materials. I can help with safe storage, decommissioning, compliance, detection or protective systems.";
 
 const immediatelyBlockedIntent = /\b(build|construct|convert|make|manufacture)\b[\s\S]*\b(working firearm|working gun|working weapon)\b/i;
 const firearmHarmfulIntent = /\b(?:caus(?:e|es|ed|ing))\b(?:\W+\w+){0,5}\W+\b(?:more|greater|additional)\s+(?:damage|harm)\b|\b(?:increas(?:e|es|ed|ing))\b(?:\W+\w+){0,5}\W+\b(?:lethal|lethality|range|rate of fire)\b|\b(?:more|greater)\s+(?:damage|harm)\b|\b(?:lethal|lethality)\b|\b(?:conceal|conceals|concealed|concealing|concealment)\b|\b(?:ammunition|ammo)\s+development\b|\b(?:defeat|defeats|defeated|defeating|disable|disables|disabled|disabling|bypass|bypasses|bypassed|bypassing)\b(?:\W+\w+){0,5}\W+\b(?:safety system|safety control)\b|\b(?:target|targets|targeted|targeting|shoot|shoots|shooting|harm|harms|harmed|harming)\b(?:\W+\w+){0,5}\W+\b(?:person|people|human|humans)\b|\b(?:evade|evades|evaded|evading|avoid|avoids|avoided|avoiding)\b(?:\W+\w+){0,5}\W+\b(?:authority|authorities|police)\b/i;
@@ -31,6 +33,17 @@ const hazardHarmfulIntent = new RegExp([
   String.raw`\b(?:authorit(?:y|ies)|regulators?|inspection|law\s+enforcement)\b(?:\W+\w+){0,5}\W+\b(?:evade|evades|evaded|evading|avoid|avoids|avoided|avoiding|bypass|bypasses|bypassed|bypassing|circumvent|circumvents|circumvented|circumventing)\b`,
 ].join("|"), "i");
 const protectiveHazardIntent = /\b(?:contain|contains|contained|containing|containment|shield|shields|shielded|shielding|barrier|enclosure|detect|detects|detected|detecting|detection|monitor|monitors|monitored|monitoring|protect|protects|protected|protecting|protection|protective|controlled\s+vent)\b|\bremote(?:ly)?\s+(?:handle|handles|handled|handling)\b|\bemergency\s+response\b/i;
+const firearmOrWeaponContext = /\b(?:firearm|gun|weapon|rifle|pistol|ammunition|ammo)\b/i;
+const hazardousChemicalContext = /\b(?:chemical|explosive|explosives|blast|charge|hazardous\s+(?:material|chemical)|precursor|reaction)\b/i;
+const firearmComponentIntent = /\b(?:weapon|firearm|gun|rifle|pistol)\b(?:\W+\w+){0,5}\W+\b(?:component|part|receiver|barrel|trigger|magazine)\b|\b(?:component|part|receiver|barrel|trigger|magazine)\b(?:\W+\w+){0,5}\W+\b(?:weapon|firearm|gun|rifle|pistol)\b|\b(?:print|printed|printing)\b(?:\W+\w+){0,5}\W+\b(?:weapon|firearm|gun|receiver|component|part)\b/i;
+const firearmModificationIntent = /\b(?:modify|modification|improve|improvement|upgrade|alter)\b(?:\W+\w+){0,6}\W+\b(?:firearm|gun|weapon|rifle|pistol)\b|\b(?:firearm|gun|weapon|rifle|pistol)\b(?:\W+\w+){0,6}\W+\b(?:accuracy|firing\s+capability|rate\s+of\s+fire|lethality|concealment)\b/i;
+const hazardousCreationIntent = /\b(?:create|make|build|formulate|weaponis[ez]|weaponization)\b(?:\W+\w+){0,6}\W+\b(?:explosive|harmful\s+chemical|chemical\s+weapon)\b/i;
+
+export type RevCreationIntentDecision =
+  | { decision: "CLEAR"; limitations: RevImageSafetyLimitation[] }
+  | { decision: "HOLD"; question: string }
+  | { decision: "BLOCK" }
+  | { decision: "unavailable"; retryable: false };
 
 const permittedFirearmIntents: Array<[RegExp, RevImageSafetyLimitation]> = [
   [/\b(safe|safety)\b/i, "safety-only"],
@@ -73,6 +86,40 @@ export function decideRevImageSafety(input: {
     decision: "CLEAR",
     receipt: createReceipt(input.imageDataUrl, description, limitations),
   };
+}
+
+/**
+ * Server-only input gate for every initial Concept creation. It deliberately
+ * precedes provider construction and image generation; image-specific safety
+ * and output safety remain independent downstream controls.
+ */
+export function preflightCreationIntent(inventorContext: string | undefined): RevCreationIntentDecision {
+  const description = normalizeInventorContext(inventorContext ?? "");
+  if (!description) return { decision: "unavailable", retryable: false };
+
+  // Harmful intent always wins over any co-located protective wording.
+  if (immediatelyBlockedIntent.test(description) || firearmHarmfulIntent.test(description) || firearmComponentIntent.test(description) || firearmModificationIntent.test(description) || hazardousCreationIntent.test(description) || hazardHarmfulIntent.test(description)) {
+    return { decision: "BLOCK" };
+  }
+
+  const firearmLimitations = permittedFirearmIntents
+    .filter(([pattern]) => pattern.test(description))
+    .map(([, limitation]) => limitation);
+  if (firearmOrWeaponContext.test(description)) {
+    if (firearmLimitations.length === 0) {
+      return { decision: "HOLD", question: "Is this for protective storage, access control, lawful transport, training, or another non-weapon purpose?" };
+    }
+    return { decision: "CLEAR", limitations: Array.from(new Set(firearmLimitations)) };
+  }
+
+  if (hazardousChemicalContext.test(description)) {
+    if (!protectiveHazardIntent.test(description)) {
+      return { decision: "HOLD", question: "Is this for containment, detection, cleanup, decommissioning, or another protective purpose?" };
+    }
+    return { decision: "CLEAR", limitations: hazardLimitations(description) };
+  }
+
+  return { decision: "CLEAR", limitations: [] };
 }
 
 export function imageDigest(dataUrl: string): string {
