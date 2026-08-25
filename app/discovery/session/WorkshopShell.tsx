@@ -3709,11 +3709,9 @@ export default function WorkshopShell({
       <style jsx global>{`
         .living-workshop {
           box-sizing: border-box;
-          width: min(1500px, calc(100% - 28px));
-          max-width: 1500px;
-          margin-top: 28px;
-          margin-left: 50%;
-          transform: translateX(-50%);
+          width: min(1672px, 100%);
+          max-width: 1672px;
+          margin: 28px auto 0;
           padding: 16px 20px 20px;
           border: 1px solid #415064;
           border-radius: 20px;
@@ -6374,7 +6372,7 @@ export default function WorkshopShell({
         .concept-sheet-next small { display: block; margin-top: 9px; color: #8299a3; font-size: 10px; }
 
         @media (max-width: 980px) {
-          .living-workshop { width: calc(100vw - 18px); padding: 16px; }
+          .living-workshop { width: 100%; padding: 16px; }
           .workshop-heading { grid-template-columns: 1fr; gap: 10px; }
           .workshop-brief { grid-template-columns: 1fr; }
           .workshop-brief-action { padding: 14px 0 0; border-top: 1px solid #315463; border-left: 0; }

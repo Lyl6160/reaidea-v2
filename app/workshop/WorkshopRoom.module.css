@@ -77,7 +77,7 @@
 }
 
 .activeProject {
-  right: 56%;
+  right: 61%;
   left: 18%;
   display: grid;
   width: auto;
@@ -89,15 +89,15 @@
 
 .activeProject strong {
   display: -webkit-box;
-  max-height: 2.3em;
+  max-height: 3.4em;
   overflow: hidden;
   color: #fff;
   font: 800 clamp(10px, 1.25vw, 20px) / 1.12 Arial, sans-serif;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
   text-shadow: 0 2px 14px #000;
   white-space: normal;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
 }
 
 .activeProject small { color: #75e29f; }
@@ -105,36 +105,38 @@
 .revIdentity {
   left: 50%;
   display: grid;
+  gap: 3px;
   justify-items: center;
   transform: translateX(-50%);
 }
 
-.revPortrait {
-  position: relative;
-  display: grid;
-  width: clamp(50px, 5.3vw, 88px);
-  aspect-ratio: 1;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid #dffaff;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(39, 143, 188, 0.42), rgba(2, 13, 24, 0.94));
-  box-shadow: 0 0 0 3px rgba(83, 207, 239, 0.17), 0 0 24px rgba(83, 207, 239, 0.58);
-}
-
-.revPortrait img {
-  width: 94%;
-  height: 94%;
-  object-fit: contain;
-  object-position: 50% 18%;
-}
-
 .revIdentity > strong {
-  margin-top: 4px;
   color: #fff;
-  font: 900 clamp(8px, 0.8vw, 13px) / 1 Arial, sans-serif;
-  letter-spacing: 0.08em;
-  text-shadow: 0 2px 9px #000;
+  font: 900 clamp(13px, 1.42vw, 24px) / 1 Arial, sans-serif;
+  letter-spacing: 0.11em;
+  text-shadow: 0 2px 9px #000, 0 0 16px rgba(77, 216, 239, 0.64);
+}
+
+.revGuideFigure {
+  position: absolute;
+  z-index: 3;
+  top: 5.2%;
+  left: 50%;
+  width: 22%;
+  height: 29.5%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 76%, transparent 100%);
+  pointer-events: none;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.revGuideFigure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.58)) drop-shadow(0 0 12px rgba(74, 201, 228, 0.16));
 }
 
 .desktopBenchMap {
@@ -187,10 +189,34 @@
   min-width: 0;
   font: 900 clamp(6px, 0.65vw, 10px) / 1 Arial, sans-serif;
   letter-spacing: 0.025em;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
   text-align: center;
   text-transform: uppercase;
   white-space: normal;
+  word-break: keep-all;
+}
+
+.stationEmblemWrap {
+  display: grid;
+  place-items: center;
+  color: #95eff9;
+  pointer-events: none;
+}
+
+.stationEmblem {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(86, 222, 240, 0.52));
+}
+
+.stationAccent {
+  stroke: #efbd65;
 }
 
 .benchPlaque[data-bench="manufacturing"] .benchName {
@@ -2419,6 +2445,127 @@
   }
 
   .consoleScreenPlane::after { display: none; }
+
+  /* B2B-1 aligns live station identities to the blank faces in the approved scene. */
+  .benchPlaque {
+    --station-state: #8cebf5;
+    top: var(--station-top);
+    left: var(--station-left);
+    display: grid;
+    width: var(--station-width);
+    height: var(--station-height);
+    min-height: 44px;
+    grid-template-columns: minmax(24px, 0.31fr) minmax(0, 0.69fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0 0.2cqw;
+    padding: 0.35cqw 0.34cqw 0.3cqw;
+    overflow: hidden;
+    border: 1px solid rgba(124, 221, 234, 0.22);
+    border-radius: 0.55cqw;
+    background: linear-gradient(180deg, rgba(4, 17, 22, 0.42), rgba(3, 11, 15, 0.74));
+    box-shadow: inset 0 0 0 1px rgba(235, 190, 101, 0.08), inset 0 -0.4cqw 0.8cqw rgba(0, 0, 0, 0.34);
+    transform: none;
+  }
+
+  .benchPlaque[data-bench="knowledge"] { --station-top: 38.1%; --station-left: 3.8%; --station-width: 9.4%; --station-height: 9.6%; }
+  .benchPlaque[data-bench="engineering"] { --station-top: 38%; --station-left: 17%; --station-width: 9.3%; --station-height: 9.6%; }
+  .benchPlaque[data-bench="prototype"] { --station-top: 38.2%; --station-left: 26.6%; --station-width: 7.2%; --station-height: 9.2%; }
+  .benchPlaque[data-bench="validation"] { --station-top: 38.2%; --station-left: 34%; --station-width: 6.8%; --station-height: 9.2%; }
+  .benchPlaque[data-bench="patent"] { --station-top: 38.1%; --station-left: 59.7%; --station-width: 7.2%; --station-height: 9.3%; }
+  .benchPlaque[data-bench="manufacturing"] { --station-top: 38%; --station-left: 67.2%; --station-width: 7.1%; --station-height: 9.5%; }
+  .benchPlaque[data-bench="marketing"] { --station-top: 38.1%; --station-left: 74.5%; --station-width: 8.5%; --station-height: 9.4%; }
+  .benchPlaque[data-bench="reality"] { --station-top: 38.1%; --station-left: 86.3%; --station-width: 8.4%; --station-height: 9.5%; }
+
+  .benchPlaque .stationEmblemWrap {
+    grid-row: 1 / 3;
+    width: clamp(26px, 2.25cqw, 38px);
+    height: clamp(26px, 2.25cqw, 38px);
+    justify-self: center;
+    color: var(--station-state);
+  }
+
+  .benchPlaque .benchNameText {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    align-self: end;
+    color: #f4f8f8;
+    font-size: clamp(7px, 0.68cqw, 11px);
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+    text-align: left;
+    text-shadow: 0 1px 3px #000;
+    hyphens: none;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+
+  .benchPlaque[data-bench="manufacturing"] .benchNameText {
+    font-size: clamp(6.5px, 0.5cqw, 8px);
+    letter-spacing: -0.01em;
+  }
+
+  .benchPlaque .benchStatusLine,
+  .benchPlaque[data-bench] .benchStatusLine {
+    position: static;
+    display: flex;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    align-self: start;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform: none;
+  }
+
+  .benchPlaque .benchStatusLine b,
+  .benchPlaque[data-bench] .benchStatusLine b {
+    overflow: visible;
+    color: var(--station-state);
+    font-size: clamp(6px, 0.5cqw, 8px);
+    font-weight: 850;
+    letter-spacing: 0.035em;
+    line-height: 1.05;
+    text-align: left;
+    text-overflow: clip;
+    text-shadow: 0 1px 2px #000, 0 0 5px color-mix(in srgb, var(--station-state) 28%, transparent);
+    white-space: normal;
+  }
+
+  .benchPlaque[data-state="dormant"] { --station-state: #84999e; }
+  .benchPlaque[data-state="available"] { --station-state: #82dce8; }
+  .benchPlaque[data-state="ready"] { --station-state: #e6be73; }
+  .benchPlaque[data-state="pulse"],
+  .benchPlaque[data-state="active"] { --station-state: #8ef3ff; }
+
+  .benchPlaque:hover,
+  .benchPlaque.selected,
+  .benchPlaque.viewingDormant,
+  .benchPlaque.recommended:not(.selected) {
+    border: 1px solid color-mix(in srgb, var(--station-state) 68%, transparent);
+    background: linear-gradient(180deg, rgba(8, 35, 43, 0.66), rgba(3, 14, 19, 0.84));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--station-state) 16%, transparent), 0 0 16px color-mix(in srgb, var(--station-state) 22%, transparent), inset 0 -0.4cqw 0.8cqw rgba(0, 0, 0, 0.3);
+  }
+
+  .benchPlaque.recommended:not(.selected) { --station-state: #f0c06c; }
+  .benchPlaque:focus-visible {
+    border: 2px solid #f6d582;
+    outline: 3px solid rgba(246, 213, 130, 0.78);
+    outline-offset: 2px;
+  }
 }
 
 @media (min-width: 1101px) and (prefers-reduced-motion: reduce) {
@@ -2440,7 +2587,16 @@
   .desktopBenchMap { display: none; }
   .consoleContent :global(.rev-screen-more) { display: none; }
   .consoleContent :global(.command-console-flow[data-bench-state="dormant"] .rev-question-screen) { display: none; }
-  .activeProject { right: 57%; left: 21%; width: auto; max-width: none; }
+  .activeProject { right: 59%; left: 20%; width: auto; max-width: none; }
+  .activeProject strong {
+    max-height: 3.3em;
+    font-size: clamp(9px, 1.15vw, 13px);
+    line-height: 1.08;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .revIdentity { left: 52%; }
+  .revGuideFigure { top: 5.5%; left: 52%; width: 18%; height: 25%; }
   .centralStage { top: 31%; left: 38%; width: 24%; }
   .prototypeStage { top: 25%; left: 30%; width: 40%; }
 
@@ -2491,11 +2647,13 @@
     position: relative;
     z-index: 2;
     display: grid;
-    min-width: 132px;
-    min-height: 58px;
-    flex: 0 0 132px;
+    min-width: 150px;
+    min-height: 64px;
+    flex: 0 0 150px;
+    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-rows: auto auto;
     align-content: center;
-    gap: 7px;
+    gap: 4px 8px;
     padding: 8px 10px;
     border: 1px solid #53676d;
     border-radius: 8px;
@@ -2506,8 +2664,22 @@
     touch-action: pan-x;
   }
 
-  .compactBench .benchName { font-size: 10px; }
-  .compactBench .benchMarkers b { font-size: 7px; }
+  .compactBench .stationEmblemWrap { grid-row: 1 / 3; width: 30px; height: 30px; color: #86e7f2; }
+  .compactBench .benchName {
+    align-self: end;
+    font-size: 10px;
+    hyphens: none;
+    overflow-wrap: normal;
+    text-align: left;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .compactBench[data-bench="manufacturing"] .benchName { font-size: 9px; letter-spacing: -0.01em; }
+  .compactBench .benchMarkers { align-self: start; justify-content: flex-start; }
+  .compactBench .benchMarkers b { color: #9eb1b5; font-size: 7px; white-space: normal; }
+  .compactBench[data-state="ready"] .stationEmblemWrap,
+  .compactBench.recommended .stationEmblemWrap { color: #efc16e; }
+  .compactBench.selected .stationEmblemWrap { color: #92f2ff; }
 
   .foregroundConsole {
     width: 100%;
@@ -2621,6 +2793,16 @@
     border-left: 0;
   }
 
+  .revGuideFigure {
+    top: 4.5%;
+    right: 2%;
+    left: auto;
+    display: block;
+    width: clamp(66px, 18vw, 108px);
+    height: clamp(48px, 13vw, 82px);
+    transform: none;
+  }
+
   .activeProject strong { font-size: clamp(7px, 2.4vw, 11px); }
   .activeProject small,
   .activeProject span { font-size: 5px; }
@@ -2631,7 +2813,6 @@
     transform: none;
   }
 
-  .revPortrait { width: clamp(36px, 11vw, 54px); }
   .revIdentity > strong { font-size: 7px; }
   .revIdentity small { max-width: 90px; font-size: 5px; text-align: center; }
 
@@ -2663,6 +2844,18 @@
   .consoleContent > :global(.prototype-focused-workspace) {
     margin-top: 12px;
     padding: 12px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .revGuideFigure {
+    top: 4%;
+    right: 2%;
+    left: auto;
+    display: block;
+    width: clamp(58px, 9vw, 80px);
+    height: clamp(42px, 8vw, 68px);
+    transform: none;
   }
 }
 

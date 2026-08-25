@@ -87,6 +87,14 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - This is a functional geometry/podium checkpoint, not final Workshop cosmetic acceptance or fabrication approval. The deterministic geometry remains a working engineering representation. Finer materials, detailed component styling, higher-fidelity product geometry, base-focused camera retargeting, lower decision-panel content, and the complete Workshop visual treatment remain future work; the latter presentation work belongs to Build 1E-B2B. Final native `1920 × 900` and responsive live acceptance remains pending.
 - Unsupported designs continue to use the truthful Visual Concept fallback. Production authentication, Project-level object authorization, rate limiting, cost-abuse protection, and secure object storage remain required before public release.
 
+## HP-24.40 Build 1E-B2B-1 — Workshop Composition and Station Identity
+
+- Founder accepted B2B-1 as a functional Workshop presentation checkpoint, not final Workshop cosmetic acceptance. The approved friendly REV now supplies the central Workshop identity, desktop viewport use is more balanced, the complete canonical Project title is presented at `1100px`, and compact portrait and landscape retain a recognizable REV identity.
+- Eight meaningful Workshop-specific inline SVG emblems preserve the existing keyboard-operable station buttons and their truthful `SELECTED`, `REV RECOMMENDS`, `AVAILABLE`, `READY`, and `DORMANT` states. No percentage or unsupported specialist completion, evidence, or approval claim was added. The compact station rail remains horizontally navigable.
+- Final station-name, emblem, and state-wording alignment with the corresponding physical bench structures is cosmetically unaccepted and explicitly deferred. The current truthful wording, accessible labels, button actions, pressed state, and focus semantics remain protected.
+- Viewer controls crossing the podium, the contained lower decision-panel layout, removal of the `ASK REV` placeholder, model materials, camera refinement, and final responsive/cosmetic polish remain deferred to later presentation checkpoints. B2B-2 contained-panel and viewer-control placement remain unimplemented.
+- No provider, Project, storage, candidate, geometry, stage resolver, `Prototype3DViewer`, Canvas, or viewer behaviour changed.
+
 Protected previous foundation:
 
 - `62bb4e6`

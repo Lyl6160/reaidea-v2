@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-import revAvatar from "../../public/images/reaidea-rev-avatar-2026-08-19.png";
+import revGuide from "../../public/images/reaidea-rev-friendly-ai-approved-2026-08-24.png";
 import workshopPlate from "../../public/images/reaidea-workshop-clean-scene-approved-2026-08-25.png";
 import { isValidConceptGeometry } from "../lib/geometry/conceptGeometry";
 import type { WorkshopBenchId, WorkshopBenchState } from "../lib/workshop/workshopBrain";
@@ -45,19 +45,56 @@ function stateLabel(state: WorkshopBenchState): string {
   return state.replaceAll("-", " ").toUpperCase();
 }
 
+function WorkshopStationEmblem({ id }: { id: WorkshopBenchId }) {
+  const commonProps = {
+    className: styles.stationEmblem,
+    viewBox: "0 0 48 48",
+    fill: "none",
+    "aria-hidden": true,
+    focusable: false,
+  } as const;
+
+  if (id === "knowledge") {
+    return <svg {...commonProps}><circle cx="24" cy="15" r="6" /><path d="M13 39c1-8 5-13 11-13s10 5 11 13M18 17c-5 2-8 6-8 11m20-11c5 2 8 6 8 11" /><path className={styles.stationAccent} d="M8 13h6m-3-3v6m23-6 4-4m-2 7h6" /></svg>;
+  }
+  if (id === "engineering") {
+    return <svg {...commonProps}><circle cx="24" cy="11" r="4" /><path d="m22 15-9 27m13-27 9 27M16 31h16M10 42h8m12 0h8" /><path className={styles.stationAccent} d="M13 22 33 14M17 18l3 5" /></svg>;
+  }
+  if (id === "prototype") {
+    return <svg {...commonProps}><path d="m24 7 13 8-13 8-13-8 13-8Zm-13 8v17l13 8 13-8V15M24 23v17" /><ellipse className={styles.stationAccent} cx="24" cy="24" rx="20" ry="9" transform="rotate(-14 24 24)" /></svg>;
+  }
+  if (id === "validation") {
+    return <svg {...commonProps}><rect x="11" y="9" width="27" height="34" rx="3" /><path d="M18 9V5h13v4M17 20l3 3 5-6m5 3h4M17 31l3 3 5-6m5 3h4" /><path className={styles.stationAccent} d="M14 13h21" /></svg>;
+  }
+  if (id === "patent") {
+    return <svg {...commonProps}><path d="M24 5 39 10v12c0 10-6 17-15 22C15 39 9 32 9 22V10l15-5Z" /><circle cx="22" cy="22" r="7" /><path d="m27 27 6 6M19 22h6m-3-3v6" /><path className={styles.stationAccent} d="m24 8 11 4" /></svg>;
+  }
+  if (id === "manufacturing") {
+    return <svg {...commonProps}><path d="M6 42V22l12 7v-8l11 7v-8l13 8v14H6ZM13 22V9h8v18M12 36h5m6 0h5m6 0h4" /><path className={styles.stationAccent} d="m33 14 2-6m3 9 5-3m-13-3-2-5" /></svg>;
+  }
+  if (id === "marketing") {
+    return <svg {...commonProps}><path d="M7 42h35M11 38V29h8v9m4 0V21h8v17m4 0V12h8v26M10 22l10-9 8 4L41 6" /><path className={styles.stationAccent} d="m35 6 6 .2-.5 6" /></svg>;
+  }
+  return <svg {...commonProps}><circle cx="24" cy="24" r="18" /><circle className={styles.stationAccent} cx="24" cy="24" r="13" /><path d="m15 24 6 6 12-14" /></svg>;
+}
+
 function BenchButton({ bench, compact, onSelectBench }: {
   bench: WorkshopRoomBench;
   compact?: boolean;
   onSelectBench: (id: WorkshopBenchId) => void;
 }) {
   const viewingDormant = bench.selected && bench.state === "dormant";
+  const visibleState = bench.selected
+    ? viewingDormant ? "SELECTED · DORMANT" : "SELECTED"
+    : bench.recommended
+      ? "REV RECOMMENDS"
+      : stateLabel(bench.state);
 
   return (
     <button
       type="button"
       className={`${compact ? styles.compactBench : styles.benchPlaque} ${bench.selected ? styles.selected : ""} ${viewingDormant ? styles.viewingDormant : ""} ${bench.recommended ? styles.recommended : ""}`}
       data-bench={bench.id}
-      data-progress={bench.progress}
       data-state={bench.state}
       onClick={() => onSelectBench(bench.id)}
       onKeyDown={(event) => {
@@ -68,11 +105,10 @@ function BenchButton({ bench, compact, onSelectBench }: {
       aria-pressed={bench.selected}
       aria-label={`${bench.shortLabel}. ${stateLabel(bench.state)}${viewingDormant ? ". Viewing dormant bench" : bench.selected ? ". Active bench" : ""}${bench.recommended ? ". REV recommends" : ""}`}
     >
+      <span className={styles.stationEmblemWrap}><WorkshopStationEmblem id={bench.id} /></span>
       <span className={`${styles.benchName} ${styles.benchNameText}`}>{bench.shortLabel}</span>
       <span className={`${styles.benchMarkers} ${styles.benchStatusLine}`}>
-        {viewingDormant ? <b className={styles.viewingMarker}>VIEWING · DORMANT</b> : bench.selected && <b className={styles.activeMarker}>ACTIVE</b>}
-        {bench.recommended && <b className={styles.recommendedMarker}>REV RECOMMENDS</b>}
-        {!bench.selected && !bench.recommended && <b>{stateLabel(bench.state)}</b>}
+        <b>{visibleState}</b>
       </span>
     </button>
   );
@@ -118,17 +154,18 @@ export default function WorkshopRoom({
           </div>
           <div className={styles.activeProject} aria-label={`Active Project: ${projectName}. ${projectStatus}`}>
             <span>ACTIVE PROJECT</span>
-            <strong title={projectName}>{projectName}</strong>
+            <strong>{projectName}</strong>
             <small>{projectStatus}</small>
           </div>
           <div className={styles.revIdentity}>
-            <span className={styles.revPortrait} aria-hidden="true">
-              <Image src={revAvatar} alt="" sizes="88px" unoptimized />
-            </span>
             <strong>REV</strong>
             <small>AI Engineering Partner</small>
           </div>
         </header>
+
+        <div className={styles.revGuideFigure} aria-hidden="true">
+          <Image src={revGuide} alt="" sizes="(max-width: 700px) 0px, 22vw" unoptimized />
+        </div>
 
         <nav className={styles.desktopBenchMap} aria-label="Workshop benches">
           {benches.map((bench) => (
