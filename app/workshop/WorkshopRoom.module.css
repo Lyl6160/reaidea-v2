@@ -2868,3 +2868,256 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* B2B-2: the Workshop overview is one contained, normal-flow decision surface.
+   The stage retains the sole Canvas; only its controls are hosted here. */
+.overviewConsole .consoleScreenPlane {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(112, 229, 242, 0.52);
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(8, 29, 38, 0.97), rgba(4, 17, 24, 0.98));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42), inset 0 1px rgba(205, 242, 247, 0.12);
+  pointer-events: auto;
+}
+
+.overviewConsole .consoleHeader {
+  position: static;
+  width: auto;
+  min-height: 0;
+  gap: 16px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid rgba(121, 220, 233, 0.24);
+  pointer-events: none;
+}
+
+.overviewConsole .consoleContent,
+.overviewConsole .consoleContent > :global(.workshop-floor-guidance) {
+  position: static;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.overviewConsole .consoleContent > :global(.workshop-floor-guidance) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.76fr) minmax(0, 1.3fr) auto;
+  gap: 10px;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-screen) {
+  position: static;
+  display: grid;
+  width: auto;
+  height: auto;
+  min-height: 76px;
+  align-content: start;
+  padding: 10px 12px;
+  overflow: visible;
+  border: 1px solid rgba(122, 213, 226, 0.2);
+  border-radius: 8px;
+  background: rgba(7, 25, 32, 0.68);
+  box-shadow: inset 0 1px rgba(201, 239, 244, 0.06);
+  clip-path: none;
+  color: #d9e8ea;
+  text-align: left;
+  pointer-events: none;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-screen > span) {
+  margin-bottom: 5px;
+  color: #85eaf6;
+  font-size: clamp(9px, 0.62cqw, 11px);
+  line-height: 1.2;
+  text-align: left;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-recommendation-screen > span) {
+  color: #f0ca78;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-screen > strong) {
+  color: #f2fafb;
+  font-size: clamp(11px, 0.78cqw, 14px);
+  line-height: 1.32;
+  overflow-wrap: break-word;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-screen > p) {
+  margin-top: 5px;
+  color: #c6d7da;
+  font-size: clamp(10px, 0.68cqw, 12px);
+  line-height: 1.35;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-recovery) {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-recovery) {
+  padding-top: 4px;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-actions) {
+  position: static;
+  display: flex;
+  width: auto;
+  height: auto;
+  align-items: center;
+  align-self: stretch;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-actions .workshop-floor-silver-control),
+.overviewConsole .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control) {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid rgba(151, 225, 234, 0.38);
+  border-radius: 7px;
+  clip-path: none;
+  background: linear-gradient(180deg, rgba(151, 183, 190, 0.24), rgba(28, 58, 67, 0.5));
+  color: #eef9fb;
+  box-shadow: inset 0 1px rgba(224, 244, 247, 0.12), 0 0 10px rgba(75, 205, 223, 0.08);
+  font: 850 10px / 1.2 Arial, sans-serif;
+  letter-spacing: 0.05em;
+  pointer-events: auto;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-actions .workshop-floor-gold-control) {
+  border-color: rgba(240, 198, 105, 0.5);
+  background: linear-gradient(180deg, rgba(188, 144, 49, 0.48), rgba(77, 50, 13, 0.62));
+  color: #fff3d0;
+}
+
+.overviewConsole .consoleContent :global(.workshop-floor-actions button:focus-visible),
+.viewerControlsHost :global(.prototype-3d-actions button:focus-visible) {
+  outline: 3px solid #f6d582;
+  outline-offset: 3px;
+}
+
+.viewerControlsPanel {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(121, 220, 233, 0.24);
+}
+
+.viewerControlsPanel > span {
+  color: #8beaf6;
+  font: 900 10px / 1.2 Arial, sans-serif;
+  letter-spacing: 0.1em;
+}
+
+.viewerControlsHost {
+  min-width: 0;
+}
+
+.viewerControlsHost :global(.prototype-3d-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.viewerControlsHost :global(.prototype-3d-actions button) {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid rgba(105, 217, 233, 0.58);
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(23, 68, 80, 0.96), rgba(12, 45, 54, 0.98));
+  color: #e9fbff;
+  font: 850 9px / 1 Arial, sans-serif;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+}
+
+@media (min-width: 1101px) {
+  .overviewConsole .consoleScreenPlane {
+    position: absolute;
+    z-index: 12;
+    inset: 37cqw auto auto 12.5%;
+    width: 75%;
+    min-height: 14.8cqw;
+    transform: none;
+  }
+
+  .overviewConsole .consoleScreenPlane::before,
+  .overviewConsole .consoleScreenPlane::after {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .overviewConsole {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .overviewConsole .consoleScreenPlane {
+    position: static;
+    padding: 14px;
+  }
+
+  .overviewConsole .consoleContent > :global(.workshop-floor-guidance) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overviewConsole .consoleContent :global(.workshop-floor-next-screen) {
+    grid-column: 1 / -1;
+  }
+
+  .overviewConsole .consoleContent :global(.workshop-floor-actions) {
+    grid-column: 1 / -1;
+  }
+
+  .viewerControlsHost :global(.prototype-3d-actions button) {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 620px) {
+  .overviewConsole .consoleHeader,
+  .overviewConsole .consoleContent > :global(.workshop-floor-guidance) {
+    grid-template-columns: 1fr;
+  }
+
+  .overviewConsole .consoleStatus {
+    text-align: left;
+  }
+
+  .overviewConsole .consoleContent :global(.workshop-floor-next-screen),
+  .overviewConsole .consoleContent :global(.workshop-floor-recovery),
+  .overviewConsole .consoleContent :global(.workshop-floor-actions) {
+    grid-column: auto;
+  }
+
+  .overviewConsole .consoleContent :global(.workshop-floor-actions),
+  .viewerControlsHost :global(.prototype-3d-actions) {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .overviewConsole .consoleContent :global(.workshop-floor-actions button),
+  .viewerControlsHost :global(.prototype-3d-actions button) {
+    width: 100%;
+    min-height: 44px;
+  }
+}

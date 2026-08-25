@@ -95,6 +95,14 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - Viewer controls crossing the podium, the contained lower decision-panel layout, removal of the `ASK REV` placeholder, model materials, camera refinement, and final responsive/cosmetic polish remain deferred to later presentation checkpoints. B2B-2 contained-panel and viewer-control placement remain unimplemented.
 - No provider, Project, storage, candidate, geometry, stage resolver, `Prototype3DViewer`, Canvas, or viewer behaviour changed.
 
+## HP-24.40 Build 1E-B2B-2 — Workshop Decision Panel and Viewer Controls
+
+- Founder accepted the contained Workshop decision-panel direction. The labelled panel owns the truthful live Workshop status, REV recommendation, next useful decision, and real bench-navigation action.
+- When source-bound validated geometry exists, the controls-only portal places the Interactive 3D actions inside the decision panel while the single Canvas remains spatially owned by the centre podium. Full-screen actions remain identifiable responsive 44px controls with visible focus, logical tab order, focus containment, Escape closing, scroll locking, and focus restoration.
+- Visual Concept, invalid-geometry, and true empty states expose no Canvas and no Interactive 3D controls. The temporary `Knowledge` wording was fixture-only; production semantics remain `Inventor's Bench`, with the recommendation supplied by current live Workshop truth.
+- The initial Workshop no longer presents `ASK REV · COMING LATER`. No provider, Project, candidate-persistence, storage, geometry, stage-resolution, or generation behaviour changed.
+- Exact station-name, emblem, and state alignment with the physical cylinders; final Workshop cosmetics; model materials and realism; camera and model-fit refinement; refined Visual Concept fallback presentation; and final responsive polish remain deferred. Build 1E-B2B-3 remains unimplemented.
+
 Protected previous foundation:
 
 - `62bb4e6`

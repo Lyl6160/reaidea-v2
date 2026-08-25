@@ -2557,10 +2557,6 @@ export default function WorkshopShell({
       >
         {!selectedBench && (
           <>
-            <div className="workshop-floor-screen workshop-floor-overview-screen" role="region" aria-label="Workshop Floor full overview">
-              <span>WORKSHOP FLOOR</span>
-              <strong>FULL OVERVIEW</strong>
-            </div>
             <div className="workshop-floor-screen workshop-floor-status-screen" role="region" aria-label="Workshop Floor selection status">
               <span>WORKSHOP STATUS</span>
               <strong>NO BENCH SELECTED</strong>
@@ -2571,16 +2567,15 @@ export default function WorkshopShell({
               <strong>{recommendedBench.label}</strong>
             </div>
             <div className="workshop-floor-screen workshop-floor-next-screen" role="region" aria-label="REV next move">
-              <span>REV · NEXT MOVE</span>
+              <span>REV · NEXT USEFUL DECISION</span>
               <strong>{recommendedBench.nextMove}</strong>
             </div>
-            <div className="workshop-floor-touchscreen" role="region" aria-label="Workshop Floor controls">
-              {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
-              {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
-              <button type="button" disabled>
-                ASK REV · COMING LATER
-              </button>
-            </div>
+            {(conceptGenerationState === "generating" || conceptGenerationState === "failed") && (
+              <div className="workshop-floor-recovery" role="status" aria-live="polite">
+                {conceptGenerationState === "generating" && <GenerationProgress kind="first-generation" status="working" />}
+                {conceptGenerationState === "failed" && <GenerationProgress kind="first-generation" status="failed" failureMessage="REV couldn't create your concept this time." onRetry={retryFirstRecognisableConcept} />}
+              </div>
+            )}
             <div className="workshop-floor-actions">
               {conceptRecoveryAvailable && (
                 <button type="button" className="workshop-floor-gold-control" onClick={recoverConcept01}>

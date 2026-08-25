@@ -20,9 +20,10 @@ type Prototype3DViewerProps = {
   geometry: ConceptGeometry;
   presentationMode?: "console" | "stage";
   autoRotate?: boolean;
+  controlsHost?: HTMLElement | null;
 };
 
-export default function Prototype3DViewer({ geometry, presentationMode = "console", autoRotate = false }: Prototype3DViewerProps) {
+export default function Prototype3DViewer({ geometry, presentationMode = "console", autoRotate = false, controlsHost = null }: Prototype3DViewerProps) {
   const [fitRequest, setFitRequest] = useState(0);
   const [resetRequest, setResetRequest] = useState(0);
   const [jointPreview, setJointPreview] = useState(false);
@@ -141,6 +142,7 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
       fitRequest={fitRequest}
       resetRequest={resetRequest}
       fullScreen={fullScreenOpen}
+      controlsHost={fullScreenOpen ? null : controlsHost}
       fullScreenButtonRef={fullScreenButtonRef}
       onToggleRotation={() => setRotationPaused((paused) => !paused)}
       onInteractionStart={() => setRotationPaused(true)}
@@ -163,7 +165,7 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
           <div className="prototype-3d-modal-content">{surface}</div>
         </div>
         <style jsx>{`
-          .prototype-3d-modal-backdrop{position:fixed;z-index:2147483647;inset:0;box-sizing:border-box;display:grid;min-width:0;min-height:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(2,8,11,.98)}.prototype-3d-modal{display:grid;grid-template-rows:auto minmax(0,1fr);width:min(1280px,100%);height:100%;min-width:0;min-height:0;margin:auto;overflow:hidden;border:1px solid rgba(112,230,244,.58);border-radius:12px;background:#071014;box-shadow:0 24px 80px rgba(0,0,0,.7)}.prototype-3d-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;border-bottom:1px solid rgba(94,198,211,.34);background:#10191d}.prototype-3d-modal-header h2{margin:0;color:#e9fbff;font:900 clamp(16px,2vw,24px)/1.2 Arial,sans-serif;letter-spacing:.04em}.prototype-3d-modal-header button{min-width:96px;min-height:44px;padding:0 16px;border:1px solid rgba(105,217,233,.7);border-radius:7px;background:#173b45;color:#e9fbff;font:850 12px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-modal-header button:focus-visible{outline:3px solid #f4d27d;outline-offset:3px}.prototype-3d-modal-content{min-width:0;min-height:0;overflow:hidden;padding:12px}.prototype-3d-modal-content :global(.prototype-3d-viewer){min-height:0;border:0;box-shadow:none}.prototype-3d-modal-content :global(.prototype-3d-actions button){min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-modal-backdrop{padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}.prototype-3d-modal{border-radius:8px}.prototype-3d-modal-header{padding:9px 10px}.prototype-3d-modal-header h2{font-size:15px}.prototype-3d-modal-header button{min-width:84px;min-height:44px;padding:0 12px}.prototype-3d-modal-content{padding:7px}}@media(max-height:520px) and (orientation:landscape){.prototype-3d-modal-backdrop{padding:6px}.prototype-3d-modal-header{padding:6px 10px}.prototype-3d-modal-header button{min-height:40px}.prototype-3d-modal-content{padding:5px}}
+          .prototype-3d-modal-backdrop{position:fixed;z-index:2147483647;inset:0;box-sizing:border-box;display:grid;min-width:0;min-height:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(2,8,11,.98)}.prototype-3d-modal{display:grid;grid-template-rows:auto minmax(0,1fr);width:min(1280px,100%);height:100%;min-width:0;min-height:0;margin:auto;overflow:hidden;border:1px solid rgba(112,230,244,.58);border-radius:12px;background:#071014;box-shadow:0 24px 80px rgba(0,0,0,.7)}.prototype-3d-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;border-bottom:1px solid rgba(94,198,211,.34);background:#10191d}.prototype-3d-modal-header h2{margin:0;color:#e9fbff;font:900 clamp(16px,2vw,24px)/1.2 Arial,sans-serif;letter-spacing:.04em}.prototype-3d-modal-header button{min-width:96px;min-height:44px;padding:0 16px;border:1px solid rgba(105,217,233,.7);border-radius:7px;background:#173b45;color:#e9fbff;font:850 12px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-modal-header button:focus-visible{outline:3px solid #f4d27d;outline-offset:3px}.prototype-3d-modal-content{min-width:0;min-height:0;overflow:hidden;padding:12px}.prototype-3d-modal-content :global(.prototype-3d-viewer){min-height:0;border:0;box-shadow:none}.prototype-3d-modal-content :global(.prototype-3d-actions){display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.34);background:rgba(10,27,33,.96)}.prototype-3d-modal-content :global(.prototype-3d-actions button){min-height:44px;padding:0 16px;border:1px solid rgba(105,217,233,.72);border-radius:7px;background:linear-gradient(180deg,#1a4a58,#112f38);box-shadow:inset 0 1px 0 rgba(225,252,255,.12),0 3px 10px rgba(0,0,0,.28);color:#e9fbff;font:850 11px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-modal-content :global(.prototype-3d-actions button:hover){border-color:#8ceaf5;background:linear-gradient(180deg,#225b69,#153c47)}.prototype-3d-modal-content :global(.prototype-3d-actions button:focus-visible){outline:3px solid #f4d27d;outline-offset:2px}@media(max-width:700px){.prototype-3d-modal-backdrop{padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}.prototype-3d-modal{border-radius:8px}.prototype-3d-modal-header{padding:9px 10px}.prototype-3d-modal-header h2{font-size:15px}.prototype-3d-modal-header button{min-width:84px;min-height:44px;padding:0 12px}.prototype-3d-modal-content{padding:7px}.prototype-3d-modal-content :global(.prototype-3d-actions){gap:7px;padding:8px}.prototype-3d-modal-content :global(.prototype-3d-actions button){flex:1 1 148px;min-height:44px;padding:0 12px;font-size:10px}}@media(max-height:520px) and (orientation:landscape){.prototype-3d-modal-backdrop{padding:6px}.prototype-3d-modal-header{padding:6px 10px}.prototype-3d-modal-header button{min-height:44px}.prototype-3d-modal-content{padding:5px}.prototype-3d-modal-content :global(.prototype-3d-actions){padding:6px 8px}}
         `}</style>
       </div>,
       portalRoot
@@ -173,7 +175,7 @@ export default function Prototype3DViewer({ geometry, presentationMode = "consol
   return surface;
 }
 
-function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, automaticRotationActive, rotationPaused, jointPreview, fitRequest, resetRequest, fullScreen, fullScreenButtonRef, onToggleRotation, onInteractionStart, onReset, onFit, onToggleJoint, onOpenFullScreen }: {
+function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, automaticRotationActive, rotationPaused, jointPreview, fitRequest, resetRequest, fullScreen, controlsHost, fullScreenButtonRef, onToggleRotation, onInteractionStart, onReset, onFit, onToggleJoint, onOpenFullScreen }: {
   geometry: ConceptGeometry;
   presentationMode: "console" | "stage";
   autoRotateEnabled: boolean;
@@ -183,6 +185,7 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
   fitRequest: number;
   resetRequest: number;
   fullScreen: boolean;
+  controlsHost: HTMLElement | null;
   fullScreenButtonRef: React.RefObject<HTMLButtonElement | null>;
   onToggleRotation: () => void;
   onInteractionStart: () => void;
@@ -191,8 +194,31 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
   onToggleJoint: () => void;
   onOpenFullScreen: () => void;
 }) {
+  const actions = (
+    <div className="prototype-3d-actions" role="group" aria-label="Interactive 3D viewer controls">
+      {autoRotateEnabled && (
+        <button
+          type="button"
+          aria-label={automaticRotationActive ? "Pause automatic Prototype model rotation" : "Resume automatic Prototype model rotation"}
+          aria-pressed={automaticRotationActive}
+          onClick={onToggleRotation}
+        >
+          {rotationPaused ? "RESUME ROTATION" : "PAUSE ROTATION"}
+        </button>
+      )}
+      <button type="button" onClick={onReset}>RESET VIEW</button>
+      <button type="button" onClick={onFit}>FIT MODEL</button>
+      {geometry.joints.length > 0 && <button type="button" onClick={onToggleJoint}>{jointPreview ? "RETURN JOINT" : "ROTATE JOINT"}</button>}
+      {!fullScreen && <button ref={fullScreenButtonRef} data-prototype3d-fullscreen-trigger="true" type="button" onClick={onOpenFullScreen}>VIEW FULL SCREEN</button>}
+    </div>
+  );
+  const externalActions = presentationMode === "stage" && controlsHost && !fullScreen
+    ? createPortal(actions, controlsHost)
+    : null;
+  const inlineActions = fullScreen || presentationMode !== "stage" ? actions : null;
+
   return (
-    <section className={`prototype-3d-viewer${presentationMode === "stage" ? " is-stage" : ""}${fullScreen ? " is-full-screen" : ""}`} aria-label="Interactive 3D model">
+    <section className={`prototype-3d-viewer${presentationMode === "stage" ? " is-stage" : ""}${fullScreen ? " is-full-screen" : ""}${externalActions ? " has-external-actions" : ""}`} aria-label="Interactive 3D model">
       <div className="prototype-3d-instructions"><strong>3D MODEL</strong><span>DRAG TO ROTATE · SCROLL TO ZOOM</span></div>
       <div className="prototype-3d-canvas">
         <Canvas camera={{ position: [3.8, 2.8, 5.2], fov: 38 }} dpr={[1, 1.75]} frameloop={automaticRotationActive ? "always" : "demand"} gl={{ antialias: true, alpha: presentationMode === "stage" }}>
@@ -211,24 +237,10 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
           </Bounds>
         </Canvas>
       </div>
-      <div className="prototype-3d-actions">
-        {autoRotateEnabled && (
-          <button
-            type="button"
-            aria-label={automaticRotationActive ? "Pause automatic Prototype model rotation" : "Resume automatic Prototype model rotation"}
-            aria-pressed={automaticRotationActive}
-            onClick={onToggleRotation}
-          >
-            {rotationPaused ? "RESUME ROTATION" : "PAUSE ROTATION"}
-          </button>
-        )}
-        <button type="button" onClick={onReset}>RESET VIEW</button>
-        <button type="button" onClick={onFit}>FIT MODEL</button>
-        {geometry.joints.length > 0 && <button type="button" onClick={onToggleJoint}>{jointPreview ? "RETURN JOINT" : "ROTATE JOINT"}</button>}
-        {!fullScreen && <button ref={fullScreenButtonRef} data-prototype3d-fullscreen-trigger="true" type="button" onClick={onOpenFullScreen}>VIEW FULL SCREEN</button>}
-      </div>
+      {inlineActions}
+      {externalActions}
       <style jsx>{`
-        :global(#workshop-central-stage:has(.prototype-3d-viewer)){z-index:9}.prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:minmax(250px,1fr) auto;min-height:0;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none}.is-stage .prototype-3d-instructions{display:none}.is-stage .prototype-3d-canvas{min-height:250px;filter:drop-shadow(0 10px 13px rgba(0,0,0,.42))}.is-stage .prototype-3d-actions{justify-content:center;gap:5px;margin:3px auto 0;padding:6px 8px;border:1px solid rgba(112,230,244,.38);border-radius:999px;background:rgba(3,15,21,.72);box-shadow:0 6px 18px rgba(0,0,0,.3)}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}.prototype-3d-viewer.is-full-screen{grid-template-rows:auto minmax(0,1fr) auto;min-height:0}.is-full-screen .prototype-3d-canvas{min-height:0}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:minmax(132px,1fr) auto}.is-stage .prototype-3d-canvas{min-height:132px}.is-stage .prototype-3d-actions{max-width:100%;gap:4px;padding:5px 6px;border-radius:8px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}.prototype-3d-viewer.is-full-screen{min-height:0}.is-full-screen .prototype-3d-instructions{padding:8px 10px;font-size:9px}.is-full-screen .prototype-3d-instructions span{display:block}.is-full-screen .prototype-3d-actions{gap:7px;padding:8px 10px}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 12px;font-size:10px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
+        :global(#workshop-central-stage:has(.prototype-3d-viewer)){z-index:9}.prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:minmax(250px,1fr);min-height:0;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none}.is-stage .prototype-3d-instructions{display:none}.is-stage .prototype-3d-canvas{min-height:250px;filter:drop-shadow(0 10px 13px rgba(0,0,0,.42))}.prototype-3d-viewer.is-full-screen{grid-template-rows:auto minmax(0,1fr) auto;min-height:0}.is-full-screen .prototype-3d-canvas{min-height:0}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:minmax(132px,1fr)}.is-stage .prototype-3d-canvas{min-height:132px}.prototype-3d-viewer.is-full-screen{min-height:0}.is-full-screen .prototype-3d-instructions{padding:8px 10px;font-size:9px}.is-full-screen .prototype-3d-instructions span{display:block}.is-full-screen .prototype-3d-actions{gap:7px;padding:8px 10px}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 12px;font-size:10px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
       `}</style>
     </section>
   );

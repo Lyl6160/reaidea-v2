@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import revGuide from "../../public/images/reaidea-rev-friendly-ai-approved-2026-08-24.png";
 import workshopPlate from "../../public/images/reaidea-workshop-clean-scene-approved-2026-08-25.png";
@@ -133,6 +133,7 @@ export default function WorkshopRoom({
   const showPrototype3D = Boolean(validPrototypeGeometry);
   const selectedBench = benches.find((bench) => bench.selected);
   const selectedBenchIsDormant = selectedBench?.state === "dormant";
+  const [viewerControlsHost, setViewerControlsHost] = useState<HTMLDivElement | null>(null);
 
   return (
     <section className={styles.workshopRoom} aria-label="reAIdea Living Workshop">
@@ -189,7 +190,7 @@ export default function WorkshopRoom({
           </div>
           <div className={styles.stageContent}>
             {showPrototype3D && validPrototypeGeometry
-              ? <Prototype3DViewer geometry={validPrototypeGeometry} presentationMode="stage" autoRotate />
+              ? <Prototype3DViewer geometry={validPrototypeGeometry} presentationMode="stage" autoRotate controlsHost={viewerControlsHost} />
               : conceptPreview}
           </div>
         </section>
@@ -207,8 +208,13 @@ export default function WorkshopRoom({
         </div>
       </nav>
 
-      <section className={styles.foregroundConsole} aria-label={selectedBench ? `${selectedBench.shortLabel} foreground console` : "Workshop foreground console"}>
+      <section
+        className={`${styles.foregroundConsole} ${!selectedBench ? styles.overviewConsole : ""}`}
+        aria-labelledby={!selectedBench ? "workshop-decision-panel-title" : undefined}
+        aria-label={selectedBench ? `${selectedBench.shortLabel} foreground console` : undefined}
+      >
         <div className={styles.consoleScreenPlane}>
+          {!selectedBench && <h2 id="workshop-decision-panel-title" className={styles.visuallyHidden}>Workshop decision panel</h2>}
           <header className={styles.consoleHeader}>
             <div className={styles.consoleWorkingState}>
               <strong>{selectedBench ? `${selectedBenchIsDormant ? "VIEWING" : "WORKING AT"} · ${selectedBench.shortLabel}` : "WORKSHOP FLOOR · FULL OVERVIEW"}</strong>
@@ -221,6 +227,12 @@ export default function WorkshopRoom({
             <button type="button" className={styles.silverConsoleControl} onClick={onReturnToOverview}>SHOW WORKSHOP FLOOR</button>
           )}
           <div className={styles.consoleContent}>{children}</div>
+          {showPrototype3D && (
+            <section className={styles.viewerControlsPanel} aria-labelledby="workshop-viewer-controls-title">
+              <span id="workshop-viewer-controls-title">INTERACTIVE 3D VIEW CONTROLS</span>
+              <div ref={setViewerControlsHost} className={styles.viewerControlsHost} />
+            </section>
+          )}
         </div>
       </section>
 
