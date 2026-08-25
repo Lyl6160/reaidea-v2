@@ -13,8 +13,8 @@ import {
   type ConceptGeometryFace,
   type ConceptGeometryJoint,
   type ConceptGeometryMarking,
-  type GeometryVector3,
 } from "../lib/geometry/conceptGeometry";
+import { resolveComponentTransform } from "../lib/geometry/componentTransforms";
 
 type Prototype3DViewerProps = {
   geometry: ConceptGeometry;
@@ -200,7 +200,7 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
           <ambientLight intensity={1.7} />
           <directionalLight position={[4, 8, 6]} intensity={2.4} />
           <directionalLight position={[-5, 3, -4]} intensity={1.1} />
-          <Bounds fit clip observe margin={1.25}>
+          <Bounds fit clip observe margin={0.85}>
             <GeometryModel geometry={geometry} jointPreview={jointPreview} />
             <ViewController
               fitRequest={fitRequest}
@@ -228,7 +228,7 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
         {!fullScreen && <button ref={fullScreenButtonRef} data-prototype3d-fullscreen-trigger="true" type="button" onClick={onOpenFullScreen}>VIEW FULL SCREEN</button>}
       </div>
       <style jsx>{`
-        :global(#workshop-central-stage:has(.prototype-3d-viewer)){z-index:9}.prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(210px,1fr) auto;min-height:280px;border-color:rgba(112,230,244,.42);background:radial-gradient(circle at 50% 48%,rgba(53,155,185,.17),rgba(3,12,19,.72) 68%);box-shadow:0 0 30px rgba(65,214,236,.16)}.is-stage .prototype-3d-instructions{padding:7px 9px;font-size:8px}.is-stage .prototype-3d-canvas{min-height:210px}.is-stage .prototype-3d-actions{gap:5px;padding:7px 9px}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}.prototype-3d-viewer.is-full-screen{grid-template-rows:auto minmax(0,1fr) auto;min-height:0}.is-full-screen .prototype-3d-canvas{min-height:0}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:auto minmax(90px,1fr) auto;min-height:150px}.is-stage .prototype-3d-instructions span{display:none}.is-stage .prototype-3d-canvas{min-height:90px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}.prototype-3d-viewer.is-full-screen{min-height:0}.is-full-screen .prototype-3d-instructions{padding:8px 10px;font-size:9px}.is-full-screen .prototype-3d-instructions span{display:block}.is-full-screen .prototype-3d-actions{gap:7px;padding:8px 10px}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 12px;font-size:10px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
+        :global(#workshop-central-stage:has(.prototype-3d-viewer)){z-index:9}.prototype-3d-viewer{display:grid;grid-template-rows:auto minmax(360px,1fr) auto;width:100%;height:100%;min-height:440px;overflow:hidden;border:1px solid rgba(94,198,211,.34);border-radius:9px;background:#10191d}.prototype-3d-instructions{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-bottom:1px solid rgba(94,198,211,.24);color:#dffbff;font-size:10px;letter-spacing:.1em}.prototype-3d-instructions span{color:#8da7ac}.prototype-3d-canvas{min-height:360px}.prototype-3d-canvas :global(canvas){display:block;touch-action:none}.prototype-3d-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid rgba(94,198,211,.24)}.prototype-3d-actions button{min-height:34px;padding:0 12px;border:1px solid rgba(105,217,233,.58);border-radius:6px;background:#173b45;color:#e9fbff;font:850 9px/1 Arial,sans-serif;letter-spacing:.08em;cursor:pointer}.prototype-3d-actions button:focus-visible{outline:3px solid #f4d27d;outline-offset:2px}.prototype-3d-unavailable{padding:20px;color:#aab9bb;text-align:center}.prototype-3d-viewer.is-stage{grid-template-rows:minmax(250px,1fr) auto;min-height:0;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none}.is-stage .prototype-3d-instructions{display:none}.is-stage .prototype-3d-canvas{min-height:250px;filter:drop-shadow(0 10px 13px rgba(0,0,0,.42))}.is-stage .prototype-3d-actions{justify-content:center;gap:5px;margin:3px auto 0;padding:6px 8px;border:1px solid rgba(112,230,244,.38);border-radius:999px;background:rgba(3,15,21,.72);box-shadow:0 6px 18px rgba(0,0,0,.3)}.is-stage .prototype-3d-actions button{min-height:30px;padding:0 8px;font-size:7px}.prototype-3d-viewer.is-full-screen{grid-template-rows:auto minmax(0,1fr) auto;min-height:0}.is-full-screen .prototype-3d-canvas{min-height:0}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 16px;font-size:11px}@media(max-width:700px){.prototype-3d-viewer.is-stage{grid-template-rows:minmax(132px,1fr) auto}.is-stage .prototype-3d-canvas{min-height:132px}.is-stage .prototype-3d-actions{max-width:100%;gap:4px;padding:5px 6px;border-radius:8px}.is-stage .prototype-3d-actions button{min-height:28px;font-size:6px}.prototype-3d-viewer.is-full-screen{min-height:0}.is-full-screen .prototype-3d-instructions{padding:8px 10px;font-size:9px}.is-full-screen .prototype-3d-instructions span{display:block}.is-full-screen .prototype-3d-actions{gap:7px;padding:8px 10px}.is-full-screen .prototype-3d-actions button{min-height:44px;padding:0 12px;font-size:10px}}@media(prefers-reduced-motion:reduce){.prototype-3d-viewer{scroll-behavior:auto}}
       `}</style>
     </section>
   );
@@ -293,15 +293,16 @@ function ComponentNode({ component, components, childrenByParent, jointsByChild,
   const quaternion = useMemo(() => joint
     ? new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(...joint.axis), THREE.MathUtils.degToRad(angle))
     : new THREE.Quaternion(), [angle, joint]);
-  const pivot: GeometryVector3 = joint?.pivot ?? [0, 0, 0];
-  const localPosition = joint ? subtract(component.position, pivot) : [0, 0, 0] as [number, number, number];
+  // Components are parent-local. A joint introduces one pivot transform; its child
+  // keeps the remaining local offset inside that transform exactly once.
+  const { containerPosition, localPosition } = resolveComponentTransform(component, joint);
   const node = (
     <group position={localPosition} rotation={component.rotation.map(THREE.MathUtils.degToRad) as [number, number, number]} scale={component.scale ? [...component.scale] : [1, 1, 1]}>
       <Primitive component={component} />
       {(childrenByParent.get(component.id) ?? []).map((child) => <ComponentNode key={child.id} component={components.get(child.id)!} components={components} childrenByParent={childrenByParent} jointsByChild={jointsByChild} jointPreview={jointPreview} />)}
     </group>
   );
-  return <group position={joint ? pivot : component.position} quaternion={quaternion}>{node}</group>;
+  return <group position={containerPosition} quaternion={quaternion}>{node}</group>;
 }
 
 function Primitive({ component }: { component: ConceptGeometryComponent }) {
@@ -337,7 +338,9 @@ function FaceMarking({ component, marking }: { component: ConceptGeometryCompone
   const texture = useMemo(() => createMarkingTexture(marking), [marking]);
   useEffect(() => () => texture.dispose(), [texture]);
   const placement = markingPlacement(component, marking.face);
-  return <mesh position={placement.position} rotation={placement.rotation}><planeGeometry args={placement.size} /><meshBasicMaterial map={texture} transparent={false} toneMapped={false} side={THREE.DoubleSide} /></mesh>;
+  const circularHousing = component.primitive === "extruded-polygon" && component.vertices && component.vertices.length >= 12;
+  const radius = circularHousing ? Math.min(placement.size[0], placement.size[1]) / 2 : 0;
+  return <mesh position={placement.position} rotation={placement.rotation}>{circularHousing ? <circleGeometry args={[radius, component.vertices!.length]} /> : <planeGeometry args={placement.size} />}<meshBasicMaterial map={texture} transparent={false} toneMapped={false} side={THREE.DoubleSide} /></mesh>;
 }
 
 function createMarkingTexture(marking: ConceptGeometryMarking): THREE.CanvasTexture {
@@ -381,8 +384,4 @@ function materialProps(component: ConceptGeometryComponent) {
   if (component.material === "plastic") return { color: component.colour, metalness: .06, roughness: .38 };
   if (component.material === "emissive") return { color: component.colour, emissive: component.colour, emissiveIntensity: 1.15, metalness: 0, roughness: .3 };
   return { color: component.colour, metalness: 0, roughness: .76 };
-}
-
-function subtract(left: GeometryVector3, right: GeometryVector3): [number, number, number] {
-  return [left[0] - right[0], left[1] - right[1], left[2] - right[2]];
 }

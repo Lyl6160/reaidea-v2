@@ -5,11 +5,12 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import revAvatar from "../../public/images/reaidea-rev-avatar-2026-08-19.png";
-import workshopPlate from "../../public/images/reaidea-living-workshop-runtime-names-only-plate-2026-08-21.png";
-import { isValidConceptGeometry, type ConceptGeometry } from "../lib/geometry/conceptGeometry";
+import workshopPlate from "../../public/images/reaidea-workshop-clean-scene-approved-2026-08-25.png";
+import { isValidConceptGeometry } from "../lib/geometry/conceptGeometry";
 import type { WorkshopBenchId, WorkshopBenchState } from "../lib/workshop/workshopBrain";
 
 import styles from "./WorkshopRoom.module.css";
+import type { WorkshopStagePresentation } from "./workshopStagePresentation";
 
 const Prototype3DViewer = dynamic(() => import("./Prototype3DViewer"), {
   ssr: false,
@@ -31,8 +32,8 @@ type WorkshopRoomProps = {
   projectName: string;
   projectStatus: string;
   conceptPreview: ReactNode;
+  stagePresentation: WorkshopStagePresentation;
   prototypeActive: boolean;
-  prototypeGeometry?: ConceptGeometry;
   prototypeRepresentation: "2d" | "3d";
   onSelectBench: (id: WorkshopBenchId) => void;
   onReturnToOverview: () => void;
@@ -82,22 +83,18 @@ export default function WorkshopRoom({
   projectName,
   projectStatus,
   conceptPreview,
+  stagePresentation,
   prototypeActive,
-  prototypeGeometry,
   prototypeRepresentation,
   onSelectBench,
   onReturnToOverview,
   caption,
   children,
 }: WorkshopRoomProps) {
-  const validPrototypeGeometry = prototypeGeometry && isValidConceptGeometry(prototypeGeometry)
-    ? prototypeGeometry
+  const validPrototypeGeometry = stagePresentation.kind === "interactive-3d" && isValidConceptGeometry(stagePresentation.geometry)
+    ? stagePresentation.geometry
     : undefined;
-  const showPrototype3D = Boolean(
-    prototypeActive &&
-    prototypeRepresentation === "3d" &&
-    validPrototypeGeometry
-  );
+  const showPrototype3D = Boolean(validPrototypeGeometry);
   const selectedBench = benches.find((bench) => bench.selected);
   const selectedBenchIsDormant = selectedBench?.state === "dormant";
 
@@ -141,13 +138,16 @@ export default function WorkshopRoom({
 
         <section
           id="workshop-central-stage"
-          className={`${styles.centralStage} ${showPrototype3D ? styles.prototypeStage : ""}`}
+          className={`${styles.centralStage} ${showPrototype3D ? styles.prototypeStage : ""} ${stagePresentation.kind === "visual-concept" ? styles.visualConceptStage : ""}`}
           aria-label={showPrototype3D ? "Current Prototype 3D model" : "Current Concept presentation"}
         >
           <div className={styles.stageHeading}>
-            <span>{showPrototype3D ? "PROTOTYPE · LIVE 3D" : "CURRENT DESIGN"}</span>
-            {prototypeActive && !showPrototype3D && (
-              <small>{validPrototypeGeometry ? "2D CONCEPT SELECTED" : "3D MODEL NEEDS MORE DESIGN DETAIL"}</small>
+            <span>{showPrototype3D ? "PROTOTYPE · LIVE 3D" : stagePresentation.kind === "visual-concept" ? "VISUAL CONCEPT" : "CURRENT DESIGN"}</span>
+            {stagePresentation.kind === "visual-concept" && (
+              <small>VISUAL CONCEPT · {stagePresentation.blocker}</small>
+            )}
+            {prototypeActive && !showPrototype3D && stagePresentation.kind === "empty" && (
+              <small>{prototypeRepresentation === "2d" ? "2D CONCEPT SELECTED" : "3D MODEL NEEDS MORE DESIGN DETAIL"}</small>
             )}
           </div>
           <div className={styles.stageContent}>

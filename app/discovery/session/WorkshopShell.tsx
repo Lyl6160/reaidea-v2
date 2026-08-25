@@ -10,6 +10,7 @@ import StandardBenchShell from "../../workshop/StandardBenchShell";
 import RollingBenchFlow, { readRollingBenchNotes, type BenchNote } from "../../workshop/RollingBenchFlow";
 import GenerationProgress from "../../workshop/GenerationProgress";
 import WorkshopRoom from "../../workshop/WorkshopRoom";
+import { resolveWorkshopStagePresentation } from "../../workshop/workshopStagePresentation";
 
 import {
   isSpecialistContributionBenchId,
@@ -875,9 +876,8 @@ export default function WorkshopShell({
   const compactConceptPreview = (
     <ConceptPreview preview={sharedConceptPreview} candidate={generatedConceptCandidate} candidateStale={generatedConceptCandidateIsStale} compact />
   );
-  const roomStageCandidate = selectedBench?.id === "prototype"
-    ? viewedConceptCandidate
-    : generatedConceptCandidate;
+  const roomStageCandidate = viewedConceptCandidate ?? generatedConceptCandidate;
+  const roomStagePresentation = resolveWorkshopStagePresentation(roomStageCandidate);
   const roomConceptPreview = roomStageCandidate ? (
     <ConceptPreview
       preview={sharedConceptPreview}
@@ -2534,12 +2534,12 @@ export default function WorkshopShell({
         projectName={projectName}
         projectStatus={formatReadiness(project.readiness)}
         conceptPreview={roomConceptPreview}
+        stagePresentation={roomStagePresentation}
         benches={CANONICAL_WORKSHOP_BENCHES.flatMap(({ id, shortLabel, positionClass }) => {
           const bench = getBench(workshop, id);
           return bench ? [{ id, shortLabel, positionClass, state: bench.state, progress: presentationProgressForBench(id), selected: selectedBench?.id === id, recommended: recommendedBench.id === id }] : [];
         })}
         prototypeActive={selectedBench?.id === "prototype"}
-        prototypeGeometry={selectedBench?.id === "prototype" ? viewedConceptCandidate?.conceptGeometry : undefined}
         prototypeRepresentation={prototypeRepresentation}
         onSelectBench={selectBench}
         onReturnToOverview={returnToWorkshop}

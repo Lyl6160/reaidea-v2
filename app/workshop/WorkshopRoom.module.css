@@ -252,9 +252,16 @@
 }
 
 .prototypeStage {
-  top: 28%;
-  left: 34.5%;
-  width: 31%;
+  top: 15.5%;
+  left: 27%;
+  width: 46%;
+  height: 49%;
+}
+
+.visualConceptStage {
+  top: 24%;
+  left: 31%;
+  width: 38%;
 }
 
 .stageHeading {
@@ -317,6 +324,11 @@
 .stageContent :global(.concept-field) {
   height: clamp(85px, 10.5vw, 175px);
   margin: 0;
+}
+
+.visualConceptStage .stageContent :global(.concept-candidate-preview),
+.visualConceptStage .stageContent :global(.concept-field) {
+  height: clamp(180px, 22vw, 360px);
 }
 
 .stageContent :global(.first-concept-generation-status) {
@@ -2387,6 +2399,26 @@
     from { background-position: 0 -3cqw; }
     to { background-position: 0 24.82cqw; }
   }
+}
+
+@media (min-width: 1101px) {
+  /* The approved scene owns the Workshop floor. Keep the live decision region
+     contained below the podium instead of projecting a second floor across it. */
+  .consoleScreenPlane {
+    transform: none;
+  }
+
+  .consoleScreenPlane::before {
+    top: 41.8cqw;
+    left: 22%;
+    width: 56%;
+    height: 13.2cqw;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(10, 33, 43, 0.94), rgba(5, 20, 29, 0.96));
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36), inset 0 1px rgba(177, 239, 246, 0.12);
+  }
+
+  .consoleScreenPlane::after { display: none; }
 }
 
 @media (min-width: 1101px) and (prefers-reduced-motion: reduce) {

@@ -1,13 +1,13 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `49e4ad2588f10d190deefa70d48bb8119fe72b21`
+**Current safe committed checkpoint:** `9f764cd84a21f3ccce9f72a5db5571965d05d97d`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.40 Build 1E-A — Home Creation Theatre
+**Current hold point:** HP-24.40 Build 1E-B2A — Validated Centre-Podium 3D Reveal
 
-**Current authorised construction step:** HP-24.40 Build 1E-A checkpoint
+**Current authorised construction step:** HP-24.40 Build 1E-B2A checkpoint
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
@@ -78,6 +78,14 @@ Build 8 founder browser acceptance passed on 23 August 2026. Full-screen 3D func
 - The local parent-relative graph models the base, optional wheels and stabilisers, pole sections, circular housing approximation, STOP/GO face markings, perimeter lights, optional remote, and a bounded vertical-axis sign joint. Plan validation is bounded and its component IDs must exactly reconcile with emitted geometry.
 - Geometry source must match candidate family ID, candidate ID, and revision. Malformed or mismatched geometry cannot persist as available; a valid Visual Concept survives unavailable geometry. Persistence and reload verification complete before creation reports success, and legacy candidates remain readable.
 - No additional provider operation occurred. `Prototype3DViewer` remains unchanged. Build 1E-B2 Workshop podium presentation remains unimplemented. Production security risks remain: authentication, object authorization, rate limiting, and secure server-side storage are required before release.
+
+## HP-24.40 Build 1E-B2A — Validated Centre-Podium 3D Reveal
+
+- Founder acceptance covers the functional centre-podium plumbing: the approved clean Workshop scene replaces the obsolete sloped-console runtime scene; initial Workshop entry restores the active candidate without Prototype-bench selection; source-bound validated geometry appears directly on the circular podium; a valid Visual Concept remains the prominent fallback when 3D is unavailable; and the empty state appears only when no valid candidate exists.
+- The stage retains one `Prototype3DViewer` mount and exactly one transparent Three.js Canvas. The lower live-panel region is contained, parent-local transforms compose correctly, and candidate/geometry family, candidate-ID, and revision binding remains enforced.
+- Provider-free visual evidence proves the portable STOP/GO working hierarchy: base; two mounted wheels with visible hubs; four connected stabilisers and four grounded feet; lower and upper pole; circular 24-sided housing; opposite STOP/GO faces; perimeter lights; remote and holder; and a bounded vertical rotation joint. The base remains grounded while the housing rotates.
+- This is a functional geometry/podium checkpoint, not final Workshop cosmetic acceptance or fabrication approval. The deterministic geometry remains a working engineering representation. Finer materials, detailed component styling, higher-fidelity product geometry, base-focused camera retargeting, lower decision-panel content, and the complete Workshop visual treatment remain future work; the latter presentation work belongs to Build 1E-B2B. Final native `1920 × 900` and responsive live acceptance remains pending.
+- Unsupported designs continue to use the truthful Visual Concept fallback. Production authentication, Project-level object authorization, rate limiting, cost-abuse protection, and secure object storage remain required before public release.
 
 Protected previous foundation:
 
