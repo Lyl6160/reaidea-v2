@@ -10,6 +10,7 @@ for (const wording of [
   "VIEW WHAT I TOLD REV",
   "READY TO CREATE 3D",
   "ADD THIS TO REV’S UNDERSTANDING",
+  "VERIFIED FROM YOUR INFORMATION",
 ]) {
   assert.match(component, new RegExp(wording.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 }
@@ -19,6 +20,8 @@ assert.doesNotMatch(component, /SECURE MY ANSWER/);
 
 assert.match(component, /aria-live="polite"/);
 assert.match(component, /aria-busy=\{busy\}/);
+assert.match(component, /notice && !error/);
+assert.match(component, /role="status"/);
 assert.match(styles, /prefers-reduced-motion:\s*reduce/);
 assert.doesNotMatch(component + styles, /\b\d{1,3}%\b|countdown|setInterval|setTimeout|spinner/i);
 

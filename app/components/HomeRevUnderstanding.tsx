@@ -20,6 +20,7 @@ type HomeRevUnderstandingProps = {
   selectedChoiceId: string;
   busy: boolean;
   error: string;
+  notice: string;
   securedKnowledgeEventId: string | null;
   onAnswerChange: (value: string) => void;
   onChoiceChange: (choiceId: string) => void;
@@ -42,6 +43,7 @@ const stateLabels: Record<HomeUnderstandingState, string> = {
 
 function factLabel(fact: ActiveHomeKnowledge): string {
   if (fact.authority === "rev-recommended") return "REV WORKING ASSUMPTION";
+  if (fact.sourceKind === "semantic-derivation") return "VERIFIED FROM YOUR INFORMATION";
   if (fact.authority === "derived-support") return "SUPPORTING REFERENCE";
   return fact.sourceKind === "original-description" ? "FROM YOUR DESCRIPTION" : "YOUR ANSWER";
 }
@@ -56,6 +58,7 @@ export default function HomeRevUnderstanding({
   selectedChoiceId,
   busy,
   error,
+  notice,
   securedKnowledgeEventId,
   onAnswerChange,
   onChoiceChange,
@@ -174,6 +177,7 @@ export default function HomeRevUnderstanding({
               <button type="button" onClick={onRetry} disabled={busy}>TRY THIS STEP AGAIN</button>
             </div>
           )}
+          {notice && !error && <p className={styles.emptyKnowledge} role="status">{notice}</p>}
         </section>
       </div>
     </section>

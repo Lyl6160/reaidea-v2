@@ -1,4 +1,17 @@
 import type { Project, ProjectTimelineEvent } from "../core/project";
+import {
+  REV_UNDERSTANDING_CATEGORIES,
+  REV_UNDERSTANDING_CONTRACT_VERSION,
+  REV_UNDERSTANDING_OPERATION_KIND,
+  deriveAcceptedBindingDigest,
+  deriveKnowledgeBasisRevision,
+  deriveRevUnderstandingOperationKey,
+  type RevUnderstandingAccounting,
+  type RevUnderstandingApiResponse,
+  type RevUnderstandingErrorCategory,
+  type RevUnderstandingProposal,
+  type RevUnderstandingRequest,
+} from "../ai/revUnderstandingTypes";
 
 export const HOME_UNDERSTANDING_STAGES = [
   "IDEA CAPTURED",
@@ -20,24 +33,14 @@ export type HomeUnderstandingState =
   | "READY_TO_CREATE_3D"
   | "SAFE_ERROR_OR_RETRY";
 
-export type HomeKnowledgeCategory =
-  | "purpose-use"
-  | "overall-form"
-  | "major-parts"
-  | "spatial-relationship"
-  | "operating-relationship"
-  | "size-proportion"
-  | "interaction-point"
-  | "constraint"
-  | "must-have"
-  | "must-avoid"
-  | "reference-evidence";
+export type HomeKnowledgeCategory = (typeof REV_UNDERSTANDING_CATEGORIES)[number];
 
 export type HomeKnowledgeSourceKind =
   | "original-description"
   | "inventor-answer"
   | "cleared-reference"
-  | "rev-recommendation";
+  | "rev-recommendation"
+  | "semantic-derivation";
 
 export type HomeKnowledgeAuthority =
   | "inventor-authored"
@@ -77,6 +80,7 @@ export type HomeUnderstandingQuestionRecord = {
   prompt: string;
   choices: HomeQuestionChoice[];
   recommendation?: HomeRecommendation;
+  interpretiveProposal?: RevUnderstandingProposal;
   sequence: number;
   createdAt: string;
 };
@@ -88,10 +92,25 @@ export type HomePresentationClaim = {
   createdAt: string;
 };
 
+export type HomeUnderstandingOperationReceipt = {
+  version: 1;
+  operationId: string;
+  operationKey: string;
+  knowledgeBasisRevision: string;
+  acceptedBindingDigest: string;
+  operationKind: typeof REV_UNDERSTANDING_OPERATION_KIND;
+  status: "started" | "completed" | "fallback" | "failed" | "stale";
+  accounting: RevUnderstandingAccounting;
+  errorCategory?: RevUnderstandingErrorCategory;
+  createdAt: string;
+  completedAt?: string;
+};
+
 export type HomeUnderstandingTimelineMetadata =
   | { kind: "knowledge"; knowledge: HomeKnowledgeRecord }
   | { kind: "question"; question: HomeUnderstandingQuestionRecord }
-  | { kind: "presentation-claim"; claim: HomePresentationClaim };
+  | { kind: "presentation-claim"; claim: HomePresentationClaim }
+  | { kind: "operation-receipt"; receipt: HomeUnderstandingOperationReceipt };
 
 export type ActiveHomeKnowledge = HomeKnowledgeRecord & { eventId: string };
 export type ActiveHomeQuestion = HomeUnderstandingQuestionRecord & { eventId: string };
@@ -130,12 +149,15 @@ export function isMatchingHomeProject(
 const categoryLabels: Record<HomeKnowledgeCategory, string> = {
   "purpose-use": "Purpose and use",
   "overall-form": "Overall form",
+  "intended-user": "Intended user",
   "major-parts": "Key parts",
   "spatial-relationship": "Part arrangement",
   "operating-relationship": "Working relationship",
   "size-proportion": "Size and proportion",
   "interaction-point": "Inventor interaction",
   constraint: "Constraint",
+  comparison: "Comparison",
+  contrast: "Contrast",
   "must-have": "Must-have",
   "must-avoid": "Must-avoid",
   "reference-evidence": "Reference evidence",
@@ -306,9 +328,260 @@ export function deriveBlockingHomeConflicts(project: Project): string[] {
   return conflicts;
 }
 
+function revKnowledgeInput(project: Project) {
+  return deriveActiveHomeKnowledge(project).map((record) => ({
+    eventId: record.eventId,
+    category: record.category,
+    value: record.value,
+    sourceKind: record.sourceKind,
+    sourceReference: record.sourceReference,
+    authority: record.authority,
+    reversibleAssumption: record.reversibleAssumption,
+    ...(record.questionEventId ? { questionEventId: record.questionEventId } : {}),
+    ...(record.supersedesEventId ? { supersedesEventId: record.supersedesEventId } : {}),
+    supportingSourceIds: record.supportingSourceIds ? [...record.supportingSourceIds] : [],
+  }));
+}
+
+export function deriveHomeKnowledgeBasisRevision(project: Project): string {
+  return deriveKnowledgeBasisRevision({
+    originalDescription: project.originalObservation,
+    originIntent: project.originIntent ?? null,
+    activeKnowledge: revKnowledgeInput(project),
+    blockingConflictEventIds: deriveBlockingHomeConflicts(project),
+  });
+}
+
+export function deriveHomeAcceptedBindingDigest(project: Project): string {
+  return deriveAcceptedBindingDigest(revKnowledgeInput(project));
+}
+
+export function createHomeRevUnderstandingRequest(project: Project, operationId: string): RevUnderstandingRequest {
+  const activeKnowledge = revKnowledgeInput(project);
+  const knowledgeBasisRevision = deriveHomeKnowledgeBasisRevision(project);
+  const acceptedBindingDigest = deriveAcceptedBindingDigest(activeKnowledge);
+  const answered = new Set(activeKnowledge.map((record) => record.questionEventId).filter(Boolean));
+  const coverage = deriveHomeEvidenceCoverage(project);
+  return {
+    version: REV_UNDERSTANDING_CONTRACT_VERSION,
+    operationId,
+    operationKind: REV_UNDERSTANDING_OPERATION_KIND,
+    operationKey: deriveRevUnderstandingOperationKey({ projectId: project.id, knowledgeBasisRevision, acceptedBindingDigest }),
+    projectId: project.id,
+    knowledgeBasisRevision,
+    acceptedBindingDigest,
+    originalDescriptionSource: { id: "project.originalObservation", text: project.originalObservation },
+    originIntent: project.originIntent ?? null,
+    activeKnowledge,
+    unresolvedConflictEventIds: deriveBlockingHomeConflicts(project),
+    meterCoverage: { completedStages: coverage.completedStages, ready: coverage.ready },
+    previousQuestions: project.timeline.filter(isQuestionEvent).slice(-24).map((entry) => ({
+      eventId: entry.id,
+      targetCategory: entry.homeUnderstanding.question.targetCategory,
+      answered: answered.has(entry.id),
+    })),
+    mustHaves: activeKnowledge.filter((record) => record.category === "must-have").map((record) => record.value).slice(0, 12),
+    mustAvoids: activeKnowledge.filter((record) => record.category === "must-avoid").map((record) => record.value).slice(0, 12),
+    reversibleAssumptions: activeKnowledge.filter((record) => record.reversibleAssumption).map((record) => record.value).slice(0, 12),
+    permittedTargetCategories: REV_UNDERSTANDING_CATEGORIES.filter((category) => category !== "reference-evidence"),
+  };
+}
+
+export function recordHomeUnderstandingOperationStarted(
+  project: Project,
+  request: RevUnderstandingRequest,
+  factory: HomeUnderstandingEventFactory
+): { project: Project; receiptEventId: string } {
+  if (project.id !== request.projectId || deriveHomeKnowledgeBasisRevision(project) !== request.knowledgeBasisRevision ||
+    deriveHomeAcceptedBindingDigest(project) !== request.acceptedBindingDigest) {
+    return { project, receiptEventId: "" };
+  }
+  const receiptEventId = factory.nextId();
+  const addition: ProjectTimelineEvent = {
+    id: receiptEventId,
+    type: "home-understanding-operation-recorded",
+    title: "REV understanding operation started",
+    description: "A bounded Home understanding operation was recorded without storing inventor content.",
+    createdAt: factory.now,
+    homeUnderstanding: {
+      kind: "operation-receipt",
+      receipt: {
+        version: 1,
+        operationId: request.operationId,
+        operationKey: request.operationKey,
+        knowledgeBasisRevision: request.knowledgeBasisRevision,
+        acceptedBindingDigest: request.acceptedBindingDigest,
+        operationKind: REV_UNDERSTANDING_OPERATION_KIND,
+        status: "started",
+        accounting: {
+          deliberateRouteRequests: 0,
+          mockExecutions: 0,
+          externalProviderAttempts: 0,
+          acceptedExplicitDerivations: 0,
+          interpretiveProposals: 0,
+          persistedQuestions: 0,
+          fallbackPresentations: 0,
+        },
+        createdAt: factory.now,
+      },
+    },
+  };
+  return { project: withEvents(project, [addition], factory.now), receiptEventId };
+}
+
+export function applyHomeRevUnderstandingResponse(
+  project: Project,
+  request: RevUnderstandingRequest,
+  response: RevUnderstandingApiResponse,
+  factory: HomeUnderstandingEventFactory
+): { project: Project; questionEventId: string | null } | null {
+  if (project.id !== request.projectId || response.status !== "completed" ||
+    response.projectId !== request.projectId || response.operationId !== request.operationId ||
+    response.operationKey !== request.operationKey || response.knowledgeBasisRevision !== request.knowledgeBasisRevision ||
+    deriveHomeKnowledgeBasisRevision(project) !== request.knowledgeBasisRevision || getActiveHomeQuestion(project)) return null;
+
+  const additions: ProjectTimelineEvent[] = [];
+  const existingSources = sourceEventIds(project);
+  existingSources.add("project.originalObservation");
+  const active = deriveActiveHomeKnowledge(project);
+
+  for (const fact of response.acceptedDerivations) {
+    if (!fact.sourceIds.every((sourceId) => existingSources.has(sourceId)) ||
+      active.some((record) => record.category === fact.category && normalize(record.value) === normalize(fact.value))) continue;
+    additions.push({
+      id: factory.nextId(),
+      type: "home-understanding-knowledge-recorded",
+      title: categoryLabels[fact.category],
+      description: "A deterministic source-backed derivation was secured as supporting Project knowledge.",
+      createdAt: factory.now,
+      homeUnderstanding: {
+        kind: "knowledge",
+        knowledge: {
+          version: 1,
+          category: fact.category,
+          value: bounded(fact.value),
+          sourceKind: "semantic-derivation",
+          sourceReference: fact.sourceIds[0],
+          authority: "derived-support",
+          reversibleAssumption: false,
+          supportingSourceIds: [...fact.sourceIds],
+          sequence: project.timeline.length + additions.length,
+          createdAt: factory.now,
+        },
+      },
+    });
+  }
+
+  let questionEventId: string | null = null;
+  const withDerivations = additions.length ? withEvents(project, additions, factory.now) : project;
+  const localCategory = !deriveHomeEvidenceCoverage(withDerivations).ready
+    ? selectSmallestMissingHomeCategory(withDerivations)
+    : null;
+  const questionToPersist = response.question ?? (localCategory ? questionForCategory(withDerivations, localCategory) : null);
+  if (questionToPersist && !deriveHomeEvidenceCoverage(withDerivations).ready) {
+    questionEventId = factory.nextId();
+    additions.push({
+      id: questionEventId,
+      type: "home-understanding-question-recorded",
+      title: "REV asked one useful question",
+      description: "One bounded Home understanding question was persisted for deliberate inventor input.",
+      createdAt: factory.now,
+      homeUnderstanding: {
+        kind: "question",
+        question: {
+          version: 1,
+          targetCategory: questionToPersist.targetCategory,
+          prompt: questionToPersist.prompt,
+          choices: questionToPersist.choices,
+          ...("recommendation" in questionToPersist && questionToPersist.recommendation ? { recommendation: questionToPersist.recommendation } : {}),
+          ...("proposal" in questionToPersist && questionToPersist.proposal ? { interpretiveProposal: questionToPersist.proposal } : {}),
+          sequence: project.timeline.length + additions.length,
+          createdAt: factory.now,
+        },
+      },
+    });
+  }
+
+  const persistedDerivations = additions.filter((entry) => entry.homeUnderstanding?.kind === "knowledge").length;
+  const accounting = {
+    ...response.accounting,
+    acceptedExplicitDerivations: persistedDerivations,
+    persistedQuestions: questionEventId ? 1 : 0,
+  };
+  additions.push(operationCompletionEvent(project, request, accounting, "completed", factory));
+  return { project: withEvents(project, additions, factory.now), questionEventId };
+}
+
+export function applyHomeRevUnderstandingFallback(
+  project: Project,
+  request: RevUnderstandingRequest,
+  response: Extract<RevUnderstandingApiResponse, { status: "fallback" | "disabled" }>,
+  factory: HomeUnderstandingEventFactory
+): Project | null {
+  if (project.id !== request.projectId || deriveHomeKnowledgeBasisRevision(project) !== request.knowledgeBasisRevision ||
+    (response.projectId !== undefined && response.projectId !== request.projectId) ||
+    (response.operationId !== undefined && response.operationId !== request.operationId) ||
+    (response.operationKey !== undefined && response.operationKey !== request.operationKey) ||
+    (response.knowledgeBasisRevision !== undefined && response.knowledgeBasisRevision !== request.knowledgeBasisRevision)) return null;
+  let fallbackProject = project;
+  if (!deriveHomeEvidenceCoverage(fallbackProject).ready && !getActiveHomeQuestion(fallbackProject)) {
+    fallbackProject = ensureHomeUnderstandingQuestion(fallbackProject, factory);
+  }
+  const completion = operationCompletionEvent(fallbackProject, request, response.accounting, "fallback", factory, response.errorCategory);
+  return withEvents(fallbackProject, [completion], factory.now);
+}
+
+export function recordHomeRevUnderstandingStale(
+  project: Project,
+  request: RevUnderstandingRequest,
+  accounting: RevUnderstandingAccounting,
+  factory: HomeUnderstandingEventFactory
+): Project {
+  if (project.id !== request.projectId) return project;
+  return withEvents(project, [operationCompletionEvent(project, request, accounting, "stale", factory, "stale")], factory.now);
+}
+
+function operationCompletionEvent(
+  project: Project,
+  request: RevUnderstandingRequest,
+  accounting: RevUnderstandingAccounting,
+  status: "completed" | "fallback" | "failed" | "stale",
+  factory: HomeUnderstandingEventFactory,
+  errorCategory?: RevUnderstandingErrorCategory
+): ProjectTimelineEvent {
+  return {
+    id: factory.nextId(),
+    type: "home-understanding-operation-recorded",
+    title: `REV understanding operation ${status}`,
+    description: "A safe Home understanding operation status was recorded without inventor content.",
+    createdAt: factory.now,
+    homeUnderstanding: {
+      kind: "operation-receipt",
+      receipt: {
+        version: 1,
+        operationId: request.operationId,
+        operationKey: request.operationKey,
+        knowledgeBasisRevision: request.knowledgeBasisRevision,
+        acceptedBindingDigest: request.acceptedBindingDigest,
+        operationKind: REV_UNDERSTANDING_OPERATION_KIND,
+        status,
+        accounting,
+        ...(errorCategory ? { errorCategory } : {}),
+        createdAt: project.timeline.find((entry) => entry.homeUnderstanding?.kind === "operation-receipt" &&
+          entry.homeUnderstanding.receipt.operationId === request.operationId)?.createdAt ?? factory.now,
+        completedAt: factory.now,
+      },
+    },
+  };
+}
+
 export function deriveHomeEvidenceCoverage(project: Project): HomeEvidenceCoverage {
   const active = deriveActiveHomeKnowledge(project);
-  const authored = active.filter((record) => record.authority === "inventor-authored" || record.authority === "rev-recommended");
+  const authored = active.filter((record) =>
+    record.authority === "inventor-authored" ||
+    record.authority === "rev-recommended" ||
+    (record.authority === "derived-support" && record.sourceKind === "semantic-derivation")
+  );
   const has = (category: HomeKnowledgeCategory) => authored.some((record) => record.category === category);
   const conflicts = deriveBlockingHomeConflicts(project);
   const completedStages: HomeUnderstandingStage[] = ["IDEA CAPTURED"];
@@ -665,6 +938,8 @@ export function normalizeHomeUnderstandingMetadata(value: unknown): HomeUndersta
       typeof recommendation.value !== "string" || recommendation.value.length > 700 ||
       !Array.isArray(recommendation.supportingSourceIds) || recommendation.supportingSourceIds.length > 8 ||
       !recommendation.supportingSourceIds.every((id) => typeof id === "string" && id.length <= 200))) return null;
+    const proposal = question.interpretiveProposal;
+    if (proposal && (!isInterpretiveProposal(proposal) || proposal.targetCategory !== question.targetCategory)) return null;
     return {
       kind: "question",
       question: {
@@ -673,6 +948,7 @@ export function normalizeHomeUnderstandingMetadata(value: unknown): HomeUndersta
         prompt: question.prompt.trim(),
         choices: question.choices.map((choice) => ({ id: choice.id, label: choice.label, value: choice.value })),
         ...(recommendation ? { recommendation: { label: recommendation.label, value: recommendation.value, supportingSourceIds: [...recommendation.supportingSourceIds] } } : {}),
+        ...(proposal ? { interpretiveProposal: proposal } : {}),
         sequence: question.sequence as number,
         createdAt: question.createdAt,
       },
@@ -685,7 +961,44 @@ export function normalizeHomeUnderstandingMetadata(value: unknown): HomeUndersta
       typeof claim.createdAt !== "string") return null;
     return { kind: "presentation-claim", claim: claim as HomePresentationClaim };
   }
+  if (metadata.kind === "operation-receipt") {
+    const receipt = metadata.receipt as Partial<HomeUnderstandingOperationReceipt> | undefined;
+    if (!receipt || receipt.version !== 1 || typeof receipt.operationId !== "string" || !receipt.operationId.trim() || receipt.operationId.length > 120 ||
+      typeof receipt.operationKey !== "string" || !receipt.operationKey.trim() || receipt.operationKey.length > 160 ||
+      typeof receipt.knowledgeBasisRevision !== "string" || !receipt.knowledgeBasisRevision.trim() || receipt.knowledgeBasisRevision.length > 160 ||
+      typeof receipt.acceptedBindingDigest !== "string" || !receipt.acceptedBindingDigest.trim() || receipt.acceptedBindingDigest.length > 160 ||
+      receipt.operationKind !== REV_UNDERSTANDING_OPERATION_KIND || !["started", "completed", "fallback", "failed", "stale"].includes(String(receipt.status)) ||
+      !isOperationAccounting(receipt.accounting) || typeof receipt.createdAt !== "string" ||
+      (receipt.completedAt !== undefined && typeof receipt.completedAt !== "string") ||
+      (receipt.errorCategory !== undefined && !isOperationErrorCategory(receipt.errorCategory))) return null;
+    return { kind: "operation-receipt", receipt: receipt as HomeUnderstandingOperationReceipt };
+  }
   return null;
+}
+
+function isInterpretiveProposal(value: unknown): value is RevUnderstandingProposal {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const proposal = value as Partial<RevUnderstandingProposal>;
+  return proposal.resultClass === "interpretive-proposal" && proposal.questionKind === "confirm-interpretation" &&
+    typeof proposal.proposalId === "string" && proposal.proposalId.length > 0 && proposal.proposalId.length <= 120 &&
+    isHomeKnowledgeCategory(proposal.targetCategory) && typeof proposal.proposalText === "string" &&
+    proposal.proposalText.length > 0 && proposal.proposalText.length <= 120 && Array.isArray(proposal.basisSourceIds) &&
+    proposal.basisSourceIds.length > 0 && proposal.basisSourceIds.length <= 3 &&
+    proposal.basisSourceIds.every((id) => typeof id === "string" && id.length > 0 && id.length <= 200);
+}
+
+function isOperationAccounting(value: unknown): value is RevUnderstandingAccounting {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const accounting = value as Record<string, unknown>;
+  const keys = ["deliberateRouteRequests", "mockExecutions", "externalProviderAttempts", "acceptedExplicitDerivations", "interpretiveProposals", "persistedQuestions", "fallbackPresentations"];
+  return Object.keys(accounting).length === keys.length && keys.every((key) => Number.isInteger(accounting[key]) && Number(accounting[key]) >= 0);
+}
+
+function isOperationErrorCategory(value: unknown): value is RevUnderstandingErrorCategory {
+  return typeof value === "string" && [
+    "disabled", "invalid-request", "origin-rejected", "malformed-response", "oversized-response",
+    "unsafe-response", "repeated-question", "unsupported-source", "timeout", "unavailable", "stale", "duplicate",
+  ].includes(value);
 }
 
 function isChoice(value: unknown): value is HomeQuestionChoice {
@@ -701,7 +1014,7 @@ function isHomeKnowledgeCategory(value: unknown): value is HomeKnowledgeCategory
 }
 
 function isSourceKind(value: unknown): value is HomeKnowledgeSourceKind {
-  return value === "original-description" || value === "inventor-answer" || value === "cleared-reference" || value === "rev-recommendation";
+  return value === "original-description" || value === "inventor-answer" || value === "cleared-reference" || value === "rev-recommendation" || value === "semantic-derivation";
 }
 
 function isAuthority(value: unknown): value is HomeKnowledgeAuthority {

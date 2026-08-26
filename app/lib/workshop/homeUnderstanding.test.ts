@@ -4,16 +4,22 @@ import fs from "node:fs";
 import { createProject, type Project } from "../core/project";
 import {
   HOME_UNDERSTANDING_STAGES,
+  applyHomeRevUnderstandingFallback,
+  applyHomeRevUnderstandingResponse,
   claimHomeKnowledgePresentation,
+  createHomeRevUnderstandingRequest,
   createInitialHomeKnowledge,
   deriveActiveHomeKnowledge,
   deriveBlockingHomeConflicts,
   deriveHomeEvidenceCoverage,
+  deriveHomeKnowledgeBasisRevision,
   ensureHomeUnderstandingQuestion,
   getActiveHomeQuestion,
   getPulseEligibleKnowledge,
   isMatchingHomeProject,
   recordHomeUnderstandingAnswer,
+  recordHomeUnderstandingOperationStarted,
+  recordHomeRevUnderstandingStale,
   type HomeUnderstandingEventFactory,
 } from "./homeUnderstanding";
 
@@ -172,5 +178,153 @@ conflictProject.timeline.push({
   homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: activeQuestion.targetCategory, value: "Corrected answer", sourceKind: "inventor-answer", sourceReference: "fixture", authority: "inventor-authored", reversibleAssumption: false, questionEventId: activeQuestion.eventId, supersedesEventId: "conflict-b", sequence: 92, createdAt: "2026-08-26T10:03:00.000Z" } },
 });
 assert.ok(!deriveActiveHomeKnowledge(conflictProject).some((fact) => fact.eventId === "conflict-b"), "superseded knowledge must not remain active");
+
+let semanticProject = createInitialHomeKnowledge(
+  project("A wearable frame with a retaining strap that helps keep eye protection in place."),
+  [],
+  factory("semantic-seed")
+);
+const semanticRequest = createHomeRevUnderstandingRequest(semanticProject, "semantic-operation");
+const semanticStarted = recordHomeUnderstandingOperationStarted(semanticProject, semanticRequest, factory("semantic-start"));
+semanticProject = semanticStarted.project;
+const semanticApplied = applyHomeRevUnderstandingResponse(semanticProject, semanticRequest, {
+  status: "completed",
+  operationId: semanticRequest.operationId,
+  operationKey: semanticRequest.operationKey,
+  projectId: semanticRequest.projectId,
+  knowledgeBasisRevision: semanticRequest.knowledgeBasisRevision,
+  acceptedDerivations: [{ resultClass: "verified-explicit-derivation", category: "major-parts", value: "retaining strap", sourceIds: ["project.originalObservation"] }],
+  question: {
+    targetCategory: "spatial-relationship",
+    prompt: "REV thinks the retaining strap sits behind the head. Is that what you mean?",
+    choices: [{ id: "confirm-proposal", label: "YES — THAT’S RIGHT", value: "The retaining strap sits behind the head." }],
+    proposal: { resultClass: "interpretive-proposal", proposalId: "semantic-proposal", targetCategory: "spatial-relationship", proposalText: "the retaining strap sits behind the head", basisSourceIds: ["project.originalObservation"], questionKind: "confirm-interpretation" },
+  },
+  accounting: { deliberateRouteRequests: 1, mockExecutions: 1, externalProviderAttempts: 0, acceptedExplicitDerivations: 1, interpretiveProposals: 1, persistedQuestions: 1, fallbackPresentations: 0 },
+}, factory("semantic-apply"));
+assert.ok(semanticApplied);
+const semanticFacts = deriveActiveHomeKnowledge(semanticApplied!.project);
+assert.ok(semanticFacts.some((fact) => fact.sourceKind === "semantic-derivation" && fact.value === "retaining strap"), "verified explicit support may become active after persistence");
+assert.equal(semanticFacts.some((fact) => /behind the head/i.test(fact.value)), false, "an interpretive proposal must not become secured knowledge");
+assert.equal(getActiveHomeQuestion(semanticApplied!.project)?.interpretiveProposal?.proposalId, "semantic-proposal");
+assert.equal(semanticApplied!.project.timeline.filter((entry) => entry.homeUnderstanding?.kind === "question" && !deriveActiveHomeKnowledge(semanticApplied!.project).some((fact) => fact.questionEventId === entry.id)).length, 1, "only one active question may persist");
+assert.equal(semanticApplied!.project.timeline.at(-1)?.homeUnderstanding?.kind, "operation-receipt");
+
+const basisProject = createInitialHomeKnowledge(
+  project("A wearable frame that helps retain eye protection, with a front panel."),
+  [],
+  factory("basis-seed")
+);
+const originalBasis = deriveHomeKnowledgeBasisRevision(basisProject);
+assert.equal(deriveHomeKnowledgeBasisRevision(structuredClone(basisProject)), originalBasis, "the same semantic Project must reproduce its basis");
+const basisRequest = createHomeRevUnderstandingRequest(basisProject, "basis-operation");
+const startedOperation = recordHomeUnderstandingOperationStarted(basisProject, basisRequest, factory("basis-start"));
+assert.ok(startedOperation.receiptEventId);
+assert.equal(deriveHomeKnowledgeBasisRevision(startedOperation.project), originalBasis, "a started receipt must not stale its own basis");
+const fallbackProject = applyHomeRevUnderstandingFallback(startedOperation.project, basisRequest, {
+  status: "fallback",
+  operationId: basisRequest.operationId,
+  operationKey: basisRequest.operationKey,
+  projectId: basisRequest.projectId,
+  knowledgeBasisRevision: basisRequest.knowledgeBasisRevision,
+  message: "REV is continuing with the information already secured.",
+  errorCategory: "unavailable",
+  accounting: {
+    deliberateRouteRequests: 1,
+    mockExecutions: 1,
+    externalProviderAttempts: 0,
+    acceptedExplicitDerivations: 0,
+    interpretiveProposals: 0,
+    persistedQuestions: 1,
+    fallbackPresentations: 1,
+  },
+}, factory("basis-fallback"));
+assert.ok(fallbackProject);
+assert.equal(deriveHomeKnowledgeBasisRevision(fallbackProject!), originalBasis, "completed/fallback receipts and unanswered questions must not change the basis");
+assert.equal(deriveHomeKnowledgeBasisRevision({ ...basisProject, updatedAt: "2099-01-01T00:00:00.000Z" }), originalBasis, "updatedAt must not affect the basis");
+const unrelatedA = { id: "unrelated-a", type: "knowledge-input-recorded" as const, title: "Unrelated", description: "Unrelated fixture event.", createdAt: "2026-08-26T10:05:00.000Z" };
+const unrelatedB = { id: "unrelated-b", type: "knowledge-input-recorded" as const, title: "Unrelated", description: "Another unrelated fixture event.", createdAt: "2026-08-26T10:06:00.000Z" };
+assert.equal(
+  deriveHomeKnowledgeBasisRevision({ ...basisProject, timeline: [...basisProject.timeline, unrelatedA, unrelatedB] }),
+  deriveHomeKnowledgeBasisRevision({ ...basisProject, timeline: [...basisProject.timeline, unrelatedB, unrelatedA] }),
+  "reordering unrelated timeline events must not affect the basis"
+);
+
+const answerBasisProject = ensureHomeUnderstandingQuestion(basisProject, factory("basis-question"));
+const answerQuestion = getActiveHomeQuestion(answerBasisProject);
+assert.ok(answerQuestion);
+const beforeAnswerBasis = deriveHomeKnowledgeBasisRevision(answerBasisProject);
+const basisAnswer = recordHomeUnderstandingAnswer(answerBasisProject, answerQuestion.eventId, { kind: "own-words", value: "A flexible retaining strap behind the head." }, factory("basis-answer"));
+assert.equal(basisAnswer.kind, "recorded");
+assert.notEqual(basisAnswer.kind === "recorded" && deriveHomeKnowledgeBasisRevision(basisAnswer.project), beforeAnswerBasis, "an accepted inventor answer must change the basis");
+if (basisAnswer.kind === "recorded") {
+  const answerBasis = deriveHomeKnowledgeBasisRevision(basisAnswer.project);
+  const presentation = claimHomeKnowledgePresentation(basisAnswer.project, basisAnswer.knowledgeEventId, factory("basis-presentation"));
+  assert.equal(deriveHomeKnowledgeBasisRevision(presentation), answerBasis, "a presentation claim must not change the basis");
+  const corrected = structuredClone(basisAnswer.project);
+  corrected.timeline.push({
+    id: "basis-correction",
+    type: "home-understanding-knowledge-recorded",
+    title: "Correction",
+    description: "Inventor correction fixture.",
+    createdAt: "2026-08-26T10:07:00.000Z",
+    homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: answerQuestion.targetCategory, value: "A fixed retaining band behind the head.", sourceKind: "inventor-answer", sourceReference: "timeline.answer", authority: "inventor-authored", reversibleAssumption: false, questionEventId: answerQuestion.eventId, supersedesEventId: basisAnswer.knowledgeEventId, sequence: 100, createdAt: "2026-08-26T10:07:00.000Z" } },
+  });
+  assert.notEqual(deriveHomeKnowledgeBasisRevision(corrected), answerBasis, "a correction must change the basis");
+}
+
+const assumptionProject = structuredClone(basisProject);
+assumptionProject.timeline.push({
+  id: "assumption-a",
+  type: "home-understanding-knowledge-recorded",
+  title: "Assumption",
+  description: "Reversible assumption fixture.",
+  createdAt: "2026-08-26T10:08:00.000Z",
+  homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: "size-proportion", value: "Use balanced first-concept proportions.", sourceKind: "rev-recommendation", sourceReference: "fixture", authority: "rev-recommended", reversibleAssumption: true, sequence: 101, createdAt: "2026-08-26T10:08:00.000Z" } },
+});
+const assumptionBasis = deriveHomeKnowledgeBasisRevision(assumptionProject);
+const assumptionRequest = createHomeRevUnderstandingRequest(assumptionProject, "stale-operation");
+assumptionProject.timeline.push({
+  id: "assumption-b",
+  type: "home-understanding-knowledge-recorded",
+  title: "Assumption replaced",
+  description: "Inventor replaced a reversible assumption.",
+  createdAt: "2026-08-26T10:09:00.000Z",
+  homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: "size-proportion", value: "Use a wider front panel.", sourceKind: "inventor-answer", sourceReference: "fixture", authority: "inventor-authored", reversibleAssumption: false, supersedesEventId: "assumption-a", sequence: 102, createdAt: "2026-08-26T10:09:00.000Z" } },
+});
+assert.notEqual(deriveHomeKnowledgeBasisRevision(assumptionProject), assumptionBasis, "superseding an assumption must change the basis");
+const changedAssumptionBasis = deriveHomeKnowledgeBasisRevision(assumptionProject);
+const staleRecorded = recordHomeRevUnderstandingStale(
+  assumptionProject,
+  assumptionRequest,
+  {
+    deliberateRouteRequests: 1,
+    mockExecutions: 1,
+    externalProviderAttempts: 0,
+    acceptedExplicitDerivations: 0,
+    interpretiveProposals: 0,
+    persistedQuestions: 0,
+    fallbackPresentations: 0,
+  },
+  factory("stale-receipt")
+);
+assert.equal(deriveHomeKnowledgeBasisRevision(staleRecorded), changedAssumptionBasis, "a stale receipt must not alter current Project knowledge");
+const staleMetadata = staleRecorded.timeline.at(-1)?.homeUnderstanding;
+assert.equal(staleMetadata?.kind === "operation-receipt" && staleMetadata.receipt.status, "stale");
+assert.equal(staleMetadata?.kind === "operation-receipt" && staleMetadata.receipt.accounting.mockExecutions, 1, "a stale receipt must preserve confirmed operation accounting");
+
+let conflictBasisProject = createInitialHomeKnowledge(project("A device that helps position a panel."), [], factory("basis-conflict-seed"));
+conflictBasisProject = ensureHomeUnderstandingQuestion(conflictBasisProject, factory("basis-conflict-question"));
+const basisConflictQuestion = getActiveHomeQuestion(conflictBasisProject)!;
+for (const [id, value, sequence] of [["basis-conflict-a", "A freestanding body.", 110], ["basis-conflict-b", "A mounted body.", 111]] as const) {
+  conflictBasisProject.timeline.push({ id, type: "home-understanding-knowledge-recorded", title: "Conflict", description: "Conflict fixture.", createdAt: `2026-08-26T10:${sequence}:00.000Z`, homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: basisConflictQuestion.targetCategory, value, sourceKind: "inventor-answer", sourceReference: "fixture", authority: "inventor-authored", reversibleAssumption: false, questionEventId: basisConflictQuestion.eventId, sequence, createdAt: `2026-08-26T10:${sequence}:00.000Z` } } });
+}
+assert.equal(deriveBlockingHomeConflicts(conflictBasisProject).length, 2);
+const unresolvedBasis = deriveHomeKnowledgeBasisRevision(conflictBasisProject);
+for (const [id, supersedes, sequence] of [["basis-resolution-a", "basis-conflict-a", 112], ["basis-resolution-b", "basis-conflict-b", 113]] as const) {
+  conflictBasisProject.timeline.push({ id, type: "home-understanding-knowledge-recorded", title: "Resolution", description: "Conflict resolution fixture.", createdAt: `2026-08-26T11:${sequence}:00.000Z`, homeUnderstanding: { kind: "knowledge", knowledge: { version: 1, category: basisConflictQuestion.targetCategory, value: "A mounted body.", sourceKind: "inventor-answer", sourceReference: "fixture", authority: "inventor-authored", reversibleAssumption: false, questionEventId: basisConflictQuestion.eventId, supersedesEventId: supersedes, sequence, createdAt: `2026-08-26T11:${sequence}:00.000Z` } } });
+}
+assert.equal(deriveBlockingHomeConflicts(conflictBasisProject).length, 0);
+assert.notEqual(deriveHomeKnowledgeBasisRevision(conflictBasisProject), unresolvedBasis, "resolving a conflict must change the basis");
 
 console.log("Provider-free Home understanding fixtures: PASS");

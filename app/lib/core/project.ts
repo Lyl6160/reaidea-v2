@@ -179,6 +179,7 @@ export type ProjectTimelineEventType =
   | "specialist-contribution-recorded"
   | "home-understanding-question-recorded"
   | "home-understanding-knowledge-recorded"
+  | "home-understanding-operation-recorded"
   | "home-understanding-presentation-claimed";
 
 export type ProjectTimelineEvent = {

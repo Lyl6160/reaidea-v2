@@ -19,19 +19,31 @@ import {
 } from "./lib/core/projectSourceEvidenceStorage";
 import {
   claimHomeKnowledgePresentation,
+  applyHomeRevUnderstandingFallback,
+  applyHomeRevUnderstandingResponse,
   createInitialHomeKnowledge,
+  createHomeRevUnderstandingRequest,
   deriveActiveHomeKnowledge,
   deriveHomeEvidenceCoverage,
+  deriveHomeKnowledgeBasisRevision,
   deriveHomeUnderstandingState,
   ensureHomeUnderstandingQuestion,
   getActiveHomeQuestion,
   getPulseEligibleKnowledge,
   isMatchingHomeProject,
+  recordHomeRevUnderstandingStale,
+  recordHomeUnderstandingOperationStarted,
   recordHomeUnderstandingAnswer,
   type HomeAnswerInput,
   type HomeUnderstandingEventFactory,
   type HomeUnderstandingState,
 } from "./lib/workshop/homeUnderstanding";
+import {
+  emptyRevUnderstandingAccounting,
+  parseRevUnderstandingApiResponse,
+  type RevUnderstandingApiResponse,
+  type RevUnderstandingRequest,
+} from "./lib/ai/revUnderstandingTypes";
 import type {
   RevImageSafetyReceipt,
   VisualUnderstandingApiResponse,
@@ -57,6 +69,8 @@ const HOME_CREATION_STATUS = [
 
 const CREATION_INTENT_UNAVAILABLE_MESSAGE = "REV couldn’t confirm the creation safety boundary. No Project was created.";
 const CREATION_INTENT_BLOCK_MESSAGE = "REV can’t help design, modify or improve weapons or explosive materials. I can help with safe storage, decommissioning, compliance, detection or protective systems.";
+const HAI2_MOCK_ROUTE_AVAILABLE = process.env.NEXT_PUBLIC_REAIDEA_HAI2_MOCK_CAPABILITY === "mock" && process.env.NODE_ENV !== "production";
+const HAI2_FALLBACK_MESSAGE = "REV is continuing with the information already secured.";
 
 type CreationIntentResponse =
   | { decision: "CLEAR"; limitations: string[] }
@@ -113,6 +127,7 @@ export default function Home() {
   const [answer, setAnswer] = useState("");
   const [selectedChoiceId, setSelectedChoiceId] = useState("");
   const [pulseKnowledgeEventId, setPulseKnowledgeEventId] = useState<string | null>(null);
+  const [understandingNotice, setUnderstandingNotice] = useState("");
   const [selectedImage, setSelectedImage] = useState<ValidatedSourceImage | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageBusy, setImageBusy] = useState(false);
@@ -305,6 +320,7 @@ export default function Home() {
     if (!originIntent || !description.trim() || project || actionRef.current || imageBusy || imageInvalid) return;
     actionRef.current = true;
     setPulseKnowledgeEventId(null);
+    setUnderstandingNotice("");
     setError("");
     setState("SAFETY_CHECKING");
     try {
@@ -345,8 +361,8 @@ export default function Home() {
       }
 
       nextProject = createInitialHomeKnowledge(nextProject, clearedReferences, newFactory());
-      nextProject = ensureHomeUnderstandingQuestion(nextProject, newFactory());
       nextProject = persistAndReload(nextProject);
+      nextProject = await prepareNextUnderstandingStep(nextProject);
       setProject(nextProject);
       setState(deriveHomeUnderstandingState(nextProject));
     } catch {
@@ -361,11 +377,12 @@ export default function Home() {
     }
   }
 
-  function answerQuestion(input: HomeAnswerInput) {
+  async function answerQuestion(input: HomeAnswerInput) {
     if (!project || !activeQuestion || actionRef.current) return;
     actionRef.current = true;
     setState("ANSWER_RECORDING");
     setError("");
+    setUnderstandingNotice("");
     setPulseKnowledgeEventId(null);
     try {
       const result = recordHomeUnderstandingAnswer(project, activeQuestion.eventId, input, newFactory());
@@ -379,8 +396,7 @@ export default function Home() {
       const claimId = claimed.timeline.at(-1)?.id;
       if (claimed === restored || !claimId) throw new Error("Presentation claim could not be secured.");
       restored = persistAndReload(claimed, claimId);
-      restored = ensureHomeUnderstandingQuestion(restored, newFactory());
-      restored = persistAndReload(restored);
+      restored = await prepareNextUnderstandingStep(restored);
       setProject(restored);
       setAnswer("");
       setSelectedChoiceId("");
@@ -396,8 +412,81 @@ export default function Home() {
     }
   }
 
+  async function prepareNextUnderstandingStep(currentProject: Project): Promise<Project> {
+    if (deriveHomeEvidenceCoverage(currentProject).ready || getActiveHomeQuestion(currentProject)) return currentProject;
+    if (!HAI2_MOCK_ROUTE_AVAILABLE) {
+      return persistAndReload(ensureHomeUnderstandingQuestion(currentProject, newFactory()));
+    }
+
+    setState("REV_ANALYSING");
+    const operationId = globalThis.crypto.randomUUID();
+    const request = createHomeRevUnderstandingRequest(currentProject, operationId);
+    const started = recordHomeUnderstandingOperationStarted(currentProject, request, newFactory());
+    if (!started.receiptEventId) throw new Error("The understanding operation could not bind to this Project.");
+    let restored = persistAndReload(started.project, started.receiptEventId);
+    if (deriveHomeKnowledgeBasisRevision(restored) !== request.knowledgeBasisRevision) {
+      throw new Error("The Project knowledge changed before the understanding operation began.");
+    }
+
+    let response: RevUnderstandingApiResponse;
+    try {
+      const routeResponse = await fetch("/api/understanding/text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+      });
+      const payload: unknown = await routeResponse.json();
+      response = parseRevUnderstandingApiResponse(payload) ?? localHai2Fallback(request, "malformed-response");
+    } catch {
+      response = localHai2Fallback(request, "unavailable");
+    }
+
+    const current = loadProject();
+    if (!current || current.id !== request.projectId) {
+      throw new Error("The Project knowledge changed while REV was organising it.");
+    }
+    if (deriveHomeKnowledgeBasisRevision(current) !== request.knowledgeBasisRevision) {
+      const stale = recordHomeRevUnderstandingStale(current, request, response.accounting, newFactory());
+      persistAndReload(stale, stale.timeline.at(-1)?.id);
+      throw new Error("The Project knowledge changed while REV was organising it.");
+    }
+
+    if (response.status === "completed") {
+      const applied = applyHomeRevUnderstandingResponse(current, request, response, newFactory());
+      if (!applied) throw new Error("The understanding response no longer matches this Project.");
+      restored = persistAndReload(applied.project, applied.project.timeline.at(-1)?.id);
+      return restored;
+    }
+
+    const fallback = applyHomeRevUnderstandingFallback(current, request, response, newFactory());
+    if (!fallback) throw new Error("The fallback no longer matches this Project.");
+    restored = persistAndReload(fallback, fallback.timeline.at(-1)?.id);
+    setUnderstandingNotice(HAI2_FALLBACK_MESSAGE);
+    return restored;
+  }
+
+  function localHai2Fallback(
+    request: RevUnderstandingRequest,
+    errorCategory: "malformed-response" | "unavailable"
+  ): Extract<RevUnderstandingApiResponse, { status: "fallback" | "disabled" }> {
+    return {
+      status: "fallback",
+      operationId: request.operationId,
+      operationKey: request.operationKey,
+      projectId: request.projectId,
+      knowledgeBasisRevision: request.knowledgeBasisRevision,
+      message: HAI2_FALLBACK_MESSAGE,
+      errorCategory,
+      accounting: emptyRevUnderstandingAccounting({
+        deliberateRouteRequests: 1,
+        fallbackPresentations: 1,
+      }),
+    };
+  }
+
   function retryCurrentStep() {
     setError("");
+    setUnderstandingNotice("");
     setPulseKnowledgeEventId(null);
     if (!project) {
       void askRev();
@@ -497,6 +586,7 @@ export default function Home() {
             selectedChoiceId={selectedChoiceId}
             busy={busy}
             error={error}
+            notice={understandingNotice}
             securedKnowledgeEventId={pulseKnowledgeEventId}
             onAnswerChange={(value) => { setAnswer(value); setError(""); setState("QUESTION_READY"); }}
             onChoiceChange={(choiceId) => { setSelectedChoiceId(choiceId); setError(""); setState("QUESTION_READY"); }}

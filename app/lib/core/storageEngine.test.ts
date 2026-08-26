@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 
 import { createProject } from "./project";
 import { parseProjectSnapshot } from "./storageEngine";
-import { createInitialHomeKnowledge, ensureHomeUnderstandingQuestion } from "../workshop/homeUnderstanding";
+import {
+  createHomeRevUnderstandingRequest,
+  createInitialHomeKnowledge,
+  ensureHomeUnderstandingQuestion,
+  recordHomeUnderstandingOperationStarted,
+} from "../workshop/homeUnderstanding";
 
 for (const originIntent of ["developing", "evaluating", "both"] as const) {
   const project = createProject({
@@ -49,5 +54,17 @@ assert.ok(restoredHomeProject?.timeline.some((event) => event.homeUnderstanding?
 const malformedHomeProject = structuredClone(homeProject);
 malformedHomeProject.timeline.at(-1)!.homeUnderstanding = { kind: "question", question: { version: 1 } } as never;
 assert.equal(parseProjectSnapshot(JSON.stringify(malformedHomeProject))?.timeline.at(-1)?.homeUnderstanding, undefined);
+
+const operationRequest = createHomeRevUnderstandingRequest(homeProject, "storage-operation");
+const operationProject = recordHomeUnderstandingOperationStarted(homeProject, operationRequest, {
+  now: "2026-08-26T10:02:00.000Z",
+  nextId: () => "home-operation-receipt",
+}).project;
+const restoredOperation = parseProjectSnapshot(JSON.stringify(operationProject));
+const restoredReceipt = restoredOperation?.timeline.find((event) => event.id === "home-operation-receipt")?.homeUnderstanding;
+assert.equal(restoredReceipt?.kind, "operation-receipt");
+assert.equal(restoredReceipt?.kind === "operation-receipt" && "externalProviderAttempts" in restoredReceipt.receipt, false, "accounting remains nested safe metadata");
+assert.equal(restoredReceipt?.kind === "operation-receipt" && restoredReceipt.receipt.accounting.externalProviderAttempts, 0);
+assert.equal(JSON.stringify(restoredReceipt).includes(operationProject.originalObservation), false, "operation receipts must not duplicate inventor text");
 
 console.log("Project origin intent storage fixtures: PASS");
