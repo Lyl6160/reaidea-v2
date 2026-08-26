@@ -1,19 +1,43 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `9f764cd84a21f3ccce9f72a5db5571965d05d97d`
+**Current safe committed checkpoint:** `a62b597e32f98669832f30956bc023eadbcc85e0`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** HP-24.40 Build 1E-B2A — Validated Centre-Podium 3D Reveal
+**Current hold point:** Documentation and Visual Authority reconciliation — founder approved, uncommitted
 
-**Current authorised construction step:** HP-24.40 Build 1E-B2A checkpoint
+**Current authorised construction step:** Documentation/visual-authority reconciliation only; no product implementation is authorised
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
-**Last governance update:** 2026-08-22
+**Last governance update:** 2026-08-26
 
-## Current Hold-Point Candidate
+## HP-24.40 Build 1E-C1-S1 — Description-Led Creation and Safety Provenance
+
+- The founder-accepted code checkpoint is committed and pushed at `a62b597e32f98669832f30956bc023eadbcc85e0`, with parent Build 1E-B2B-2 checkpoint `4171b8ee426ff7703617e3062b59ac5e5cdf4f8c` retained as history.
+- C1 live verdict: **PASS**. S1A live verdict: **PASS**. FIREARM-SAFETY-001 live verdict: **PASS**. Acceptance is limited to the tested representation routing, source-provenance separation and explicit firearm-construction BLOCK boundary.
+- The surf walkthrough recorded one creation-intent request (`200`), one image-understanding request (`200`), one local concept-generation request (`200`) and one external generation operation. The candidate persisted before navigation, unsupported geometry remained unavailable, Workshop opened with the truthful Visual Concept fallback, and refresh restored the same Project with zero regeneration.
+- The firearm walkthrough recorded one creation-intent request (`422`) with discriminator `BLOCK`. It created no Project, image-understanding request, concept-generation request, provider operation, candidate, geometry or Workshop navigation.
+- Interactive 3D geometry for the surf-goggle invention is unresolved and is not accepted. S1B's genuine safety-HOLD answer/resume experience remains deferred.
+- Authentication, Project/object authorization, rate limiting and secure production persistence remain open security requirements. reAIdea is not production-security verified.
+- Preserve the approved Home → truthful Creation Theatre → persisted Concept/validated geometry → same-Project Workshop restoration → centre-podium one-Canvas journey as the target architecture.
+- Next safe action: define a bounded geometry-support checkpoint for supported physical-product Concepts such as surf goggles. Do not rebuild the viewer.
+- Detailed sanitized evidence is recorded in [the 2026-08-26 Daily Log](continuity/daily/2026-08-26/DAILY_LOG.md) and [Evidence Index](continuity/daily/2026-08-26/EVIDENCE_INDEX.md).
+
+## Architecture and Visual Authority Reconciliation — 26 August 2026
+
+- The founder accepted `FOUNDER_PRODUCT_CONSTITUTION.md` and its hierarchy. The Flight Plan, page/visual registers, build lanes, supersession decisions and visual blueprint standard now operate beneath it; `AGENTS.md` is the enforcement gateway rather than product authority.
+- The safe committed checkpoint is `a62b597e32f98669832f30956bc023eadbcc85e0` on `sprint006-build24-40-home-rebuild`, with configured upstream parity `0/0` at reconciliation start.
+- HP-24.40 Build 1E-B2B-3A remains paused and uncommitted. `app/workshop/Prototype3DViewer.tsx` is preserved at SHA-256 `226EEE2B8B53289E224995BF2158EAECC488950689D9A589F7B0AD7C1A617EF4`; `app/workshop/Prototype3DViewer.test.mjs` is preserved at SHA-256 `13B7491C0443A5AF408E81709A1A134252ECE463B0C835B3616DCE105D006FD7`.
+- No product coding resumes until the founder selects one active lane and authorizes a bounded Build Contract.
+- The approved `VPB-HOME-001`, sign-free `VPB-WORKSHOP-001` and `VPB-JOURNEY-001` are canonical repository authority. Home readiness has no percentages; Workshop percentages require calculation from real canonical Project state.
+- `REAIDEA_ARCHITECTURE_GUIDE.md` is excluded from current authority and retained locally as proposed historical synthesis pending an archival decision. Historical founder journals and 25 August daily records remain unchanged.
+- This checkpoint changes no production source, dependency, asset, provider, API, Project, candidate, browser-storage or runtime behavior.
+
+## Historical Hold-Point Record — HP-24.39 Build 8
+
+The records below preserve chronology. Present-tense wording inside a dated build record describes that historical hold point and cannot override the current checkpoint above, the Founder Product Constitution, the Flight Plan or the Visual Authority Register.
 
 **HP-24.39 Build 8 — Full-Screen 3D Restoration** — FOUNDER BROWSER ACCEPTED 23 AUGUST 2026 / COMMIT AUTHORISED
 
@@ -535,13 +559,13 @@ Build 24.2 must not be called verified until the following are demonstrated on t
 9. Existing Concept 01 → Concept 02 → Concept 03 workflow remains intact.
 10. Existing Discovery → validation planning flow does not regress.
 
-## Current Hold Point
+## Historical Build 24.2 Hold Point
 
 **HOLD POINT HP-24.2-VALIDATION-WORKSHOP**
 
 Do not proceed to unrelated feature construction until Build 24.2 has passed its acceptance journey and been reviewed.
 
-## Next Approved Task
+## Historical Build 24.2 Next Approved Task
 
 Run the Build 24.2 validation-workshop acceptance journey on the home PC.
 
@@ -864,9 +888,9 @@ Generated image bytes remain transient React state and are not stored in Project
 
 HP-24.36 — Inventor-Guided Concept Refinement is proposed but NOT STARTED. Its purpose is a deliberate Concept 01 → inventor feedback → Concept 02 revision loop that retains family identity, advances revision identity and keeps every candidate non-authoritative until explicit adoption. Question adaptivity from HP-24.34 also remains deferred.
 
-## HP-24.37 Current Construction Checkpoint
+## Historical HP-24.37 Construction Checkpoint
 
-HP-24.37 remains **IN CONSTRUCTION**. The current safe checkpoint is `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` on branch `sprint006-build24-36-engineering-concept-model`.
+At that historical hold point, HP-24.37 remained **IN CONSTRUCTION** and its safe checkpoint was `36b461e2437f380bb0eb24d3aed85bc2bfea3fd1` on branch `sprint006-build24-36-engineering-concept-model`.
 
 The protected construction work includes the visual-first Workshop and Inventor flow, footstep progress, Prototype revision history and candidate durability, VisualDesignSnapshot, ConceptGeometry, interactive 3D viewing, and truthful 3D refusal when structured design information is insufficient. HP-24.37 is not frozen by this documentation update.
 
