@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Bounds, OrbitControls, useBounds } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Bounds, Edges, OrbitControls, useBounds } from "@react-three/drei";
+import { Canvas, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 import {
@@ -22,6 +22,44 @@ type Prototype3DViewerProps = {
   autoRotate?: boolean;
   controlsHost?: HTMLElement | null;
 };
+
+type PrototypeBounds = {
+  box: THREE.Box3;
+  size: THREE.Vector3;
+  center: THREE.Vector3;
+  distance: number;
+};
+
+const GROUNDED_TARGET_HEIGHT_RATIO = 0.43;
+const GROUNDED_DISTANCE_FACTOR = 1.08;
+const GROUNDED_VIEW_DIRECTION = new THREE.Vector3(1.08, 0.72, 1.34).normalize();
+
+export const PROTOTYPE_ORBIT_LIMITS = {
+  minPolarAngle: THREE.MathUtils.degToRad(18),
+  maxPolarAngle: THREE.MathUtils.degToRad(88),
+} as const;
+
+export function resolveGroundedPrototypeView(bounds: PrototypeBounds): {
+  position: [number, number, number];
+  target: [number, number, number];
+} {
+  const podiumX = bounds.box.min.x <= 0 && bounds.box.max.x >= 0 ? 0 : bounds.center.x;
+  const podiumZ = bounds.box.min.z <= 0 && bounds.box.max.z >= 0 ? 0 : bounds.center.z;
+  const target = new THREE.Vector3(
+    podiumX,
+    bounds.box.min.y + bounds.size.y * GROUNDED_TARGET_HEIGHT_RATIO,
+    podiumZ
+  );
+  const position = target.clone().addScaledVector(
+    GROUNDED_VIEW_DIRECTION,
+    bounds.distance * GROUNDED_DISTANCE_FACTOR
+  );
+
+  return {
+    position: position.toArray() as [number, number, number],
+    target: target.toArray() as [number, number, number],
+  };
+}
 
 export default function Prototype3DViewer({ geometry, presentationMode = "console", autoRotate = false, controlsHost = null }: Prototype3DViewerProps) {
   const [fitRequest, setFitRequest] = useState(0);
@@ -223,10 +261,12 @@ function Prototype3DSurface({ geometry, presentationMode, autoRotateEnabled, aut
       <div className="prototype-3d-canvas">
         <Canvas camera={{ position: [3.8, 2.8, 5.2], fov: 38 }} dpr={[1, 1.75]} frameloop={automaticRotationActive ? "always" : "demand"} gl={{ antialias: true, alpha: presentationMode === "stage" }}>
           {presentationMode !== "stage" && <color attach="background" args={["#eef2f3"]} />}
-          <ambientLight intensity={1.7} />
-          <directionalLight position={[4, 8, 6]} intensity={2.4} />
-          <directionalLight position={[-5, 3, -4]} intensity={1.1} />
-          <Bounds fit clip observe margin={0.85}>
+          <hemisphereLight args={["#dff8ff", "#34291d", 1.05]} />
+          <ambientLight intensity={0.58} />
+          <directionalLight color="#e8fbff" position={[4.5, 8, 6]} intensity={2.05} />
+          <directionalLight color="#8ed9e8" position={[-5, 3.5, -4]} intensity={0.82} />
+          <directionalLight color="#efbf70" position={[2, 2.5, -6]} intensity={0.48} />
+          <Bounds clip margin={1.18}>
             <GeometryModel geometry={geometry} jointPreview={jointPreview} />
             <ViewController
               fitRequest={fitRequest}
@@ -254,26 +294,26 @@ function ViewController({ fitRequest, resetRequest, autoRotate, onInteractionSta
 }) {
   const bounds = useBounds();
   const controls = useRef<React.ElementRef<typeof OrbitControls>>(null);
+  const { width, height } = useThree((state) => state.size);
+
+  const restoreGroundedView = useCallback(() => {
+    const refreshedBounds = bounds.refresh();
+    const view = resolveGroundedPrototypeView(refreshedBounds.getSize());
+    refreshedBounds.to(view).clip();
+  }, [bounds]);
 
   useEffect(() => {
-    if (fitRequest === 0) return;
     let fitFrame = 0;
     const layoutFrame = window.requestAnimationFrame(() => {
-      fitFrame = window.requestAnimationFrame(() => bounds.refresh().fit().clip());
+      fitFrame = window.requestAnimationFrame(restoreGroundedView);
     });
     return () => {
       window.cancelAnimationFrame(layoutFrame);
       window.cancelAnimationFrame(fitFrame);
     };
-  }, [bounds, fitRequest]);
+  }, [fitRequest, height, resetRequest, restoreGroundedView, width]);
 
-  useEffect(() => {
-    if (resetRequest === 0) return;
-    controls.current?.reset();
-    bounds.refresh().fit().clip();
-  }, [bounds, resetRequest]);
-
-  return <OrbitControls ref={controls} makeDefault autoRotate={autoRotate} autoRotateSpeed={0.45} enableDamping enablePan={false} minDistance={0.5} maxDistance={30} onStart={onInteractionStart} />;
+  return <OrbitControls ref={controls} makeDefault autoRotate={autoRotate} autoRotateSpeed={0.45} enableDamping enablePan={false} minDistance={0.5} maxDistance={30} minPolarAngle={PROTOTYPE_ORBIT_LIMITS.minPolarAngle} maxPolarAngle={PROTOTYPE_ORBIT_LIMITS.maxPolarAngle} onStart={onInteractionStart} />;
 }
 
 function GeometryModel({ geometry, jointPreview }: { geometry: ConceptGeometry; jointPreview: boolean }) {
@@ -318,7 +358,7 @@ function ComponentNode({ component, components, childrenByParent, jointsByChild,
 }
 
 function Primitive({ component }: { component: ConceptGeometryComponent }) {
-  const material = materialProps(component);
+  const material = prototypeMaterialProps(component);
   const extrudedGeometry = useMemo(() => {
     if (component.primitive !== "extruded-polygon" || !component.vertices) return null;
     const shape = new THREE.Shape();
@@ -340,7 +380,11 @@ function Primitive({ component }: { component: ConceptGeometryComponent }) {
           : <primitive object={extrudedGeometry!} attach="geometry" />;
   return (
     <group>
-      <mesh castShadow receiveShadow>{geometry}<meshStandardMaterial {...material} side={component.primitive === "plane" ? THREE.DoubleSide : THREE.FrontSide} /></mesh>
+      <mesh castShadow receiveShadow>
+        {geometry}
+        <meshStandardMaterial {...material} side={component.primitive === "plane" ? THREE.DoubleSide : THREE.FrontSide} />
+        <Edges threshold={28} color={component.material === "emissive" ? "#f2ce77" : "#6ca9b5"} />
+      </mesh>
       {component.markings?.map((marking, index) => <FaceMarking key={`${marking.face}-${index}`} component={component} marking={marking} />)}
     </group>
   );
@@ -391,9 +435,9 @@ function markingPlacement(component: ConceptGeometryComponent, face: ConceptGeom
   return placements[face];
 }
 
-function materialProps(component: ConceptGeometryComponent) {
-  if (component.material === "metal") return { color: component.colour, metalness: .78, roughness: .27 };
-  if (component.material === "plastic") return { color: component.colour, metalness: .06, roughness: .38 };
-  if (component.material === "emissive") return { color: component.colour, emissive: component.colour, emissiveIntensity: 1.15, metalness: 0, roughness: .3 };
-  return { color: component.colour, metalness: 0, roughness: .76 };
+export function prototypeMaterialProps(component: Pick<ConceptGeometryComponent, "colour" | "material">) {
+  if (component.material === "metal") return { color: component.colour, metalness: .68, roughness: .34 };
+  if (component.material === "plastic") return { color: component.colour, metalness: .1, roughness: .43 };
+  if (component.material === "emissive") return { color: component.colour, emissive: component.colour, emissiveIntensity: 1.28, metalness: 0, roughness: .34 };
+  return { color: component.colour, metalness: .02, roughness: .68 };
 }
