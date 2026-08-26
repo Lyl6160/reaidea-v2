@@ -45,7 +45,7 @@ Only one screen/state and one active build lane proceed at a time unless a found
 
 ## Current checkpoint
 
-The founder accepted the Architecture and Visual Authority direction on 26 August 2026. The accepted code checkpoint is `a62b597e32f98669832f30956bc023eadbcc85e0`; authority packaging remains uncommitted. Product coding is paused. HP-24.40 Build 1E-B2B-3A remains preserved as two uncommitted files; its exact hashes and next decision are recorded in `continuity/ACTIVE_HANDOFF.md`.
+The founder accepted and committed the Documentation Authority at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; the accepted code foundation is `a62b597e32f98669832f30956bc023eadbcc85e0`. Product coding is paused. B2B-3A and the founder-rejected C2 implementation are preserved on separate experimental archive branches, not on the active worktree. `FVT-C2F-001` is founder-approved Project 000 fidelity-test evidence—not page authority or implementation approval—and the next safe action is a read-only C2F Build Contract plan. Exact current state is recorded in `continuity/ACTIVE_HANDOFF.md`.
 
 Current authority uses canonical repository paths only. Local working locations are never authority.
 

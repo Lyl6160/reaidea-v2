@@ -38,12 +38,22 @@ This index records current lifecycle markers without rewriting completed history
 - **SHA-256:** `AD28450B7DC0D57F5C2B2A194BB311B8CEDA44690010C62CA4AD95D514831494`.
 - **Truth rule:** Validated geometry uses the existing one-Canvas podium; unsupported geometry uses the Visual Concept fallback. STOP/GO remains historical sample content only.
 
+## Registered fidelity-test evidence — not a Visual Page Blueprint
+
+### FVT-C2F-001 — Source-Aware Concept Fidelity Target
+
+- **Use:** Project 000 fidelity-test evidence for source-backed must-haves and must-avoids.
+- **Approved image:** `fidelity/FVT-C2F-001-approved-surf-eyewear-concept-2026-08-26.png`.
+- **Authority record:** `fidelity/FVT-C2F-001-authority-2026-08-26.md`.
+- **SHA-256:** image `D5C37DEB6ABE5CD8E746CF9D3C6A0A4E5B02108CAFB2E1C9482A3272C7D19384`; record `40A846DD3552B220A3D77E196FB4FDC3EA6D1495E63E72C7BFC385F5F5167CFE`.
+- **Status:** Founder approved, 26 Aug 2026. It is not page authority, engineering proof or performance proof; C2F remains unimplemented and no surf-specific production rule is authorized.
+
 ## Page flight tick-sheet
 
 | Page/surface | Current marker | Evidence / qualification | Next gate |
 | --- | --- | --- | --- |
 | `/` Home creation foundation | VERIFIED | Accepted bounded Home/Creation checkpoints in `CURRENT_CONSTRUCTION_STATE.md`; final visual family is not fully approved | Register and approve material screen blueprints one at a time |
-| `/workshop` Living Workshop | VERIFIED | B2A, B2B-1 and B2B-2 functional checkpoints; cosmetics/responsiveness partial | Founder decision on paused B2B-3A and future blueprint versions |
+| `/workshop` Living Workshop | VERIFIED | B2A, B2B-1 and B2B-2 functional checkpoints; cosmetics/responsiveness partial | B2B-3A is archived as experimental; future presentation work requires a new bounded blueprint/contract |
 | `/discovery` legacy door | COMMITTED | Route exists; current authority/disposition unresolved | Founder chooses retire, redirect or repurpose |
 | `/discovery/session` legacy session/review | COMMITTED | Useful truth tooling exists; questionnaire default is superseded | Contract migration/retirement without losing Project semantics |
 | `/interview` legacy knowledge interview | COMMITTED | Route exists; not approved default journey | Founder chooses optional evidence role or retirement |
@@ -64,14 +74,14 @@ Only Lane 0 is active. Lifecycle markers describe accumulated checkpoint state, 
 
 | Lane | Marker | Active | Evidence / next gate |
 | --- | --- | --- | --- |
-| 0 — Governance, safety and truth | FOUNDER APPROVED | YES | Authority reconciliation/packaging is uncommitted |
+| 0 — Governance, safety and truth | FOUNDER APPROVED | YES | Documentation Authority committed at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; C2 fidelity evidence reconciliation active |
 | 1 — Inventor Entry | VERIFIED | NO | Functional Home foundation accepted; visual blueprints remain incomplete |
 | 2 — REV Intelligence | VERIFIED | NO | Description-led routing/provenance/firearm BLOCK accepted at `a62b597e32f98669832f30956bc023eadbcc85e0`; S1B/provider-backed scope unresolved |
 | 3 — Core Creation | VERIFIED | NO | Bounded Concept/portable-signage geometry checkpoint accepted |
 | 4 — Living Workshop | VERIFIED | NO | Functional B2A/B2B-1/B2B-2 accepted; later cosmetics pending |
 | 5 — Evidence Engine | NOT DESIGNED | NO | Domain foundations exist; cohesive sourced delivery uncontracted |
 | 6 — Production Foundation | NOT DESIGNED | NO | Identity, authorization, server storage and abuse controls absent |
-| 7 — Product Polish | IMPLEMENTING | NO — PAUSED | Two-file B2B-3A experiment preserved; no authority to continue |
+| 7 — Product Polish | NOT ACTIVE | NO | B2B-3A preserved on an experimental archive branch; no authority to promote or continue it |
 
 ## Update rule
 

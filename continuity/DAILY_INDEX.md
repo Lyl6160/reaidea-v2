@@ -7,7 +7,7 @@ The first indexed working day starts from the last founder-accepted constructed 
 | Date | Protected constructed baseline | Active lane | Daily log | Evidence index | Current checkpoint result |
 | --- | --- | --- | --- | --- | --- |
 | 2026-08-25 | HP-24.40 Build 1E-B2B-2 — founder accepted at `4171b8ee426ff7703617e3062b59ac5e5cdf4f8c` | Lane 0 — Governance, safety and truth | [Daily Log](daily/2026-08-25/DAILY_LOG.md) | [Evidence Index](daily/2026-08-25/EVIDENCE_INDEX.md) | Architecture Control Pack and Continuity/Visual Blueprint Standard prepared locally; founder review pending; nothing committed |
-| 2026-08-26 | Start: Build 1E-B2B-2 at `4171b8ee426ff7703617e3062b59ac5e5cdf4f8c`; accepted code checkpoint: Build 1E-C1-S1 at `a62b597e32f98669832f30956bc023eadbcc85e0` | Lane 0 — Governance, safety and truth | [Daily Log](daily/2026-08-26/DAILY_LOG.md) | [Evidence Index](daily/2026-08-26/EVIDENCE_INDEX.md) | C1/S1A/FIREARM-SAFETY-001 committed; Architecture and Visual Authority founder approved and reconciliation uncommitted; surf 3D unresolved |
+| 2026-08-26 | Start: Build 1E-B2B-2 at `4171b8ee426ff7703617e3062b59ac5e5cdf4f8c`; accepted code: Build 1E-C1-S1 at `a62b597e32f98669832f30956bc023eadbcc85e0`; Documentation Authority at `484ddf625423cd1b63b7314fcc0f12b88c1899de` | Lane 0 — Governance, safety and truth | [Daily Log](daily/2026-08-26/DAILY_LOG.md) | [Evidence Index](daily/2026-08-26/EVIDENCE_INDEX.md) | Rejected C2 archived; `FVT-C2F-001` registered as fidelity-test evidence; C2F unimplemented; `FAIL-NAV-001` unresolved |
 
 ## Index rule
 

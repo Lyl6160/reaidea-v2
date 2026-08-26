@@ -1,10 +1,10 @@
 # reAIdea Daily Log — 2026-08-26
 
-**Status:** FOUNDER-ACCEPTED CODE AND AUTHORITY EVIDENCE — documentation/visual checkpoint not committed
+**Status:** FOUNDER-ACCEPTED CODE AND DOCUMENTATION AUTHORITY; C2 ARCHIVED; C2F CONTRACT PENDING
 
 **Active lane:** Lane 0 — Governance, safety and truth
 
-**Checkpoint:** HP-24.40 Build 1E-C1-S1 committed; Documentation and Visual Authority reconciliation active
+**Checkpoint:** Documentation Authority at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; rejected C2 archived; `FVT-C2F-001` registered locally
 
 **Founder-approved Build Contract:** Documentation-only evidence recording; no further production implementation authorized
 
@@ -92,3 +92,20 @@
 ## Security posture
 
 **PASS WITH RISKS.** The documentation records bounded diagnostics and authority precedence without confidential payloads. Production identity, Project object authorization, secure server persistence, rate limiting and abuse controls remain incomplete.
+
+## C2 archive and source-aware fidelity target
+
+- The bounded C2 experiment produced a `wearable-enclosure` plan with nine validated components, verified candidate persistence/reload and restored one-Canvas 3D. The founder rejected it because both the Visual Concept and deterministic geometry resembled a conventional scuba mask instead of the requested sunglasses-first form.
+- The reference image was safety-scanned and interpreted but its bytes were not supplied to the engineering-outline generation operation. Flattened text duplicated and over-weighted goggles, diving, seal and strap language. Candidate validation proved structure, source binding and safety, not semantic visual fidelity.
+- The exact six-file experiment and its record are preserved on `archive/c2-wearable-geometry-fidelity-failure-2026-08-26` at `84075329d11476a6563b6f0ad7ba898e3b0d7106`. C2 is rejected and is not product authority.
+- `FVT-C2F-001 — Source-Aware Concept Fidelity Target` is founder-approved Project 000 fidelity-test evidence. It records source-backed must-haves and must-avoids; it is not page authority, engineering proof or performance proof and does not authorize a surf-specific production rule.
+- `FAIL-NAV-001` remains unresolved: automatic Home-to-Workshop transition did not commit after the successful Workshop response during the development walkthrough. Direct `/workshop` navigation restored the same Project with zero regeneration.
+- C2F remains unimplemented. The next safe action is a read-only C2F Build Contract plan that preserves the accepted viewer and one-Canvas ownership.
+
+## Superseding end-of-day state
+
+- Active branch HEAD/upstream: `484ddf625423cd1b63b7314fcc0f12b88c1899de`, parity `0/0` without fetching.
+- Active C2 code diff: none; all six rejected C2 files equal active HEAD.
+- Active index: empty.
+- B2B-3A remains archived at `53e9a8fec7730f345b34c6e00cc6b0ac3587108f`; accepted active viewer SHA-256 is `DF039DBE1F16E618C3D17761B4A1C3C5E2F2ADC9337F11BFE7A217252339A61B`.
+- `REAIDEA_ARCHITECTURE_GUIDE.md` remains unrelated, untracked and unchanged.

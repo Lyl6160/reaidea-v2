@@ -16,6 +16,12 @@
 | Friendly REV identity | `public/images/reaidea-rev-friendly-ai-approved-2026-08-24.png` | `B385D98AAB0038940512D4780EA72CFD89CDB0921C10F651BA8BD5067DC49070` | Founder-approved identity/runtime layer | Transparent full-figure friendly mature REV; byte-identical asset protected | Frightening blue-faced, masked, faceless and older human-only REV variants |
 | Workshop clean runtime scene | `public/images/reaidea-workshop-clean-scene-approved-2026-08-25.png` | `2F2CEFB29D38D9AED98166C4DB9992D4942905D42BA7A1F1A75C3567CBB0B567` | Founder-approved clean scene layer | Character-free/UI-free scene with centre podium and inactive station architecture | Obsolete sloped-console runtime plates for current Workshop use |
 
+## Approved fidelity-test evidence — not page authority
+
+| Evidence target | Exact repository path | SHA-256 | Approval status | Binding use / limitation |
+| --- | --- | --- | --- | --- |
+| `FVT-C2F-001` — Source-Aware Concept Fidelity Target | Image `visual-authority/fidelity/FVT-C2F-001-approved-surf-eyewear-concept-2026-08-26.png`; record `visual-authority/fidelity/FVT-C2F-001-authority-2026-08-26.md` | Image `D5C37DEB6ABE5CD8E746CF9D3C6A0A4E5B02108CAFB2E1C9482A3272C7D19384`; record `40A846DD3552B220A3D77E196FB4FDC3EA6D1495E63E72C7BFC385F5F5167CFE` | Founder approved, 26 Aug 2026 | Project 000 fidelity-test evidence for source-backed must-haves and must-avoids. It is not page authority, engineering proof or performance proof. It authorizes no surf-specific production rule; C2F remains unimplemented. |
+
 ## Superseded or historical references
 
 | Reference | Exact repository path | SHA-256 | Current status | Superseded by / retained purpose |

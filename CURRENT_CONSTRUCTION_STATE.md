@@ -1,17 +1,25 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** `a62b597e32f98669832f30956bc023eadbcc85e0`
+**Current safe committed checkpoint:** Documentation Authority `484ddf625423cd1b63b7314fcc0f12b88c1899de`; accepted code foundation `a62b597e32f98669832f30956bc023eadbcc85e0`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** Documentation and Visual Authority reconciliation — founder approved, uncommitted
+**Current hold point:** C2 archived after founder fidelity rejection; `FVT-C2F-001` restored for a read-only C2F contract plan
 
-**Current authorised construction step:** Documentation/visual-authority reconciliation only; no product implementation is authorised
+**Current authorised construction step:** Documentation-only fidelity registration; C2F is unimplemented and no product implementation is authorised
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
 **Last governance update:** 2026-08-26
+
+## HP-24.40 C2 Archive and FVT-C2F-001 — 26 August 2026
+
+- The founder-rejected C2 wearable-geometry experiment is preserved on `archive/c2-wearable-geometry-fidelity-failure-2026-08-26` at `84075329d11476a6563b6f0ad7ba898e3b0d7106`. Its geometry plumbing, persistence/restoration and one-Canvas presentation passed, but its Visual Concept and deterministic geometry failed the required sunglasses-first source fidelity; C2 is not product authority.
+- The reference image was safety-scanned and interpreted but its bytes were not supplied to the engineering-outline generation operation. Flattened text over-weighted goggles, diving, seal and strap language, while validation proved structure and safety rather than semantic visual fidelity.
+- `FVT-C2F-001 — Source-Aware Concept Fidelity Target` is founder-approved Project 000 fidelity-test evidence at `visual-authority/fidelity/`. It records source-backed must-haves and must-avoids. It is not page authority, engineering proof or performance proof and authorizes no surf-specific production rule.
+- C2F remains unimplemented. The next safe action is a read-only, general source-aware C2F Build Contract plan. The accepted viewer and one-Canvas Workshop ownership remain protected.
+- `FAIL-NAV-001` remains unresolved: the successful Workshop response did not commit the automatic client transition during the development walkthrough; direct Workshop navigation restored the same Project without regeneration.
 
 ## HP-24.40 Build 1E-C1-S1 — Description-Led Creation and Safety Provenance
 
@@ -28,8 +36,8 @@
 ## Architecture and Visual Authority Reconciliation — 26 August 2026
 
 - The founder accepted `FOUNDER_PRODUCT_CONSTITUTION.md` and its hierarchy. The Flight Plan, page/visual registers, build lanes, supersession decisions and visual blueprint standard now operate beneath it; `AGENTS.md` is the enforcement gateway rather than product authority.
-- The safe committed checkpoint is `a62b597e32f98669832f30956bc023eadbcc85e0` on `sprint006-build24-40-home-rebuild`, with configured upstream parity `0/0` at reconciliation start.
-- HP-24.40 Build 1E-B2B-3A remains paused and uncommitted. `app/workshop/Prototype3DViewer.tsx` is preserved at SHA-256 `226EEE2B8B53289E224995BF2158EAECC488950689D9A589F7B0AD7C1A617EF4`; `app/workshop/Prototype3DViewer.test.mjs` is preserved at SHA-256 `13B7491C0443A5AF408E81709A1A134252ECE463B0C835B3616DCE105D006FD7`.
+- The Documentation Authority checkpoint is committed at `484ddf625423cd1b63b7314fcc0f12b88c1899de` on `sprint006-build24-40-home-rebuild`; the accepted code foundation remains `a62b597e32f98669832f30956bc023eadbcc85e0`.
+- HP-24.40 Build 1E-B2B-3A is archived as experimental, not product authority, on `archive/b2b-3a-viewer-experiment-2026-08-26` at `53e9a8fec7730f345b34c6e00cc6b0ac3587108f`. The active branch uses the accepted viewer at SHA-256 `DF039DBE1F16E618C3D17761B4A1C3C5E2F2ADC9337F11BFE7A217252339A61B`; its experimental fixture is absent.
 - No product coding resumes until the founder selects one active lane and authorizes a bounded Build Contract.
 - The approved `VPB-HOME-001`, sign-free `VPB-WORKSHOP-001` and `VPB-JOURNEY-001` are canonical repository authority. Home readiness has no percentages; Workshop percentages require calculation from real canonical Project state.
 - `REAIDEA_ARCHITECTURE_GUIDE.md` is excluded from current authority and retained locally as proposed historical synthesis pending an archival decision. Historical founder journals and 25 August daily records remain unchanged.
