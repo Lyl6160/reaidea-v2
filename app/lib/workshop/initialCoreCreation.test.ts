@@ -86,6 +86,65 @@ assert.ok(persistenceFailure.kind === "failure" && persistenceFailure.retryPersi
 assert.equal((await persistenceFailure.retryPersistence!()).kind, "success");
 assert.equal(persistenceCalls, 2);
 
+const mixedProject = createProject({
+  ownerId: "fixture-inventor",
+  originIntent: "developing",
+  originalObservation: "I want a physical wearable device with a frame and lens plus a software app with screens that control how it operates.",
+});
+let unresolvedGenerationCalls = 0;
+let unresolvedCandidateWrites = 0;
+const routingReceipts: string[] = [];
+const unresolved = await runInitialCoreCreation(mixedProject, undefined, {
+  persistReceipt: async (receipt) => { routingReceipts.push(receipt.status); return true; },
+  fetchConcept: async () => { unresolvedGenerationCalls += 1; throw new Error("Generation must not run before representation resolution."); },
+  persistCandidate: async () => { unresolvedCandidateWrites += 1; return true; },
+});
+assert.equal(unresolved.kind, "needs-representation");
+assert.equal(unresolvedGenerationCalls, 0);
+assert.equal(unresolvedCandidateWrites, 0);
+assert.deepEqual(routingReceipts, ["awaiting-representation"]);
+assert.equal(unresolved.kind === "needs-representation" && unresolved.receipt.projectId, mixedProject.id);
+let unresolvedTransactionSaves = 0;
+const unresolvedTransactionPhases: string[] = [];
+const unresolvedTransaction = await runInitialCoreCreationTransaction({
+  saveProject: async () => { unresolvedTransactionSaves += 1; return mixedProject; },
+  createConcept: async (savedProject) => {
+    assert.equal(savedProject.id, mixedProject.id);
+    return unresolved;
+  },
+  onPhase: (phase) => unresolvedTransactionPhases.push(phase),
+});
+assert.equal(unresolvedTransaction.kind, "needs-representation");
+assert.equal(unresolvedTransactionSaves, 1);
+assert.deepEqual(unresolvedTransactionPhases, ["saving"]); // No Workshop-opening phase before resolution.
+
+let resolvedGenerationCalls = 0;
+let resolvedCandidate: ConceptCandidate | null = null;
+const resolved = await runInitialCoreCreation(mixedProject, undefined, {
+  persistReceipt: async (receipt) => { routingReceipts.push(receipt.status); return true; },
+  fetchConcept: async (request) => {
+    resolvedGenerationCalls += 1;
+    assert.equal(request.visualMode, "product");
+    assert.match(request.brief.assumptions.join(" "), /^REV working assumption:/);
+    return { status: 200, payload: { candidate: { ...candidate, conceptFamilyId: request.conceptFamilyId, revision: request.revision } } };
+  },
+  persistCandidate: async (projectId, saved) => { assert.equal(projectId, mixedProject.id); resolvedCandidate = saved; return true; },
+  restoreCandidate: async (projectId) => { assert.equal(projectId, mixedProject.id); return resolvedCandidate; },
+}, { mode: "product", source: "rev-recommendation" });
+assert.equal(resolved.kind, "success");
+assert.equal(resolvedGenerationCalls, 1);
+assert.equal(unresolvedGenerationCalls, 0);
+assert.deepEqual(routingReceipts, ["awaiting-representation", "creating"]);
+
+const unknownProject = createProject({ ownerId: "fixture-inventor", originIntent: "both", originalObservation: "I want a better way to improve mornings for people." });
+let unknownGenerationCalls = 0;
+const unknown = await runInitialCoreCreation(unknownProject, undefined, {
+  persistReceipt: async () => true,
+  fetchConcept: async () => { unknownGenerationCalls += 1; throw new Error("Generation must remain stopped."); },
+});
+assert.equal(unknown.kind, "needs-representation");
+assert.equal(unknownGenerationCalls, 0);
+
 console.log("Initial Core Creation fixtures: PASS");
 }
 

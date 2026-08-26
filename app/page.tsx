@@ -10,6 +10,8 @@ import { savePreferredName } from "./lib/core/inventorStorage";
 import { loadProject, saveProject } from "./lib/core/storageEngine";
 import {
   createSourceImageReference,
+  loadProjectSourceImage,
+  parseSourceImageReference,
   saveProjectSourceImage,
   sourceImageToDataUrl,
   validateSourceImage,
@@ -24,7 +26,8 @@ import {
   type InitialCoreCreationResult,
 } from "./lib/workshop/initialCoreCreation";
 import { persistInitialCoreCreationReceipt, restoreInitialCoreCreationReceipt } from "./lib/workshop/conceptCandidateStorage";
-import type { ConceptCandidate, RevImageSafetyReceipt, VisualUnderstandingApiResponse, VisualUnderstandingResult } from "./lib/ai/types";
+import { routeInitialRepresentation, REV_RECOMMENDATION_LABEL, type InitialRepresentationRoutingDecision } from "./lib/workshop/conceptGeneration";
+import type { ConceptCandidate, RepresentationResolution, RevImageSafetyReceipt, SupportedRepresentationMode, VisualUnderstandingApiResponse, VisualUnderstandingResult } from "./lib/ai/types";
 
 const BLOCKED_IMAGE_MESSAGE = "REV can’t use that image. Choose another image or continue without one.";
 
@@ -185,6 +188,8 @@ export default function Home() {
   const [initialProject, setInitialProject] = useState<Project | null>(null);
   const [creationPhase, setCreationPhase] = useState<InitialCoreCreationPhase | "idle" | "failed">("idle");
   const [retryPersistence, setRetryPersistence] = useState<(() => Promise<InitialCoreCreationResult>) | null>(null);
+  const [representationPrompt, setRepresentationPrompt] = useState<Extract<InitialRepresentationRoutingDecision, { kind: "needs-representation" }> | null>(null);
+  const [representationResolutionActive, setRepresentationResolutionActive] = useState(false);
   const [validatedCandidate, setValidatedCandidate] = useState<ConceptCandidate | null>(null);
   const [preflightActive, setPreflightActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -200,6 +205,7 @@ export default function Home() {
     normalizeBlockedContext(description) === blockedInventorContext;
   const readyToStart = understanding.ready && !blockedContextActive;
   const creationActive = preflightActive || isInitialCoreCreationActive(creationPhase);
+  const submissionLocked = creationActive || representationResolutionActive || Boolean(representationPrompt);
   const currentWorkflowStage = creationPhase === "reading" || creationPhase === "generating" ? 1 : creationPhase === "checking-geometry" || creationPhase === "building" ? 2 : creationPhase === "opening" ? 3 : understanding.ready ? 0 : -1;
   const liveCreationStatus = preflightActive ? "REV IS CONFIRMING CREATION SAFETY"
     : creationPhase === "reading" ? "REV IS READING YOUR SKETCH"
@@ -209,7 +215,7 @@ export default function Home() {
           : creationPhase === "building" ? "REV IS SECURING YOUR CREATION"
           : creationPhase === "opening" ? "OPENING YOUR WORKSHOP"
             : creationPhase === "failed" ? "CREATION PAUSED"
-              : understanding.ready ? "READY TO BEGIN" : "WAITING FOR DETAIL";
+              : understanding.ready ? "REV UNDERSTANDS ENOUGH TO CREATE YOUR FIRST CONCEPT" : "WAITING FOR DETAIL";
 
   useEffect(() => {
     return () => {
@@ -223,11 +229,31 @@ export default function Home() {
   useEffect(() => {
     const project = loadProject();
     if (!project) return;
-    void restoreInitialCoreCreationReceipt(project.id).then((receipt) => {
+    void restoreInitialCoreCreationReceipt(project.id).then(async (receipt) => {
       if (!receipt) return;
       setInitialProject(project);
       setOriginIntent(project.originIntent ?? null);
       setDescription(project.originalObservation);
+      if (receipt.status === "awaiting-representation") {
+        let interpretation: VisualUnderstandingResult | undefined;
+        for (const reference of project.files) {
+          const evidenceId = parseSourceImageReference(reference);
+          if (!evidenceId) continue;
+          const record = await loadProjectSourceImage(project.id, evidenceId);
+          if (!record?.interpretation) continue;
+          interpretation = record.interpretation;
+          setVisualInterpretation(record.interpretation);
+          if (record.safetyReceipt) {
+            setImageSafetyReceipt(record.safetyReceipt);
+            setImageSafetyState("CLEAR");
+          }
+          break;
+        }
+        const routing = routeInitialRepresentation(project, interpretation);
+        if (routing.kind === "needs-representation") setRepresentationPrompt(routing);
+        setCreationPhase("idle");
+        return;
+      }
       setCreationPhase("failed");
       if (receipt.status === "creating") {
         const occurredAt = new Date().toISOString();
@@ -455,6 +481,7 @@ export default function Home() {
     try {
       setError("");
       setRetryPersistence(null);
+      setRepresentationPrompt(null);
       setValidatedCandidate(null);
       setPreflightActive(true);
       const intent = await assessCreationIntent(completeDescription);
@@ -512,6 +539,12 @@ export default function Home() {
         setCreationPhase("failed");
         return;
       }
+      if (result.kind === "needs-representation") {
+        setCreationPhase("idle");
+        setRepresentationPrompt(result.prompt);
+        setError("");
+        return;
+      }
       setCreationPhase("failed");
       setError(result.message);
       if (result.retryPersistence) setRetryPersistence(() => result.retryPersistence!);
@@ -520,6 +553,41 @@ export default function Home() {
       setError(persistedProject ? "REV could not continue this creation. Your Project remains saved; start another creation attempt when ready." : "REV could not save your Project before creation began. No creation request was made.");
     } finally {
       setPreflightActive(false);
+      projectCreationStartedRef.current = false;
+    }
+  }
+
+  async function resumeWithRepresentation(mode: SupportedRepresentationMode, source: RepresentationResolution["source"]) {
+    if (!initialProject || !representationPrompt || creationActive || projectCreationStartedRef.current) return;
+    projectCreationStartedRef.current = true;
+    setRepresentationResolutionActive(true);
+    setError("");
+    setRetryPersistence(null);
+    try {
+      const result = await runInitialCoreCreation(
+        initialProject,
+        visualInterpretation ?? undefined,
+        { onPhase: (phase) => { setRepresentationPrompt(null); setCreationPhase(phase); }, onCandidateValidated: setValidatedCandidate },
+        { mode, source }
+      );
+      if (result.kind === "success") {
+        setCreationPhase("opening");
+        router.push("/workshop");
+        return;
+      }
+      if (result.kind === "needs-representation") {
+        setCreationPhase("idle");
+        setRepresentationPrompt(result.prompt);
+        return;
+      }
+      setCreationPhase("failed");
+      setError(result.message);
+      if (result.retryPersistence) setRetryPersistence(() => result.retryPersistence!);
+    } catch {
+      setCreationPhase("idle");
+      setError("REV could not apply that representation choice. Your Project and accepted information remain saved; choose when to try again.");
+    } finally {
+      setRepresentationResolutionActive(false);
       projectCreationStartedRef.current = false;
     }
   }
@@ -551,7 +619,7 @@ export default function Home() {
               <div className="origin-options">
                 {ORIGIN_INTENTS.map((intent) => (
                   <label key={intent.value} className={originIntent === intent.value ? "is-selected" : ""}>
-                    <input type="radio" name="origin-intent" value={intent.value} checked={originIntent === intent.value} onChange={() => setOriginIntent(intent.value)} disabled={creationActive} />
+                    <input type="radio" name="origin-intent" value={intent.value} checked={originIntent === intent.value} onChange={() => setOriginIntent(intent.value)} disabled={submissionLocked} />
                     <OriginIntentIcon kind={intent.icon} />
                     <span>{intent.label}</span>
                   </label>
@@ -588,15 +656,25 @@ export default function Home() {
 
             <label className="description-field" htmlFor="idea-description">
               <span className="sr-only">Your complete idea</span>
-              <textarea id="idea-description" value={description} onChange={(event) => { const nextDescription = event.target.value; const contextChanged = Boolean(blockedInventorContext) && normalizeBlockedContext(nextDescription) !== blockedInventorContext; if (imageUnderstandingAttemptRef.current && normalizeAttemptContext(nextDescription) !== imageUnderstandingAttemptRef.current.inventorContext) invalidateImageUnderstandingAttempt(); setDescription(nextDescription); setHelpingQuestion(""); setError(""); if (contextChanged) { setBlockedInventorContext(""); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage(selectedImage ? "START WITH REV to check and understand this image." : ""); } if (selectedImage) { setVisualInterpretation(null); setImageSafetyReceipt(null); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage("START WITH REV to check and understand this image."); } }} rows={5} placeholder="Describe your idea in plain language. What should it do, and what matters most to you?" disabled={creationActive} />
+              <textarea id="idea-description" value={description} onChange={(event) => { const nextDescription = event.target.value; const contextChanged = Boolean(blockedInventorContext) && normalizeBlockedContext(nextDescription) !== blockedInventorContext; if (imageUnderstandingAttemptRef.current && normalizeAttemptContext(nextDescription) !== imageUnderstandingAttemptRef.current.inventorContext) invalidateImageUnderstandingAttempt(); setDescription(nextDescription); setHelpingQuestion(""); setError(""); if (contextChanged) { setBlockedInventorContext(""); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage(selectedImage ? "START WITH REV to check and understand this image." : ""); } if (selectedImage) { setVisualInterpretation(null); setImageSafetyReceipt(null); setImageSafetyState("unchecked"); setVisualUnderstandingState("idle"); setVisualUnderstandingMessage("START WITH REV to check and understand this image."); } }} rows={5} placeholder="Describe your idea in plain language. What should it do, and what matters most to you?" disabled={submissionLocked} />
             </label>
 
             <div className="console-action">
-              <input ref={fileInputRef} className="file-input" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void selectImage(event.target.files?.[0])} disabled={creationActive} />
-              <button type="button" className="secondary add-image" onClick={() => fileInputRef.current?.click()} disabled={imageBusy || creationActive}>{selectedImage ? "CHANGE PHOTO" : imageBusy ? "CHECKING IMAGE..." : "ADD PHOTO OR SKETCH"}</button>
-              {selectedImage && <button type="button" className="secondary remove-image" onClick={removeImage} disabled={imageBusy || creationActive}>REMOVE</button>}
-              <button type="button" className="start-button" onClick={() => void startWithRev()} disabled={!originIntent || !readyToStart || imageBusy || imageInvalid || creationActive}>{creationActive ? liveCreationStatus : creationPhase === "failed" ? "START ANOTHER CREATION ATTEMPT" : "START WITH REV"} <span aria-hidden="true">→</span></button>
+              <input ref={fileInputRef} className="file-input" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void selectImage(event.target.files?.[0])} disabled={submissionLocked} />
+              <button type="button" className="secondary add-image" onClick={() => fileInputRef.current?.click()} disabled={imageBusy || submissionLocked}>{selectedImage ? "CHANGE PHOTO" : imageBusy ? "CHECKING IMAGE..." : "ADD PHOTO OR SKETCH"}</button>
+              {selectedImage && <button type="button" className="secondary remove-image" onClick={removeImage} disabled={imageBusy || submissionLocked}>REMOVE</button>}
+              <button type="button" className="start-button" onClick={() => void startWithRev()} disabled={!originIntent || !readyToStart || imageBusy || imageInvalid || submissionLocked}>{creationActive ? liveCreationStatus : creationPhase === "failed" ? "START ANOTHER CREATION ATTEMPT" : "START WITH REV"} <span aria-hidden="true">→</span></button>
             </div>
+
+            {representationPrompt && <section className="representation-choice" aria-labelledby="representation-choice-heading">
+              <h3 id="representation-choice-heading">{representationPrompt.heading}</h3>
+              <p>{representationPrompt.question}</p>
+              <div className="representation-options">
+                {representationPrompt.choices.map((choice) => <button key={choice.mode} type="button" className="secondary" disabled={representationResolutionActive} onClick={() => void resumeWithRepresentation(choice.mode, "inventor-choice")}>{choice.label}</button>)}
+                <button type="button" className="secondary" disabled={representationResolutionActive || !representationPrompt.recommendation} onClick={() => representationPrompt.recommendation && void resumeWithRepresentation(representationPrompt.recommendation, "rev-recommendation")}>{REV_RECOMMENDATION_LABEL}</button>
+              </div>
+              {!representationPrompt.recommendation && <small>REV does not have enough evidence to recommend without guessing. Choose the representation you want to judge first.</small>}
+            </section>}
 
             {visualInterpretation && <section className="visual-understanding" aria-label="REV visual understanding"><span>WHAT REV CAN SEE</span><p>{visualInterpretation.factualSummary}</p><small>Derived from the attached visual reference · not Project truth</small></section>}
             {visualUnderstandingMessage && <p className="visual-understanding-message" role="status">{visualUnderstandingMessage.replace("ASK REV", "START WITH REV")}</p>}
@@ -644,9 +722,10 @@ export default function Home() {
         .creation-status :global(.icon-depth){fill:rgba(30,125,158,.5);stroke:rgba(100,216,235,.82);filter:drop-shadow(1px 2px 1px rgba(0,0,0,.5))}.creation-status :global(.icon-highlight){stroke:#d8fbff;stroke-width:1.15;opacity:.92;filter:drop-shadow(0 0 2px rgba(131,234,251,.7))}.creation-status :global(.icon-base){fill:rgba(50,154,184,.25);stroke:rgba(224,169,79,.62);filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
         .origin-intent{margin:7px 0 0;padding:0;border:0}.origin-intent legend{padding:0;color:#86aeb9;font-size:9px;font-weight:720;letter-spacing:.07em}.origin-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:5px}.origin-options label{display:grid;grid-template-columns:23px minmax(0,1fr);align-items:center;gap:5px;min-height:42px;padding:5px 7px;border:1px solid rgba(72,129,146,.65);border-radius:5px;background:rgba(3,15,25,.48);color:#dcecf0;cursor:pointer}.origin-options input{position:absolute;inline-size:1px;block-size:1px;opacity:0}.origin-options svg{width:21px;height:21px;color:#8ce9fb;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(72,207,238,.42))}.origin-options svg :global(path),.origin-options svg :global(circle),.origin-options svg :global(ellipse){stroke:currentColor}.origin-options :global(.origin-depth){fill:rgba(39,153,183,.2);stroke:rgba(84,177,199,.66)}.origin-options :global(.origin-highlight){stroke:#dcfbff;stroke-width:1;opacity:.9}.origin-options :global(.origin-gold){stroke:#e0aa51;filter:drop-shadow(0 0 2px rgba(224,170,81,.74))}.origin-options :global(.origin-metal){stroke:#8bafbb;stroke-width:3}.origin-options span{font-size:clamp(8px,.56vw,10px);font-weight:800;line-height:1.2}.origin-options label.is-selected{border-color:#dda850;background:linear-gradient(135deg,rgba(41,132,156,.3),rgba(162,104,38,.21));box-shadow:inset 0 0 0 1px rgba(219,165,76,.2),0 0 12px rgba(69,186,216,.16);color:#fff5df}.origin-options label:focus-within{outline:3px solid #8ce9fb;outline-offset:2px}
         .console-action{display:flex;align-items:center;gap:8px;margin-top:7px}.console-action>button{width:auto;min-height:39px;padding:8px 13px;font-size:10px;white-space:nowrap}.console-action .secondary{min-height:39px;border-color:rgba(83,185,211,.8);background:rgba(4,26,39,.8)}.console-action .start-button{margin-left:auto;background:linear-gradient(180deg,#c18432,#7d4b1c)}
+        .representation-choice{margin-top:8px;padding:10px 12px;border:1px solid rgba(95,206,228,.68);border-radius:8px;background:linear-gradient(135deg,rgba(8,38,52,.92),rgba(17,27,39,.9));box-shadow:0 0 18px rgba(60,192,220,.12)}.representation-choice h3{margin:0;color:#86e8f6;font-size:12px;letter-spacing:.11em}.representation-choice p{margin:5px 0 8px;color:#f4f7f5;font-weight:700}.representation-choice small{display:block;margin-top:7px;color:#a9bec5}.representation-options{display:flex;flex-wrap:wrap;gap:8px}.representation-options .secondary{min-height:44px}.representation-options .secondary:disabled{opacity:.48}
         @media(min-width:1201px){.entry{width:min(100%,98rem);margin-top:-.55rem}.console-regions{grid-template-columns:42fr 58fr}.project-region,.idea-region{padding:12px 14px}.region-heading{margin-bottom:0}.region-heading h1,.region-heading h2{font-size:clamp(16px,1.05vw,20px);letter-spacing:.015em}.description-field{margin-top:7px}.description-field textarea{height:108px;min-height:108px;padding:10px 12px;font-size:13px}.workflow{margin-top:10px;padding-top:8px}.workflow-heading small{font-size:8px}.journey-bar{height:8px;margin-top:6px}.workflow ol{margin-top:5px}.workflow li span{font-size:8px}.workflow li small{display:none}.idea-region{display:block}.origin-options label{grid-template-columns:27px minmax(0,1fr);min-height:44px}.origin-options svg{width:24px;height:24px}.creation-status{margin-top:4px;padding:7px 12px 8px}.creation-status-heading{justify-content:center}.creation-status-heading small{display:none}.creation-status ul{gap:6px;margin-top:5px}.creation-status li{position:relative;display:grid;grid-template-columns:1fr;grid-template-rows:auto auto;align-content:start;justify-items:center;gap:4px;min-height:104px;padding:0;text-align:center}.creation-status li:not(.is-core):not(.is-reality)::before{content:"";position:absolute;z-index:0;top:34px;width:42px;height:12px;border:1px solid rgba(224,169,79,.44);border-radius:50%;background:radial-gradient(ellipse,rgba(73,199,222,.3),rgba(29,90,121,.14) 48%,transparent 72%);box-shadow:0 4px 6px rgba(0,0,0,.58),0 0 11px rgba(50,187,219,.22)}.creation-status li :global(.status-icon){position:relative;z-index:1;grid-row:auto;width:47px;height:47px;stroke-width:1.5;filter:drop-shadow(0 0 5px rgba(67,196,221,.5)) drop-shadow(0 4px 4px rgba(0,0,0,.48))}.creation-status li strong{position:relative;z-index:1;font-size:clamp(9px,.59vw,11px);line-height:1.18;letter-spacing:.01em;text-shadow:0 2px 3px rgba(0,0,0,.8)}.creation-status li small{display:none}.creation-status li.is-core :global(.status-icon){width:61px;height:61px;stroke-width:1.5;filter:drop-shadow(0 0 5px rgba(91,228,250,.96)) drop-shadow(0 0 12px rgba(219,164,75,.62))}.creation-status li.is-reality :global(.status-icon){width:62px;height:62px;stroke-width:1.75;filter:drop-shadow(0 0 6px rgba(70,211,238,.82)) drop-shadow(0 0 12px rgba(220,166,76,.5))}.creation-status li.is-reality{grid-template-columns:1fr}.creation-status li.is-reality strong{font-size:clamp(9px,.59vw,11px)}.creation-status li.is-manufacturing :global(.manufacturing-sparks){stroke-width:1.65;filter:drop-shadow(0 0 4px rgba(235,173,74,.86))}.visual-understanding,.visual-understanding-message,.question{margin-top:5px}.error{margin:5px 0 0;font-size:11px}}
         @media(min-width:901px) and (max-width:1200px){.entry{width:100%;margin-top:0}.console-regions{grid-template-columns:minmax(22rem,42fr) minmax(0,58fr)}.project-region,.idea-region{padding:14px}.region-heading h1,.region-heading h2{font-size:20px}.origin-options label{min-height:48px}.creation-status{margin-top:8px;padding:10px 12px}.creation-status-heading small{display:none}.creation-status ul{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:7px}.creation-status li{position:relative;display:grid;grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;gap:5px;min-height:105px;text-align:center}.creation-status li :global(.status-icon){grid-row:auto;width:47px;height:47px}.creation-status li.is-core :global(.status-icon),.creation-status li.is-reality :global(.status-icon){width:60px;height:60px}.creation-status li strong{font-size:10px;line-height:1.2}.creation-status li small{display:none}}
-        @media(max-width:900px){.entry{width:100%;margin-top:0}.console-regions{display:flex;flex-direction:column;padding:16px;overflow:visible}.project-region,.idea-region{display:contents}.project-region>.region-heading{order:1}.origin-intent{order:2}.idea-heading{order:3;margin-top:16px;padding-top:16px;border-top:1px solid rgba(91,174,195,.34)}.description-field{order:4;margin-top:8px}.console-action{order:5}.workflow{order:6;margin-top:16px;padding-top:14px}.visual-understanding,.visual-understanding-message,.question{order:7}.error{order:8}.region-heading h1,.region-heading h2{font-size:clamp(20px,3vw,26px)}textarea{height:160px;min-height:160px}.origin-options label{min-height:48px}.console-action>button{min-height:48px}.creation-status{margin-top:10px;padding:12px}.creation-status-heading small{display:none}.creation-status ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}.creation-status li{display:grid;grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;gap:5px;min-height:104px;text-align:center}.creation-status li :global(.status-icon){grid-row:auto;width:47px;height:47px}.creation-status li.is-core :global(.status-icon),.creation-status li.is-reality :global(.status-icon){width:60px;height:60px}.creation-status li strong{font-size:10px;line-height:1.22}.creation-status li small{display:none}}
+        @media(max-width:900px){.entry{width:100%;margin-top:0}.console-regions{display:flex;flex-direction:column;padding:16px;overflow:visible}.project-region,.idea-region{display:contents}.project-region>.region-heading{order:1}.origin-intent{order:2}.idea-heading{order:3;margin-top:16px;padding-top:16px;border-top:1px solid rgba(91,174,195,.34)}.description-field{order:4;margin-top:8px}.console-action{order:5}.representation-choice{order:6}.workflow{order:7;margin-top:16px;padding-top:14px}.visual-understanding,.visual-understanding-message,.question{order:8}.error{order:9}.region-heading h1,.region-heading h2{font-size:clamp(20px,3vw,26px)}textarea{height:160px;min-height:160px}.origin-options label{min-height:48px}.console-action>button{min-height:48px}.creation-status{margin-top:10px;padding:12px}.creation-status-heading small{display:none}.creation-status ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}.creation-status li{display:grid;grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;gap:5px;min-height:104px;text-align:center}.creation-status li :global(.status-icon){grid-row:auto;width:47px;height:47px}.creation-status li.is-core :global(.status-icon),.creation-status li.is-reality :global(.status-icon){width:60px;height:60px}.creation-status li strong{font-size:10px;line-height:1.22}.creation-status li small{display:none}}
         @media(max-width:560px){.console-regions{padding:15px 14px}.origin-options{grid-template-columns:1fr;gap:8px}.origin-options label{grid-template-columns:32px minmax(0,1fr);min-height:52px;padding:8px 10px}.origin-options svg{width:27px;height:27px}.origin-options span{font-size:11px}.console-action{display:grid;grid-template-columns:1fr;gap:9px}.console-action>button,.console-action .secondary,.console-action .start-button{width:100%;min-height:50px;margin-left:0;font-size:11px}.workflow-heading{align-items:flex-start;flex-direction:column;gap:4px}.workflow ol{gap:4px}.workflow li span{font-size:9px}.workflow li small{font-size:7.5px}textarea{height:175px;min-height:175px;font-size:16px}.creation-status ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.creation-status li{min-height:112px;padding:5px}.creation-status li strong{font-size:10px}.creation-status li :global(.status-icon){width:49px;height:49px}.creation-status li.is-core :global(.status-icon),.creation-status li.is-reality :global(.status-icon){width:62px;height:62px}}
         @media(max-width:900px) and (max-height:520px){.console-regions{padding:14px}.origin-options{grid-template-columns:repeat(3,minmax(0,1fr))}.origin-options label{grid-template-columns:24px minmax(0,1fr);min-height:46px;padding:6px}.origin-options svg{width:22px;height:22px}.origin-options span{font-size:9px}.creation-status ul{grid-template-columns:repeat(4,minmax(0,1fr))}.creation-status li{min-height:96px}.creation-status li :global(.status-icon){width:43px;height:43px}.creation-status li.is-core :global(.status-icon),.creation-status li.is-reality :global(.status-icon){width:55px;height:55px}}
       `}</style>

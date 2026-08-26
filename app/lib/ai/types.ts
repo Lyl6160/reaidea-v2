@@ -10,6 +10,42 @@ export type IdeaVisualMode =
   | "mixed"
   | "unknown";
 
+export type SupportedRepresentationMode = Exclude<IdeaVisualMode, "mixed" | "unknown">;
+
+export type RepresentationRoutingReason =
+  | "explicit-description-supported"
+  | "description-mixed"
+  | "description-insufficient"
+  | "explicit-inventor-choice"
+  | "evidence-backed-recommendation";
+
+export type RepresentationSupportingSignalLabel =
+  | "description-physical-form"
+  | "description-components"
+  | "description-operation"
+  | "description-wearable-use"
+  | "description-machine"
+  | "description-process"
+  | "description-software"
+  | "description-system"
+  | "description-environmental"
+  | "image-corroborates-description"
+  | "image-context-differs";
+
+/** Bounded routing metadata only. It never contains inventor text or image/provider content. */
+export type RepresentationRoutingDiagnostic = {
+  mode: IdeaVisualMode;
+  reason: RepresentationRoutingReason;
+  supportingSignalLabels: RepresentationSupportingSignalLabel[];
+  phase: "request-construction";
+  category: "representation-question";
+};
+
+export type RepresentationResolution = {
+  mode: SupportedRepresentationMode;
+  source: "inventor-choice" | "rev-recommendation";
+};
+
 export type ConceptOutputType =
   | "image"
   | "diagram"

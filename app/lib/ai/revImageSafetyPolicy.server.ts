@@ -15,7 +15,12 @@ export const HAZARD_INTENT_QUESTION = "Is the goal to contain an existing hazard
 export const CREATION_INTENT_HOLD_MESSAGE = "REV needs to confirm the safety purpose before creating anything.";
 export const CREATION_INTENT_BLOCK_MESSAGE = "REV can’t help design, modify or improve weapons or explosive materials. I can help with safe storage, decommissioning, compliance, detection or protective systems.";
 
-const immediatelyBlockedIntent = /\b(build|construct|convert|make|manufacture)\b[\s\S]*\b(working firearm|working gun|working weapon)\b/i;
+const weaponConstructionVerb = String.raw`(?:design|build|construct|make|manufacture|convert|modify)`;
+const workingWeaponTarget = String.raw`(?:working\s+(?:firearm|gun|weapon|rifle|pistol))(?!\s+(?:safe|storage|cabinet|case|lock|rack|holder|mount|transport)\b)`;
+const immediatelyBlockedIntent = new RegExp([
+  String.raw`\b${weaponConstructionVerb}\b(?:\W+\w+){0,8}\W+\b${workingWeaponTarget}\b`,
+  String.raw`\b${workingWeaponTarget}\b(?:\W+\w+){0,12}\W+\b${weaponConstructionVerb}\b(?:\W+\w+){0,3}\W+\b(?:it|this|that|one|the\s+(?:firearm|gun|weapon|rifle|pistol))\b`,
+].join("|"), "i");
 const firearmHarmfulIntent = /\b(?:caus(?:e|es|ed|ing))\b(?:\W+\w+){0,5}\W+\b(?:more|greater|additional)\s+(?:damage|harm)\b|\b(?:increas(?:e|es|ed|ing))\b(?:\W+\w+){0,5}\W+\b(?:lethal|lethality|range|rate of fire)\b|\b(?:more|greater)\s+(?:damage|harm)\b|\b(?:lethal|lethality)\b|\b(?:conceal|conceals|concealed|concealing|concealment)\b|\b(?:ammunition|ammo)\s+development\b|\b(?:defeat|defeats|defeated|defeating|disable|disables|disabled|disabling|bypass|bypasses|bypassed|bypassing)\b(?:\W+\w+){0,5}\W+\b(?:safety system|safety control)\b|\b(?:target|targets|targeted|targeting|shoot|shoots|shooting|harm|harms|harmed|harming)\b(?:\W+\w+){0,5}\W+\b(?:person|people|human|humans)\b|\b(?:evade|evades|evaded|evading|avoid|avoids|avoided|avoiding)\b(?:\W+\w+){0,5}\W+\b(?:authority|authorities|police)\b/i;
 const hazardHarmfulIntent = new RegExp([
   String.raw`\b(?:chemical\s+)?mixtures?\s+(?:recipes?|ratios?)\b|\b(?:recipes?|ratios?)\s+(?:for|of)\s+(?:a\s+)?(?:chemical|explosive|mixture|reaction)\b`,
@@ -37,6 +42,7 @@ const firearmOrWeaponContext = /\b(?:firearm|gun|weapon|rifle|pistol|ammunition|
 const hazardousChemicalContext = /\b(?:chemical|explosive|explosives|blast|charge|hazardous\s+(?:material|chemical)|precursor|reaction)\b/i;
 const firearmComponentIntent = /\b(?:weapon|firearm|gun|rifle|pistol)\b(?:\W+\w+){0,5}\W+\b(?:component|part|receiver|barrel|trigger|magazine)\b|\b(?:component|part|receiver|barrel|trigger|magazine)\b(?:\W+\w+){0,5}\W+\b(?:weapon|firearm|gun|rifle|pistol)\b|\b(?:print|printed|printing)\b(?:\W+\w+){0,5}\W+\b(?:weapon|firearm|gun|receiver|component|part)\b/i;
 const firearmModificationIntent = /\b(?:modify|modification|improve|improvement|upgrade|alter)\b(?:\W+\w+){0,6}\W+\b(?:firearm|gun|weapon|rifle|pistol)\b|\b(?:firearm|gun|weapon|rifle|pistol)\b(?:\W+\w+){0,6}\W+\b(?:accuracy|firing\s+capability|rate\s+of\s+fire|lethality|concealment)\b/i;
+const firearmCapabilityIncreaseIntent = /\b(?:increase|boost|strengthen|improve|upgrade)\b(?:\W+\w+){0,5}\W+\b(?:capability|capabilities|performance|accuracy|range|rate\s+of\s+fire|lethality)\b(?:\W+\w+){0,5}\W+\b(?:working\s+)?(?:firearm|gun|weapon|rifle|pistol)\b|\b(?:working\s+)?(?:firearm|gun|weapon|rifle|pistol)\b(?:\W+\w+){0,8}\W+\b(?:increase|boost|strengthen|improve|upgrade)\b(?:\W+\w+){0,4}\W+\b(?:its?\s+)?(?:capability|capabilities|performance|accuracy|range|rate\s+of\s+fire|lethality)\b/i;
 const hazardousCreationIntent = /\b(?:create|make|build|formulate|weaponis[ez]|weaponization)\b(?:\W+\w+){0,6}\W+\b(?:explosive|harmful\s+chemical|chemical\s+weapon)\b/i;
 
 export type RevCreationIntentDecision =
@@ -98,7 +104,7 @@ export function preflightCreationIntent(inventorContext: string | undefined): Re
   if (!description) return { decision: "unavailable", retryable: false };
 
   // Harmful intent always wins over any co-located protective wording.
-  if (immediatelyBlockedIntent.test(description) || firearmHarmfulIntent.test(description) || firearmComponentIntent.test(description) || firearmModificationIntent.test(description) || hazardousCreationIntent.test(description) || hazardHarmfulIntent.test(description)) {
+  if (immediatelyBlockedIntent.test(description) || firearmHarmfulIntent.test(description) || firearmComponentIntent.test(description) || firearmModificationIntent.test(description) || firearmCapabilityIncreaseIntent.test(description) || hazardousCreationIntent.test(description) || hazardHarmfulIntent.test(description)) {
     return { decision: "BLOCK" };
   }
 

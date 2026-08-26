@@ -1,13 +1,14 @@
-import type { ConceptCandidate, ConceptCreationDiagnostic, ConceptGenerationApiResponse, ConceptGenerationRequest, VisualUnderstandingResult } from "../ai/types";
+import type { ConceptCandidate, ConceptCreationDiagnostic, ConceptGenerationApiResponse, ConceptGenerationRequest, RepresentationResolution, VisualUnderstandingResult } from "../ai/types";
 import { bindConceptGeometry } from "../geometry/buildConceptGeometry";
 import { buildInitialGeometryPlan } from "../geometry/initialGeometryPlan";
 import type { Project } from "../core/project";
 import { isValidSafetyReceipt, loadProjectSourceImage, parseSourceImageReference, sourceImageToDataUrl } from "../core/projectSourceEvidenceStorage";
-import { buildConceptGenerationFoundation, createConceptWorkflowIdentity, suggestVisualMode } from "./conceptGeneration";
+import { buildConceptGenerationFoundation, createConceptWorkflowIdentity, routeInitialRepresentation, type InitialRepresentationRoutingDecision } from "./conceptGeneration";
 import { persistCurrentConceptCandidate, persistInitialCoreCreationReceipt, restoreCurrentConceptCandidate, type InitialCoreCreationReceipt } from "./conceptCandidateStorage";
 
 export type InitialCoreCreationResult =
   | { kind: "success"; candidate: ConceptCandidate }
+  | { kind: "needs-representation"; prompt: Extract<InitialRepresentationRoutingDecision, { kind: "needs-representation" }>; receipt: InitialCoreCreationReceipt }
   | { kind: "failure"; message: string; receipt: InitialCoreCreationReceipt; retryPersistence?: () => Promise<InitialCoreCreationResult> };
 
 export type InitialCoreCreationPhase = "reading" | "saving" | "generating" | "checking-geometry" | "building" | "opening";
@@ -59,16 +60,28 @@ export function isInitialCoreCreationActive(phase: InitialCoreCreationUiPhase): 
 export async function runInitialCoreCreation(
   project: Project,
   visualInterpretation?: VisualUnderstandingResult,
-  dependencies: InitialCoreCreationDependencies = {}
+  dependencies: InitialCoreCreationDependencies = {},
+  resolution?: RepresentationResolution
 ): Promise<InitialCoreCreationResult> {
   const identity = createConceptWorkflowIdentity();
-  const mode = suggestVisualMode(project, [], visualInterpretation).mode;
   const now = new Date().toISOString();
-  const creating: InitialCoreCreationReceipt = { projectId: project.id, status: "creating", correlationId: identity.requestId, startedAt: now, updatedAt: now };
   const saveReceipt = dependencies.persistReceipt ?? persistInitialCoreCreationReceipt;
+  const routing = routeInitialRepresentation(project, visualInterpretation, resolution);
+  if (routing.kind === "needs-representation") {
+    const receipt: InitialCoreCreationReceipt = {
+      projectId: project.id,
+      status: "awaiting-representation",
+      correlationId: identity.requestId,
+      startedAt: now,
+      updatedAt: now,
+      representationDiagnostic: routing.diagnostic,
+    };
+    await saveReceipt(receipt);
+    return { kind: "needs-representation", prompt: routing, receipt };
+  }
+  const creating: InitialCoreCreationReceipt = { projectId: project.id, status: "creating", correlationId: identity.requestId, startedAt: now, updatedAt: now };
   await saveReceipt(creating);
-  if (mode === "unknown" || mode === "mixed") return fail(project.id, creating, "request-construction", "REV could not form one supported visual concept from this submission.", false, dependencies, 0);
-  const foundation = buildConceptGenerationFoundation(project, mode, identity, [], [], visualInterpretation ? [visualInterpretation] : []);
+  const foundation = buildConceptGenerationFoundation(project, routing.mode, identity, [], [], visualInterpretation ? [visualInterpretation] : [], routing.workingAssumptions);
   if (!foundation.request) return fail(project.id, creating, "request-construction", "REV could not prepare the initial Concept 01 request.", false, dependencies, 0);
   const request = await attachSourceImageReference(project, foundation.request);
   const fetchConcept = dependencies.fetchConcept ?? requestConcept;

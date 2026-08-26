@@ -1,4 +1,4 @@
-import type { ConceptCandidate, ConceptCreationDiagnostic } from "../ai/types";
+import type { ConceptCandidate, ConceptCreationDiagnostic, RepresentationRoutingDiagnostic } from "../ai/types";
 import { isValidConceptGeometry } from "../geometry/conceptGeometry";
 import { validateInitialGeometryPlan } from "../geometry/initialGeometryPlan";
 
@@ -11,11 +11,12 @@ export const MAX_RETAINED_CONCEPT_CANDIDATES = 5;
 
 export type InitialCoreCreationReceipt = {
   projectId: string;
-  status: "creating" | "failed";
+  status: "creating" | "awaiting-representation" | "failed";
   correlationId: string;
   startedAt: string;
   updatedAt: string;
   diagnostic?: ConceptCreationDiagnostic;
+  representationDiagnostic?: RepresentationRoutingDiagnostic;
 };
 
 type StoredConceptCandidate = {
@@ -202,8 +203,13 @@ function geometryMatchesPlan(geometry: { components: Array<{ id: string }> }, pl
 }
 
 export function isInitialCoreCreationReceipt(value: unknown, projectId?: string): value is InitialCoreCreationReceipt {
-  if (!isRecord(value) || value.status !== "creating" && value.status !== "failed") return false;
+  if (!isRecord(value) || !["creating", "awaiting-representation", "failed"].includes(String(value.status))) return false;
   if (!nonEmptyString(value.projectId) || (projectId && value.projectId !== projectId) || !nonEmptyString(value.correlationId) || !nonEmptyString(value.startedAt) || !nonEmptyString(value.updatedAt)) return false;
+  if (value.status === "awaiting-representation") {
+    return Object.keys(value).every((key) => ["projectId", "status", "correlationId", "startedAt", "updatedAt", "representationDiagnostic"].includes(key)) &&
+      value.diagnostic === undefined && isRepresentationRoutingDiagnostic(value.representationDiagnostic);
+  }
+  if (value.representationDiagnostic !== undefined) return false;
   if (value.diagnostic === undefined) return value.status === "creating";
   const diagnostic = value.diagnostic;
   return isRecord(diagnostic) && diagnostic.correlationId === value.correlationId && nonEmptyString(diagnostic.occurredAt) && typeof diagnostic.retryable === "boolean" &&
@@ -211,6 +217,19 @@ export function isInitialCoreCreationReceipt(value: unknown, projectId?: string)
     (diagnostic.httpStatus === undefined || typeof diagnostic.httpStatus === "number") &&
     (diagnostic.modelIdentifier === undefined || nonEmptyString(diagnostic.modelIdentifier)) &&
     ["invalid-request", "unsupported-mode", "not-configured", "provider-failure", "safety-hold", "safety-block", "safety-unavailable", "network", "candidate-validation", "local-persistence", "request-construction", "interrupted"].includes(String(diagnostic.category));
+}
+
+function isRepresentationRoutingDiagnostic(value: unknown): value is RepresentationRoutingDiagnostic {
+  if (!isRecord(value)) return false;
+  return ["product", "machine", "process", "software", "system", "environmental", "mixed", "unknown"].includes(String(value.mode)) &&
+    ["explicit-description-supported", "description-mixed", "description-insufficient", "explicit-inventor-choice", "evidence-backed-recommendation"].includes(String(value.reason)) &&
+    value.phase === "request-construction" && value.category === "representation-question" &&
+    Array.isArray(value.supportingSignalLabels) && value.supportingSignalLabels.length <= 8 &&
+    value.supportingSignalLabels.every((label) => [
+      "description-physical-form", "description-components", "description-operation", "description-wearable-use",
+      "description-machine", "description-process", "description-software", "description-system",
+      "description-environmental", "image-corroborates-description", "image-context-differs",
+    ].includes(String(label)));
 }
 
 function isVisualDesignSnapshot(value: unknown): boolean {

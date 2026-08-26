@@ -6,6 +6,10 @@ import type {
   ConceptOutputType,
   ConceptRepresentationStyle,
   IdeaVisualMode,
+  RepresentationResolution,
+  RepresentationRoutingDiagnostic,
+  RepresentationSupportingSignalLabel,
+  SupportedRepresentationMode,
 } from "../ai/types";
 import {
   assessEngineeringDefinition,
@@ -51,6 +55,31 @@ export type ConceptGenerationFoundation = {
   generationReady: boolean;
   request: ConceptGenerationRequest | null;
 };
+
+export const REPRESENTATION_CHOICE_HEADING = "REV NEEDS ONE REPRESENTATION CHOICE";
+export const REPRESENTATION_CHOICE_QUESTION = "What should REV create first so you can judge this idea?";
+export const REV_RECOMMENDATION_LABEL = "I'M NOT SURE / LET REV RECOMMEND";
+
+export type RepresentationChoice = {
+  mode: SupportedRepresentationMode;
+  label: string;
+};
+
+export type InitialRepresentationRoutingDecision =
+  | {
+      kind: "ready";
+      mode: SupportedRepresentationMode;
+      diagnostic: RepresentationRoutingDiagnostic;
+      workingAssumptions: string[];
+    }
+  | {
+      kind: "needs-representation";
+      heading: typeof REPRESENTATION_CHOICE_HEADING;
+      question: typeof REPRESENTATION_CHOICE_QUESTION;
+      choices: RepresentationChoice[];
+      recommendation: SupportedRepresentationMode | null;
+      diagnostic: RepresentationRoutingDiagnostic;
+    };
 
 export const IDEA_VISUAL_MODES: readonly IdeaVisualMode[] = [
   "product",
@@ -145,6 +174,22 @@ const MODE_SIGNALS: Record<Exclude<IdeaVisualMode, "mixed" | "unknown">, RegExp[
   ],
 };
 
+const SAFE_SIGNAL_LABELS: Record<SupportedRepresentationMode, RepresentationSupportingSignalLabel> = {
+  product: "description-physical-form",
+  machine: "description-machine",
+  process: "description-process",
+  software: "description-software",
+  system: "description-system",
+  environmental: "description-environmental",
+};
+
+const INITIAL_GENERATION_MODES = new Set<SupportedRepresentationMode>(["product"]);
+const INITIAL_PRODUCT_SIGNALS = {
+  form: /\b(?:wearable|eyewear|[a-z]+glasses|goggles|lens(?:es)?|strap|handle|tool|device|appliance|pair)\b/i,
+  operation: /\b(?:wear|worn|fit|fits|fitted|attach|attached|secure|secured|stay on|stays on|fall off|falls off|carry|carried|operate|operated)\b/i,
+  components: /\b(?:frame|lens(?:es)?|strap|hinge|fastener|mount|holder|enclosure|housing|base|wheel(?:s)?|button(?:s)?)\b/i,
+} as const;
+
 export function visualModeLabel(mode: IdeaVisualMode): string {
   return MODE_LABELS[mode];
 }
@@ -209,6 +254,69 @@ export function suggestVisualMode(
   };
 }
 
+/**
+ * Routes initial creation from inventor-owned Project text first. Derived image
+ * interpretation may corroborate that decision, but cannot replace or override it.
+ */
+export function routeInitialRepresentation(
+  project: Project,
+  derivedVisualContext?: DerivedVisualModeContext,
+  resolution?: RepresentationResolution
+): InitialRepresentationRoutingDecision {
+  const authoritative = scoreModes(project.originalObservation);
+  const relevant = authoritative.filter((item) => item.score > 0);
+  const strongest = relevant[0];
+  const second = relevant[1];
+  const mixed = Boolean(strongest && second && second.score >= 2 && second.score >= strongest.score - 1);
+  const supported = Boolean(strongest && strongest.score >= 2 && !mixed && INITIAL_GENERATION_MODES.has(strongest.mode));
+  const imageLabels = imageRelationshipLabels(strongest?.mode, derivedVisualContext);
+  const signalLabels = uniqueSignalLabels([
+    ...relevant.slice(0, 2).map((item) => SAFE_SIGNAL_LABELS[item.mode]),
+    ...(authoritative.find((item) => item.mode === "product")?.wearable ? ["description-wearable-use" as const] : []),
+    ...(authoritative.find((item) => item.mode === "product")?.operation ? ["description-operation" as const] : []),
+    ...(authoritative.find((item) => item.mode === "product")?.components ? ["description-components" as const] : []),
+    ...imageLabels,
+  ]);
+
+  if (resolution) {
+    if (!INITIAL_GENERATION_MODES.has(resolution.mode)) {
+      return needsRepresentation(authoritative, signalLabels, mixed);
+    }
+    const selectedIsRelevant = relevant.some((item) => item.mode === resolution.mode);
+    const recommendationIsSupported =
+      resolution.source === "rev-recommendation" &&
+      strongest?.mode === resolution.mode &&
+      strongest.score >= 2 &&
+      (!second || strongest.score > second.score);
+    if (resolution.source === "rev-recommendation" && !recommendationIsSupported) {
+      return needsRepresentation(authoritative, signalLabels, mixed);
+    }
+    const reason = resolution.source === "rev-recommendation"
+      ? "evidence-backed-recommendation"
+      : "explicit-inventor-choice";
+    return {
+      kind: "ready",
+      mode: resolution.mode,
+      diagnostic: routingDiagnostic(resolution.mode, reason, signalLabels),
+      workingAssumptions: resolution.source === "rev-recommendation"
+        ? [`REV working assumption: begin with a ${visualModeLabel(resolution.mode).toLowerCase()} representation, based on the captured Project information.`]
+        : selectedIsRelevant
+          ? []
+          : [`Inventor representation choice: begin with a ${visualModeLabel(resolution.mode).toLowerCase()} representation.`],
+    };
+  }
+
+  if (supported && strongest) {
+    return {
+      kind: "ready",
+      mode: strongest.mode,
+      diagnostic: routingDiagnostic(strongest.mode, "explicit-description-supported", signalLabels),
+      workingAssumptions: [],
+    };
+  }
+  return needsRepresentation(authoritative, signalLabels, mixed);
+}
+
 export function outputTypeForVisualMode(mode: IdeaVisualMode): ConceptOutputType | null {
   switch (mode) {
     case "product":
@@ -256,7 +364,8 @@ export function buildConceptGenerationFoundation(
   identity: ConceptWorkflowIdentity,
   rollingEngineeringNotes: ConceptGenerationBenchNote[] = [],
   rollingInventorNotes: ConceptGenerationBenchNote[] = [],
-  visualInterpretations: import("./revWorkingUnderstanding").RoutedVisualInterpretation[] = []
+  visualInterpretations: import("./revWorkingUnderstanding").RoutedVisualInterpretation[] = [],
+  routingAssumptions: string[] = []
 ): ConceptGenerationFoundation {
   const definition = assessEngineeringDefinition(project);
   const definitionInputs = latestDefinitionInputs(project);
@@ -297,7 +406,7 @@ export function buildConceptGenerationFoundation(
     ...(optionalAnswer(answers, "user-interaction", "userInteraction", workingBrief.userInteraction?.text)),
     ...(optionalAnswer(answers, "arrangement", "arrangement", rollingAnswers[1] || workingBrief.arrangement?.text)),
     constraints: unique([...constraints, ...derivedConstraints, rollingAnswers[7] ?? ""]),
-    assumptions: unique(project.engineeringState.currentAssumptions),
+    assumptions: unique([...project.engineeringState.currentAssumptions, ...routingAssumptions]),
     ...(optionalAnswer(answers, "technical-uncertainty", "technicalUncertainty")),
   };
   const sourceTrace: ConceptBriefSource[] = [
@@ -479,6 +588,95 @@ function rollingBriefSourceTrace(
     !answers.arrangement?.trim() && rollingAnswers[1] ? { field: "arrangement", sourceKind: "bench-note", sourceId: "engineering-rolling-2" } : null,
     rollingAnswers[7] ? { field: "constraints", sourceKind: "bench-note", sourceId: "engineering-rolling-8" } : null,
   ].filter((source): source is ConceptBriefSource => source !== null);
+}
+
+type ModeScore = {
+  mode: SupportedRepresentationMode;
+  score: number;
+  wearable: boolean;
+  operation: boolean;
+  components: boolean;
+};
+
+function scoreModes(text: string): ModeScore[] {
+  const bounded = text.slice(0, 6_000);
+  return (Object.entries(MODE_SIGNALS) as Array<[SupportedRepresentationMode, RegExp[]]>)
+    .map(([mode, patterns]) => {
+      const initialProductMatches = mode === "product"
+        ? Object.values(INITIAL_PRODUCT_SIGNALS).filter((pattern) => pattern.test(bounded)).length
+        : 0;
+      return {
+        mode,
+        score: patterns.reduce((count, pattern) => count + (pattern.test(bounded) ? 1 : 0), 0) + initialProductMatches,
+        wearable: mode === "product" && INITIAL_PRODUCT_SIGNALS.form.test(bounded) && /\b(?:wear|worn|fit|fits|fitted|stay on|stays on)\b/i.test(bounded),
+        operation: mode === "product" && INITIAL_PRODUCT_SIGNALS.operation.test(bounded),
+        components: mode === "product" && INITIAL_PRODUCT_SIGNALS.components.test(bounded),
+      };
+    })
+    .sort((left, right) => right.score - left.score || MODE_LABELS[left.mode].localeCompare(MODE_LABELS[right.mode]));
+}
+
+function needsRepresentation(
+  scores: ModeScore[],
+  signalLabels: RepresentationSupportingSignalLabel[],
+  mixed: boolean
+): InitialRepresentationRoutingDecision {
+  const relevant = scores.filter((item) => item.score > 0).slice(0, 2);
+  const supportedChoices = relevant.filter((item) => INITIAL_GENERATION_MODES.has(item.mode));
+  if (supportedChoices.length === 0) {
+    const product = scores.find((item) => item.mode === "product");
+    if (product) supportedChoices.push(product);
+  }
+  const strongest = relevant[0];
+  const second = relevant[1];
+  const recommendation = strongest && INITIAL_GENERATION_MODES.has(strongest.mode) && strongest.score >= 2 && (!second || strongest.score > second.score)
+    ? strongest.mode
+    : null;
+  return {
+    kind: "needs-representation",
+    heading: REPRESENTATION_CHOICE_HEADING,
+    question: REPRESENTATION_CHOICE_QUESTION,
+    choices: supportedChoices.map((item) => ({ mode: item.mode, label: visualModeLabel(item.mode) })),
+    recommendation,
+    diagnostic: routingDiagnostic(
+      mixed ? "mixed" : "unknown",
+      mixed ? "description-mixed" : "description-insufficient",
+      signalLabels
+    ),
+  };
+}
+
+function routingDiagnostic(
+  mode: IdeaVisualMode,
+  reason: RepresentationRoutingDiagnostic["reason"],
+  supportingSignalLabels: RepresentationSupportingSignalLabel[]
+): RepresentationRoutingDiagnostic {
+  return {
+    mode,
+    reason,
+    supportingSignalLabels: supportingSignalLabels.slice(0, 8),
+    phase: "request-construction",
+    category: "representation-question",
+  };
+}
+
+function imageRelationshipLabels(
+  authoritativeMode: SupportedRepresentationMode | undefined,
+  context?: DerivedVisualModeContext
+): RepresentationSupportingSignalLabel[] {
+  if (!context || !authoritativeMode) return [];
+  const derived = scoreModes([
+    context.factualSummary.slice(0, 280),
+    ...context.visualObservations.slice(0, 8).map((item) => item.slice(0, 240)),
+  ].join("\n"))[0];
+  if (!derived || derived.score < 2) return [];
+  return [derived.mode === authoritativeMode ? "image-corroborates-description" : "image-context-differs"];
+}
+
+function uniqueSignalLabels(
+  values: RepresentationSupportingSignalLabel[]
+): RepresentationSupportingSignalLabel[] {
+  return Array.from(new Set(values));
 }
 
 function articleFor(mode: IdeaVisualMode): "a" | "an" {

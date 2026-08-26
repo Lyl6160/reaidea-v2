@@ -155,8 +155,9 @@ export async function generateConcept(
     );
   }
 
+  const inventorIntentContext = request.brief.originalIdea;
   const safetyContext = conceptSafetyContext(request);
-  const creationIntent = preflightCreationIntent(safetyContext);
+  const creationIntent = preflightCreationIntent(inventorIntentContext);
   if (creationIntent.decision !== "CLEAR") {
     throw creationIntentError(creationIntent);
   }
@@ -178,7 +179,7 @@ export async function generateConcept(
       ? { ...request, safetyLimitations: creationIntent.limitations }
       : request;
     if (request.referenceImage) {
-      const safety = await inspectSafety(provider, request.referenceImage.dataUrl, request.referenceImage.mediaType, safetyContext, diagnostic, "reference-safety");
+      const safety = await inspectSafety(provider, request.referenceImage.dataUrl, request.referenceImage.mediaType, inventorIntentContext, diagnostic, "reference-safety");
       if (safety.decision !== "CLEAR") {
         const error = safetyError(safety, "Concept generation could not complete.");
         logConceptDiagnostic(diagnostic, "reference-safety", "moderation+visual-safety", error.code, error, error.code === "safety-unavailable" ? 503 : 422);
