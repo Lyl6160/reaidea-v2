@@ -1,9 +1,9 @@
 # reAIdea Flight Plan
 
 **Status:** FOUNDER APPROVED — current shared construction plan
-**Baseline:** `a62b597e32f98669832f30956bc023eadbcc85e0`
+**Baseline:** `27592acd8c7eb2bca3d7734adae923c9b29fdc69`
 **Branch:** `sprint006-build24-40-home-rebuild`
-**Active work:** Lane 0 authority reconciliation and packaging; B2B-3A is paused and uncommitted
+**Active work:** Lane 0 registration of `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002`; production implementation remains paused
 
 ## Purpose
 
@@ -28,13 +28,16 @@ flowchart LR
     S -- HOLD --> Q[One smallest purpose question]
     S -- BLOCK or unavailable --> X[No persistence or generation]
     Q --> D
-    P --> T[Creation Theatre with real phases]
-    T --> C[Concept 01]
-    T --> G[Supported geometry plan]
-    C --> V[Validate output safety and source binding]
-    G --> V
+    P --> U[ASK REV understanding loop]
+    U --> Q[One useful question at a time]
+    Q --> U
+    U --> T[Ready to create supported 3D]
+    T --> C[Creation Theatre with real phases]
+    C --> G[Concept 01 and supported geometry]
+    G --> V[Validate fidelity safety geometry and source binding]
     V --> R[Persist and reload verification]
-    R --> W[Living Workshop reveal]
+    R --> E[Deliberate Enter Workshop]
+    E --> W[Same stored 3D on centre podium]
     W --> B[Route understanding to relevant benches]
     B --> E[Specialist evidence and limitations]
     E --> N[One next useful decision]
@@ -140,11 +143,11 @@ Only one lane may be active in a Build Contract. Cross-lane work requires a foun
 
 | Area | Verified position | Next controlled gate |
 | --- | --- | --- |
-| Governance and safety | Constitution and authority hierarchy are founder accepted; packaging is uncommitted | Verify and package the reconciled authority without unfinished work |
-| Inventor Entry | Responsive Home, origin intent, readiness, optional image and one-action transaction accepted | Final responsive product review after architecture acceptance |
-| REV Intelligence | Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted at `a62b597e32f98669832f30956bc023eadbcc85e0` | Define S1B separately; do not infer acceptance of provider-backed smallest-question work |
-| Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define bounded physical-product geometry support without rebuilding the viewer |
-| Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Decide whether to resume paused B2B-3A in Lane 7 or address Lane 5 first |
+| Governance and safety | Constitution and authority hierarchy are founder accepted; Home AI-active and stored-3D journey authorities are registered | Prepare the read-only `HAI-1` Build Contract without product implementation |
+| Inventor Entry | Responsive Home, origin intent, optional image and safety foundation accepted | Contract `ASK REV`, one-question Home state and evidence-derived meter against `VPB-HOME-002/003` |
+| REV Intelligence | Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted at `a62b597e32f98669832f30956bc023eadbcc85e0` | Define provider-free HAI-1 first; S1B and provider-backed smallest-question work remain separate |
+| Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define source-aware fidelity and supported geometry before claiming `READY TO CREATE 3D` |
+| Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Preserve the viewer; later contract deliberate entry and same-stored-model arrival after `FAIL-NAV-001` diagnosis |
 | Evidence Engine | Project evidence/decision/action/result foundations exist | Define minimum sourced specialist output and adoption flow |
 | Production Foundation | Material controls absent | Identity, authorization and server persistence architecture |
 | Product Polish | Home/Workshop visual foundations are partial | Resume only after founder selects the active lane |
@@ -171,4 +174,4 @@ Exit gates require a truthful golden journey, safe failure, no cross-Project acc
 
 ## Immediate hold
 
-No production lane is active while the founder-approved Architecture and Visual Authority records are reconciled and packaged. The two-file B2B-3A diff is preserved as an uncommitted rollback-safe experiment. A later production step requires one active lane and a founder-approved Build Contract before coding resumes.
+No production lane is active while the founder-approved Home AI-active and stored-3D journey authority is registered. B2B-3A and C2 remain preserved on experimental archive branches and are not product authority. The next safe step is a read-only `HAI-1` Build Contract for the provider-free Home understanding loop and evidence-derived meter.

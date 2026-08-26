@@ -35,6 +35,7 @@ The active Build Contract cannot change product authority; it must implement wit
 | SR-012 | `VPB-HOME-001`, sign-free `VPB-WORKSHOP-001`, `VPB-JOURNEY-001`, locked 23 Aug composition authorities and accepted clean runtime layers control their scoped visual direction | Earlier Home/Workshop north stars, STOP/GO sample authority and old REV identities where conflicting | Old images remain historical; runtime truth stays live and layered; navigation follows verified persistence |
 | SR-013 | Build Lane 0 plus one delivery lane at a time | Unbounded multi-system construction | Cross-lane work needs an accepted ADR and combined rollback |
 | SR-014 | Project 000 applies the eight benches to reAIdea | Roadmap motion treated as proof | Completed, tested, assumed, planned and unresolved remain explicit |
+| SR-015 | `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002` establish `ASK REV` → understanding growth → stored 3D → deliberate Workshop entry | `START WITH REV` as the canonical action, automatic creation after one description, Visual-Concept-only completion, automatic navigation, entry without stored 3D, empty-podium arrival and 2D-as-3D interpretations | The initial Workshop handover occurs only after the same validated Concept 01 geometry is durably stored; earlier authorities remain preserved where non-conflicting |
 
 ## Document disposition
 

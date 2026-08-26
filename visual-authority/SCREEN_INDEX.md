@@ -18,6 +18,24 @@ This index records current lifecycle markers without rewriting completed history
 - **Truth rule:** Home understanding/readiness uses no percentage, confidence, feasibility or success-probability claim.
 - **Limitation:** Final complete responsive runtime acceptance remains partial; no new implementation is authorized by this image alone.
 
+### VPB-HOME-002 — Home AI Understanding Conversation
+
+- **Route/state:** `/` — `ASK REV` active, `WHAT REV UNDERSTANDS`, one useful question and optional evidence-backed recommendation.
+- **Blueprint status / flight marker:** **FOUNDER APPROVED / NOT IMPLEMENTED**.
+- **Approved image:** `home/VPB-HOME-002-ai-understanding-approved-2026-08-26.png`.
+- **Dimensions:** `1804 × 872` PNG.
+- **SHA-256:** `874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D`.
+- **Truth rule:** The inventor's description remains authoritative; images support; REV asks one useful question at a time and never repeats accepted information.
+
+### VPB-HOME-003 — Information-Driven Knowledge Pulse
+
+- **Route/state:** `/` — a useful answer has been accepted and visibly increases captured Project knowledge.
+- **Blueprint status / flight marker:** **FOUNDER APPROVED / NOT IMPLEMENTED**.
+- **Approved image:** `home/VPB-HOME-003-knowledge-pulse-approved-2026-08-26.png`.
+- **Dimensions:** `1804 × 872` PNG.
+- **SHA-256:** `7C4B12975E7EB228C23B5E7A4CD4143A8DCCCF271C29D9371FAD40B66995F795`.
+- **Truth rule:** Blue means active communication; orange means newly secured knowledge. Meter advancement requires genuine recorded information growth and is never a percentage or timer.
+
 ### VPB-WORKSHOP-001 — Sign-Free Living Workshop
 
 - **Route/state:** `/workshop` — current Project restored after verified candidate persistence.
@@ -38,6 +56,15 @@ This index records current lifecycle markers without rewriting completed history
 - **SHA-256:** `AD28450B7DC0D57F5C2B2A194BB311B8CEDA44690010C62CA4AD95D514831494`.
 - **Truth rule:** Validated geometry uses the existing one-Canvas podium; unsupported geometry uses the Visual Concept fallback. STOP/GO remains historical sample content only.
 
+### VPB-JOURNEY-002 — Home AI Understanding to Stored-3D Workshop Arrival
+
+- **Route/state:** Describe → `ASK REV` → understanding growth → `READY TO CREATE 3D` → Creation Theatre → persisted geometry → `ENTER WORKSHOP` → same 3D on podium.
+- **Blueprint status / flight marker:** **FOUNDER APPROVED / CONTRACT REQUIRED**.
+- **Approved PDF:** `journey/VPB-JOURNEY-002-home-ai-creation-handover-approved-2026-08-26.pdf`.
+- **Authority record:** `journey/VPB-JOURNEY-002-authority-2026-08-26.md`.
+- **SHA-256:** PDF `BF241741760BBCD4B98F610D99D72331E55D390630B42EFDEB51DB8F7C7495D3`; authority record `01C435C1D1CBF8AA2904FC7DAF526B7F8580FEA2DA17158D9F0535EBD89A0DBF`.
+- **Truth rule:** Initial Workshop entry requires validated and reload-verified Concept 01 geometry. The same stored model appears on the one-Canvas podium without regeneration; flattened sample content is not runtime truth.
+
 ## Registered fidelity-test evidence — not a Visual Page Blueprint
 
 ### FVT-C2F-001 — Source-Aware Concept Fidelity Target
@@ -52,7 +79,7 @@ This index records current lifecycle markers without rewriting completed history
 
 | Page/surface | Current marker | Evidence / qualification | Next gate |
 | --- | --- | --- | --- |
-| `/` Home creation foundation | VERIFIED | Accepted bounded Home/Creation checkpoints in `CURRENT_CONSTRUCTION_STATE.md`; final visual family is not fully approved | Register and approve material screen blueprints one at a time |
+| `/` Home creation foundation | FOUNDER APPROVED | `VPB-HOME-001/002/003` define the visual foundation, conversation state and knowledge pulse; HAI behavior is not implemented | Read-only `HAI-1` Build Contract for the provider-free loop and evidence-derived meter |
 | `/workshop` Living Workshop | VERIFIED | B2A, B2B-1 and B2B-2 functional checkpoints; cosmetics/responsiveness partial | B2B-3A is archived as experimental; future presentation work requires a new bounded blueprint/contract |
 | `/discovery` legacy door | COMMITTED | Route exists; current authority/disposition unresolved | Founder chooses retire, redirect or repurpose |
 | `/discovery/session` legacy session/review | COMMITTED | Useful truth tooling exists; questionnaire default is superseded | Contract migration/retirement without losing Project semantics |
@@ -61,6 +88,7 @@ This index records current lifecycle markers without rewriting completed history
 | Home creation (`VPB-HOME-001`) | FOUNDER APPROVED | Canonical image restored; functional C1-S1 foundation committed at `a62b597e32f98669832f30956bc023eadbcc85e0` | Future changes require an exact Build Contract and measured responsive review |
 | Sign-free Workshop (`VPB-WORKSHOP-001`) | FOUNDER APPROVED | Canonical image and authority record restored | Preserve truthful state; later cosmetics require a bounded contract |
 | Home → Workshop completion (`VPB-JOURNEY-001`) | FOUNDER APPROVED | Canonical image/record restored; one-Canvas journey protected | Surf-goggle geometry remains unresolved; no viewer rebuild |
+| Home AI → stored-3D Workshop arrival (`VPB-JOURNEY-002`) | FOUNDER APPROVED | Six-page handover and authority record registered; implementation remains pending | Contract HAI, source-aware geometry, deliberate entry and same-model restoration in separate flights |
 | Account and secure access | NOT DESIGNED | Production requirement; no visual authority | Founder direction and security architecture |
 | Project Library / Returning Project | NOT DESIGNED | Production requirement; no visual authority | Object-authorization contract and finished design |
 | REV Project Board overlay | NOT DESIGNED | Future whiteboard-style direction only | Founder information hierarchy and screen design |
@@ -74,10 +102,10 @@ Only Lane 0 is active. Lifecycle markers describe accumulated checkpoint state, 
 
 | Lane | Marker | Active | Evidence / next gate |
 | --- | --- | --- | --- |
-| 0 — Governance, safety and truth | FOUNDER APPROVED | YES | Documentation Authority committed at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; C2 fidelity evidence reconciliation active |
-| 1 — Inventor Entry | VERIFIED | NO | Functional Home foundation accepted; visual blueprints remain incomplete |
-| 2 — REV Intelligence | VERIFIED | NO | Description-led routing/provenance/firearm BLOCK accepted at `a62b597e32f98669832f30956bc023eadbcc85e0`; S1B/provider-backed scope unresolved |
-| 3 — Core Creation | VERIFIED | NO | Bounded Concept/portable-signage geometry checkpoint accepted |
+| 0 — Governance, safety and truth | FOUNDER APPROVED | YES | Home AI-active and stored-3D journey authorities registered; production remains paused |
+| 1 — Inventor Entry | VERIFIED | NO | Functional Home foundation accepted; `VPB-HOME-002/003` implementation requires HAI-1 contract |
+| 2 — REV Intelligence | VERIFIED | NO | Description-led routing/provenance/firearm BLOCK accepted; Home one-question loop remains unimplemented and S1B/provider scope unresolved |
+| 3 — Core Creation | VERIFIED | NO | Bounded portable-signage geometry accepted; source-aware broader 3D is required before `VPB-JOURNEY-002` entry can pass |
 | 4 — Living Workshop | VERIFIED | NO | Functional B2A/B2B-1/B2B-2 accepted; later cosmetics pending |
 | 5 — Evidence Engine | NOT DESIGNED | NO | Domain foundations exist; cohesive sourced delivery uncontracted |
 | 6 — Production Foundation | NOT DESIGNED | NO | Identity, authorization, server storage and abuse controls absent |

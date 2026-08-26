@@ -32,7 +32,10 @@ One screen/state proceeds at a time. No agent may alter production presentation 
 ## Founder-approved visual foundations
 
 - `VPB-HOME-001` — `home/VPB-HOME-001-approved-homepage-2026-08-25.png`
+- `VPB-HOME-002` — `home/VPB-HOME-002-ai-understanding-approved-2026-08-26.png`
+- `VPB-HOME-003` — `home/VPB-HOME-003-knowledge-pulse-approved-2026-08-26.png`
 - `VPB-WORKSHOP-001` — `workshop/VPB-WORKSHOP-001-authority-2026-08-25.md`
 - `VPB-JOURNEY-001` — `journey/VPB-JOURNEY-001-authority-2026-08-25.md`
+- `VPB-JOURNEY-002` — `journey/VPB-JOURNEY-002-authority-2026-08-26.md`
 
-These authorities protect the accepted visual direction. They do not authorize a later production change without an exact page/data/interaction Build Contract. Only canonical repository paths can carry authority.
+These authorities protect the accepted visual direction. `VPB-JOURNEY-002` makes `ASK REV`, information-driven understanding growth, stored validated 3D and deliberate Workshop entry the canonical initial journey; it does not make its flattened sample object or status data runtime truth. They do not authorize a later production change without an exact page/data/interaction Build Contract. Only canonical repository paths can carry authority.

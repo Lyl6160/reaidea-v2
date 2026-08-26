@@ -10,18 +10,19 @@ The 3D journey was difficult, valuable work. It proved that reAIdea can carry on
 ## User Journey
 
 1. The inventor describes the idea once on Home and may attach supporting evidence.
-2. REV reflects its understanding and asks zero or one genuinely useful question.
-3. Home saves and verifies one canonical Project.
-4. The Creation Theatre honestly shows REV working; footprints/progress indicate real process stages rather than fabricated certainty.
-5. Concept generation creates a candidate Visual Concept separate from authoritative Project truth.
-6. Deterministic local planning may produce `ConceptGeometry` bound to the same candidate family, candidate ID and revision.
-7. Only schema-valid, correctly bound geometry may be presented as Interactive 3D.
-8. If geometry is missing or invalid, the same candidate remains visible as a clearly labelled Visual Concept; reAIdea must not pretend that a 2D picture is a 3D model.
-9. The candidate and any valid source-bound geometry persist and reload-verify before Workshop navigation.
-10. Workshop navigation then restores the same Project-keyed candidate without repeating generation.
-11. On first arrival, the current invention appears on the central podium and the Prototype/3D review console opens.
-12. The inventor can orbit/move, zoom, reset, fit, inspect axes, use bounded movement previews and open the accessible full-screen viewer.
-13. The inventor tells REV what feels right or wrong, keeps developing, reviews changes or explores another direction; new revisions remain traceable.
+2. The inventor selects `ASK REV`; REV reflects its current understanding and asks one genuinely useful question at a time only while information must grow.
+3. Home safety-clears, saves and verifies one canonical Project; each accepted answer advances source-traced Project knowledge without repeating known information.
+4. `READY TO CREATE 3D` means REV has enough captured information for one supported first geometry attempt, not confidence, feasibility or engineering approval.
+5. The Creation Theatre honestly shows REV working; progress indicates real process stages rather than fabricated certainty.
+6. Concept generation creates a candidate separate from authoritative Project truth.
+7. Deterministic local planning may produce `ConceptGeometry` bound to the same candidate family, candidate ID and revision.
+8. Only schema-valid, correctly bound geometry may satisfy the initial Workshop-entry gate or be presented as Interactive 3D.
+9. If geometry is missing or invalid, useful Concept evidence remains truthfully labelled on Home and REV asks only the smallest blocking question; reAIdea does not open an empty Workshop or pretend a 2D picture is 3D.
+10. The candidate and valid source-bound geometry persist and reload-verify before `ENTER WORKSHOP` becomes available.
+11. Deliberate Workshop entry restores the same Project-keyed candidate and exact stored geometry without repeating generation.
+12. On first arrival, REV presents the current invention with both hands extended over the central podium and the Prototype/3D review console opens.
+13. The inventor can orbit/move, zoom, reset, fit, inspect axes, use bounded movement previews and open the accessible full-screen viewer.
+14. The inventor tells REV what feels right or wrong, keeps developing, reviews changes or explores another direction; new revisions remain traceable.
 
 ## Accepted Technical Foundation
 
@@ -43,12 +44,16 @@ Accepted Build 8 viewer record:
 
 HP-24.40 Build 1E-B2B-2 at `4171b8ee426ff7703617e3062b59ac5e5cdf4f8c` remains the accepted one-Canvas/podium and contained decision-panel foundation. The current accepted code checkpoint is C1/S1 at `a62b597e32f98669832f30956bc023eadbcc85e0`; it does not claim surf-goggle Interactive 3D.
 
-## Current Paused 3D Work
+## Experimental 3D Archives
 
-B2B-3A is paused and must remain byte-identical until specifically authorized:
+B2B-3A is preserved as experimental evidence, not product authority, on `archive/b2b-3a-viewer-experiment-2026-08-26` at `53e9a8fec7730f345b34c6e00cc6b0ac3587108f`:
 
-- `app/workshop/Prototype3DViewer.tsx` — `226EEE2B8B53289E224995BF2158EAECC488950689D9A589F7B0AD7C1A617EF4`
-- `app/workshop/Prototype3DViewer.test.mjs` — `13B7491C0443A5AF408E81709A1A134252ECE463B0C835B3616DCE105D006FD7`
+- archived `app/workshop/Prototype3DViewer.tsx` — `226EEE2B8B53289E224995BF2158EAECC488950689D9A589F7B0AD7C1A617EF4`;
+- archived `app/workshop/Prototype3DViewer.test.mjs` — `13B7491C0443A5AF408E81709A1A134252ECE463B0C835B3616DCE105D006FD7`;
+- active accepted `app/workshop/Prototype3DViewer.tsx` — normalized SHA-256 `DF039DBE1F16E618C3D17761B4A1C3C5E2F2ADC9337F11BFE7A217252339A61B`;
+- the experimental fixture is absent from the active branch.
+
+The founder-rejected C2 wearable-geometry experiment is separately preserved on `archive/c2-wearable-geometry-fidelity-failure-2026-08-26` at `84075329d11476a6563b6f0ad7ba898e3b0d7106`. Neither archive may be adopted without a new bounded founder decision.
 
 ## Truth and Ownership Boundaries
 
@@ -64,13 +69,15 @@ B2B-3A is paused and must remain byte-identical until specifically authorized:
 
 ## Founder-Approved Finished Presentation
 
-`VPB-JOURNEY-001` connects the proven plumbing to the finished experience:
+`VPB-JOURNEY-001` remains the accepted one-Canvas/podium foundation. `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002` now control the initial Home AI understanding, information-driven meter, Creation Theatre and deliberate stored-3D Workshop handover:
 
 - REV presents the user's model with open hands.
 - The user's invention—not REV—is the primary focal point and remains the inventor's work.
 - Energy visually connects the same Project to all eight Workshop stations.
 - The Prototype/3D console is immediately understandable and contains Ask REV, left, right, rotate, pan, zoom, axis, fit, reset and full-screen controls.
 - The live Project title and truthful progress replace all sample content.
+- The flattened Workshop arrival is composition authority only; its sample object, percentages and statuses are not runtime truth.
+- A clean two-hands REV layer remains a future implementation dependency.
 
 ## Never Rebuild Without Cause
 

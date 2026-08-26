@@ -1,12 +1,12 @@
 # reAIdea Daily Log — 2026-08-26
 
-**Status:** FOUNDER-ACCEPTED CODE AND DOCUMENTATION AUTHORITY; C2 ARCHIVED; C2F CONTRACT PENDING
+**Status:** FOUNDER-ACCEPTED CODE, DOCUMENTATION AND HOME AI-ACTIVE VISUAL AUTHORITY; HAI-1 CONTRACT PENDING
 
 **Active lane:** Lane 0 — Governance, safety and truth
 
-**Checkpoint:** Documentation Authority at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; rejected C2 archived; `FVT-C2F-001` registered locally
+**Checkpoint:** Home AI-active authority registration from baseline `27592acd8c7eb2bca3d7734adae923c9b29fdc69`; rejected C2 remains archived; `FVT-C2F-001` remains fidelity evidence
 
-**Founder-approved Build Contract:** Documentation-only evidence recording; no further production implementation authorized
+**Founder-approved Build Contract:** Documentation/visual-authority registration only; no production implementation authorized
 
 ## Start state
 
@@ -109,3 +109,12 @@
 - Active index: empty.
 - B2B-3A remains archived at `53e9a8fec7730f345b34c6e00cc6b0ac3587108f`; accepted active viewer SHA-256 is `DF039DBE1F16E618C3D17761B4A1C3C5E2F2ADC9337F11BFE7A217252339A61B`.
 - `REAIDEA_ARCHITECTURE_GUIDE.md` remains unrelated, untracked and unchanged.
+
+## Home AI-active authority registration
+
+- Founder-approved sources were verified and registered as `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002`.
+- The six-page handover verifies a Home conversation state, genuine blue-to-orange knowledge advancement, truthful approximately two-minute Creation Theatre, and Workshop arrival with REV extending both hands over a non-empty centre podium containing 3D.
+- The canonical initial journey is Describe → `ASK REV` → one useful question at a time → visible captured-information growth → `READY TO CREATE 3D` → Creation Theatre → validated and reload-verified Concept 01 geometry → deliberate `ENTER WORKSHOP` → same stored model on the one-Canvas podium.
+- Flattened sample object, percentages, statuses, controls and completion wording are excluded from runtime authority. The clean two-hands REV layer remains a future dependency.
+- No product code, test, provider, API, Project, candidate, geometry, application storage or viewer behavior changed. HAI and C2F remain unimplemented; `FAIL-NAV-001` remains unresolved.
+- Next action: read-only `HAI-1` Build Contract for the provider-free Home understanding loop and evidence-derived meter.

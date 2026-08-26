@@ -71,3 +71,7 @@ Home understanding/readiness uses no percentages and makes no confidence, feasib
 ## AD-017 — Three founder-approved visual foundations
 
 `VPB-HOME-001`, sign-free `VPB-WORKSHOP-001` and `VPB-JOURNEY-001` control their scoped visual direction. The journey is Home → verified creation/persistence → Workshop navigation → current invention on the existing one-Canvas podium. STOP/GO remains historical sample content only.
+
+## AD-018 — Home AI understanding precedes stored-3D creation
+
+`VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002` establish the current initial journey: describe once → `ASK REV` → one useful question at a time → evidence-derived knowledge growth → `READY TO CREATE 3D` → truthful Creation Theatre → validated and reload-verified Concept 01 geometry → deliberate `ENTER WORKSHOP` → the same stored 3D on the centre podium. The understanding meter measures captured information rather than confidence or feasibility. This decision supersedes automatic creation after one description, automatic Workshop navigation and Visual-Concept-only completion for the initial canonical journey, while preserving earlier authorities as non-conflicting visual and historical evidence.

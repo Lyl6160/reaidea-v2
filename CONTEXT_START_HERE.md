@@ -45,7 +45,7 @@ Only one screen/state and one active build lane proceed at a time unless a found
 
 ## Current checkpoint
 
-The founder accepted and committed the Documentation Authority at `484ddf625423cd1b63b7314fcc0f12b88c1899de`; the accepted code foundation is `a62b597e32f98669832f30956bc023eadbcc85e0`. Product coding is paused. B2B-3A and the founder-rejected C2 implementation are preserved on separate experimental archive branches, not on the active worktree. `FVT-C2F-001` is founder-approved Project 000 fidelity-test evidence—not page authority or implementation approval—and the next safe action is a read-only C2F Build Contract plan. Exact current state is recorded in `continuity/ACTIVE_HANDOFF.md`.
+The current accepted branch baseline before this authority registration is `27592acd8c7eb2bca3d7734adae923c9b29fdc69`; the accepted code foundation remains `a62b597e32f98669832f30956bc023eadbcc85e0`. Product coding is paused. B2B-3A and the founder-rejected C2 implementation remain preserved on separate experimental archive branches. `FVT-C2F-001` remains fidelity-test evidence, not page or engineering authority. `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002` now control the founder-approved Home AI understanding, genuine knowledge growth, Creation Theatre and stored-3D Workshop-arrival architecture. The next safe action is a read-only `HAI-1` Build Contract. Exact current truth is recorded in `continuity/ACTIVE_HANDOFF.md`.
 
 Current authority uses canonical repository paths only. Local working locations are never authority.
 

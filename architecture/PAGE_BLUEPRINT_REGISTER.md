@@ -16,14 +16,14 @@ This register lists every current routable page and every named future page/surf
 
 ### `/` — Home and Inventor Entry — PARTIAL
 
-- **Purpose:** Low-friction entry into one truthful initial creation transaction.
-- **User action:** Select origin intent, describe once, optionally attach evidence and deliberately select START WITH REV.
-- **REV work:** Deterministic readiness, pre-Project safety, optional image safety/understanding, Project creation, Creation Theatre, Concept 01 creation, validation, persistence and navigation.
-- **Data read/written:** Session-only form/denial context; on CLEAR only, one canonical Project, approved source evidence, operational receipt and validated candidate.
+- **Purpose:** Low-friction entry into a live REV understanding loop and one truthful stored-3D initial creation transaction.
+- **User action:** Select origin intent, describe once, optionally attach evidence, deliberately select `ASK REV`, answer one useful question at a time where needed, then select `ENTER WORKSHOP` only after stored 3D is ready.
+- **REV work:** Pre-Project safety, optional image safety/understanding, one canonical Project, source-traced understanding, evidence-derived meter growth, smallest-question selection, Creation Theatre, Concept 01 fidelity/geometry validation, persistence and reload verification.
+- **Data read/written:** Session-only form/denial context; on CLEAR only, one canonical Project, accepted answers, approved source evidence, operational receipt, validated candidate and source-bound geometry.
 - **Security boundary:** Untrusted text/upload; bounded client preflight; provider-free server intent gate before Project creation; server validation; no secrets in browser code; explicit retry.
-- **Approved appearance:** `VPB-HOME-001`, the locked Home authority and approved Home scene/REV layers in `VISUAL_AUTHORITY_REGISTER.md`.
-- **Current implementation:** Responsive Home, truthful no-percentage readiness, origin intent, image path, Creation Theatre and description-led routing are accepted foundations. The C1/S1A/FIREARM-SAFETY-001 checkpoint is committed at `a62b597e32f98669832f30956bc023eadbcc85e0`. Final broad responsive/cosmetic review remains incomplete.
-- **Next acceptance test:** Founder review of the full responsive Home journey with provider-free states plus one separately authorized end-to-end transaction when required.
+- **Approved appearance:** `VPB-HOME-001` remains the visual foundation; `VPB-HOME-002` controls the AI-understanding conversation state and `VPB-HOME-003` controls genuine blue-to-orange knowledge advancement. See `VISUAL_AUTHORITY_REGISTER.md`.
+- **Current implementation:** Responsive Home, truthful no-percentage readiness, origin intent, image path, Creation Theatre and description-led routing are accepted foundations. The approved `ASK REV` loop, evidence-derived meter and stored-3D handover are not implemented.
+- **Next acceptance test:** Read-only `HAI-1` Build Contract, followed by provider-free deterministic Home-loop states against `VPB-HOME-002/003`; no production work is authorized by registration alone.
 
 ### `/workshop` — Living Workshop — PARTIAL
 
@@ -32,9 +32,9 @@ This register lists every current routable page and every named future page/surf
 - **REV work:** Restore source-bound candidate, assess Workshop state, recommend a truthful bench/decision and expose available information.
 - **Data read/written:** Reads canonical Project and Project-scoped candidate; bench actions may use existing canonical Project writers. Refresh must not generate.
 - **Security boundary:** Candidate/Project/revision binding; safe React text rendering; no cross-Project restoration; one Canvas; generated images remain untrusted until validated.
-- **Approved appearance:** `VPB-WORKSHOP-001`, `VPB-JOURNEY-001`, the locked Workshop authority, approved clean scene and approved friendly REV in `VISUAL_AUTHORITY_REGISTER.md`.
-- **Current implementation:** B2A, B2B-1 and B2B-2 functional presentation checkpoints are accepted. B2B-3A camera/material work is paused and uncommitted. Final station alignment and cosmetics remain pending.
-- **Next acceptance test:** Define bounded geometry support for supported physical products without rebuilding the viewer; surf-goggle geometry remains unresolved. Any presentation change still requires its own blueprint/contract.
+- **Approved appearance:** `VPB-WORKSHOP-001` and `VPB-JOURNEY-001` retain the sign-free room and one-Canvas podium foundation; `VPB-JOURNEY-002` controls the same-stored-3D arrival composition with REV extending both hands.
+- **Current implementation:** B2A, B2B-1 and B2B-2 functional presentation checkpoints are accepted. The two-hands arrival layer and strict initial stored-3D entry gate are not implemented. B2B-3A remains experimental on its archive branch.
+- **Next acceptance test:** After HAI and source-aware geometry contracts, verify deliberate entry restores the exact persisted geometry with zero regeneration and one Canvas. Any presentation change still requires its own blueprint/contract.
 
 ### `/discovery` — Legacy Discovery Door — PARTIAL
 

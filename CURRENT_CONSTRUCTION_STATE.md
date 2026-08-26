@@ -1,17 +1,28 @@
 # CURRENT_CONSTRUCTION_STATE
 
 **Project:** reAIdea  
-**Current safe committed checkpoint:** Documentation Authority `484ddf625423cd1b63b7314fcc0f12b88c1899de`; accepted code foundation `a62b597e32f98669832f30956bc023eadbcc85e0`
+**Current safe committed baseline before this authority checkpoint:** Fidelity Authority `27592acd8c7eb2bca3d7734adae923c9b29fdc69`; accepted code foundation `a62b597e32f98669832f30956bc023eadbcc85e0`
 
 **Branch:** `sprint006-build24-40-home-rebuild`
 
-**Current hold point:** C2 archived after founder fidelity rejection; `FVT-C2F-001` restored for a read-only C2F contract plan
+**Current hold point:** Founder-approved Home AI-active and stored-3D Workshop-arrival authority registered; production implementation paused
 
-**Current authorised construction step:** Documentation-only fidelity registration; C2F is unimplemented and no product implementation is authorised
+**Current authorised construction step:** Read-only `HAI-1` Build Contract for the provider-free Home understanding loop and evidence-derived meter; no product implementation is authorised
 
 **HP-24.38 implementation:** BUILD 3 COMPLETED / HUMAN ACCEPTED / COMMITTED / PUSHED
 
 **Last governance update:** 2026-08-26
+
+## HP-24.40 Home AI-Active Visual Authority — 26 August 2026
+
+- `VPB-HOME-002` locks the integrated Home AI-understanding conversation: `WHAT REV UNDERSTANDS`, one useful question at a time, optional evidence-backed `LET REV RECOMMEND`, and the corrected first-3D promise.
+- `VPB-HOME-003` locks blue active communication energy and orange newly secured knowledge. Understanding advances only after genuine recorded information growth; it is not a percentage, confidence, feasibility or timer.
+- `VPB-JOURNEY-002` locks Describe → `ASK REV` → understanding growth → `READY TO CREATE 3D` → truthful Creation Theatre → validated/reload-verified Concept 01 geometry → deliberate `ENTER WORKSHOP` → the same stored 3D on the one-Canvas podium with REV extending both hands.
+- The flattened Workshop-arrival page is composition authority only. Its sample object, percentages, statuses, controls and completion claims are not production truth. A clean two-hands REV layer remains a future implementation dependency.
+- This authority supersedes conflicting initial-journey interpretations involving canonical `START WITH REV`, automatic creation after one description, Visual-Concept-only completion, automatic Workshop navigation, entry without stored 3D, empty-podium arrival or 2D-as-3D.
+- Registration changes no production source, provider, Project, candidate, geometry, storage, safety, Workshop or viewer behavior. The accepted viewer and one-Canvas ownership remain unchanged.
+- C2 remains founder-rejected and archived; `FVT-C2F-001` remains fidelity-test evidence; C2F and HAI remain unimplemented; `FAIL-NAV-001` remains unresolved.
+- The next safe action is a read-only `HAI-1` Build Contract. Product coding remains paused.
 
 ## HP-24.40 C2 Archive and FVT-C2F-001 — 26 August 2026
 

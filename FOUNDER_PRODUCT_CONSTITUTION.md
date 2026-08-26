@@ -16,7 +16,7 @@ Security controls in `SECURITY_ENGINEERING_STANDARD.md` remain mandatory. A late
 
 reAIdea is an outcome-delivery service for inventors: effortless for the inventor and rigorous behind the scenes.
 
-> Choose your intent, describe the invention once, and START WITH REV. REV prepares useful creation and evidence, shows what is known and assumed, and presents one next useful decision.
+> Choose your intent, describe the invention once, and ASK REV. REV shows what it understands, asks one useful question at a time only where information must grow, creates and safely stores the first supported 3D Concept, and prepares the same invention in the Workshop.
 
 REV means **Realize · Engineer · Validation**. REV is the persistent intelligence and engineering partner across one canonical Project, not a chatbot added to disconnected forms.
 
@@ -52,11 +52,15 @@ flowchart LR
     D -- unavailable --> G[Fail closed]
     E --> B
     D -- CLEAR --> H[Create and verify one Project]
-    H --> I[Truthful Creation Theatre]
-    I --> J[Visual Concept and supported geometry creation]
-    J --> K[Validate bind persist and reload]
-    K --> L[Open Living Workshop]
-    L --> M[Specialist evidence and recommendations]
+    H --> I[ASK REV understanding loop]
+    I --> Q[One useful question at a time]
+    Q --> I
+    I --> J[Ready to create supported 3D]
+    J --> K[Truthful Creation Theatre]
+    K --> R[Validate bind persist and reload Concept 01 geometry]
+    R --> L[Inventor selects Enter Workshop]
+    L --> P[Same stored 3D on centre podium]
+    P --> M[Specialist evidence and recommendations]
     M --> N[Inventor decision]
     N --> O[Validation and Project history]
     O --> L
@@ -114,10 +118,10 @@ All eight read the same canonical Project. Each bench prepares a bounded contrib
 
 ## Representation and validation contract
 
-- Concept 01 is created and persisted before successful Workshop navigation.
-- A valid Visual Concept is useful even when geometry is unavailable.
+- Concept 01 geometry is created, validated, persisted and reload-verified before the initial canonical Workshop-entry action becomes available.
+- A valid Visual Concept remains useful working evidence when geometry is unavailable, but it does not satisfy the initial journey's stored-3D Workshop-entry gate and is never presented as Interactive 3D.
 - Validated, source-bound ConceptGeometry may appear in the single centre-podium Canvas.
-- Invalid, unavailable or mismatched geometry is removed or refused; the Visual Concept remains the truthful fallback.
+- Invalid, unavailable or mismatched geometry is removed or refused; REV remains truthful, retains useful work and asks only the smallest genuinely blocking question rather than opening an empty Workshop.
 - Deterministic working geometry is an engineering representation, not CAD, fabrication approval or feasibility proof.
 - Every validation result records what was tested, the evidence used, the outcome, limitations and next decision.
 
