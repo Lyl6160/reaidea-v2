@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import type { ConceptCandidate, ConceptVisualDesignSnapshot } from "../ai/types";
+import type { ConceptCandidate, ConceptVisualDesignSnapshot, VisualUnderstandingResult } from "../ai/types";
 import { buildConceptGeometry, CONCEPT_GEOMETRY_BUILDER_VERSION } from "./buildConceptGeometry";
 import { isValidConceptGeometry, type ConceptGeometryComponent, type GeometryVector3 } from "./conceptGeometry";
 import { buildGeometryFromInitialPlan, buildInitialGeometryPlan, validateInitialGeometryPlan } from "./initialGeometryPlan";
@@ -208,5 +208,77 @@ assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: Array.from
 assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, componentIds: ["base", "base"] }), false);
 assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: [{ ...stopGoPlan.parameters[0], status: "working-assumption", basis: "accepted-description" }] }), false);
 assert.equal(validateInitialGeometryPlan({ ...stopGoPlan, parameters: [{ ...stopGoPlan.parameters[0], label: "x".repeat(121) }] }), false);
+
+const surfWearableDescription = "i want to design surf sun glasses, they would look like goggles, but better portrayed on your face like sun glasses, rubber seal, back strap to hold the glasses when diving under water, show me possible ideas";
+const wearablePlan = buildInitialGeometryPlan({ originalObservation: surfWearableDescription });
+assert.equal(wearablePlan.profile, "wearable-enclosure");
+assert.equal(wearablePlan.blocker, undefined);
+assert.deepEqual(wearablePlan.componentIds, ["frame-body", "lens-panel", "seal-top", "seal-bottom", "seal-left", "seal-right", "strap-left", "strap-right", "strap-back"]);
+assert(wearablePlan.parameters.filter(({ status }) => status === "working-assumption").every(({ basis, inventorConfirmationDesirable }) => basis === "rev-wearable-enclosure-profile" && inventorConfirmationDesirable));
+const wearableGeometry = buildGeometryFromInitialPlan(candidate, wearablePlan);
+assert(wearableGeometry.geometry);
+if (wearableGeometry.geometry) {
+  const geometry = wearableGeometry.geometry;
+  assert.equal(geometry.components.length, 9);
+  assert.equal(geometry.joints.length, 0);
+  assert.deepEqual(geometry.source, { conceptFamilyId: candidate.conceptFamilyId, candidateId: candidate.candidateId, revision: candidate.revision });
+  assert.deepEqual(geometry.components.map(({ id }) => id), wearablePlan.componentIds);
+  assert.equal(geometry.components.find(({ id }) => id === "frame-body")?.primitive, "extruded-polygon");
+  assert.equal(geometry.components.find(({ id }) => id === "lens-panel")?.parentId, "frame-body");
+  assert(geometry.components.filter(({ id }) => id.startsWith("seal-") || id.startsWith("strap-")).every(({ parentId }) => parentId === "frame-body"));
+  assert(geometry.components.every(({ id }) => componentBounds(geometry.components, id).min[1] >= 0), "Wearable components must remain above the podium plane");
+  assert(isValidConceptGeometry(geometry));
+}
+
+const unrelatedWearable = buildInitialGeometryPlan({ originalObservation: "A face-mounted inspection viewer enclosure with a rigid body, clear front panel and adjustable head strap for hands-free equipment checks." });
+assert.equal(unrelatedWearable.profile, "wearable-enclosure");
+assert.equal(unrelatedWearable.blocker, undefined);
+const unsupportedFlexibleWearable = buildInitialGeometryPlan({ originalObservation: "A wearable entirely soft fabric hood with a clear front panel and adjustable head strap." });
+assert.equal(unsupportedFlexibleWearable.blocker?.code, "unsupported-profile");
+
+const interpretation: VisualUnderstandingResult = {
+  evidenceReference: "evidence-reference-fixture",
+  nonAuthoritative: true,
+  createdAt: new Date(0).toISOString(),
+  factualSummary: "A person near water wearing goggles with a strap; approximate frame width 900 mm.",
+  visualObservations: ["Face-mounted eyewear with a front lens and rear strap."],
+  uncertainties: [],
+};
+const interpretationOnlyPlan = buildInitialGeometryPlan({ originalObservation: "A better portable product." }, interpretation);
+assert.equal(interpretationOnlyPlan.blocker?.code, "unsupported-profile", "Derived interpretation must not activate wearable geometry");
+const corroboratedWearablePlan = buildInitialGeometryPlan({ originalObservation: surfWearableDescription }, interpretation);
+assert.equal(corroboratedWearablePlan.profile, "wearable-enclosure");
+assert(corroboratedWearablePlan.parameters.some(({ id, status }) => id === "cleared-reference" && status === "interpreted"));
+assert.equal(corroboratedWearablePlan.parameters.find(({ id }) => id === "frame-width")?.value, 210, "Derived prose must not supply dimensions");
+
+const measuredWearableDescription = "A face-mounted eyewear enclosure with a rigid frame, lens panel and adjustable head strap. Frame width 240 mm, frame height 110 mm, frame depth 60 mm, lens thickness 6 mm, seal depth 24 mm and strap length 220 mm.";
+const measuredWearablePlan = buildInitialGeometryPlan({ originalObservation: measuredWearableDescription });
+assert.equal(measuredWearablePlan.profile, "wearable-enclosure");
+assert.deepEqual(
+  measuredWearablePlan.parameters.filter(({ id }) => ["frame-width", "frame-height", "frame-depth", "lens-thickness", "seal-depth", "strap-reach"].includes(id)).map(({ id, value, status, basis }) => ({ id, value, status, basis })),
+  [
+    { id: "frame-width", value: 240, status: "inventor-evidence", basis: "accepted-description" },
+    { id: "frame-height", value: 110, status: "inventor-evidence", basis: "accepted-description" },
+    { id: "frame-depth", value: 60, status: "inventor-evidence", basis: "accepted-description" },
+    { id: "lens-thickness", value: 6, status: "inventor-evidence", basis: "accepted-description" },
+    { id: "seal-depth", value: 24, status: "inventor-evidence", basis: "accepted-description" },
+    { id: "strap-reach", value: 220, status: "inventor-evidence", basis: "accepted-description" },
+  ],
+);
+const measuredWearableGeometry = buildGeometryFromInitialPlan(candidate, measuredWearablePlan);
+assert(measuredWearableGeometry.geometry);
+if (measuredWearableGeometry.geometry) assert.equal(componentBounds(measuredWearableGeometry.geometry.components, "frame-body").max[0] - componentBounds(measuredWearableGeometry.geometry.components, "frame-body").min[0], 240);
+const revisedWearablePlan = structuredClone(measuredWearablePlan);
+const revisedWidth = revisedWearablePlan.parameters.find(({ id }) => id === "frame-width");
+assert(revisedWidth);
+revisedWidth.value = 260;
+const revisedWearableGeometry = buildGeometryFromInitialPlan(candidate, revisedWearablePlan);
+assert(revisedWearableGeometry.geometry);
+if (revisedWearableGeometry.geometry) assert.equal(componentBounds(revisedWearableGeometry.geometry.components, "frame-body").max[0] - componentBounds(revisedWearableGeometry.geometry.components, "frame-body").min[0], 260, "Changed accepted datum must deterministically rebuild geometry");
+const invalidWearablePlan = structuredClone(measuredWearablePlan);
+const invalidWidth = invalidWearablePlan.parameters.find(({ id }) => id === "frame-width");
+assert(invalidWidth);
+invalidWidth.value = -1;
+assert.equal(buildGeometryFromInitialPlan(candidate, invalidWearablePlan).blocker?.code, "invalid-plan");
 
 console.log("Geometry fidelity fixtures: PASS");

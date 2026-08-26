@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 import type { ConceptCandidate } from "../lib/ai/types";
 import { buildGeometryFromInitialPlan, buildInitialGeometryPlan } from "../lib/geometry/initialGeometryPlan";
@@ -14,5 +16,20 @@ if (built.geometry) {
   assert.equal(resolveWorkshopStagePresentation({ ...available, conceptGeometry: { ...built.geometry, source: { ...built.geometry.source!, candidateId: "candidate-b" } } }).kind, "visual-concept");
 }
 assert.equal(resolveWorkshopStagePresentation({ ...candidate, conceptGeometryStatus: "unsupported-geometry" }).kind, "visual-concept");
+const wearablePlan = buildInitialGeometryPlan({ originalObservation: "A face-mounted inspection viewer enclosure with a rigid frame, front shield panel and adjustable head strap." });
+const wearableBuilt = buildGeometryFromInitialPlan(candidate, wearablePlan);
+assert(wearableBuilt.geometry);
+if (wearableBuilt.geometry) {
+  const wearableCandidate = { ...candidate, initialGeometryPlan: wearablePlan, conceptGeometry: wearableBuilt.geometry, conceptGeometryStatus: "available" as const };
+  assert.equal(resolveWorkshopStagePresentation(wearableCandidate).kind, "interactive-3d");
+  assert.equal(resolveWorkshopStagePresentation({ ...wearableCandidate, conceptGeometry: { ...wearableBuilt.geometry, source: { ...wearableBuilt.geometry.source!, revision: 2 } } }).kind, "visual-concept");
+}
+const unsupportedWearablePlan = buildInitialGeometryPlan({ originalObservation: "A wearable entirely soft fabric hood with a front panel and head strap." });
+assert.equal(unsupportedWearablePlan.blocker?.code, "unsupported-profile");
+assert.equal(resolveWorkshopStagePresentation({ ...candidate, initialGeometryPlan: unsupportedWearablePlan, conceptGeometryStatus: "unsupported-geometry" }).kind, "visual-concept");
 assert.equal(resolveWorkshopStagePresentation(null).kind, "empty");
+const viewerSource = readFileSync(resolve(process.cwd(), "app/workshop/Prototype3DViewer.tsx"), "utf8");
+const workshopSource = readFileSync(resolve(process.cwd(), "app/workshop/WorkshopRoom.tsx"), "utf8");
+assert.equal(viewerSource.match(/<Canvas\b/g)?.length, 1, "Prototype3DViewer must retain one Canvas expression");
+assert.equal(workshopSource.match(/<Prototype3DViewer\b/g)?.length, 1, "WorkshopRoom must retain one viewer mount expression");
 console.log("Workshop stage presentation fixtures: PASS");

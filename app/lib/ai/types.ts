@@ -290,7 +290,7 @@ export type InitialGeometryDatum = {
   value: string | number | boolean;
   unit?: "mm" | "degrees" | "count";
   status: "inventor-evidence" | "interpreted" | "working-assumption";
-  basis: "accepted-description" | "cleared-image-interpretation" | "rev-portable-signage-profile";
+  basis: "accepted-description" | "cleared-image-interpretation" | "rev-portable-signage-profile" | "rev-wearable-enclosure-profile";
   blocksGeometry: boolean;
   inventorConfirmationDesirable: boolean;
 };
@@ -304,7 +304,7 @@ export type InitialGeometryBlocker = {
 export type InitialGeometryPlan = {
   version: 1;
   nonAuthoritative: true;
-  profile: "portable-signage";
+  profile: "portable-signage" | "wearable-enclosure";
   parameters: InitialGeometryDatum[];
   componentIds: string[];
   blocker?: InitialGeometryBlocker;

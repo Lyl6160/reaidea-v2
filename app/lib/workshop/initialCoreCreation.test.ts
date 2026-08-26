@@ -145,6 +145,42 @@ const unknown = await runInitialCoreCreation(unknownProject, undefined, {
 assert.equal(unknown.kind, "needs-representation");
 assert.equal(unknownGenerationCalls, 0);
 
+const wearableProject = createProject({
+  ownerId: "fixture-inventor",
+  originIntent: "developing",
+  originalObservation: "i want to design surf sun glasses, they would look like goggles, but better portrayed on your face like sun glasses, rubber seal, back strap to hold the glasses when diving under water, show me possible ideas",
+});
+let wearableProjectSaves = 0;
+let wearableGenerationCalls = 0;
+let wearablePersisted: ConceptCandidate | null = null;
+const wearableEvents: string[] = [];
+const wearableTransaction = await runInitialCoreCreationTransaction({
+  saveProject: async () => { wearableProjectSaves += 1; wearableEvents.push("project-saved"); return wearableProject; },
+  createConcept: async (savedProject, onPhase) => runInitialCoreCreation(savedProject, undefined, {
+    persistReceipt: async () => true,
+    fetchConcept: async (request) => {
+      wearableGenerationCalls += 1;
+      wearableEvents.push("candidate-returned");
+      return { status: 200, payload: { candidate: { ...candidate, conceptFamilyId: request.conceptFamilyId, revision: request.revision, sourceEventIds: request.sourceEventIds } } };
+    },
+    persistCandidate: async (projectId, saved) => { assert.equal(projectId, wearableProject.id); wearableEvents.push("candidate-persisted"); wearablePersisted = saved; return true; },
+    restoreCandidate: async (projectId) => { assert.equal(projectId, wearableProject.id); wearableEvents.push("candidate-restored"); return wearablePersisted; },
+    onPhase,
+  }),
+  onPhase: (phase) => wearableEvents.push(`phase:${phase}`),
+});
+assert.equal(wearableTransaction.kind, "success");
+assert.equal(wearableProjectSaves, 1);
+assert.equal(wearableGenerationCalls, 1);
+assert(wearablePersisted);
+assert.equal((wearablePersisted as ConceptCandidate).initialGeometryPlan?.profile, "wearable-enclosure");
+assert.equal((wearablePersisted as ConceptCandidate).conceptGeometryStatus, "available");
+assert.equal((wearablePersisted as ConceptCandidate).conceptGeometry?.components.length, 9);
+assert(wearableEvents.indexOf("project-saved") < wearableEvents.indexOf("candidate-returned"));
+assert(wearableEvents.indexOf("candidate-returned") < wearableEvents.indexOf("candidate-persisted"));
+assert(wearableEvents.indexOf("candidate-persisted") < wearableEvents.indexOf("candidate-restored"));
+assert(wearableEvents.indexOf("candidate-restored") < wearableEvents.indexOf("phase:opening"));
+
 console.log("Initial Core Creation fixtures: PASS");
 }
 
