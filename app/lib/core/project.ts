@@ -1,3 +1,5 @@
+import type { HomeUnderstandingTimelineMetadata } from "../workshop/homeUnderstanding";
+
 export type ProjectReadiness =
   | "observation"
   | "understanding"
@@ -174,7 +176,10 @@ export type ProjectTimelineEventType =
   | "engineering-action-recorded"
   | "engineering-action-result-recorded"
   | "project-evidence-recorded"
-  | "specialist-contribution-recorded";
+  | "specialist-contribution-recorded"
+  | "home-understanding-question-recorded"
+  | "home-understanding-knowledge-recorded"
+  | "home-understanding-presentation-claimed";
 
 export type ProjectTimelineEvent = {
   id: string;
@@ -191,6 +196,7 @@ export type ProjectTimelineEvent = {
   decisionId?: string;
   engineeringActionId?: string;
   specialistBenchId?: SpecialistContributionBenchId;
+  homeUnderstanding?: HomeUnderstandingTimelineMetadata;
 };
 
 export type Project = {
@@ -221,9 +227,9 @@ export type CreateProjectInput = {
 };
 
 export function createProject(input: CreateProjectInput): Project {
-  const originalObservation = input.originalObservation.trim();
+  const originalObservation = input.originalObservation;
 
-  if (!originalObservation) {
+  if (!originalObservation.trim()) {
     throw new Error("A Project requires an original observation.");
   }
 

@@ -102,6 +102,47 @@
   filter: drop-shadow(0 0 0.18rem rgba(67, 202, 255, 0.7));
 }
 
+.knowledgePulseHalo,
+.knowledgePulseCore {
+  stroke-dasharray: 32 220;
+  stroke-dashoffset: 250;
+  animation: knowledge-pulse-travel 1.45s ease-out 1 both;
+}
+
+.knowledgePulseHalo {
+  stroke: rgba(65, 196, 244, 0.5);
+  stroke-width: 10;
+  filter: url("#home-energy-glow");
+}
+
+.knowledgePulseCore {
+  stroke: #e1a850;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 0.42rem rgba(233, 172, 74, 0.9));
+}
+
+@keyframes knowledge-pulse-travel {
+  0% {
+    stroke-dashoffset: 250;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knowledgePulseHalo,
+  .knowledgePulseCore {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 .siteHeader,
 .introduction,
 .formRegion {

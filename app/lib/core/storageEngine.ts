@@ -18,6 +18,7 @@ import type {
   ValidationPlanStatus,
 } from "./project";
 import { isSpecialistContributionBenchId } from "./project";
+import { normalizeHomeUnderstandingMetadata } from "../workshop/homeUnderstanding";
 
 type StoredEngineeringState = Omit<
   EngineeringState,
@@ -353,6 +354,9 @@ function normalizeTimeline(events: ProjectTimelineEvent[]): ProjectTimelineEvent
       : {}),
     ...(isSpecialistContributionBenchId(event.specialistBenchId)
       ? { specialistBenchId: event.specialistBenchId }
+      : {}),
+    ...(normalizeHomeUnderstandingMetadata(event.homeUnderstanding)
+      ? { homeUnderstanding: normalizeHomeUnderstandingMetadata(event.homeUnderstanding)! }
       : {}),
   }));
 }

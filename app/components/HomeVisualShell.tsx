@@ -10,9 +10,11 @@ import styles from "./HomeVisualShell.module.css";
 type HomeVisualShellProps = {
   children: ReactNode;
   className?: string;
+  knowledgePulseActive?: boolean;
+  knowledgePulseKey?: string | null;
 };
 
-export default function HomeVisualShell({ children, className }: HomeVisualShellProps) {
+export default function HomeVisualShell({ children, className, knowledgePulseActive = false, knowledgePulseKey }: HomeVisualShellProps) {
   const shellClassName = className
     ? `${styles.shell} ${className}`
     : styles.shell;
@@ -59,6 +61,12 @@ export default function HomeVisualShell({ children, className }: HomeVisualShell
           <path className={styles.energyFilaments} d="M281 79C267 62 260 51 246 49c-10-1-13-10-23-7M382 111c-8-18-19-29-31-32-9-2-14-13-25-12M460 137c13-20 20-31 35-34 10-2 14-12 27-11M569 157c-8-18-17-28-30-31-10-2-14-12-25-12M680 192c13-19 24-28 38-28 10 0 17-11 28-10M819 251c-7-18-18-28-31-30-10-2-16-11-28-10M926 275c13-18 23-27 38-28 11 0 16-10 28-9M1003 302c-7-15-16-24-28-27-9-2-13-10-24-10M315 91c7 13 15 21 27 23 8 2 11 10 20 11M635 204c8 13 17 20 29 21 9 1 13 9 23 9" />
           <path className={styles.energyApproach} d="M1003 302 1041 294 C1068 293 1075 321 1102 321 L1122 324" />
           <circle className={styles.energyPalm} cx="1122" cy="324" r="13" />
+          {knowledgePulseActive && (
+            <g key={knowledgePulseKey ?? "knowledge-pulse"} className={styles.knowledgePulse}>
+              <path className={styles.knowledgePulseHalo} d="M1122 324 C1084 344 1042 362 1004 382 C963 404 924 420 872 430" />
+              <path className={styles.knowledgePulseCore} d="M1122 324 C1084 344 1042 362 1004 382 C963 404 924 420 872 430" />
+            </g>
+          )}
         </svg>
       </div>
 
@@ -84,7 +92,7 @@ export default function HomeVisualShell({ children, className }: HomeVisualShell
           </h2>
           <p className={styles.supportingCopy}>
             Describe your idea in plain language. REV will understand it,
-            create the first visual concept and start the specialist work around it.
+            create your first 3D concept and prepare your Workshop.
           </p>
           <ul className={styles.benefits} aria-label="How reAIdea works with you">
             <li>

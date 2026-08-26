@@ -133,16 +133,11 @@ export function assessHomeUnderstanding(
   visualInterpretation?: Pick<RoutedVisualInterpretation, "factualSummary" | "visualObservations">
 ) {
   const text = description.trim();
-  const visualText = visualInterpretation
-    ? [visualInterpretation.factualSummary, ...visualInterpretation.visualObservations].join(" ").trim()
-    : "";
-  const assessedText = [text, visualText].filter(Boolean).join(" ");
-  const categories = categoriesFor(assessedText);
-  const conceptFacets = conceptFacetsFor(assessedText);
-  const wordCount = assessedText.match(/\b[\p{L}\p{N}][\p{L}\p{N}'’-]*\b/gu)?.length ?? 0;
+  const categories = categoriesFor(text);
+  const conceptFacets = conceptFacetsFor(text);
   const hasPurposeOrProblem = categories.includes("purpose") ||
     conceptFacets.includes("purposeProblemBenefit") ||
-    /\b(i|we) (want|need)\b|\b(should|must|meant to|intended to|in order to)\b|\bso (a|an|the|people|someone|users?|workers?|operators?)\b/i.test(assessedText);
+    /\b(i|we) (want|need)\b|\b(should|must|meant to|intended to|in order to)\b|\bso (a|an|the|people|someone|users?|workers?|operators?)\b/i.test(text);
   const hasFunctionalOrContextDetail = categories.some((category) =>
     category === "user" || category === "operation" || category === "constraint"
   ) || conceptFacets.some((facet) =>
@@ -150,12 +145,7 @@ export function assessHomeUnderstanding(
     facet === "userGripControlInteraction" ||
     facet === "environmentSafetyConstraint"
   );
-  const score = Math.min(100, Math.round(Math.min(assessedText.length, 240) / 4.8) + categories.length * 8);
-  const contentReady = assessedText.length >= 50 &&
-    wordCount >= 8 &&
-    hasPurposeOrProblem &&
-    hasFunctionalOrContextDetail;
-  const ready = Boolean(text) && contentReady;
+  const ready = Boolean(text) && hasPurposeOrProblem && hasFunctionalOrContextDetail;
   const helperQuestion = !hasPurposeOrProblem
     ? "What problem should this invention solve?"
     : !categories.includes("operation")
@@ -163,7 +153,13 @@ export function assessHomeUnderstanding(
       : !categories.includes("form") && !categories.includes("build")
         ? "What main parts, shape, or size do you already imagine?"
         : "What one detail would matter most if REV began developing this now?";
-  return { score, ready, helperQuestion };
+  return {
+    ready,
+    helperQuestion,
+    supportingReferenceAvailable: Boolean(
+      visualInterpretation?.factualSummary.trim() || visualInterpretation?.visualObservations.some((item) => item.trim())
+    ),
+  };
 }
 
 export function deriveRevWorkingUnderstanding(
