@@ -871,6 +871,515 @@
   }
 }
 
+.entry {
+  box-sizing: border-box;
+  width: 100%;
+  color: #edf5f7;
+}
+
+.screenReaderOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.consoleRegions {
+  display: grid;
+  grid-template-columns: minmax(0, 56%) minmax(0, 44%);
+  overflow: hidden;
+  border: 1px solid rgba(48, 176, 212, 0.62);
+  border-radius: 0.5rem;
+  background: linear-gradient(112deg, rgba(3, 18, 31, 0.97), rgba(2, 12, 22, 0.94));
+  box-shadow:
+    0 1.35rem 4.8rem rgba(0, 0, 0, 0.58),
+    inset 0 0 1.6rem rgba(40, 156, 193, 0.08);
+  backdrop-filter: blur(11px);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.projectRegion,
+.ideaRegion {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: clamp(0.85rem, 1.25vw, 1.2rem);
+}
+
+.projectRegion {
+  position: relative;
+  border-right: 1px solid rgba(75, 154, 181, 0.42);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.awaitingIntent .projectRegion {
+  border-color: rgba(78, 223, 255, 0.88);
+  box-shadow:
+    inset 0 0 1.4rem rgba(36, 186, 224, 0.18),
+    0 0 1rem rgba(30, 175, 222, 0.34);
+}
+
+.projectRegion h1,
+.ideaRegion h2 {
+  margin: 0;
+  color: #f4f6f4;
+  font-size: clamp(0.94rem, 1.12vw, 1.15rem);
+  font-weight: 680;
+  line-height: 1.08;
+  letter-spacing: 0.035em;
+  text-shadow: 0 0.12rem 0.32rem rgba(0, 0, 0, 0.94);
+}
+
+.originIntent {
+  margin: 0.72rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.intentOptions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.72rem;
+}
+
+.intentOptions label {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3.35rem auto 1fr;
+  justify-items: center;
+  align-items: start;
+  align-content: start;
+  min-height: 8.7rem;
+  padding: 0.72rem 0.56rem 0.6rem;
+  border: 1px solid rgba(59, 192, 225, 0.76);
+  border-radius: 0.42rem;
+  background: linear-gradient(160deg, rgba(7, 34, 52, 0.96), rgba(2, 18, 30, 0.96));
+  box-shadow:
+    inset 0 0 1rem rgba(38, 143, 177, 0.08),
+    0 0.45rem 1rem rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.intentOptions label:hover {
+  transform: translateY(-2px);
+  border-color: #8befff;
+  box-shadow:
+    inset 0 0 1.1rem rgba(59, 197, 234, 0.16),
+    0 0 1rem rgba(42, 187, 225, 0.2);
+}
+
+.intentOptions input {
+  position: absolute;
+  opacity: 0;
+}
+
+.intentOptions label:focus-within {
+  outline: 3px solid #8ce9fb;
+  outline-offset: 2px;
+}
+
+.intentOptions label.intentSelected {
+  border-color: #e0ac55;
+  background: linear-gradient(155deg, rgba(20, 102, 151, 0.96), rgba(6, 48, 78, 0.97));
+  box-shadow:
+    inset 0 0 1.35rem rgba(88, 216, 247, 0.27),
+    0 0 0.2rem #e0ac55,
+    0 0 1.1rem rgba(48, 191, 232, 0.42);
+}
+
+.intentIcon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  color: #e0a743;
+}
+
+.intentIcon svg {
+  display: block;
+  width: 2.9rem;
+  height: 2.9rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.3rem rgba(222, 163, 60, 0.42));
+}
+
+.intentOptions label:nth-child(2) .intentIcon {
+  color: #a8efff;
+}
+
+.intentOptions strong {
+  align-self: start;
+  color: #f3f7f8;
+  font-size: clamp(0.64rem, 0.72vw, 0.74rem);
+  font-weight: 730;
+  line-height: 1.18;
+  letter-spacing: 0.015em;
+}
+
+.intentOptions small {
+  display: block;
+  margin-top: 0.28rem;
+  color: #bacbd1;
+  font-size: clamp(0.58rem, 0.64vw, 0.66rem);
+  line-height: 1.28;
+}
+
+.selectedMarker {
+  position: absolute;
+  top: 0.48rem;
+  right: 0.48rem;
+  display: none;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid #e4ae4f;
+  border-radius: 50%;
+  color: #ffd476;
+  font-size: 0.78rem;
+  font-weight: 900;
+  background: #132a34;
+  box-shadow: 0 0 0.55rem rgba(224, 170, 72, 0.55);
+}
+
+.intentSelected .selectedMarker {
+  display: grid;
+}
+
+.intentGuidance {
+  margin: 0.48rem 0 -0.14rem;
+  color: #a9c4cd;
+  font-size: 0.61rem;
+  font-weight: 690;
+  letter-spacing: 0.045em;
+  text-align: center;
+}
+
+.ideaRegion {
+  position: relative;
+  transition: opacity 0.25s ease, filter 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ideaLocked {
+  opacity: 0.42;
+  filter: saturate(0.35);
+}
+
+.ideaOpen {
+  box-shadow: inset 0 0 1.2rem rgba(35, 157, 196, 0.08);
+}
+
+.ideaGuidance {
+  margin: 0.28rem 0 0;
+  color: #a9bcc4;
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+
+.ideaRegion textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 5rem;
+  height: 5rem;
+  margin-top: 0.5rem;
+  padding: 0.62rem 0.72rem;
+  border: 1px solid rgba(66, 118, 137, 0.82);
+  border-radius: 0.35rem;
+  resize: vertical;
+  outline: none;
+  background: rgba(1, 10, 18, 0.82);
+  color: #f4f8f8;
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.ideaRegion textarea:focus-visible {
+  border-color: #81e8f7;
+  box-shadow: 0 0 0 3px rgba(70, 208, 232, 0.17);
+}
+
+.ideaRegion textarea:disabled {
+  resize: none;
+}
+
+.consoleAction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.58rem;
+}
+
+.fileInput {
+  display: none;
+}
+
+.consoleAction button,
+.entryError button {
+  min-height: 2.55rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #48869a;
+  border-radius: 0.32rem;
+  color: #e8fbff;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.secondaryAction {
+  position: relative;
+  padding-left: 2.05rem !important;
+  background: linear-gradient(180deg, rgba(6, 40, 55, 0.96), rgba(3, 23, 34, 0.96));
+}
+
+.secondaryAction::before {
+  position: absolute;
+  left: 0.78rem;
+  color: #83e8fb;
+  font-size: 1rem;
+  content: "◇";
+}
+
+.askRevAction {
+  min-width: 9rem;
+  margin-left: auto;
+  border-color: #e2a846 !important;
+  background: linear-gradient(180deg, #b47829, #754617);
+  box-shadow:
+    inset 0 0 0.75rem rgba(255, 205, 113, 0.14),
+    0 0 0.7rem rgba(214, 145, 44, 0.26);
+}
+
+.consoleAction button:focus-visible,
+.entryError button:focus-visible {
+  outline: 3px solid #89ecfb;
+  outline-offset: 3px;
+}
+
+.consoleAction button:disabled {
+  border-color: #637078 !important;
+  background: rgba(40, 44, 48, 0.82);
+  box-shadow: none;
+  color: #9ca3a7;
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.imageEvidence {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.75rem;
+  color: #a9c0c6;
+  font-size: 0.72rem;
+}
+
+.imageEvidence img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+  border-radius: 0.35rem;
+  background: #02080d;
+}
+
+.visualUnderstanding {
+  margin-top: 0.7rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(64, 112, 128, 0.72);
+  border-radius: 0.4rem;
+  background: rgba(5, 17, 27, 0.6);
+}
+
+.visualUnderstanding strong {
+  color: #81e1f0;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+
+.visualUnderstanding p {
+  margin: 0.3rem 0;
+}
+
+.visualUnderstanding small,
+.information {
+  color: #8ca3ab;
+  font-size: 0.65rem;
+}
+
+.entryError {
+  margin-top: 0.7rem;
+  color: #ffb6a9;
+}
+
+.entryError p {
+  margin: 0 0 0.5rem;
+}
+
+.coreCreation {
+  margin-top: 0.45rem;
+  padding: 0.65rem 0.9rem 0.55rem;
+  border: 1px solid rgba(45, 147, 179, 0.58);
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, rgba(3, 19, 32, 0.96), rgba(2, 12, 22, 0.96));
+  box-shadow: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.4);
+}
+
+.coreCreation h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.coreCreation ul {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coreCreation li {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  min-width: 0;
+  min-height: 7.3rem;
+  padding: 0.15rem 0.18rem;
+  color: #d2dde0;
+  text-align: center;
+}
+
+.coreCreation li > span {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto 0.2rem;
+  border: 1px solid rgba(51, 171, 204, 0.54);
+  border-radius: 50%;
+  color: #5cdfff;
+  font-size: 2.3rem;
+  background: radial-gradient(circle, rgba(25, 126, 164, 0.34), rgba(2, 16, 28, 0.2) 65%);
+  box-shadow:
+    inset 0 0 1rem rgba(55, 181, 218, 0.2),
+    0 0 0.8rem rgba(32, 148, 190, 0.25);
+}
+
+.coreCreation li.coreItem > span {
+  border-color: rgba(223, 164, 69, 0.76);
+  color: #87ecff;
+  box-shadow:
+    inset 0 0 1rem rgba(64, 199, 237, 0.24),
+    0 0 0.8rem rgba(224, 161, 61, 0.38);
+}
+
+.coreCreation li strong {
+  font-size: clamp(0.55rem, 0.62vw, 0.65rem);
+  font-weight: 620;
+  line-height: 1.2;
+}
+
+.coreCreation li small {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .consoleRegions {
+    grid-template-columns: 1fr;
+  }
+
+  .projectRegion {
+    border-right: 0;
+    border-bottom: 1px solid rgba(75, 154, 181, 0.42);
+  }
+
+  .intentOptions label {
+    min-height: 8rem;
+  }
+
+  .coreCreation ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .projectRegion,
+  .ideaRegion {
+    padding: 0.8rem;
+  }
+
+  .intentOptions {
+    grid-template-columns: 1fr;
+  }
+
+  .intentOptions label {
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    justify-items: start;
+    align-items: center;
+    min-height: 5.2rem;
+    padding: 0.58rem 0.75rem;
+    text-align: left;
+  }
+
+  .intentIcon {
+    grid-row: 1 / 3;
+  }
+
+  .intentOptions small {
+    margin-top: 0.15rem;
+  }
+
+  .coreCreation ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coreCreation li {
+    min-height: 6.8rem;
+  }
+
+  .consoleAction {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .askRevAction {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consoleRegions,
+  .projectRegion,
+  .ideaRegion,
+  .intentOptions label {
+    transition: none;
+  }
+
+  .intentOptions label:hover {
+    transform: none;
+  }
+}
+
 @media (max-width: 900px) and (max-height: 520px) {
   .shell {
     padding-top: max(0.6rem, env(safe-area-inset-top));
@@ -941,5 +1450,360 @@
 
   .revFigure {
     width: 9rem;
+  }
+}
+
+/* VPB-HOME-004 — compact desktop composition and truthful blank hierarchy */
+.shell {
+  padding:
+    max(0.75rem, env(safe-area-inset-top))
+    max(1.25rem, env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+}
+
+.scene {
+  height: max(100svh, 53.875rem);
+}
+
+.sceneContrast {
+  background:
+    linear-gradient(180deg, rgba(2, 8, 15, 0.12) 0 13%, transparent 31% 58%, rgba(3, 11, 20, 0.2) 73%, #06101c 100%),
+    linear-gradient(90deg, rgba(3, 10, 17, 0.42) 0, rgba(3, 10, 17, 0.08) 48%, transparent 72%);
+}
+
+.siteHeader,
+.introduction {
+  width: min(100%, 114rem);
+}
+
+.siteHeader {
+  min-height: 5.8rem;
+  padding-bottom: 0.25rem;
+}
+
+.brandPlacement {
+  transform: scale(0.88);
+  transform-origin: top left;
+  margin-bottom: -1rem;
+}
+
+.navigation {
+  padding-top: 0.25rem;
+}
+
+.navigation a:last-child {
+  border-color: transparent;
+  color: #f2f5f6;
+  padding-inline: 0.9rem;
+}
+
+.navigation a:last-child:hover {
+  border-color: rgba(114, 210, 228, 0.7);
+  color: #9ce8f5;
+}
+
+.introduction {
+  grid-template-columns: minmax(0, 72fr) minmax(21rem, 28fr);
+  min-height: clamp(18rem, 34vh, 20.5rem);
+  padding-top: clamp(0.85rem, 1.25vw, 1.3rem);
+}
+
+.founderMessage {
+  max-width: 69rem;
+  padding: 0.2rem clamp(1rem, 2vw, 2rem) 0;
+}
+
+.headline {
+  font-size: clamp(2.15rem, 2.75vw, 3.15rem);
+}
+
+.supportingCopy {
+  max-width: 34rem;
+  margin-top: 0.55rem;
+  font-size: clamp(0.82rem, 0.92vw, 0.95rem);
+  line-height: 1.5;
+}
+
+.benefits {
+  max-width: 38rem;
+  margin-top: 0.55rem;
+}
+
+.revFigure {
+  top: clamp(4.2rem, 4.8vw, 5.2rem);
+  right: max(2.5rem, calc((100vw - 114rem) / 2 + 2.5rem));
+  width: clamp(21rem, 22vw, 25rem);
+}
+
+.formRegion {
+  width: min(72vw, 80rem);
+  margin-left: max(4.2rem, calc((100vw - 114rem) / 2 + 4.2rem));
+  margin-right: auto;
+  padding: 0;
+}
+
+@media (max-width: 1180px) {
+  .brandPlacement {
+    transform: none;
+    margin-bottom: 0;
+  }
+
+  .introduction {
+    min-height: 21rem;
+  }
+
+  .formRegion {
+    width: 100%;
+    margin-inline: auto;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .scene {
+    height: 49rem;
+  }
+
+  .siteHeader {
+    min-height: 6rem;
+  }
+
+  .introduction {
+    min-height: 0;
+  }
+
+  .revFigure {
+    width: clamp(10rem, 28vw, 13rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .navigation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scene {
+    height: 44rem;
+  }
+}
+
+/* VPB-HOME-005 — exact founder-approved desktop opening plate with live controls */
+.approvedOpening {
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .openingMode {
+    min-height: 100svh;
+    padding: 0;
+    background: #02070d;
+  }
+
+  .openingMode .approvedOpening {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 50%;
+    display: block;
+    width: min(100%, 114.0625rem);
+    aspect-ratio: 1825 / 862;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .approvedOpeningImage {
+    object-fit: contain;
+    object-position: top center;
+  }
+
+  .openingMode .scene,
+  .openingMode .energyPath,
+  .openingMode .introduction,
+  .openingMode .revFigure {
+    display: none;
+  }
+
+  .openingMode .siteHeader {
+    position: absolute;
+    z-index: 6;
+    top: 0;
+    left: 50%;
+    width: min(100%, 114.0625rem);
+    height: 13%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .openingMode .brandPlacement {
+    display: none;
+  }
+
+  .openingMode .navigation {
+    position: absolute;
+    top: 2.2rem;
+    right: 15.5%;
+    display: flex;
+    gap: 1.1rem;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  .openingMode .navigation a,
+  .openingMode .navigation a:last-child,
+  .openingMode .navigation a:hover,
+  .openingMode .navigation a:last-child:hover {
+    border-color: transparent;
+    background: transparent;
+    color: transparent;
+    text-shadow: none;
+  }
+
+  .openingMode .navigation a:focus-visible {
+    outline: 2px solid #7fe8fb;
+    outline-offset: 2px;
+  }
+
+  .openingMode .formRegion {
+    position: relative;
+    z-index: 4;
+    width: min(100%, 114.0625rem);
+    aspect-ratio: 1825 / 862;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .openingEntry {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  .openingEntry .consoleRegions {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .openingEntry .projectRegion {
+    position: static;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .openingEntry .projectRegion h1,
+  .openingEntry .originIntent legend,
+  .openingEntry .intentGuidance {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .openingEntry .originIntent {
+    position: static;
+    margin: 0;
+  }
+
+  .openingEntry .intentOptions {
+    position: absolute;
+    top: 58.8%;
+    left: 5.4%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.55%;
+    width: 36%;
+    height: 18.9%;
+  }
+
+  .openingEntry .intentOptions label {
+    display: block;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 0.45rem;
+    background: transparent;
+    box-shadow: none;
+    color: transparent;
+    transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  }
+
+  .openingEntry .intentOptions label:hover {
+    transform: none;
+    border-color: rgba(121, 232, 251, 0.88);
+    background: rgba(18, 117, 153, 0.08);
+    box-shadow: 0 0 0.85rem rgba(53, 198, 232, 0.32);
+  }
+
+  .openingEntry .intentOptions label.intentSelected {
+    border: 2px solid #e2ad4d;
+    background: linear-gradient(150deg, rgba(22, 121, 166, 0.3), rgba(3, 28, 46, 0.18));
+    box-shadow: 0 0 0.25rem #e2ad4d, 0 0 1.2rem rgba(63, 205, 239, 0.48);
+  }
+
+  .openingEntry .intentIcon,
+  .openingEntry .intentOptions strong,
+  .openingEntry .intentOptions small {
+    visibility: hidden;
+  }
+
+  .openingEntry .selectedMarker {
+    top: 0.45rem;
+    right: 0.45rem;
+  }
+
+  .openingEntry .ideaRegion {
+    display: none;
+  }
+
+  .openingEntry .ideaRegion.ideaOpen {
+    position: absolute;
+    top: 53.1%;
+    left: 42.25%;
+    display: block;
+    box-sizing: border-box;
+    width: 32.15%;
+    min-height: 25.2%;
+    padding: clamp(0.7rem, 0.9vw, 1.05rem);
+    border: 1px solid rgba(87, 221, 248, 0.9);
+    border-radius: 0.5rem;
+    opacity: 1;
+    background: linear-gradient(112deg, rgba(2, 19, 32, 0.98), rgba(1, 12, 23, 0.96));
+    box-shadow: inset 0 0 1.2rem rgba(45, 177, 216, 0.1), 0 0 1rem rgba(42, 184, 222, 0.28);
+    filter: none;
+  }
+
+  .openingEntry .ideaRegion h2 {
+    font-size: clamp(0.78rem, 1.08vw, 1.12rem);
+  }
+
+  .openingEntry .ideaGuidance {
+    font-size: clamp(0.58rem, 0.65vw, 0.68rem);
+  }
+
+  .openingEntry .ideaRegion textarea {
+    min-height: clamp(4rem, 5vw, 5.35rem);
+    height: clamp(4rem, 5vw, 5.35rem);
+  }
+
+  .openingEntry .coreCreation {
+    display: none;
   }
 }

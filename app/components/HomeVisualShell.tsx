@@ -1,9 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 import approvedPanoramicScene from "../../public/images/reaidea-home-panoramic-scene-candidate-corrected-2026-08-24.png";
 import approvedRev from "../../public/images/reaidea-rev-friendly-ai-approved-2026-08-24.png";
+import approvedOpeningHome from "../../visual-authority/home/VPB-HOME-006-approved-homepage-entry-2026-08-27.png";
 import ReAIdeaBrand from "./ReAIdeaBrand";
 import styles from "./HomeVisualShell.module.css";
 
@@ -12,15 +12,31 @@ type HomeVisualShellProps = {
   className?: string;
   knowledgePulseActive?: boolean;
   knowledgePulseKey?: string | null;
+  openingMode?: boolean;
 };
 
-export default function HomeVisualShell({ children, className, knowledgePulseActive = false, knowledgePulseKey }: HomeVisualShellProps) {
-  const shellClassName = className
-    ? `${styles.shell} ${className}`
-    : styles.shell;
+export default function HomeVisualShell({ children, className, knowledgePulseActive = false, knowledgePulseKey, openingMode = false }: HomeVisualShellProps) {
+  const shellClassName = [styles.shell, openingMode ? styles.openingMode : "", className ?? ""].filter(Boolean).join(" ");
 
   return (
     <main className={shellClassName}>
+      {openingMode && (
+        <div
+          className={styles.approvedOpening}
+          aria-hidden="true"
+          data-opening-brand-correction="ReAlize · Engineer · ValidatIon"
+        >
+          <Image
+            src={approvedOpeningHome}
+            alt=""
+            fill
+            preload
+            sizes="100vw"
+            className={styles.approvedOpeningImage}
+            unoptimized
+          />
+        </div>
+      )}
       <div className={styles.scene} aria-hidden="true">
         <Image
           src={approvedPanoramicScene}
@@ -78,7 +94,6 @@ export default function HomeVisualShell({ children, className, knowledgePulseAct
         <nav className={styles.navigation} aria-label="Home navigation">
           <a href="#how-it-works">HOW IT WORKS</a>
           <a href="#what-rev-does">WHAT REV DOES</a>
-          <Link href="/workshop">RETURNING PROJECT</Link>
         </nav>
       </header>
 

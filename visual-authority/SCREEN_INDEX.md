@@ -6,7 +6,45 @@
 
 This index records current lifecycle markers without rewriting completed history. Evidence and checkpoint details remain in linked daily/construction records.
 
+## Current reset qualification
+
+Combined `REV-FIX-02.1–02.4` is the completed Homepage entry checkpoint. `VPB-HOME-006` controls the exact opening and intent-to-REV activation. `VPB-HOME-004/004A/005` remain preserved approval evidence; `VPB-HOME-001/002/003` remain protected where non-conflicting.
+
 ## Registered Visual Page Blueprints
+
+### VPB-HOME-006 — Final Approved Homepage Entry
+
+- **Route/state:** `/` — `BLANK NEW PROJECT`, before intent selection.
+- **Blueprint status / flight marker:** **FOUNDER VISUALLY APPROVED / TECHNICALLY VERIFIED / CHECKPOINT READY**.
+- **Approved image:** `home/VPB-HOME-006-approved-homepage-entry-2026-08-27.png`.
+- **Authority record:** `home/VPB-HOME-006-authority-2026-08-27.md`.
+- **Dimensions:** `1825 × 862` PNG.
+- **SHA-256:** `122F5579FC5A34D219C42CC4C517C2F93C1543A3D7269A73415C3BDEBFA48B1F`.
+- **Truth rule:** Exact approved plasma, REV floor position, eight station geometries and refined intent icons. The REV expansion reads `ReAlize · Engineer · ValidatIon`, with A and I blue and E orange, without a ghosted line.
+- **Next gate:** Morning handover; REV-FIX-02.5 remains locked until separately authorized.
+
+### VPB-HOME-005 — Approved Home Opening
+
+- **Route/state:** `/` — `BLANK NEW PROJECT`, before intent selection.
+- **Blueprint status / flight marker:** **FOUNDER-APPROVED HISTORICAL EVIDENCE / SUPERSEDED BY VPB-HOME-006 FOR THE EXACT OPENING**.
+- **Approved image:** `home/VPB-HOME-005-approved-opening-homepage-2026-08-27.png`.
+- **Authority record:** `home/VPB-HOME-005-authority-2026-08-27.md`.
+- **Dimensions:** `1825 × 862` PNG.
+- **SHA-256:** `E3CEBF8DAC0B9F7D11B1BDC8AC56CBDF0BC6CAFD5C561F329D91A7DDD5E0E448`.
+- **Truth rule:** The exact opening preserves the approved plasma route, REV floor position, eight station geometries and refined intent icons. Functional intent overlays may reveal the live REV entry panel but may not change the opening architecture.
+- **Brand amendment:** `ReAlize · Engineer · ValidatIon`; A and I are blue, E is orange, and the REV initials remain orange.
+- **Next gate:** None; preserved evidence superseded by VPB-HOME-006 for the exact opening.
+
+### VPB-HOME-004 — Blank Intent-Gated Home
+
+- **Route/state:** `/` — `BLANK NEW PROJECT`, before intent selection.
+- **Blueprint status / flight marker:** **FOUNDER-APPROVED HISTORICAL EVIDENCE / SUPERSEDED BY VPB-HOME-006 FOR THE EXACT OPENING**.
+- **Approved image:** `home/VPB-HOME-004-approved-blank-intent-gated-home-2026-08-27.png`.
+- **Authority record:** `home/VPB-HOME-004-authority-2026-08-27.md`.
+- **Dimensions:** `1825 × 862` PNG.
+- **SHA-256:** `BE36A3F98E43A919BC59B873AF68C424B57081DDE03BBC21795E5EABF422B07F`.
+- **Truth rule:** Nothing is preselected or created. Intent selection alone opens the REV panel, focuses the description and performs no persistence, API or provider work.
+- **Next gate:** None; preserved evidence superseded by VPB-HOME-006 for the exact opening.
 
 ### VPB-HOME-001 — Home Creation
 
@@ -79,7 +117,7 @@ This index records current lifecycle markers without rewriting completed history
 
 | Page/surface | Current marker | Evidence / qualification | Next gate |
 | --- | --- | --- | --- |
-| `/` Home creation foundation | FOUNDER APPROVED | `VPB-HOME-001/002/003` define the visual foundation, conversation state and knowledge pulse; HAI behavior is not implemented | Read-only `HAI-1` Build Contract for the provider-free loop and evidence-derived meter |
+| `/` Home creation foundation | FOUNDER VISUALLY APPROVED — CHECKPOINT READY | `VPB-HOME-006` controls the exact opening; `VPB-HOME-004/004A/005` are preserved evidence; `VPB-HOME-001/002/003` remain protected | Morning handover; `.5` and later locked |
 | `/workshop` Living Workshop | VERIFIED | B2A, B2B-1 and B2B-2 functional checkpoints; cosmetics/responsiveness partial | B2B-3A is archived as experimental; future presentation work requires a new bounded blueprint/contract |
 | `/discovery` legacy door | COMMITTED | Route exists; current authority/disposition unresolved | Founder chooses retire, redirect or repurpose |
 | `/discovery/session` legacy session/review | COMMITTED | Useful truth tooling exists; questionnaire default is superseded | Contract migration/retirement without losing Project semantics |
@@ -88,7 +126,7 @@ This index records current lifecycle markers without rewriting completed history
 | Home creation (`VPB-HOME-001`) | FOUNDER APPROVED | Canonical image restored; functional C1-S1 foundation committed at `a62b597e32f98669832f30956bc023eadbcc85e0` | Future changes require an exact Build Contract and measured responsive review |
 | Sign-free Workshop (`VPB-WORKSHOP-001`) | FOUNDER APPROVED | Canonical image and authority record restored | Preserve truthful state; later cosmetics require a bounded contract |
 | Home → Workshop completion (`VPB-JOURNEY-001`) | FOUNDER APPROVED | Canonical image/record restored; one-Canvas journey protected | Surf-goggle geometry remains unresolved; no viewer rebuild |
-| Home AI → stored-3D Workshop arrival (`VPB-JOURNEY-002`) | FOUNDER APPROVED | Six-page handover and authority record registered; implementation remains pending | Contract HAI, source-aware geometry, deliberate entry and same-model restoration in separate flights |
+| Home AI → stored-3D Workshop arrival (`VPB-JOURNEY-002`) | FOUNDER APPROVED / LOCKED | Six-page handover and authority record remain registered; implementation is later-category work | LOCKED until its controlling REV-FIX reference becomes current |
 | Account and secure access | NOT DESIGNED | Production requirement; no visual authority | Founder direction and security architecture |
 | Project Library / Returning Project | NOT DESIGNED | Production requirement; no visual authority | Object-authorization contract and finished design |
 | REV Project Board overlay | NOT DESIGNED | Future whiteboard-style direction only | Founder information hierarchy and screen design |
@@ -102,8 +140,8 @@ Only Lane 0 is active. Lifecycle markers describe accumulated checkpoint state, 
 
 | Lane | Marker | Active | Evidence / next gate |
 | --- | --- | --- | --- |
-| 0 — Governance, safety and truth | FOUNDER APPROVED | YES | Home AI-active and stored-3D journey authorities registered; production remains paused |
-| 1 — Inventor Entry | VERIFIED | NO | Functional Home foundation accepted; `VPB-HOME-002/003` implementation requires HAI-1 contract |
+| 0 — Governance, safety and truth | FOUNDER APPROVED | NO | Controls and protects the active contract |
+| 1 — Inventor Entry | FOUNDER WALKTHROUGH | YES | Combined blank truth, approved visual layout, data entry and protected `ASK REV` foundation technically verified |
 | 2 — REV Intelligence | VERIFIED | NO | Description-led routing/provenance/firearm BLOCK accepted; Home one-question loop remains unimplemented and S1B/provider scope unresolved |
 | 3 — Core Creation | VERIFIED | NO | Bounded portable-signage geometry accepted; source-aware broader 3D is required before `VPB-JOURNEY-002` entry can pass |
 | 4 — Living Workshop | VERIFIED | NO | Functional B2A/B2B-1/B2B-2 accepted; later cosmetics pending |

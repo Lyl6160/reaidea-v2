@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const page = fs.readFileSync(new URL("./page.tsx", import.meta.url), "utf8");
+const shell = fs.readFileSync(new URL("./components/HomeVisualShell.tsx", import.meta.url), "utf8");
 
 assert.match(page, /"ASK REV"/);
 assert.match(page, /\/api\/creation-intent/);
@@ -19,6 +20,22 @@ assert.ok(prepareUnderstanding.indexOf("recordHomeUnderstandingOperationStarted"
 assert.ok(prepareUnderstanding.lastIndexOf("deriveHomeKnowledgeBasisRevision") > prepareUnderstanding.indexOf('fetch("/api/understanding/text"'), "the basis must be rechecked after the response");
 assert.doesNotMatch(page, /\/api\/concepts\/generate|runInitialCoreCreation|buildConceptGeometry|router\.push|\/workshop["']/);
 assert.doesNotMatch(page, /setInterval|setTimeout|percentage|confidence score/i);
+assert.match(page, /FIRST, WHAT DO YOU WANT REV TO HELP WITH\?/);
+assert.match(page, /DEVELOP AN INVENTION/);
+assert.match(page, /EVALUATE AN INVENTION/);
+assert.match(page, /DEVELOP \+ EVALUATE/);
+assert.match(page, /data-intent-icon="plasma-ignition"/);
+assert.match(page, /data-intent-icon="scanning-lens"/);
+assert.match(page, /data-intent-icon="converging-energy"/);
+assert.doesNotMatch(page, /M18 35h12m-10 5h8/);
+assert.match(page, /CHOOSE ONE PATH TO UNLOCK YOUR IDEA/);
+assert.match(page, /disabled=\{!originIntent \|\| busy\}/, "REV entry must remain disabled before an intent is selected");
+assert.match(page, /descriptionInputRef\.current\?\.focus\(\)/, "intent selection must move focus into REV entry");
+assert.doesNotMatch(shell, /RETURNING PROJECT|href=["']\/workshop/, "blank Home must not expose Workshop or Returning Project navigation");
+assert.match(shell, /data-opening-brand-correction="ReAlize · Engineer · ValidatIon"/, "opening brand line must preserve the founder-approved blue A, orange E and blue I treatment");
+assert.match(shell, /VPB-HOME-006-approved-homepage-entry-2026-08-27\.png/, "Home must use the final founder-approved homepage entry image");
+const intentSelection = page.slice(page.indexOf('name="origin-intent"'), page.indexOf('id="intent-guidance"'));
+assert.doesNotMatch(intentSelection, /fetch\(|createProject\(|saveProject\(/, "intent selection must not create or call anything");
 assert.equal((page.match(/createProject\(/g) ?? []).length, 1, "ASK REV owns one canonical Project creation point");
 const askRev = page.slice(page.indexOf("async function askRev"), page.indexOf("function answerQuestion"));
 assert.ok(askRev.indexOf("assessCreationIntent") < askRev.indexOf("createProject"), "safety must clear before Project creation");

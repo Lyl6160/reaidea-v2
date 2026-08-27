@@ -2,6 +2,8 @@
 
 **Status:** FOUNDER APPROVED — current construction control
 
+**Current reference:** Combined `REV-FIX-02.1–02.4` final Homepage entry checkpoint, Phase 5 Documentation checkpoint, Iteration 3 exact `VPB-HOME-006`, `FOUNDER VISUALLY APPROVED — READY FOR MORNING HANDOVER`. Lane 1 remains the only active delivery lane under `architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md`; every other delivery lane remains inactive and REV-FIX-02.5 is locked.
+
 ## Lane rule
 
 Every Build Contract names exactly one active lane. A change may preserve dependencies in other lanes, but it may not modify them. Cross-lane implementation requires an accepted architecture decision recording why separation is unsafe, the combined file boundary, protected invariants, acceptance evidence and rollback.
@@ -34,7 +36,7 @@ flowchart LR
 - **Dependencies:** None. Every lane depends on Lane 0.
 - **Security boundary:** Deny by default; no secrets or confidential Project content in governance documents.
 - **Acceptance gate:** Founder accepts the authority change; conflicts and unresolved matters are explicit; negative truth/safety tests are defined.
-- **Current status:** **ACTIVE — authority reconciliation and packaging only.** Product implementation is paused.
+- **Current status:** **FOUNDATION / NOT ACTIVE.** Governance controls the active Lane 1 boundary but is not a second implementation lane.
 
 ## Lane 1 — Inventor Entry
 
@@ -46,7 +48,7 @@ flowchart LR
 - **Dependencies:** Lane 0.
 - **Security boundary:** Untrusted bounded text/files; pre-persistence safety; safe errors; no raw denied input in receipts/logs.
 - **Acceptance gate:** HOLD/BLOCK/unavailable create nothing; CLEAR creates one Project; accessibility and no-repetition behavior pass.
-- **Current status:** **PARTIAL.** Accepted functional foundation; final responsive product acceptance remains.
+- **Current status:** **ACTIVE — COMBINED HOME ENTRY BUILD.** Blank truth, approved visual hierarchy, intent-gated entry and the protected existing `ASK REV` foundation are the only implementation scope.
 
 ## Lane 2 — REV Intelligence
 

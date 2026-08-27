@@ -23,7 +23,8 @@ This register lists every current routable page and every named future page/surf
 - **Security boundary:** Untrusted text/upload; bounded client preflight; provider-free server intent gate before Project creation; server validation; no secrets in browser code; explicit retry.
 - **Approved appearance:** `VPB-HOME-001` remains the visual foundation; `VPB-HOME-002` controls the AI-understanding conversation state and `VPB-HOME-003` controls genuine blue-to-orange knowledge advancement. See `VISUAL_AUTHORITY_REGISTER.md`.
 - **Current implementation:** Responsive Home, truthful no-percentage readiness, origin intent, image path, Creation Theatre and description-led routing are accepted foundations. The approved `ASK REV` loop, evidence-derived meter and stored-3D handover are not implemented.
-- **Next acceptance test:** Read-only `HAI-1` Build Contract, followed by provider-free deterministic Home-loop states against `VPB-HOME-002/003`; no production work is authorized by registration alone.
+- **Current reset qualification:** `VPB-HOME-006` is the final founder-approved Homepage entry for the `BLANK NEW PROJECT` state. The intent cards are the first active choice; the REV entry panel is dim and disabled until selection, then opens and receives focus. No Returning Project or Workshop entry appears. `VPB-HOME-004/004A/005` remain preserved approval evidence.
+- **Next acceptance test:** Morning handover at the accepted Homepage entry checkpoint. REV-FIX-02.5 remains locked pending a separate founder direction. Compact responsive visual acceptance remains open.
 
 ### `/workshop` — Living Workshop — PARTIAL
 

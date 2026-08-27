@@ -8,27 +8,17 @@ A handover must let another agent or founder continue without reconstructing aut
 
 ## Required document read order
 
-`AGENTS.md` → `CONTEXT_START_HERE.md` → `continuity/ACTIVE_HANDOFF.md` → `FOUNDER_PRODUCT_CONSTITUTION.md` → `architecture/REAIDEA_FLIGHT_PLAN.md` → relevant Page Blueprint and Visual Authority → `CURRENT_CONSTRUCTION_STATE.md` → active Build Contract
+`AGENTS.md` → `CONTEXT_START_HERE.md` → `CURRENT_CONSTRUCTION_STATE.md` → Constitution and Security Standard → Founder Control System → exact Visual Authority → accepted architecture/runtime and active Build Contract → `continuity/ACTIVE_HANDOFF.md` → historical evidence only as needed
 
-After reading `AGENTS.md`, every coding agent reads completely and in order:
+The `CURRENT WORK` block is the sole live reference, phase, iteration and stop gate. The handoff copies it and cannot change it. If the active Build Contract, visual authority, exact founder authorization or path boundary is absent or conflicting, work remains read-only.
 
-1. `CONTEXT_START_HERE.md`
-2. `continuity/ACTIVE_HANDOFF.md`
-3. `FOUNDER_PRODUCT_CONSTITUTION.md`
-4. `architecture/REAIDEA_FLIGHT_PLAN.md`
-5. The relevant page entry, matching visual-authority entry and registered Visual Page Blueprint
-6. `CURRENT_CONSTRUCTION_STATE.md`
-7. The founder-approved active Build Contract named by the construction state
-
-Relevant lane, supersession/decision and security records follow this canonical sequence.
-
-If the active Build Contract is absent or not founder-approved, work remains read-only.
+Before action, every agent accounts for: current reference/phase/iteration; exact founder authorization; branch/HEAD/upstream/index; tracked/untracked paths; required starting state; allowed files; prohibited files/protected foundations; visual references/hashes; tests/founder walkthrough; and stop conditions.
 
 ## Mandatory fields
 
 Every future handover states:
 
-1. **Checkpoint** — exact Build/hold point and acceptance state.
+1. **Checkpoint** — exact current reference, phase, iteration and controlled status.
 2. **Active lane** — one Lane 0–7, or the accepted ADR authorizing cross-lane work.
 3. **Baseline SHA** — full local commit and configured upstream relationship without fetching unless authorized.
 4. **Completed work** — observed implementation or documentation outcome; distinguish founder-accepted, technically verified and merely implemented.
@@ -36,7 +26,7 @@ Every future handover states:
 6. **Protected invariants** — Project truth, safety, provider, persistence, one-Canvas, accessibility or other contracts that remain unchanged.
 7. **Checks** — exact commands/results, browser/provider counts and any deferred or environmental failure.
 8. **Founder decisions** — unresolved choices; never convert silence or a screenshot into approval.
-9. **Next action** — one bounded action and its required authorization.
+9. **Next action** — one bounded action, exact founder gate, required starting state and stop conditions.
 10. **Rollback point** — commit or preserved file hashes that return to the last accepted state without destroying unrelated work.
 
 ## Required handover form
@@ -44,14 +34,19 @@ Every future handover states:
 ```text
 REV HANDOFF
 Checkpoint:
+Founder authorization:
 Active lane:
 Baseline SHA / upstream:
+Required starting state:
 Completed work:
 Changed paths:
+Allowed / prohibited files:
 Protected invariants:
+Visual references / hashes:
 Checks:
 Founder decisions:
 Next action:
+Stop conditions:
 Rollback point:
 Security posture: PASS / PASS WITH RISKS / NOT READY
 ```

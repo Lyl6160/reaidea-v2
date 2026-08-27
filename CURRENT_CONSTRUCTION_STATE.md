@@ -1,5 +1,92 @@
 # CURRENT_CONSTRUCTION_STATE
 
+```text
+CURRENT WORK
+
+Reference: REV-FIX-02.1–02.4 — Final approved Homepage entry checkpoint
+Phase: 5 — Documentation checkpoint
+Iteration: 3
+Status: FOUNDER VISUALLY APPROVED — READY FOR MORNING HANDOVER
+Required starting state: BLANK NEW PROJECT on a new isolated localhost origin
+Allowed files:
+CURRENT_CONSTRUCTION_STATE.md
+architecture/BUILD_LANES.md
+architecture/PAGE_BLUEPRINT_REGISTER.md
+architecture/REAIDEA_FLIGHT_PLAN.md
+architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md
+architecture/SUPERSESSION_REGISTER.md
+architecture/VISUAL_AUTHORITY_REGISTER.md
+app/page.tsx
+app/page.test.mjs
+app/components/HomeVisualShell.tsx
+app/components/HomeVisualShell.module.css
+continuity/ACTIVE_HANDOFF.md
+continuity/DAILY_INDEX.md
+continuity/daily/2026-08-27/DAILY_LOG.md
+continuity/daily/2026-08-27/EVIDENCE_INDEX.md
+visual-authority/SCREEN_INDEX.md
+visual-authority/home/VPB-HOME-004-approved-blank-intent-gated-home-2026-08-27.png
+visual-authority/home/VPB-HOME-004-authority-2026-08-27.md
+visual-authority/home/VPB-HOME-004A-approved-intent-icon-refinement-2026-08-27.png
+visual-authority/home/VPB-HOME-004A-authority-2026-08-27.md
+visual-authority/home/VPB-HOME-005-approved-opening-homepage-2026-08-27.png
+visual-authority/home/VPB-HOME-005-authority-2026-08-27.md
+visual-authority/home/VPB-HOME-006-approved-homepage-entry-2026-08-27.png
+visual-authority/home/VPB-HOME-006-authority-2026-08-27.md
+Prohibited files: Every repository path not listed above, including all app/api/**, app/lib/**, other app components/routes, Workshop source, public/**, node_modules/**, dependency manifests/locks, configuration, fixtures, runtime data and REAIDEA_ARCHITECTURE_GUIDE.md
+Founder authorization: upload the new image you just refined as HOMEPAGE entry, and update github with out latest files for our new way forward
+Founder gate: CHECKPOINT DOCUMENTATION, COMMIT AND PUSH AUTHORIZED
+Next reference: REV-FIX-02.5 — LOCKED
+
+Branch: sprint006-build24-40-home-rebuild
+Baseline HEAD: b27f10e9bc651a9492d9b4872d59336f123af5b0
+Upstream: origin/sprint006-build24-40-home-rebuild
+Ahead/behind without fetching: 0/0
+Index: clean
+Tracked worktree: prior approved documentation alignment paths are unstaged; implementation remains inside the active contract
+Untracked worktree: approved authority/contract/continuity paths within the boundary; REAIDEA_ARCHITECTURE_GUIDE.md unrelated, protected and excluded
+
+Applicable approved visual authorities:
+VPB-HOME-001: FF945CA7863A5698F9488D90E2647CCD62E0C1533C805F78611B317336854472
+VPB-HOME-002: 874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D
+VPB-HOME-003: 7C4B12975E7EB228C23B5E7A4CD4143A8DCCCF271C29D9371FAD40B66995F795
+VPB-HOME-004: BE36A3F98E43A919BC59B873AF68C424B57081DDE03BBC21795E5EABF422B07F
+VPB-HOME-004A: FB072D0EAFE55BA08A7CDE85101F55AF621F60E5B804AE813B20E2335BF9CC1B
+VPB-HOME-005: E3CEBF8DAC0B9F7D11B1BDC8AC56CBDF0BC6CAFD5C561F329D91A7DDD5E0E448
+VPB-HOME-006: 122F5579FC5A34D219C42CC4C517C2F93C1543A3D7269A73415C3BDEBFA48B1F
+
+Blank-state visual qualification:
+VPB-HOME-006 is the final founder-approved Homepage entry. It preserves the approved plasma route, REV scale and floor position, eight workstation geometries, intent icons and corrected `ReAlize · Engineer · ValidatIon` expansion without ghosting. No intent is preselected; the REV panel is dim and disabled until selection. Selection opens the live panel and moves focus to the description.
+VPB-HOME-004, VPB-HOME-004A and VPB-HOME-005 remain preserved approval evidence and are superseded by VPB-HOME-006 for the exact opening presentation.
+VPB-HOME-001/002/003 remain protected where non-conflicting. Flattened sample state does not override runtime truth.
+The approved panoramic backdrop and friendly REV assets remain byte-protected.
+
+Current action:
+Complete the founder-authorized checkpoint commit and push, leave the active handoff ready for morning, and stop.
+Do not begin REV-FIX-02.5.
+
+Combined references:
+REV-FIX-02.1 — Blank Home truth — INCLUDED
+REV-FIX-02.2 — Blank Home visual layout — INCLUDED
+REV-FIX-02.3 — Data entry and optional image — INCLUDED
+REV-FIX-02.4 — ASK REV and canonical Project creation — INCLUDED / EXISTING PLUMBING PROTECTED
+
+Locked references:
+REV-FIX-02.5 — Answer, knowledge and understanding — LOCKED
+REV-FIX-02.6 — Ready state and Creation Theatre handoff — LOCKED
+REV-FIX-02.7 — Professional electrical system — LOCKED
+REV-FIX-02.8 — Professional 3D quality target — LOCKED
+REV-FIX-02.9 — Live formation, fidelity and securing — LOCKED
+REV-FIX-02.10 — Complete blank-to-Workshop journey — LOCKED
+
+Stop condition:
+Stop on any authority conflict, path-boundary breach, protected-plumbing change, unexpected worktree change, provider operation during verification or request to enter REV-FIX-02.5 or later.
+```
+
+## Historical construction record — preserved, non-authoritative for next action
+
+Everything below this boundary is retained as implementation evidence and chronology. Every embedded statement naming a “current”, “active”, “next safe”, “next approved” or similarly actionable step is superseded as permission by the `CURRENT WORK` block above. In particular, `HAI-1`, C2F and earlier HP-24.* next actions are not current authorization. Historical acceptance, defects, hashes and protected invariants remain evidence.
+
 **Project:** reAIdea  
 **Current safe committed baseline before this authority checkpoint:** Fidelity Authority `27592acd8c7eb2bca3d7734adae923c9b29fdc69`; accepted code foundation `a62b597e32f98669832f30956bc023eadbcc85e0`
 

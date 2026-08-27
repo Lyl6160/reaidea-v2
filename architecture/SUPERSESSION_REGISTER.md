@@ -5,17 +5,19 @@
 
 ## Current authority hierarchy
 
-1. Explicit founder decision and `FOUNDER_PRODUCT_CONSTITUTION.md`.
-2. `SECURITY_ENGINEERING_STANDARD.md` and accepted security records; the safer mandatory control governs conflicts.
-3. `architecture/REAIDEA_FLIGHT_PLAN.md`.
-4. `architecture/PAGE_BLUEPRINT_REGISTER.md`, `VISUAL_AUTHORITY_REGISTER.md` and `BUILD_LANES.md`.
-5. This Supersession Register and an accepted architecture decision for the active cross-lane exception.
-6. `CURRENT_CONSTRUCTION_STATE.md` as implementation evidence.
-7. Founder-approved active Build Contract.
-8. Handover and retained acceptance evidence.
-9. Historical journals, blueprints, handovers and obsolete construction records as immutable history only.
+Product and security guards are non-weakenable: explicit founder direction and the Founder Product Constitution control product direction; `SECURITY_ENGINEERING_STANDARD.md` and accepted security records control mandatory safety/security requirements.
 
-The active Build Contract cannot change product authority; it must implement within it.
+Within those guards, live working-process authority is:
+
+1. Founder instruction and explicit founder approval.
+2. The plain-text `CURRENT WORK` block in `CURRENT_CONSTRUCTION_STATE.md` — the only live reference, phase, iteration, checklist and stop gate.
+3. Approved visual-authority files with exact hashes.
+4. Accepted architecture/runtime contracts and the founder-approved active Build Contract.
+5. `continuity/ACTIVE_HANDOFF.md` as a copy of current status.
+6. Journals and daily logs as historical evidence only.
+7. Temporary prototypes, screenshots and agent suggestions as non-authoritative unless explicitly promoted.
+
+The Founder Control System is `architecture/REAIDEA_FOUNDER_CONTROL_SYSTEM_2026-08-27.md`. A Build Contract cannot change product or security authority. Historical wording cannot override `CURRENT WORK`.
 
 ## Current supersession decisions
 
@@ -36,6 +38,10 @@ The active Build Contract cannot change product authority; it must implement wit
 | SR-013 | Build Lane 0 plus one delivery lane at a time | Unbounded multi-system construction | Cross-lane work needs an accepted ADR and combined rollback |
 | SR-014 | Project 000 applies the eight benches to reAIdea | Roadmap motion treated as proof | Completed, tested, assumed, planned and unresolved remain explicit |
 | SR-015 | `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002` establish `ASK REV` → understanding growth → stored 3D → deliberate Workshop entry | `START WITH REV` as the canonical action, automatic creation after one description, Visual-Concept-only completion, automatic navigation, entry without stored 3D, empty-podium arrival and 2D-as-3D interpretations | The initial Workshop handover occurs only after the same validated Concept 01 geometry is durably stored; earlier authorities remain preserved where non-conflicting |
+| SR-016 | Founder Control System and the `CURRENT WORK` block control live sequencing | `HAI-1`, C2F and every older “current”, “active”, “next safe” or “next approved” implementation statement as present authorization | Historical evidence and accepted foundations remain preserved; only explicit founder authorization reflected in `CURRENT WORK` can unlock a reference and phase |
+| SR-017 | Founder-approved combined `REV-FIX-02.1–02.4` Home entry walkthrough and `VPB-HOME-004` control the current build | Separate `.1`, `.2`, `.3` and `.4` locks for this one Home entry iteration; `RETURNING PROJECT` on blank Home; visually active entry before intent selection | Lane 1 may implement only the bounded Home contract; `.5–.10`, providers, advanced REV, Creation Theatre and Workshop remain locked |
+| SR-018 | `VPB-HOME-005` controls the exact Home opening presentation | Simplified live plasma, placeholder workstation circles, raised/undersized REV and `VPB-HOME-004/004A` as the exact opening presentation | Approved Home architecture is preserved as one exact opening image with functional intent overlays; earlier approvals remain historical evidence and later journey states remain locked |
+| SR-019 | `VPB-HOME-006` controls the final Homepage entry checkpoint | `VPB-HOME-005` plus its temporary live brand correction as the exact runtime plate | The corrected REV expansion is baked into the canonical opening image with no ghosting; 004/004A/005 remain preserved evidence; REV-FIX-02.5 remains locked |
 
 ## Document disposition
 
@@ -45,7 +51,8 @@ The active Build Contract cannot change product authority; it must implement wit
 | `FOUNDER_PRODUCT_DIRECTION.md` Draft 1.0 | HISTORICAL/DRAFT INPUT after Constitution acceptance, except explicit dated approvals | Contains valuable direction but is not wholly approved and includes superseded interaction detail |
 | `docs/ARCHITECTURE.md`, `docs/ROADMAP.md` and related early docs | HISTORICAL REFERENCE where conflicting | Older architecture/roadmap language cannot override the Flight Plan |
 | `blueprints/**` | HISTORICAL DESIGN/DOMAIN EVIDENCE unless a current register explicitly references it | Prevents old visual or ownership decisions from silently returning |
-| Handovers and `CURRENT_CONSTRUCTION_STATE.md` | IMPLEMENTATION EVIDENCE | Describe what happened, not what the product must become |
+| `CURRENT_CONSTRUCTION_STATE.md` | LIVE WORK BOARD at top; IMPLEMENTATION EVIDENCE below the historical boundary | The `CURRENT WORK` block alone controls live sequencing; preserved history describes what happened |
+| Handovers | RESTART COPY / HISTORICAL EVIDENCE | Active handoff copies current state; older handovers cannot authorize work |
 | `REAIDEA_ARCHITECTURE_GUIDE.md` | PROPOSED HISTORICAL SYNTHESIS; EXCLUDED FROM CURRENT AUTHORITY | Retained locally pending a later archival decision; cannot override the Constitution or Flight Plan |
 | `architecture/ARCHITECTURE_DECISIONS.md` | SUPPORTING DECISION RATIONALE | Retains why decisions were made; this register controls supersession status |
 | `architecture/PROJECT_000_REAIDEA.md` | CURRENT PROJECT 000 RECORD after acceptance | Applies the eight benches to reAIdea without becoming product authority |

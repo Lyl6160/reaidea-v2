@@ -3,7 +3,7 @@
 **Status:** FOUNDER APPROVED — current shared construction plan
 **Baseline:** `27592acd8c7eb2bca3d7734adae923c9b29fdc69`
 **Branch:** `sprint006-build24-40-home-rebuild`
-**Active work:** Lane 0 registration of `VPB-HOME-002`, `VPB-HOME-003` and `VPB-JOURNEY-002`; production implementation remains paused
+**Active work:** Lane 1 combined `REV-FIX-02.1–02.4` final Homepage entry checkpoint; Phase 5 Documentation checkpoint; exact `VPB-HOME-006` founder approved
 
 ## Purpose
 
@@ -141,11 +141,13 @@ Only one lane may be active in a Build Contract. Cross-lane work requires a foun
 
 ## Current flight position
 
+The detailed current reference, phase, iteration, path boundary and founder gate exist only in `CURRENT_CONSTRUCTION_STATE.md`. Every earlier `HAI-1`, C2F or HP-24.* next action is superseded as permission and retained only as evidence.
+
 | Area | Verified position | Next controlled gate |
 | --- | --- | --- |
-| Governance and safety | Constitution and authority hierarchy are founder accepted; Home AI-active and stored-3D journey authorities are registered | Prepare the read-only `HAI-1` Build Contract without product implementation |
-| Inventor Entry | Responsive Home, origin intent, optional image and safety foundation accepted | Contract `ASK REV`, one-question Home state and evidence-derived meter against `VPB-HOME-002/003` |
-| REV Intelligence | Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted at `a62b597e32f98669832f30956bc023eadbcc85e0` | Define provider-free HAI-1 first; S1B and provider-backed smallest-question work remain separate |
+| Governance and safety | Founder Control System approved; Home contract and exact visual authority registered | Preserve the active Lane 1 boundary and security controls |
+| Inventor Entry | Exact `VPB-HOME-006` Homepage entry, blank truth, input and protected `ASK REV` foundation founder approved | Morning handover; founder separately decides whether to authorize a REV-FIX-02.5 contract |
+| REV Intelligence | Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted at `a62b597e32f98669832f30956bc023eadbcc85e0` | LOCKED until the controlling REV-FIX reference reaches it |
 | Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define source-aware fidelity and supported geometry before claiming `READY TO CREATE 3D` |
 | Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Preserve the viewer; later contract deliberate entry and same-stored-model arrival after `FAIL-NAV-001` diagnosis |
 | Evidence Engine | Project evidence/decision/action/result foundations exist | Define minimum sourced specialist output and adoption flow |
@@ -172,6 +174,12 @@ flowchart LR
 
 Exit gates require a truthful golden journey, safe failure, no cross-Project access, cost controls, accessible responsive behavior, recoverable storage and explicit founder acceptance. Visual polish or a successful provider call cannot substitute for these gates.
 
+## REV-FIX-02 controlled sequence
+
+The near-term flight order is `REV-FIX-02.1` Blank Home truth; `.2` Blank Home visual layout; `.3` Data entry and optional image; `.4` ASK REV and canonical Project creation; `.5` Answer, knowledge and understanding; `.6` Ready state and Creation Theatre handoff; `.7` Professional electrical system; `.8` Professional 3D quality target; `.9` Live formation, fidelity and securing; `.10` Complete blank-to-Workshop journey.
+
+Only the reference named in `CURRENT WORK` may proceed. The founder combined `.1–.4` for the Home entry walkthrough on 27 August 2026; `.5–.10` remain locked.
+
 ## Immediate hold
 
-No production lane is active while the founder-approved Home AI-active and stored-3D journey authority is registered. B2B-3A and C2 remain preserved on experimental archive branches and are not product authority. The next safe step is a read-only `HAI-1` Build Contract for the provider-free Home understanding loop and evidence-derived meter.
+Lane 1 is active under `architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md`. Combined `REV-FIX-02.1–02.4` is at Phase 5 Documentation checkpoint, Iteration 3. `VPB-HOME-006` controls the final Homepage entry. B2B-3A and C2 remain non-authoritative archive evidence; HAI-1 and C2F remain superseded as next actions. `.5` and later remain locked.
