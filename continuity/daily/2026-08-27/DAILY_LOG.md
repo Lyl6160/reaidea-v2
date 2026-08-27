@@ -130,3 +130,6 @@
 - Focused Home tests, TypeScript, lint, production build and `git diff --check` pass. Lint retains only the three pre-existing Workshop image warnings.
 - The final Homepage entry checkpoint is founder visually approved. REV-FIX-02.5 and all later references remain locked for a separate founder decision.
 - Commit and push were explicitly founder-authorized. The final repository result is reported in the active handoff and closing response.
+- Accepted Homepage checkpoint: `eaf9e0e95a0150c8491ce3dc20935c640067cc45` on `sprint006-build24-40-home-rebuild`.
+- GitHub remote: `https://github.com/Lyl6160/reaidea-v2.git`; upstream matched the accepted checkpoint at `0/0` ahead/behind immediately after push.
+- Closing tracked worktree and index were clean before this handoff update. The unrelated untracked `REAIDEA_ARCHITECTURE_GUIDE.md` remains preserved and excluded.

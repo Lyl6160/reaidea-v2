@@ -39,12 +39,13 @@ Founder gate: CHECKPOINT DOCUMENTATION, COMMIT AND PUSH AUTHORIZED
 Next reference: REV-FIX-02.5 — LOCKED
 
 Branch: sprint006-build24-40-home-rebuild
-Baseline HEAD: b27f10e9bc651a9492d9b4872d59336f123af5b0
+Accepted Homepage checkpoint commit: eaf9e0e95a0150c8491ce3dc20935c640067cc45
+Rollback baseline: b27f10e9bc651a9492d9b4872d59336f123af5b0
 Upstream: origin/sprint006-build24-40-home-rebuild
 Ahead/behind without fetching: 0/0
 Index: clean
-Tracked worktree: prior approved documentation alignment paths are unstaged; implementation remains inside the active contract
-Untracked worktree: approved authority/contract/continuity paths within the boundary; REAIDEA_ARCHITECTURE_GUIDE.md unrelated, protected and excluded
+Tracked worktree: clean after the founder-authorized Homepage checkpoint commit and push
+Untracked worktree: REAIDEA_ARCHITECTURE_GUIDE.md remains unrelated, protected and excluded
 
 Applicable approved visual authorities:
 VPB-HOME-001: FF945CA7863A5698F9488D90E2647CCD62E0C1533C805F78611B317336854472
