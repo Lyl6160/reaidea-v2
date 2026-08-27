@@ -14,9 +14,21 @@ import {
   type RevUnderstandingRawResult,
   type RevUnderstandingRequest,
 } from "./revUnderstandingTypes";
+import {
+  OpenAIRevUnderstandingProviderError,
+  prepareOpenAIRevUnderstandingOperation,
+  type OpenAIRevUnderstandingEvidence,
+  type PreparedOpenAIRevUnderstandingOperation,
+} from "./providers/openaiRevUnderstandingProvider.server";
 
 export type RevUnderstandingFeatureGate = "disabled" | "mock" | "founder-live-test" | "production";
 export type RevUnderstandingMockExecutor = (request: RevUnderstandingRequest) => Promise<unknown>;
+export type RevUnderstandingProviderPreparer = (
+  request: RevUnderstandingRequest,
+) => PreparedOpenAIRevUnderstandingOperation;
+export type RevUnderstandingLiveEvidence = OpenAIRevUnderstandingEvidence & {
+  liveBudgetConsumed: boolean;
+};
 
 type RegistryEntry = {
   routeRequests: number;
@@ -27,6 +39,24 @@ const registry = new Map<string, RegistryEntry>();
 const MAX_PROCESS_LOCAL_OPERATIONS = 128;
 let testExecutor: RevUnderstandingMockExecutor | null = null;
 let testTimeoutMilliseconds: number | null = null;
+let testProviderPreparer: RevUnderstandingProviderPreparer | null = null;
+let testEvidenceSink: ((evidence: RevUnderstandingLiveEvidence) => void) | null = null;
+
+type LiveAttemptState =
+  | { status: "unused" }
+  | {
+      status: "in-flight" | "consumed";
+      operationKey: string;
+      routeRequests: number;
+      promise: Promise<RevUnderstandingApiResponse>;
+      evidence?: RevUnderstandingLiveEvidence;
+    };
+
+declare global {
+  // A single development-server process owns one founder-authorized live attempt.
+  // The global survives Next development module reloads; it is not distributed production enforcement.
+  var __REAIDEA_HAI2B_LIVE_ATTEMPT_V1__: LiveAttemptState | undefined;
+}
 
 const FALLBACK_MESSAGE = "REV is continuing with the information already secured." as const;
 
@@ -46,17 +76,53 @@ export function setRevUnderstandingTimeoutForTests(milliseconds: number | null):
   testTimeoutMilliseconds = milliseconds;
 }
 
+export function setRevUnderstandingProviderPreparerForTests(
+  preparer: RevUnderstandingProviderPreparer | null,
+): void {
+  testProviderPreparer = preparer;
+}
+
+export function setRevUnderstandingEvidenceSinkForTests(
+  sink: ((evidence: RevUnderstandingLiveEvidence) => void) | null,
+): void {
+  testEvidenceSink = sink;
+}
+
+export function resetRevUnderstandingLiveAttemptBudgetForTests(): void {
+  globalThis.__REAIDEA_HAI2B_LIVE_ATTEMPT_V1__ = { status: "unused" };
+}
+
+export function getRevUnderstandingLiveAttemptStateForTests(): Readonly<{
+  status: LiveAttemptState["status"];
+  operationKey?: string;
+  routeRequests?: number;
+  evidence?: RevUnderstandingLiveEvidence;
+}> {
+  const state = liveAttemptState();
+  return state.status === "unused"
+    ? { status: state.status }
+    : {
+        status: state.status,
+        operationKey: state.operationKey,
+        routeRequests: state.routeRequests,
+        ...(state.evidence ? { evidence: state.evidence } : {}),
+      };
+}
+
 export function resetRevUnderstandingOperationRegistryForTests(): void {
   registry.clear();
   testExecutor = null;
   testTimeoutMilliseconds = null;
+  testProviderPreparer = null;
+  testEvidenceSink = null;
 }
 
 export async function runRevUnderstandingOperation(
   request: RevUnderstandingRequest,
   gate = resolveRevUnderstandingFeatureGate()
 ): Promise<RevUnderstandingApiResponse> {
-  if (gate !== "mock") return fallback(request, "disabled", "disabled", 0);
+  if (gate === "founder-live-test") return runFounderLiveOperation(request);
+  if (gate !== "mock") return fallback(request, "disabled", "disabled", 0, 0);
 
   const current = registry.get(request.operationKey);
   if (current) {
@@ -86,21 +152,113 @@ async function executeMockOperation(request: RevUnderstandingRequest): Promise<R
   try {
     raw = await withTimeout(executor(request), testTimeoutMilliseconds ?? REV_UNDERSTANDING_TIMEOUT_MS);
   } catch (error) {
-    return fallback(request, error instanceof TimeoutError ? "timeout" : "unavailable", "fallback", 1);
+    return fallback(request, error instanceof TimeoutError ? "timeout" : "unavailable", "fallback", 1, 0);
   }
 
   let serialized = "";
   try {
     serialized = JSON.stringify(raw);
   } catch {
-    return fallback(request, "malformed-response", "fallback", 1);
+    return fallback(request, "malformed-response", "fallback", 1, 0);
   }
   if (new TextEncoder().encode(serialized).byteLength > REV_UNDERSTANDING_MAX_RESPONSE_BYTES) {
-    return fallback(request, "oversized-response", "fallback", 1);
+    return fallback(request, "oversized-response", "fallback", 1, 0);
   }
 
   const parsed = parseRevUnderstandingRawResult(raw);
-  if (!parsed) return fallback(request, "malformed-response", "fallback", 1);
+  if (!parsed) return fallback(request, "malformed-response", "fallback", 1, 0);
+  return applySemanticAuthority(request, parsed, 1, 0);
+}
+
+async function runFounderLiveOperation(request: RevUnderstandingRequest): Promise<RevUnderstandingApiResponse> {
+  const current = liveAttemptState();
+  if (current.status !== "unused") {
+    if (current.status === "in-flight" && current.operationKey === request.operationKey) {
+      current.routeRequests += 1;
+      const response = await current.promise;
+      return {
+        ...response,
+        accounting: { ...response.accounting, deliberateRouteRequests: current.routeRequests },
+      };
+    }
+    return fallback(request, "duplicate", "fallback", 0, 0);
+  }
+
+  let prepared: PreparedOpenAIRevUnderstandingOperation;
+  try {
+    prepared = (testProviderPreparer ?? prepareOpenAIRevUnderstandingOperation)(request);
+  } catch (error) {
+    if (error instanceof OpenAIRevUnderstandingProviderError) {
+      emitLiveEvidence({ ...error.evidence, liveBudgetConsumed: false });
+      return fallback(request, publicErrorCategory(error), "fallback", 0, 0);
+    }
+    return fallback(request, "unavailable", "fallback", 0, 0);
+  }
+
+  let resolveOperation!: (response: RevUnderstandingApiResponse) => void;
+  const promise = new Promise<RevUnderstandingApiResponse>((resolve) => {
+    resolveOperation = resolve;
+  });
+  globalThis.__REAIDEA_HAI2B_LIVE_ATTEMPT_V1__ = {
+    status: "in-flight",
+    operationKey: request.operationKey,
+    routeRequests: 1,
+    promise,
+  };
+
+  void executeFounderLiveOperation(request, prepared, promise).then(resolveOperation);
+  return promise;
+}
+
+async function executeFounderLiveOperation(
+  request: RevUnderstandingRequest,
+  prepared: PreparedOpenAIRevUnderstandingOperation,
+  promise: Promise<RevUnderstandingApiResponse>,
+): Promise<RevUnderstandingApiResponse> {
+  let response: RevUnderstandingApiResponse;
+  let evidence: RevUnderstandingLiveEvidence | undefined;
+  try {
+    const completed = await prepared.execute();
+    evidence = { ...completed.evidence, liveBudgetConsumed: true };
+    emitLiveEvidence(evidence);
+    response = applySemanticAuthority(
+      request,
+      completed.result,
+      0,
+      completed.evidence.externalProviderAttempts,
+    );
+  } catch (error) {
+    if (error instanceof OpenAIRevUnderstandingProviderError) {
+      evidence = { ...error.evidence, liveBudgetConsumed: true };
+      emitLiveEvidence(evidence);
+      response = fallback(
+        request,
+        publicErrorCategory(error),
+        "fallback",
+        0,
+        error.evidence.externalProviderAttempts,
+      );
+    } else {
+      response = fallback(request, "unavailable", "fallback", 0, 0);
+    }
+  }
+  const state = liveAttemptState();
+  globalThis.__REAIDEA_HAI2B_LIVE_ATTEMPT_V1__ = {
+    status: "consumed",
+    operationKey: request.operationKey,
+    routeRequests: state.status === "unused" ? 1 : state.routeRequests,
+    promise,
+    ...(evidence ? { evidence } : {}),
+  };
+  return response;
+}
+
+function applySemanticAuthority(
+  request: RevUnderstandingRequest,
+  parsed: RevUnderstandingRawResult,
+  mockExecutions: number,
+  externalProviderAttempts: number,
+): RevUnderstandingApiResponse {
 
   const sourceMap = sourceTextById(request);
   const accepted: RevUnderstandingProposedFact[] = [];
@@ -124,24 +282,24 @@ async function executeMockOperation(request: RevUnderstandingRequest): Promise<R
   const conflictQuestion = buildConflictQuestion(request);
   const candidateProposal = parsed.proposal ?? demotedProposal;
   if (!conflictQuestion && candidateProposal && repeatedCategory(candidateProposal.targetCategory, request)) {
-    return fallback(request, "repeated-question", "fallback", 1);
+    return fallback(request, "repeated-question", "fallback", mockExecutions, externalProviderAttempts);
   }
   if (!conflictQuestion && candidateProposal && unsafeProposal(candidateProposal.proposalText)) {
-    return fallback(request, "unsafe-response", "fallback", 1);
+    return fallback(request, "unsafe-response", "fallback", mockExecutions, externalProviderAttempts);
   }
   if (!conflictQuestion && candidateProposal && !referencesClose(candidateProposal.basisSourceIds, sourceMap)) {
-    return fallback(request, "unsupported-source", "fallback", 1);
+    return fallback(request, "unsupported-source", "fallback", mockExecutions, externalProviderAttempts);
   }
   const proposalQuestion = !conflictQuestion && candidateProposal
     ? buildProposalQuestion(candidateProposal, request, sourceMap)
     : null;
 
   if (candidateProposal && !conflictQuestion && !proposalQuestion) {
-    return fallback(request, "unsafe-response", "fallback", 1);
+    return fallback(request, "unsafe-response", "fallback", mockExecutions, externalProviderAttempts);
   }
 
   if (!accepted.length && !conflictQuestion && !proposalQuestion && !request.meterCoverage.ready) {
-    return fallback(request, "unsupported-source", "fallback", 1);
+    return fallback(request, "unsupported-source", "fallback", mockExecutions, externalProviderAttempts);
   }
 
   return {
@@ -154,7 +312,8 @@ async function executeMockOperation(request: RevUnderstandingRequest): Promise<R
     question: conflictQuestion ?? proposalQuestion,
     accounting: emptyRevUnderstandingAccounting({
       deliberateRouteRequests: 1,
-      mockExecutions: 1,
+      mockExecutions,
+      externalProviderAttempts,
       acceptedExplicitDerivations: accepted.length,
       interpretiveProposals: proposalQuestion ? 1 : 0,
       persistedQuestions: conflictQuestion || proposalQuestion ? 1 : 0,
@@ -287,7 +446,8 @@ function fallback(
   request: RevUnderstandingRequest,
   errorCategory: RevUnderstandingErrorCategory,
   status: "fallback" | "disabled",
-  mockExecutions: number
+  mockExecutions: number,
+  externalProviderAttempts: number,
 ): RevUnderstandingApiResponse {
   return {
     status,
@@ -300,9 +460,32 @@ function fallback(
     accounting: emptyRevUnderstandingAccounting({
       deliberateRouteRequests: status === "disabled" ? 0 : 1,
       mockExecutions,
+      externalProviderAttempts,
       fallbackPresentations: 1,
     }),
   };
+}
+
+function liveAttemptState(): LiveAttemptState {
+  globalThis.__REAIDEA_HAI2B_LIVE_ATTEMPT_V1__ ??= { status: "unused" };
+  return globalThis.__REAIDEA_HAI2B_LIVE_ATTEMPT_V1__;
+}
+
+function emitLiveEvidence(evidence: RevUnderstandingLiveEvidence): void {
+  if (testEvidenceSink) {
+    testEvidenceSink(evidence);
+    return;
+  }
+  console.info("HAI-2B safe operation evidence", evidence);
+}
+
+function publicErrorCategory(error: OpenAIRevUnderstandingProviderError): RevUnderstandingErrorCategory {
+  if (error.category === "timeout") return "timeout";
+  if (error.category === "oversized-input") return "invalid-request";
+  if (error.category === "oversized-response") return "oversized-response";
+  if (error.category === "malformed-response" || error.category === "schema-failure") return "malformed-response";
+  if (error.category === "unsafe-response") return "unsafe-response";
+  return "unavailable";
 }
 
 class TimeoutError extends Error {}

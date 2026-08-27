@@ -69,7 +69,7 @@ const HOME_CREATION_STATUS = [
 
 const CREATION_INTENT_UNAVAILABLE_MESSAGE = "REV couldn’t confirm the creation safety boundary. No Project was created.";
 const CREATION_INTENT_BLOCK_MESSAGE = "REV can’t help design, modify or improve weapons or explosive materials. I can help with safe storage, decommissioning, compliance, detection or protective systems.";
-const HAI2_MOCK_ROUTE_AVAILABLE = process.env.NEXT_PUBLIC_REAIDEA_HAI2_MOCK_CAPABILITY === "mock" && process.env.NODE_ENV !== "production";
+const HAI2_ROUTE_AVAILABLE = process.env.NEXT_PUBLIC_REAIDEA_HAI2_ROUTE_CAPABILITY === "enabled" && process.env.NODE_ENV !== "production";
 const HAI2_FALLBACK_MESSAGE = "REV is continuing with the information already secured.";
 
 type CreationIntentResponse =
@@ -414,7 +414,7 @@ export default function Home() {
 
   async function prepareNextUnderstandingStep(currentProject: Project): Promise<Project> {
     if (deriveHomeEvidenceCoverage(currentProject).ready || getActiveHomeQuestion(currentProject)) return currentProject;
-    if (!HAI2_MOCK_ROUTE_AVAILABLE) {
+    if (!HAI2_ROUTE_AVAILABLE) {
       return persistAndReload(ensureHomeUnderstandingQuestion(currentProject, newFactory()));
     }
 

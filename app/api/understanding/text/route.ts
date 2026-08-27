@@ -51,7 +51,11 @@ export async function POST(request: Request): Promise<Response> {
     !referencesClose(input)) return safeError("invalid-request", 409);
 
   const gate = resolveRevUnderstandingFeatureGate();
-  if (gate !== "mock") {
+  const founderLiveAllowed = gate === "founder-live-test" &&
+    process.env.NODE_ENV !== "production" &&
+    process.env.REAIDEA_HAI2_FOUNDER_LIVE_ATTEMPT === "authorize-one" &&
+    isLoopbackRequest(request);
+  if (gate !== "mock" && !founderLiveAllowed) {
     return json({
       status: "disabled",
       operationId: input.operationId,
@@ -77,6 +81,16 @@ function isSameOrigin(request: Request): boolean {
   if (!origin) return false;
   try {
     return new URL(origin).origin === new URL(request.url).origin;
+  } catch {
+    return false;
+  }
+}
+
+function isLoopbackRequest(request: Request): boolean {
+  try {
+    const hostname = new URL(request.url).hostname.toLocaleLowerCase();
+    return hostname === "localhost" || hostname === "127.0.0.1" ||
+      hostname === "[::1]" || hostname === "::1";
   } catch {
     return false;
   }
