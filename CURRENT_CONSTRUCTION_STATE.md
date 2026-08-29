@@ -3,77 +3,62 @@
 ```text
 CURRENT WORK
 
-Reference: REV-FIX-02.1–02.4 — Final approved Homepage entry checkpoint
-Phase: 5 — Documentation checkpoint
-Iteration: 3
-Status: FOUNDER VISUALLY APPROVED — READY FOR MORNING HANDOVER
-Required starting state: BLANK NEW PROJECT on a new isolated localhost origin
-Allowed files:
-CURRENT_CONSTRUCTION_STATE.md
-architecture/BUILD_LANES.md
-architecture/PAGE_BLUEPRINT_REGISTER.md
-architecture/REAIDEA_FLIGHT_PLAN.md
-architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md
-architecture/SUPERSESSION_REGISTER.md
-architecture/VISUAL_AUTHORITY_REGISTER.md
-app/page.tsx
-app/page.test.mjs
-app/components/HomeVisualShell.tsx
-app/components/HomeVisualShell.module.css
-continuity/ACTIVE_HANDOFF.md
-continuity/DAILY_INDEX.md
-continuity/daily/2026-08-27/DAILY_LOG.md
-continuity/daily/2026-08-27/EVIDENCE_INDEX.md
-visual-authority/SCREEN_INDEX.md
-visual-authority/home/VPB-HOME-004-approved-blank-intent-gated-home-2026-08-27.png
-visual-authority/home/VPB-HOME-004-authority-2026-08-27.md
-visual-authority/home/VPB-HOME-004A-approved-intent-icon-refinement-2026-08-27.png
-visual-authority/home/VPB-HOME-004A-authority-2026-08-27.md
-visual-authority/home/VPB-HOME-005-approved-opening-homepage-2026-08-27.png
-visual-authority/home/VPB-HOME-005-authority-2026-08-27.md
-visual-authority/home/VPB-HOME-006-approved-homepage-entry-2026-08-27.png
-visual-authority/home/VPB-HOME-006-authority-2026-08-27.md
-Prohibited files: Every repository path not listed above, including all app/api/**, app/lib/**, other app components/routes, Workshop source, public/**, node_modules/**, dependency manifests/locks, configuration, fixtures, runtime data and REAIDEA_ARCHITECTURE_GUIDE.md
-Founder authorization: upload the new image you just refined as HOMEPAGE entry, and update github with out latest files for our new way forward
-Founder gate: CHECKPOINT DOCUMENTATION, COMMIT AND PUSH AUTHORIZED
-Next reference: REV-FIX-02.5 — LOCKED
+Reference: REV-FIX-02.4 — Founder Visual Recovery Hold
+Phase: 5 — Stage 1B documentation checkpoint complete
+Iteration: Stage 1B — Independent REV Home Placement
+Status: FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE
+Active lane: Lane 0 — recovery/control
+Active Build Contract: NONE
+Required starting state: `VPB-HOME-008/008A/008B` protect the clean responsive Home environment; `VPB-HOME-009/009A/009B` protect the independent REV desktop, compact and mobile placement evidence; production must keep environment, transparent REV, responsive positioning/occlusion and live HTML separate; `VPB-HOME-006/007` remain composition references only; the post-ASK REV presentation remains rejected
+Allowed files: NONE until a new exact founder authorization names the next boundary
+Prohibited files: Every repository path and all production/test/runtime actions until separately authorized, especially app/**, public/**, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
+Founder authorization: `STAGE 1B DESKTOP REV PLACEMENT APPROVED`; `STAGE 1B COMPACT REV PLACEMENT ITERATION 2 APPROVED`; `STAGE 1B MOBILE REV PLACEMENT APPROVED — INCLUDING RESPONSIVE CONSOLE OCCLUSION`; perform the Stage 1B documentation and visual-lock checkpoint only
+Founder gate: STAGE 1B DOCUMENTATION CHECKPOINT COMPLETE; STOP; DO NOT BEGIN PRODUCTION IMPLEMENTATION, STAGE 1C OR REV-FIX-02.5
+Next reference: Stage 1C — LOCKED pending separate founder authorization; REV-FIX-02.5 remains locked
 
 Branch: sprint006-build24-40-home-rebuild
-Accepted Homepage checkpoint commit: eaf9e0e95a0150c8491ce3dc20935c640067cc45
+Accepted Homepage implementation checkpoint: eaf9e0e95a0150c8491ce3dc20935c640067cc45
+Current pushed documentation baseline: 503d1389bdec5e7cb4c3b94560e009189896faa3
 Rollback baseline: b27f10e9bc651a9492d9b4872d59336f123af5b0
 Upstream: origin/sprint006-build24-40-home-rebuild
 Ahead/behind without fetching: 0/0
 Index: clean
-Tracked worktree: clean after the founder-authorized Homepage checkpoint commit and push
-Untracked worktree: REAIDEA_ARCHITECTURE_GUIDE.md remains unrelated, protected and excluded
+Tracked worktree: approved Stage 1A/1B documentation and pre-existing unstaged work remain uncommitted; nothing is staged
+Untracked worktree: the Stage 1A and Stage 1B authority/evidence assets and records join pre-existing untracked authority/evidence and unrelated protected files; nothing is staged
 
-Applicable approved visual authorities:
-VPB-HOME-001: FF945CA7863A5698F9488D90E2647CCD62E0C1533C805F78611B317336854472
+Byte-locked current Home visual authorities:
 VPB-HOME-002: 874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D
 VPB-HOME-003: 7C4B12975E7EB228C23B5E7A4CD4143A8DCCCF271C29D9371FAD40B66995F795
-VPB-HOME-004: BE36A3F98E43A919BC59B873AF68C424B57081DDE03BBC21795E5EABF422B07F
-VPB-HOME-004A: FB072D0EAFE55BA08A7CDE85101F55AF621F60E5B804AE813B20E2335BF9CC1B
-VPB-HOME-005: E3CEBF8DAC0B9F7D11B1BDC8AC56CBDF0BC6CAFD5C561F329D91A7DDD5E0E448
 VPB-HOME-006: 122F5579FC5A34D219C42CC4C517C2F93C1543A3D7269A73415C3BDEBFA48B1F
+VPB-HOME-007: DC5D6F8F2129D4F2C6BB3B36920C8BB28D70A3A8F371ECF5B473DFE9007CEF5C
+VPB-HOME-008: 286F4C61B29D119FBE284036493FCADEE737C112FA759711C214315A3DFFC37B
+VPB-HOME-008A: 2D3CB9685F5F7CD9A8B335DCBA2DE1CD4E1A8137844CFC7D74AA71DABF1CD526
+VPB-HOME-008B: 231F6B5C807CD081FDA66464F1AFBA331E073CF7922C9ED52A80CD9F826CC389
+VPB-HOME-009: F792FFAA78F9BEE97E6A2D87B5EAB6AE7C5CC6A0872E61246391A73A53CE15C3
+VPB-HOME-009A: 9644F2CE63FBD53A1F7BBC7023D61DFECFC8EB9DF7927FF717C9992FA661739A
+VPB-HOME-009B: D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370
+VPB-JOURNEY-002: BF241741760BBCD4B98F610D99D72331E55D390630B42EFDEB51DB8F7C7495D3
 
-Blank-state visual qualification:
-VPB-HOME-006 is the final founder-approved Homepage entry. It preserves the approved plasma route, REV scale and floor position, eight workstation geometries, intent icons and corrected `ReAlize · Engineer · ValidatIon` expansion without ghosting. No intent is preselected; the REV panel is dim and disabled until selection. Selection opens the live panel and moves focus to the description.
-VPB-HOME-004, VPB-HOME-004A and VPB-HOME-005 remain preserved approval evidence and are superseded by VPB-HOME-006 for the exact opening presentation.
-VPB-HOME-001/002/003 remain protected where non-conflicting. Flattened sample state does not override runtime truth.
-The approved panoramic backdrop and friendly REV assets remain byte-protected.
+Founder Visual Lock:
+Every approved image is immutable authority, never inspiration. No agent may regenerate, reinterpret, restyle, redraw, rescan, patch over or silently substitute it.
+No next-state design begins unless a clean layer/source capable of preserving the approved pixels exists. A flattened approved screen containing controls cannot be used as a background for a different state; stop and ask the founder.
+One complete standalone image is shown for founder approval before production code. One requested change per cycle. No unrequested additions. KIS prevails.
+Automated checks may prove hashes and unchanged pixels but cannot grant visual approval. Only the founder's personal walkthrough can approve.
 
 Current action:
-Complete the founder-authorized checkpoint commit and push, leave the active handoff ready for morning, and stop.
-Do not begin REV-FIX-02.5.
+Stop after the Stage 1B authority checkpoint. Await a separate founder authorization before any Stage 1C action, Build Contract or production work.
 
-Combined references:
-REV-FIX-02.1 — Blank Home truth — INCLUDED
-REV-FIX-02.2 — Blank Home visual layout — INCLUDED
-REV-FIX-02.3 — Data entry and optional image — INCLUDED
-REV-FIX-02.4 — ASK REV and canonical Project creation — INCLUDED / EXISTING PLUMBING PROTECTED
+Current reference:
+REV-FIX-02.4 — FOUNDER VISUAL RECOVERY HOLD; STAGE 1B COMPLETE
+
+Accepted earlier references:
+REV-FIX-02.1 — Blank Home truth — FOUNDER APPROVED / PROTECTED
+REV-FIX-02.2 — Blank Home visual layout — FOUNDER APPROVED WITH FINAL RESPONSIVE JOURNEY REVIEW DEFERRED TO .10
+REV-FIX-02.3 — Data entry and optional image — FOUNDER APPROVED / VISUAL POLISH DEFERRED
 
 Locked references:
-REV-FIX-02.5 — Answer, knowledge and understanding — LOCKED
+Stage 1C — LOCKED
+REV-FIX-02.5 — Answer, knowledge and understanding — CONTRACT APPROVED / QUEUED / PHASE 2 BUILD LOCKED
 REV-FIX-02.6 — Ready state and Creation Theatre handoff — LOCKED
 REV-FIX-02.7 — Professional electrical system — LOCKED
 REV-FIX-02.8 — Professional 3D quality target — LOCKED
@@ -81,7 +66,7 @@ REV-FIX-02.9 — Live formation, fidelity and securing — LOCKED
 REV-FIX-02.10 — Complete blank-to-Workshop journey — LOCKED
 
 Stop condition:
-Stop on any authority conflict, path-boundary breach, protected-plumbing change, unexpected worktree change, provider operation during verification or request to enter REV-FIX-02.5 or later.
+After the Stage 1B documentation and visual-lock checkpoint is verified, stop. Live brand/console composition, stations, electricity, production, provider, Project, question/answer, knowledge, Concept, geometry, Workshop, Stage 1C or `.5` action requires a new exact founder authorization and compliant boundary. The rejected moon panorama, rejected compact REV Iteration 1 and rejected post-ASK output remain prohibited. Any later effect on Stage 1B placement or clearances requires a repeated affected-viewport founder walkthrough.
 ```
 
 ## Historical construction record — preserved, non-authoritative for next action

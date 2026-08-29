@@ -2,7 +2,9 @@
 
 **Status:** FOUNDER APPROVED — current construction control
 
-**Current reference:** Combined `REV-FIX-02.1–02.4` final Homepage entry checkpoint, Phase 5 Documentation checkpoint, Iteration 3 exact `VPB-HOME-006`, `FOUNDER VISUALLY APPROVED — READY FOR MORNING HANDOVER`. Lane 1 remains the only active delivery lane under `architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md`; every other delivery lane remains inactive and REV-FIX-02.5 is locked.
+**Current reference:** `REV-FIX-02.4 — Founder Visual Recovery Hold`. Stage 1A clean environment and Stage 1B independent REV placement are founder approved and documented. Stage 1C and `REV-FIX-02.5` remain locked. Lane 0 governance/checkpoint control is current; there is no active production Build Contract and no delivery lane is active.
+
+The former Phase 2, Iteration 3 and Lane 1 current-state wording is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no present implementation or phase-advance authority.
 
 ## Lane rule
 
@@ -36,7 +38,7 @@ flowchart LR
 - **Dependencies:** None. Every lane depends on Lane 0.
 - **Security boundary:** Deny by default; no secrets or confidential Project content in governance documents.
 - **Acceptance gate:** Founder accepts the authority change; conflicts and unresolved matters are explicit; negative truth/safety tests are defined.
-- **Current status:** **FOUNDATION / NOT ACTIVE.** Governance controls the active Lane 1 boundary but is not a second implementation lane.
+- **Current status:** **ACTIVE — GOVERNANCE / CHECKPOINT CONTROL.** Lane 0 controls the `REV-FIX-02.4` visual-recovery hold and the accepted Stage 1A–1B checkpoint. No production Build phase is active.
 
 ## Lane 1 — Inventor Entry
 
@@ -48,7 +50,7 @@ flowchart LR
 - **Dependencies:** Lane 0.
 - **Security boundary:** Untrusted bounded text/files; pre-persistence safety; safe errors; no raw denied input in receipts/logs.
 - **Acceptance gate:** HOLD/BLOCK/unavailable create nothing; CLEAR creates one Project; accessibility and no-repetition behavior pass.
-- **Current status:** **ACTIVE — COMBINED HOME ENTRY BUILD.** Blank truth, approved visual hierarchy, intent-gated entry and the protected existing `ASK REV` foundation are the only implementation scope.
+- **Current status:** **NO ACTIVE DELIVERY — REV-FIX-02.4 RECOVERY HOLD.** Stage 1A and Stage 1B are founder approved and documented; Stage 1C is locked. The former active Lane 1/Phase 2/Iteration 3 marker is superseded historical evidence only. `VPB-HOME-001/004/004A/005` remain archived and prohibited as runtime/fallback authority.
 
 ## Lane 2 — REV Intelligence
 
@@ -60,7 +62,7 @@ flowchart LR
 - **Dependencies:** Lanes 0 and 1.
 - **Security boundary:** Least provider disclosure, output validation, provenance and authorized/cost-controlled operations.
 - **Acceptance gate:** No repeated questions; assumptions labelled; smallest blocker only; deterministic safe fallback.
-- **Current status:** **PARTIAL.** Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted; S1B safety-HOLD resume and provider-backed smallest-question/research work remain unresolved.
+- **Current status:** **QUEUED CONTRACT / INACTIVE.** The founder-approved `.5` contract is preserved, but Stage 1A and Stage 1B alone do not satisfy its entry conditions. It cannot become current until the remaining `REV-FIX-02.4` visual-recovery stages are completed and documented and the founder gives explicit phase authorization. Phase 2 and providers remain locked.
 
 ## Lane 3 — Core Creation
 

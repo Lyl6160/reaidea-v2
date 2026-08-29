@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "LOCKED",
+  "effectiveDate": "2026-08-28",
+  "founderAuthorization": "ok lock it in, no deviation from my approval",
+  "rules": {
+    "approvedImagesAreImmutable": true,
+    "approvedImagesAreAuthorityNotInspiration": true,
+    "regenerationOrRescanForbidden": true,
+    "patchingFlattenedStateTransitionsForbidden": true,
+    "fullScreenFounderApprovalRequiredBeforeCode": true,
+    "founderWalkthroughRequiredForAcceptance": true,
+    "oneScreenOneStateOneChange": true
+  },
+  "assets": [
+    {
+      "id": "VPB-HOME-006",
+      "state": "blank-home-opening",
+      "path": "visual-authority/home/VPB-HOME-006-approved-homepage-entry-2026-08-27.png",
+      "sha256": "122F5579FC5A34D219C42CC4C517C2F93C1543A3D7269A73415C3BDEBFA48B1F"
+    },
+    {
+      "id": "VPB-HOME-007",
+      "state": "selected-path-before-ask-rev",
+      "path": "visual-authority/home/VPB-HOME-007-approved-selected-path-entry-2026-08-28.png",
+      "sha256": "DC5D6F8F2129D4F2C6BB3B36920C8BB28D70A3A8F371ECF5B473DFE9007CEF5C"
+    },
+    {
+      "id": "VPB-HOME-008",
+      "state": "clean-home-environment-master",
+      "path": "visual-authority/home/VPB-HOME-008-approved-clean-home-environment-2026-08-29.png",
+      "sha256": "286F4C61B29D119FBE284036493FCADEE737C112FA759711C214315A3DFFC37B"
+    },
+    {
+      "id": "VPB-HOME-008A",
+      "state": "clean-home-environment-compact-crop-evidence",
+      "path": "visual-authority/home/VPB-HOME-008A-approved-clean-environment-compact-evidence-2026-08-29.png",
+      "sha256": "2D3CB9685F5F7CD9A8B335DCBA2DE1CD4E1A8137844CFC7D74AA71DABF1CD526"
+    },
+    {
+      "id": "VPB-HOME-008B",
+      "state": "clean-home-environment-mobile-crop-evidence",
+      "path": "visual-authority/home/VPB-HOME-008B-approved-clean-environment-mobile-evidence-2026-08-29.png",
+      "sha256": "231F6B5C807CD081FDA66464F1AFBA331E073CF7922C9ED52A80CD9F826CC389"
+    },
+    {
+      "id": "VPB-HOME-009",
+      "state": "independent-rev-desktop-placement-evidence",
+      "path": "visual-authority/home/VPB-HOME-009-approved-independent-rev-desktop-placement-2026-08-29.png",
+      "sha256": "F792FFAA78F9BEE97E6A2D87B5EAB6AE7C5CC6A0872E61246391A73A53CE15C3"
+    },
+    {
+      "id": "VPB-HOME-009A",
+      "state": "independent-rev-compact-placement-evidence",
+      "path": "visual-authority/home/VPB-HOME-009A-approved-independent-rev-compact-placement-2026-08-29.png",
+      "sha256": "9644F2CE63FBD53A1F7BBC7023D61DFECFC8EB9DF7927FF717C9992FA661739A"
+    },
+    {
+      "id": "VPB-HOME-009B",
+      "state": "independent-rev-mobile-occlusion-evidence",
+      "path": "visual-authority/home/VPB-HOME-009B-approved-independent-rev-mobile-occlusion-evidence-2026-08-29.png",
+      "sha256": "D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370"
+    },
+    {
+      "id": "VPB-HOME-002",
+      "state": "home-ai-understanding-conversation",
+      "path": "visual-authority/home/VPB-HOME-002-ai-understanding-approved-2026-08-26.png",
+      "sha256": "874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D"
+    },
+    {
+      "id": "VPB-HOME-003",
+      "state": "information-driven-knowledge-pulse",
+      "path": "visual-authority/home/VPB-HOME-003-knowledge-pulse-approved-2026-08-26.png",
+      "sha256": "7C4B12975E7EB228C23B5E7A4CD4143A8DCCCF271C29D9371FAD40B66995F795"
+    },
+    {
+      "id": "VPB-WORKSHOP-001",
+      "state": "sign-free-living-workshop",
+      "path": "visual-authority/workshop/VPB-WORKSHOP-001-approved-workshop-2026-08-25.png",
+      "sha256": "5CBA3CDABE03F53EF12C8DAA34BA5DE265DBC56C1D938D344703A2F44B582BC2"
+    },
+    {
+      "id": "VPB-JOURNEY-001",
+      "state": "home-to-workshop-completion",
+      "path": "visual-authority/journey/VPB-JOURNEY-001-home-to-workshop-completion-2026-08-25.png",
+      "sha256": "AD28450B7DC0D57F5C2B2A194BB311B8CEDA44690010C62CA4AD95D514831494"
+    },
+    {
+      "id": "VPB-JOURNEY-002",
+      "state": "home-ai-understanding-to-stored-3d-workshop-arrival",
+      "path": "visual-authority/journey/VPB-JOURNEY-002-home-ai-creation-handover-approved-2026-08-26.pdf",
+      "sha256": "BF241741760BBCD4B98F610D99D72331E55D390630B42EFDEB51DB8F7C7495D3"
+    },
+    {
+      "id": "FVT-C2F-001",
+      "state": "source-aware-concept-fidelity-target",
+      "path": "visual-authority/fidelity/FVT-C2F-001-approved-surf-eyewear-concept-2026-08-26.png",
+      "sha256": "D5C37DEB6ABE5CD8E746CF9D3C6A0A4E5B02108CAFB2E1C9482A3272C7D19384"
+    }
+  ]
+}

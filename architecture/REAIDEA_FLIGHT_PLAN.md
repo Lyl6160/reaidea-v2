@@ -3,7 +3,14 @@
 **Status:** FOUNDER APPROVED — current shared construction plan
 **Baseline:** `27592acd8c7eb2bca3d7734adae923c9b29fdc69`
 **Branch:** `sprint006-build24-40-home-rebuild`
-**Active work:** Lane 1 combined `REV-FIX-02.1–02.4` final Homepage entry checkpoint; Phase 5 Documentation checkpoint; exact `VPB-HOME-006` founder approved
+**Current reference:** `REV-FIX-02.4 — Founder Visual Recovery Hold`
+**Current phase:** Governance and checkpoint control — Stage 1B complete
+**Current lane:** Lane 0 — recovery/control
+**Current status:** Stage 1A and Stage 1B founder approved and documented; `FOUNDER REJECTED — REMAIN INSIDE REV-FIX-02.4`; Stage 1C locked
+**Active Build Contract:** NONE
+**Locked next work:** Stage 1C and `REV-FIX-02.5` Phase 2 Build remain locked
+
+Earlier REV-FIX-02.4 iterations, lane markers and technical milestones below are preserved as dated construction history. They do not authorize a Build phase, visual progression or production correction.
 
 ## Purpose
 
@@ -145,9 +152,9 @@ The detailed current reference, phase, iteration, path boundary and founder gate
 
 | Area | Verified position | Next controlled gate |
 | --- | --- | --- |
-| Governance and safety | Founder Control System approved; Home contract and exact visual authority registered | Preserve the active Lane 1 boundary and security controls |
-| Inventor Entry | Exact `VPB-HOME-006` Homepage entry, blank truth, input and protected `ASK REV` foundation founder approved | Morning handover; founder separately decides whether to authorize a REV-FIX-02.5 contract |
-| REV Intelligence | Description-led routing, source-provenance separation and explicit weapon-construction BLOCK are accepted at `a62b597e32f98669832f30956bc023eadbcc85e0` | LOCKED until the controlling REV-FIX reference reaches it |
+| Governance and safety | Lane 0 governance/checkpoint control is current; Stage 1A and Stage 1B are founder approved and documented; no production Build Contract is active | Preserve the accepted checkpoint; Stage 1C requires a separate founder-approved contract |
+| Inventor Entry | `VPB-HOME-008/008A/008B` protect the clean responsive environment and `VPB-HOME-009/009A/009B` protect independent REV placement; `VPB-HOME-006/007` remain composition references only; post-ASK remains rejected | Stage 1C locked; no production integration or automatic phase advance |
+| REV Intelligence | `REV-FIX-02.5` contract is preserved as a queued future boundary; existing answer persistence/source foundations remain evidence; Home-to-Workshop value routing defect remains unresolved | Locked until all remaining `.4` visual-recovery stages are completed/documented and the founder explicitly authorizes Phase 2; providers remain prohibited |
 | Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define source-aware fidelity and supported geometry before claiming `READY TO CREATE 3D` |
 | Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Preserve the viewer; later contract deliberate entry and same-stored-model arrival after `FAIL-NAV-001` diagnosis |
 | Evidence Engine | Project evidence/decision/action/result foundations exist | Define minimum sourced specialist output and adoption flow |
@@ -178,8 +185,10 @@ Exit gates require a truthful golden journey, safe failure, no cross-Project acc
 
 The near-term flight order is `REV-FIX-02.1` Blank Home truth; `.2` Blank Home visual layout; `.3` Data entry and optional image; `.4` ASK REV and canonical Project creation; `.5` Answer, knowledge and understanding; `.6` Ready state and Creation Theatre handoff; `.7` Professional electrical system; `.8` Professional 3D quality target; `.9` Live formation, fidelity and securing; `.10` Complete blank-to-Workshop journey.
 
-Only the reference named in `CURRENT WORK` may proceed. The founder combined `.1–.4` for the Home entry walkthrough on 27 August 2026; `.5–.10` remain locked.
+Only the reference named in `CURRENT WORK` may proceed. On 28 August 2026 the founder registered `VPB-HOME-007` for the selected-path/pre-ASK state and directed `VPB-HOME-001/004/004A/005` into historical archive so they cannot return as runtime or fallback authority. `.4` remains founder rejected inside the same category. The `.5` contract is approved only as a queued future boundary; `.6–.10` remain locked.
 
 ## Immediate hold
 
-Lane 1 is active under `architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md`. Combined `REV-FIX-02.1–02.4` is at Phase 5 Documentation checkpoint, Iteration 3. `VPB-HOME-006` controls the final Homepage entry. B2B-3A and C2 remain non-authoritative archive evidence; HAI-1 and C2F remain superseded as next actions. `.5` and later remain locked.
+The dominant current position is `REV-FIX-02.4 — Founder Visual Recovery Hold` under Lane 0 governance/checkpoint control. Stage 1A and Stage 1B are founder approved and documented. Stage 1C is locked pending a separate founder-approved contract and exact boundary. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
+
+The former statement naming Lane 1, Phase 2, Iteration 3 and the numbered current-image review as the immediate gate is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no current implementation or phase-advance authority.
