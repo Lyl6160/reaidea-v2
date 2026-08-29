@@ -1,14 +1,16 @@
 # reAIdea Flight Plan
 
 **Status:** FOUNDER APPROVED — current shared construction plan
-**Baseline:** `27592acd8c7eb2bca3d7734adae923c9b29fdc69`
+**Pushed Stage 1A–1B checkpoint baseline:** `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`
 **Branch:** `sprint006-build24-40-home-rebuild`
 **Current reference:** `REV-FIX-02.4 — Founder Visual Recovery Hold`
-**Current phase:** Governance and checkpoint control — Stage 1B complete
+**Current phase:** Governance and checkpoint control — Stage 1C brand-only boundary recorded
 **Current lane:** Lane 0 — recovery/control
-**Current status:** Stage 1A and Stage 1B founder approved and documented; `FOUNDER REJECTED — REMAIN INSIDE REV-FIX-02.4`; Stage 1C locked
+**Current status:** Stage 1A and Stage 1B founder approved, documented and remotely checkpointed; `FOUNDER REJECTED — REMAIN INSIDE REV-FIX-02.4`; Stage 1C remains locked
 **Active Build Contract:** NONE
-**Locked next work:** Stage 1C and `REV-FIX-02.5` Phase 2 Build remain locked
+**Locked next work:** Stage 1C — `LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE`; Stage 1C-A candidate preparation; console composition as a separate future category; and `REV-FIX-02.5` Phase 2 Build all remain locked
+
+Stage 1C is brand-only and sequenced as Stage 1C-A — Desktop; Stage 1C-B — Compact; Stage 1C-C — Mobile and REV clearance. It controls the live reAIdea/REV brand lockup, supporting brand wording, responsive scale and clearance only. Console composition is not part of Stage 1C and remains locked for a separate future category. No production implementation or active Build Contract exists.
 
 Earlier REV-FIX-02.4 iterations, lane markers and technical milestones below are preserved as dated construction history. They do not authorize a Build phase, visual progression or production correction.
 
@@ -152,8 +154,8 @@ The detailed current reference, phase, iteration, path boundary and founder gate
 
 | Area | Verified position | Next controlled gate |
 | --- | --- | --- |
-| Governance and safety | Lane 0 governance/checkpoint control is current; Stage 1A and Stage 1B are founder approved and documented; no production Build Contract is active | Preserve the accepted checkpoint; Stage 1C requires a separate founder-approved contract |
-| Inventor Entry | `VPB-HOME-008/008A/008B` protect the clean responsive environment and `VPB-HOME-009/009A/009B` protect independent REV placement; `VPB-HOME-006/007` remain composition references only; post-ASK remains rejected | Stage 1C locked; no production integration or automatic phase advance |
+| Governance and safety | Lane 0 governance/checkpoint control is current; Stage 1A and Stage 1B are founder approved, documented and remotely checkpointed at `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`; no production Build Contract is active | Preserve the accepted checkpoint; Stage 1C-A candidate preparation requires separate founder authorization |
+| Inventor Entry | `VPB-HOME-008/008A/008B` protect the clean responsive environment and `VPB-HOME-009/009A/009B` protect independent REV placement; `VPB-HOME-006/007` remain composition references only; post-ASK remains rejected | Stage 1C is brand-only and locked through Desktop, Compact, then Mobile and REV clearance; console composition remains a separate future locked category; no production integration or automatic phase advance |
 | REV Intelligence | `REV-FIX-02.5` contract is preserved as a queued future boundary; existing answer persistence/source foundations remain evidence; Home-to-Workshop value routing defect remains unresolved | Locked until all remaining `.4` visual-recovery stages are completed/documented and the founder explicitly authorizes Phase 2; providers remain prohibited |
 | Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define source-aware fidelity and supported geometry before claiming `READY TO CREATE 3D` |
 | Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Preserve the viewer; later contract deliberate entry and same-stored-model arrival after `FAIL-NAV-001` diagnosis |
@@ -189,6 +191,6 @@ Only the reference named in `CURRENT WORK` may proceed. On 28 August 2026 the fo
 
 ## Immediate hold
 
-The dominant current position is `REV-FIX-02.4 — Founder Visual Recovery Hold` under Lane 0 governance/checkpoint control. Stage 1A and Stage 1B are founder approved and documented. Stage 1C is locked pending a separate founder-approved contract and exact boundary. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
+The dominant current position is `REV-FIX-02.4 — Founder Visual Recovery Hold` under Lane 0 governance/checkpoint control. Stage 1A and Stage 1B are founder approved, documented and remotely checkpointed at `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`. Stage 1C is `LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE` only, sequenced as Stage 1C-A Desktop, Stage 1C-B Compact and Stage 1C-C Mobile and REV clearance. Stage 1C-A candidate preparation remains locked pending separate founder authorization. Console composition is excluded and locked for a separate future category. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
 
 The former statement naming Lane 1, Phase 2, Iteration 3 and the numbered current-image review as the immediate gate is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no current implementation or phase-advance authority.

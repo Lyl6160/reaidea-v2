@@ -4,27 +4,27 @@
 CURRENT WORK
 
 Reference: REV-FIX-02.4 — Founder Visual Recovery Hold
-Phase: 5 — Stage 1B documentation checkpoint complete
-Iteration: Stage 1B — Independent REV Home Placement
-Status: FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE
+Phase: 5 — Stage 1C-C founder visual approval documentation checkpoint
+Iteration: Stage 1C-C — Mobile live brand lockup and REV clearance — Iteration 1
+Status: Stage 1A/1B remain protected; Stage 1C-A/1C-B remain protected as `VPB-HOME-010/011`; Stage 1C-C mobile live brand and REV clearance is FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE as `VPB-HOME-012`; compact grounding and Galaxy Fold 6 integration gates remain open
 Active lane: Lane 0 — recovery/control
 Active Build Contract: NONE
-Required starting state: `VPB-HOME-008/008A/008B` protect the clean responsive Home environment; `VPB-HOME-009/009A/009B` protect the independent REV desktop, compact and mobile placement evidence; production must keep environment, transparent REV, responsive positioning/occlusion and live HTML separate; `VPB-HOME-006/007` remain composition references only; the post-ASK REV presentation remains rejected
-Allowed files: NONE until a new exact founder authorization names the next boundary
-Prohibited files: Every repository path and all production/test/runtime actions until separately authorized, especially app/**, public/**, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
-Founder authorization: `STAGE 1B DESKTOP REV PLACEMENT APPROVED`; `STAGE 1B COMPACT REV PLACEMENT ITERATION 2 APPROVED`; `STAGE 1B MOBILE REV PLACEMENT APPROVED — INCLUDING RESPONSIVE CONSOLE OCCLUSION`; perform the Stage 1B documentation and visual-lock checkpoint only
-Founder gate: STAGE 1B DOCUMENTATION CHECKPOINT COMPLETE; STOP; DO NOT BEGIN PRODUCTION IMPLEMENTATION, STAGE 1C OR REV-FIX-02.5
-Next reference: Stage 1C — LOCKED pending separate founder authorization; REV-FIX-02.5 remains locked
+Required starting state: `VPB-HOME-008/008A/008B` protect the environment; `VPB-HOME-009/009A/009B` protect REV placement/occlusion; `VPB-HOME-010/011/012` protect desktop, compact and mobile semantic brand evidence; runtime layers remain separate; compact grounding and real Galaxy Fold 6 walkthrough remain open; mask is not console design; post-ASK remains rejected
+Allowed files: NONE after completion of the Stage 1C-C authority and visual-lock checkpoint
+Prohibited files: Every other repository path and all production/test/runtime actions, especially app/**, public/**, assets, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
+Founder authorization: `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`; document and lock mobile brand/clearance only; mask remains unapproved; no production implementation
+Founder gate: Stage 1C-C approval is documented; stop and await exact authorization for any next work
+Next reference: No next Stage 1C work is authorized; console composition, production implementation and REV-FIX-02.5 remain locked
 
 Branch: sprint006-build24-40-home-rebuild
 Accepted Homepage implementation checkpoint: eaf9e0e95a0150c8491ce3dc20935c640067cc45
-Current pushed documentation baseline: 503d1389bdec5e7cb4c3b94560e009189896faa3
+Current pushed Stage 1A–1B checkpoint baseline: 501ccc71f6f7028b0f3fcae2f80e2032390f28dc
 Rollback baseline: b27f10e9bc651a9492d9b4872d59336f123af5b0
 Upstream: origin/sprint006-build24-40-home-rebuild
 Ahead/behind without fetching: 0/0
 Index: clean
-Tracked worktree: approved Stage 1A/1B documentation and pre-existing unstaged work remain uncommitted; nothing is staged
-Untracked worktree: the Stage 1A and Stage 1B authority/evidence assets and records join pre-existing untracked authority/evidence and unrelated protected files; nothing is staged
+Tracked worktree: two pre-existing excluded production modifications and all unrelated existing documentation modifications remain untouched; only authorized Stage 1C-A/1C-B/1C-C authority/control records are changed; nothing is staged
+Untracked worktree: twelve pre-existing excluded paths remain untouched; `VPB-HOME-010/011/012` authority sets are added only by their checkpoints; nothing is staged
 
 Byte-locked current Home visual authorities:
 VPB-HOME-002: 874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D
@@ -37,6 +37,9 @@ VPB-HOME-008B: 231F6B5C807CD081FDA66464F1AFBA331E073CF7922C9ED52A80CD9F826CC389
 VPB-HOME-009: F792FFAA78F9BEE97E6A2D87B5EAB6AE7C5CC6A0872E61246391A73A53CE15C3
 VPB-HOME-009A: 9644F2CE63FBD53A1F7BBC7023D61DFECFC8EB9DF7927FF717C9992FA661739A
 VPB-HOME-009B: D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370
+VPB-HOME-010: 0F1FBA33456071B4BB2FA92096D447CF3ECB9C533482A6A6BC11AF80B51E77E2
+VPB-HOME-011: 28DE60F6AA105636963A0D94AA2E5353E10D5FF131E7A3F3BCA5232DD99539AA
+VPB-HOME-012: C86BBBDE56BFF2CEBE778489B8844771FF4E6700DEE950372814D779BF7CC94E
 VPB-JOURNEY-002: BF241741760BBCD4B98F610D99D72331E55D390630B42EFDEB51DB8F7C7495D3
 
 Founder Visual Lock:
@@ -46,10 +49,10 @@ One complete standalone image is shown for founder approval before production co
 Automated checks may prove hashes and unchanged pixels but cannot grant visual approval. Only the founder's personal walkthrough can approve.
 
 Current action:
-Stop after the Stage 1B authority checkpoint. Await a separate founder authorization before any Stage 1C action, Build Contract or production work.
+Stage 1C-C mobile live brand and REV clearance is founder visually approved and documented as `VPB-HOME-012` with exact wording `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`. The mask is not console design. Compact grounding and real closed Galaxy Fold 6 integration walkthroughs remain mandatory. Stop after verification. No Build Contract or production work is active.
 
 Current reference:
-REV-FIX-02.4 — FOUNDER VISUAL RECOVERY HOLD; STAGE 1B COMPLETE
+REV-FIX-02.4 — FOUNDER VISUAL RECOVERY HOLD; STAGE 1A–1B REMOTELY CHECKPOINTED; STAGE 1C-A/1C-B/1C-C BRAND AND MOBILE CLEARANCE FOUNDER VISUALLY APPROVED AND DOCUMENTED; INTEGRATION GATES REMAIN
 
 Accepted earlier references:
 REV-FIX-02.1 — Blank Home truth — FOUNDER APPROVED / PROTECTED
@@ -57,7 +60,11 @@ REV-FIX-02.2 — Blank Home visual layout — FOUNDER APPROVED WITH FINAL RESPON
 REV-FIX-02.3 — Data entry and optional image — FOUNDER APPROVED / VISUAL POLISH DEFERRED
 
 Locked references:
-Stage 1C — LOCKED
+Stage 1C — LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE — Stage 1C-A Desktop, Stage 1C-B Compact brand and Stage 1C-C Mobile brand/REV clearance founder approved and documented; no production implementation authorized
+Stage 1C-A — Desktop — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-010`; no production implementation authorized
+Stage 1C-B — Compact live brand — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-011`; REV grounding/apparent-floating concern remains open for mandatory integrated walkthrough; no REV alteration authorized
+Stage 1C-C — Mobile live brand and REV clearance — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-012`; temporary mask unapproved; real Galaxy Fold 6 live-integration walkthrough mandatory
+Future console composition category — SEPARATE / LOCKED / NOT PART OF STAGE 1C
 REV-FIX-02.5 — Answer, knowledge and understanding — CONTRACT APPROVED / QUEUED / PHASE 2 BUILD LOCKED
 REV-FIX-02.6 — Ready state and Creation Theatre handoff — LOCKED
 REV-FIX-02.7 — Professional electrical system — LOCKED
@@ -66,7 +73,7 @@ REV-FIX-02.9 — Live formation, fidelity and securing — LOCKED
 REV-FIX-02.10 — Complete blank-to-Workshop journey — LOCKED
 
 Stop condition:
-After the Stage 1B documentation and visual-lock checkpoint is verified, stop. Live brand/console composition, stations, electricity, production, provider, Project, question/answer, knowledge, Concept, geometry, Workshop, Stage 1C or `.5` action requires a new exact founder authorization and compliant boundary. The rejected moon panorama, rejected compact REV Iteration 1 and rejected post-ASK output remain prohibited. Any later effect on Stage 1B placement or clearances requires a repeated affected-viewport founder walkthrough.
+After the Stage 1C-C documentation and visual-lock checkpoint verifies, stop. Console composition, production implementation, stations, electricity, providers, Project, question/answer, knowledge, Concept, geometry, Workshop and `.5` remain locked. The temporary mask remains unapproved. Compact grounding and real closed Galaxy Fold 6 live-integration walkthroughs remain mandatory. Approved composites are evidence only; runtime layers remain separate. Rejected evidence remains prohibited.
 ```
 
 ## Historical construction record — preserved, non-authoritative for next action

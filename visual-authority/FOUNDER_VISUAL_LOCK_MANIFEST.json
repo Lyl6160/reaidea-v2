@@ -62,6 +62,78 @@
       "sha256": "D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370"
     },
     {
+      "id": "VPB-HOME-010",
+      "state": "desktop-live-brand-lockup",
+      "path": "visual-authority/home/VPB-HOME-010-approved-live-brand-lockup-desktop-2026-08-30.png",
+      "sha256": "0F1FBA33456071B4BB2FA92096D447CF3ECB9C533482A6A6BC11AF80B51E77E2"
+    },
+    {
+      "id": "VPB-HOME-010-GUIDE",
+      "state": "desktop-live-brand-lockup-supporting-measurement-guide",
+      "path": "visual-authority/home/VPB-HOME-010-supporting-measurement-guide-2026-08-30.png",
+      "sha256": "CEC91959C12BE8C6EA9B7CF3233323C928D949D5FC522E6074F57F9EBE0878DE"
+    },
+    {
+      "id": "VPB-HOME-010-HTML",
+      "state": "desktop-live-brand-lockup-semantic-html-source",
+      "path": "visual-authority/home/VPB-HOME-010-semantic-live-brand-2026-08-30.html",
+      "sha256": "D0094A45B27227521B341BF1F32A00866B81794332681EA227813201E8A1FBDA"
+    },
+    {
+      "id": "VPB-HOME-010-CSS",
+      "state": "desktop-live-brand-lockup-external-css-source",
+      "path": "visual-authority/home/VPB-HOME-010-semantic-live-brand-2026-08-30.css",
+      "sha256": "4C9242F3F97CE7AB75B2A16802E7ED37EC92008F3496C15E9766C42220E4EE44"
+    },
+    {
+      "id": "VPB-HOME-011",
+      "state": "compact-live-brand-lockup",
+      "path": "visual-authority/home/VPB-HOME-011-approved-live-brand-lockup-compact-2026-08-30.png",
+      "sha256": "28DE60F6AA105636963A0D94AA2E5353E10D5FF131E7A3F3BCA5232DD99539AA"
+    },
+    {
+      "id": "VPB-HOME-011-GUIDE",
+      "state": "compact-live-brand-lockup-supporting-measurement-guide",
+      "path": "visual-authority/home/VPB-HOME-011-supporting-measurement-guide-2026-08-30.png",
+      "sha256": "57270F12DE8116E8E92D6F7A4E8A06C16E44802CB724955E3148CBF64E6B442A"
+    },
+    {
+      "id": "VPB-HOME-011-HTML",
+      "state": "compact-live-brand-lockup-semantic-html-source",
+      "path": "visual-authority/home/VPB-HOME-011-semantic-live-brand-compact-2026-08-30.html",
+      "sha256": "8C7E2D0EDB95B4BD2AC07E5E5300A3EF7E05BA433C1F5816C5A17622C77363B3"
+    },
+    {
+      "id": "VPB-HOME-011-CSS",
+      "state": "compact-live-brand-lockup-external-css-source",
+      "path": "visual-authority/home/VPB-HOME-011-semantic-live-brand-compact-2026-08-30.css",
+      "sha256": "5032433E2C30D9A23D1601A3A8D60663215F9DF1E05C89DD02333FFEBB2156A1"
+    },
+    {
+      "id": "VPB-HOME-012",
+      "state": "mobile-live-brand-lockup-and-rev-clearance",
+      "path": "visual-authority/home/VPB-HOME-012-approved-live-brand-lockup-mobile-rev-clearance-2026-08-30.png",
+      "sha256": "C86BBBDE56BFF2CEBE778489B8844771FF4E6700DEE950372814D779BF7CC94E"
+    },
+    {
+      "id": "VPB-HOME-012-GUIDE",
+      "state": "mobile-live-brand-lockup-supporting-measurement-guide",
+      "path": "visual-authority/home/VPB-HOME-012-supporting-measurement-guide-2026-08-30.png",
+      "sha256": "DE1164522B78A80507E4D692F10A5ECFAA9D0863A008DA311C7CAAD6FCB00377"
+    },
+    {
+      "id": "VPB-HOME-012-HTML",
+      "state": "mobile-live-brand-lockup-semantic-html-source",
+      "path": "visual-authority/home/VPB-HOME-012-semantic-live-brand-mobile-2026-08-30.html",
+      "sha256": "B11606CC3275A03BDCE1C3948C37F1F04A6D8E7DF8798F27A7AB337E140364E6"
+    },
+    {
+      "id": "VPB-HOME-012-CSS",
+      "state": "mobile-live-brand-lockup-external-css-source",
+      "path": "visual-authority/home/VPB-HOME-012-semantic-live-brand-mobile-2026-08-30.css",
+      "sha256": "667F2E3293B6333DD1FB24DFCE486F4EBD570A827D125F0EDBB129B1B9EC90D7"
+    },
+    {
       "id": "VPB-HOME-002",
       "state": "home-ai-understanding-conversation",
       "path": "visual-authority/home/VPB-HOME-002-ai-understanding-approved-2026-08-26.png",

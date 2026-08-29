@@ -14,9 +14,58 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A is founder visually approved and documented. `VPB-HOME-008` controls the clean Home environment; `VPB-HOME-008A/008B` are approved centred compact/mobile crop evidence from the same master. Stage 1B is also founder visually approved and documented: `VPB-HOME-009/009A/009B` lock the independent REV desktop, compact and mobile placement evidence while the existing transparent REV remains the runtime identity layer. `VPB-HOME-006/007` remain composition references only and cannot remain flattened runtime interfaces. The rejected moon panorama and rejected compact REV Iteration 1 remain prohibited. Stage 1C and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is founder visually approved and documented as `VPB-HOME-012`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-012 — Mobile Live Brand Lockup and REV Clearance
+
+- **Route/state:** `/` — Stage 1C-C mobile brand-and-clearance evidence at `390 × 844`.
+- **Blueprint status / flight marker:** **FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE**.
+- **Founder approval wording:** `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`.
+- **Approved image:** `home/VPB-HOME-012-approved-live-brand-lockup-mobile-rev-clearance-2026-08-30.png`; SHA-256 `C86BBBDE56BFF2CEBE778489B8844771FF4E6700DEE950372814D779BF7CC94E`.
+- **Supporting guide:** `home/VPB-HOME-012-supporting-measurement-guide-2026-08-30.png`; SHA-256 `DE1164522B78A80507E4D692F10A5ECFAA9D0863A008DA311C7CAAD6FCB00377`.
+- **Semantic source:** `home/VPB-HOME-012-semantic-live-brand-mobile-2026-08-30.html`; SHA-256 `B11606CC3275A03BDCE1C3948C37F1F04A6D8E7DF8798F27A7AB337E140364E6`; external CSS `home/VPB-HOME-012-semantic-live-brand-mobile-2026-08-30.css`; SHA-256 `667F2E3293B6333DD1FB24DFCE486F4EBD570A827D125F0EDBB129B1B9EC90D7`.
+- **Authority record:** `home/VPB-HOME-012-authority-2026-08-30.md`.
+- **Scope:** Mobile live brand and clearance from REV only; approximately `10px` hair clearance and `0px` overlap.
+- **Exclusions:** Temporary dark mask as console design; compact REV grounding approval; production implementation.
+- **Mandatory gates:** Compact integrated grounding walkthrough remains open. Real closed Galaxy Fold 6 walkthrough remains mandatory after live integration.
+- **Runtime invariant:** Environment, independent REV and one responsive semantic brand remain separate production layers; composite is evidence only.
+- **Next gate:** Stop and await exact founder authorization. `REV-FIX-02.5` remains locked.
+
+### VPB-HOME-011 — Compact Live Brand Lockup
+
+- **Route/state:** `/` — Stage 1C-B compact brand-only visual evidence at `1100 × 800`.
+- **Blueprint status / flight marker:** **FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE**.
+- **Founder approval wording:** `APPROVE STAGE 1C-B COMPACT LIVE BRAND LOCKUP`.
+- **Approved image:** `home/VPB-HOME-011-approved-live-brand-lockup-compact-2026-08-30.png`; SHA-256 `28DE60F6AA105636963A0D94AA2E5353E10D5FF131E7A3F3BCA5232DD99539AA`.
+- **Supporting guide:** `home/VPB-HOME-011-supporting-measurement-guide-2026-08-30.png`; SHA-256 `57270F12DE8116E8E92D6F7A4E8A06C16E44802CB724955E3148CBF64E6B442A`.
+- **Semantic source:** `home/VPB-HOME-011-semantic-live-brand-compact-2026-08-30.html`; SHA-256 `8C7E2D0EDB95B4BD2AC07E5E5300A3EF7E05BA433C1F5816C5A17622C77363B3`; external CSS `home/VPB-HOME-011-semantic-live-brand-compact-2026-08-30.css`; SHA-256 `5032433E2C30D9A23D1601A3A8D60663215F9DF1E05C89DD02333FFEBB2156A1`.
+- **Authority record:** `home/VPB-HOME-011-authority-2026-08-30.md`.
+- **Scope:** Compact live brand only. REV grounding and the apparent-floating concern are not visually approved.
+- **Mandatory future check:** Compact REV grounding must receive another founder walkthrough when the live console, station region and contact shadow are present together.
+- **Runtime invariant:** Environment, independent REV and semantic live brand remain separate production layers; the approved composite is evidence only.
+- **Next gate:** Stage 1C-C is documented as `VPB-HOME-012`. Production implementation and `REV-FIX-02.5` remain locked.
+
+### VPB-HOME-010 — Desktop Live Brand Lockup
+
+- **Route/state:** `/` — Stage 1C-A desktop brand-only visual evidence.
+- **Blueprint status / flight marker:** **FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE**.
+- **Founder approval wording:** `APPROVE STAGE 1C-A DESKTOP LIVE BRAND LOCKUP`.
+- **Approved image:** `home/VPB-HOME-010-approved-live-brand-lockup-desktop-2026-08-30.png`; SHA-256 `0F1FBA33456071B4BB2FA92096D447CF3ECB9C533482A6A6BC11AF80B51E77E2`.
+- **Supporting guide:** `home/VPB-HOME-010-supporting-measurement-guide-2026-08-30.png`; SHA-256 `CEC91959C12BE8C6EA9B7CF3233323C928D949D5FC522E6074F57F9EBE0878DE`.
+- **Semantic source:** `home/VPB-HOME-010-semantic-live-brand-2026-08-30.html`; SHA-256 `D0094A45B27227521B341BF1F32A00866B81794332681EA227813201E8A1FBDA`; external CSS `home/VPB-HOME-010-semantic-live-brand-2026-08-30.css`; SHA-256 `4C9242F3F97CE7AB75B2A16802E7ED37EC92008F3496C15E9766C42220E4EE44`.
+- **Authority record:** `home/VPB-HOME-010-authority-2026-08-30.md`.
+- **Scope:** Desktop live brand appearance, wording/capitalization, colour hierarchy, scale/top-left placement, legibility, relationship to the approved environment and REV, and semantic HTML/CSS rendering method only.
+- **Exclusions:** Flattened runtime input, compact/mobile branding, console, navigation, intent/entry controls, stations, electricity, post-`ASK REV` states and production implementation.
+- **Runtime invariant:** Environment, independent REV and semantic live brand remain separate production layers; the approved composite is supporting visual evidence only.
+- **Next gate:** Stage 1C-B is documented as `VPB-HOME-011`; Stage 1C-C is documented as `VPB-HOME-012`. Production implementation and `REV-FIX-02.5` remain locked.
 
 Temporary later-journey images are numbered `FUTURE-01–04` in `future-candidates/FUTURE_VISUAL_HOLD_REGISTER.md`. They are held for later founder scrutiny and are not registered Visual Page Blueprints. Six 9 August screenshots are separately numbered `WALKTHROUGH-FAIL-01–06`; the founder confirmed all six failed, so they can never control design or runtime.
+
+## Stage 1C-A predecessor evidence
+
+- **Iteration 1:** Founder rejected as non-compliant technical evidence because System.Drawing produced flattened text. It remains rejected historical evidence and cannot be reused.
+- **Iteration 2:** Promoted byte-identically to `VPB-HOME-010` after the founder stated `APPROVE STAGE 1C-A DESKTOP LIVE BRAND LOCKUP`.
+- **Locks:** Stage 1C-B/1C-C are separately documented as `VPB-HOME-011/012`; console composition, production implementation and `REV-FIX-02.5` remain locked.
 
 ## Registered Visual Page Blueprints
 
@@ -48,7 +97,7 @@ Temporary later-journey images are numbered `FUTURE-01–04` in `future-candidat
 - **SHA-256:** `D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370`.
 - **Truth rule:** Complete REV bounds `X=95–364`, `Y=100–624`; visible after console occlusion `X=95–364`, `Y=100–384`; hand target `X=113`, `Y=283`; zero brand and station overlap.
 - **Scope limit:** The plain dark mask is not approved console artwork, colour, opacity, shape or styling. The evidence cannot become a flattened mobile interface. Real closed Galaxy Fold 6 review waits for live integration.
-- **Road-behind gate:** Later work must repeat the affected viewport walkthrough if it changes scale, placement, floor/hand target, clearances or occlusion. Stage 1C must repeat mobile REV review if live brand text, glow or electricity enters the approximately `10px` hair-to-brand clearance.
+- **Road-behind gate:** Later work must repeat the affected viewport walkthrough if it changes scale, placement, floor/hand target, clearances or occlusion. Stage 1C-C must repeat mobile REV review if live brand text or glow enters the approximately `10px` hair-to-brand clearance. Electricity is outside Stage 1C and requires its own later founder gate.
 
 ### VPB-HOME-008 — Clean Home Environment
 
@@ -86,7 +135,7 @@ Temporary later-journey images are numbered `FUTURE-01–04` in `future-candidat
 - **Dimensions:** `1825 × 862` PNG.
 - **SHA-256:** `DC5D6F8F2129D4F2C6BB3B36920C8BB28D70A3A8F371ECF5B473DFE9007CEF5C`.
 - **Truth rule:** Compact selected-path strip, `CHANGE PATH`, preparation meter, approved REV expansion, live description/optional-image controls and the detailed eight-station strip. Sample text, filename and thumbnail are illustrative only.
-- **Next gate:** **SUPERSEDED — HISTORICAL EVIDENCE ONLY.** The numbered current-image review was surpassed by the accepted Stage 1A and Stage 1B recovery checkpoints. Stage 1C remains locked and requires a separate founder-approved contract.
+- **Next gate:** **SUPERSEDED — HISTORICAL EVIDENCE ONLY.** Stage 1C-A/1C-B/1C-C authority is now `VPB-HOME-010/011/012`; console composition remains separately locked.
 
 ### CURRENT-01 / VPB-HOME-006 — Final Approved Homepage Entry
 
@@ -97,7 +146,7 @@ Temporary later-journey images are numbered `FUTURE-01–04` in `future-candidat
 - **Dimensions:** `1825 × 862` PNG.
 - **SHA-256:** `122F5579FC5A34D219C42CC4C517C2F93C1543A3D7269A73415C3BDEBFA48B1F`.
 - **Truth rule:** Exact approved plasma, REV floor position, eight station geometries and refined intent icons. The REV expansion reads `ReAlize · Engineer · ValidatIon`, with A and I blue and E orange, without a ghosted line.
-- **Next gate:** Preserve the opening and accepted `.3` behavior. Stage 1A and Stage 1B are founder approved and documented; Stage 1C and `REV-FIX-02.5` remain locked with no active Build Contract.
+- **Next gate:** Preserve the opening and accepted `.3` behavior. Stage 1C-A/1C-B/1C-C authority is `VPB-HOME-010/011/012`; production implementation and `REV-FIX-02.5` remain locked with no active Build Contract.
 
 ### ARCHIVED / VPB-HOME-005 — Approved Home Opening
 
@@ -195,7 +244,7 @@ Temporary later-journey images are numbered `FUTURE-01–04` in `future-candidat
 
 | Page/surface | Current marker | Evidence / qualification | Next gate |
 | --- | --- | --- | --- |
-| `/` Home creation foundation | Stage 1A and Stage 1B **FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE**; `.4` umbrella remains recovery-held | `VPB-HOME-008/008A/008B` protect the clean responsive environment; `VPB-HOME-009/009A/009B` protect independent REV placement. `VPB-HOME-006/007` are composition references only. Post-ASK REV remains rejected. | Stage 1C locked; no active Build Contract; keep `REV-FIX-02.5` locked |
+| `/` Home creation foundation | Stage 1A/1B protected at `501ccc71`; Stage 1C-A/1C-B/1C-C founder visually approved and documented as `VPB-HOME-010/011/012`; `.4` umbrella remains recovery-held | Environment and REV placement remain protected; responsive semantic brand evidence is locked. Mask is not console design; compact grounding and real Galaxy Fold 6 integration walkthroughs remain mandatory. Composites are evidence only. | Stop and await exact founder authorization; console composition and production remain locked; no active Build Contract; keep `REV-FIX-02.5` locked |
 | `/workshop` Living Workshop | VERIFIED | B2A, B2B-1 and B2B-2 functional checkpoints; cosmetics/responsiveness partial | B2B-3A is archived as experimental; future presentation work requires a new bounded blueprint/contract |
 | `/discovery` legacy door | COMMITTED | Route exists; current authority/disposition unresolved | Founder chooses retire, redirect or repurpose |
 | `/discovery/session` legacy session/review | COMMITTED | Useful truth tooling exists; questionnaire default is superseded | Contract migration/retirement without losing Project semantics |
