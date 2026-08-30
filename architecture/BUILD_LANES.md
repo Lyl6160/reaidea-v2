@@ -2,7 +2,7 @@
 
 **Status:** FOUNDER APPROVED — current construction control
 
-**Current reference:** `REV-FIX-02.4 — Founder Visual Recovery Hold`. Stage 1A clean environment and Stage 1B independent REV placement are founder approved and documented. Stage 1C and `REV-FIX-02.5` remain locked. Lane 0 governance/checkpoint control is current; there is no active production Build Contract and no delivery lane is active.
+**Current reference:** Stage 1D-A `DESKTOP OPENING CONSOLE-ENTRY SHELL` documentation-only boundary reconciliation. Stage 1C-A, Stage 1C-B and Stage 1C-C are founder visually approved, documented, byte-locked and remotely checkpointed at `cd56dcced53a43b1fe69b1778676733d15394537`. Stage 1D-A candidate preparation and `REV-FIX-02.5` remain locked. Lane 0 governance/checkpoint control is current; there is no active production Build Contract and no delivery lane is active.
 
 The former Phase 2, Iteration 3 and Lane 1 current-state wording is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no present implementation or phase-advance authority.
 
@@ -38,7 +38,7 @@ flowchart LR
 - **Dependencies:** None. Every lane depends on Lane 0.
 - **Security boundary:** Deny by default; no secrets or confidential Project content in governance documents.
 - **Acceptance gate:** Founder accepts the authority change; conflicts and unresolved matters are explicit; negative truth/safety tests are defined.
-- **Current status:** **ACTIVE — GOVERNANCE / CHECKPOINT CONTROL.** Lane 0 controls the `REV-FIX-02.4` visual-recovery hold and the accepted Stage 1A–1B checkpoint. No production Build phase is active.
+- **Current status:** **ACTIVE — GOVERNANCE / CHECKPOINT CONTROL.** Lane 0 controls the Stage 1D-A documentation boundary and accepted Stage 1C remote checkpoint. No candidate or production Build phase is active.
 
 ## Lane 1 — Inventor Entry
 
@@ -50,7 +50,7 @@ flowchart LR
 - **Dependencies:** Lane 0.
 - **Security boundary:** Untrusted bounded text/files; pre-persistence safety; safe errors; no raw denied input in receipts/logs.
 - **Acceptance gate:** HOLD/BLOCK/unavailable create nothing; CLEAR creates one Project; accessibility and no-repetition behavior pass.
-- **Current status:** **NO ACTIVE DELIVERY — REV-FIX-02.4 RECOVERY HOLD.** Stage 1A and Stage 1B are founder approved and documented; Stage 1C is locked. The former active Lane 1/Phase 2/Iteration 3 marker is superseded historical evidence only. `VPB-HOME-001/004/004A/005` remain archived and prohibited as runtime/fallback authority.
+- **Current status:** **NO ACTIVE DELIVERY.** Stage 1C-A, Stage 1C-B and Stage 1C-C are visually approved and remotely checkpointed. Stage 1D-A candidate preparation, console controls beyond the opening shell and production implementation remain locked. The former active Lane 1/Phase 2/Iteration 3 marker is superseded historical evidence only. `VPB-HOME-001/004/004A/005` remain archived and prohibited as runtime/fallback authority.
 
 ## Lane 2 — REV Intelligence
 

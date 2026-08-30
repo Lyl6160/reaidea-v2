@@ -1,14 +1,14 @@
 # reAIdea Active Handoff
 
-**Updated:** 30 August 2026 — Stage 1C-C mobile brand-and-clearance founder approval documentation checkpoint
+**Updated:** 30 August 2026 — Stage 1D-A-ICON-1 VPB-HOME-013 documentation and visual lock
 **Controlling source:** `CURRENT_CONSTRUCTION_STATE.md`
 
 REV HANDOFF
 
-- **Checkpoint:** `REV-FIX-02.4 — Founder Visual Recovery Hold`; Phase 5. Stage 1A/1B remain protected; Stage 1C-A/1C-B remain protected as `VPB-HOME-010/011`; Stage 1C-C Mobile brand and REV clearance is founder visually approved and documented as `VPB-HOME-012`.
-- **Founder approval wording:** `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`.
+- **Checkpoint:** Develop an Invention SVG Iteration 3 is founder visually approved, documented and byte-locked as `VPB-HOME-013`; V1/V2 remain rejected; remaining icons and console Iteration 2 locked.
+- **Founder authorization wording:** `FOUNDER APPROVES STAGE 1D-A-ICON-1 — DEVELOP AN INVENTION SVG ITERATION 3`.
 - **Active lane:** Lane 0 — recovery/control. No active Build Contract.
-- **Baseline / upstream:** Local HEAD and `origin/sprint006-build24-40-home-rebuild` are `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`; ahead/behind `0/0` without fetching; index empty.
+- **Baseline / upstream:** Local HEAD and `origin/sprint006-build24-40-home-rebuild` are `cd56dcced53a43b1fe69b1778676733d15394537`; ahead/behind `0/0` without fetching; index empty.
 - **Stage 1A:** `VPB-HOME-008/008A/008B` remain protected clean-environment authority.
 - **Stage 1B:** `VPB-HOME-009/009A/009B` remain protected independent-REV placement authority.
 - **Stage 1C-A authority:** `VPB-HOME-010`; clean candidate `visual-authority/home/VPB-HOME-010-approved-live-brand-lockup-desktop-2026-08-30.png`; SHA-256 `0F1FBA33456071B4BB2FA92096D447CF3ECB9C533482A6A6BC11AF80B51E77E2`.
@@ -26,8 +26,21 @@ REV HANDOFF
 - **Galaxy Fold gate:** Real closed Galaxy Fold 6 walkthrough remains mandatory after live integration.
 - **Runtime invariant:** Environment, independent REV and semantic live brand remain separate production layers. The approved composite is supporting visual evidence only.
 - **Rejected evidence:** Stage 1C-A Iteration 1, compact REV Iteration 1, moon panorama and post-`ASK REV` Iteration 4 remain rejected and prohibited as authority or implementation source.
-- **Worktree:** Two pre-existing production modifications, existing unrelated documentation changes and twelve pre-existing untracked paths remain untouched. Only authorized Stage 1C-A/1C-B/1C-C authority/control paths are added or updated. Nothing is staged.
-- **Locked work:** Console composition; production code/tests/runtime; providers; Project/Concept/geometry/Workshop operations; staging, commit and push; `REV-FIX-02.5`.
-- **Next action:** Stop after verification and await exact founder authorization.
+- **Rejected candidate:** Candidate V1 is preserved unchanged as rejected temporary evidence; clean PNG SHA-256 `755FB7CD7DF47394D4374D4C85E808C42CF5EE731E68E4153CA9E89BB7B86B59`. It is not authority, fallback or an Iteration 2 source.
+- **Corrected Stage 1D-A scope:** Live hero/trust/intent opening shell plus disabled live textarea, disabled `ADD PHOTO OR SKETCH` and disabled `ASK REV` controls as blank-state visual explanation only.
+- **No functional authority:** No interaction, entry, file selection, selected path, `ASK REV` activation, Project, persistence, provider, safety or post-ASK authority is granted.
+- **Layer invariant:** `VPB-HOME-008` environment, `VPB-HOME-009` REV and `VPB-HOME-010` semantic live brand remain separate. Wording, controls and framing remain live semantic HTML/CSS; pathway-icon layer form waits for its founder-approved asset gate. `VPB-HOME-006` must be measured and reconstructed with live layers and cannot be a flattened runtime image. The lower station region remains clear.
+- **Prohibitions:** Generic lock placeholders, invented wording, generic icon substitutes, cropping, tracing or extracting icons from flattened authority are prohibited.
+- **Source truth:** The read-only recovery map completed with no Category A or B candidates. No compliant independent pre-flattening source exists for any of the three `VPB-HOME-006` pathway icons. Further searching is closed unless the founder supplies a specific original file.
+- **Rejected and prohibited sources:** Flattened extraction, cropping, tracing, repainting and pixel reuse are prohibited. Simplified `app/page.tsx` SVGs remain unapproved. Pathway-icon V1 remains founder-rejected and cannot become source material or runtime authority.
+- **Stage 1D-A-ICON gate:** A later separately authorized operation may deterministically author three new semantic-safe responsive SVG designs: irregular blue-white plasma with a restrained-gold core; a recognizable deep-cyan scanning lens with restrained metallic/gold detail; and horizontal gold/cyan convergence. Each uses a shared `512×512` viewBox, transparent background, vector/gradient/controlled-filter content only, no raster, Canvas, remote resource, wording or UI surface, and one family across desktop, compact and mobile.
+- **VPB-HOME-013 authority:** Develop an Invention SVG `B36F51AE45CB6CC0F617B5A98E15F18FBCBEBAB69E504257ED2D435B395C8AF8`; transparent render `2C9148AABD0EC949B60A22EB2498215F27690F618941F14D8CD0F551CAF9C4F4`; repaired-link review HTML `01732BBDF7791CDC5D20A1282C3DB7711AB886D751624BC9616733E2B3B57261`; CSS `2BF5A384CDD4198650994D4CC62F88EBE9F7DBAEE76A6323159B78AEDF1A3505`; approved responsive review evidence `656D06CF170564C69C2E0A3BBEC7EC31D2D83CCCEFF3E33FD864C21DD13809DF`.
+- **VPB-HOME-013 runtime boundary:** Decorative transparent vector SVG only; title and description remain live semantic HTML and duplicate screen-reader announcements must be prevented. Geometry, colour, glow, core, responsive scaling or appearance changes require another walkthrough.
+- **Authority position:** `VPB-HOME-006` guides concepts, silhouette direction, colour balance, restrained density, small-card legibility and family relationship only. New SVGs are not reproductions or exact matches and require their own founder visual approval before authority.
+- **Security wording:** `PRIVATE TO YOUR PROJECT` may be reviewed visually, but visual approval cannot certify identity, authorization, encryption or server-storage security.
+- **Historical boundary:** `architecture/REV_FIX_02_HOME_ENTRY_BUILD_CONTRACT.md` remains historical evidence and grants no Stage 1D-A visual/runtime authority; applicable safety-before-Project and Project-creation requirements remain preserved.
+- **Worktree:** Two pre-existing production modifications and twelve pre-existing unrelated untracked paths remain untouched. Only the authorized VPB-HOME-013 evidence, authority and control records change in this checkpoint. Nothing is staged.
+- **Locked work:** Evaluate an Invention and Develop + Evaluate candidate preparation; console Iteration 2 until the SVG set is founder-approved and documented; production code/tests/runtime; providers; Project/Concept/geometry/Workshop operations; staging, commit and push; `REV-FIX-02.5`.
+- **Next action:** Stop after VPB-HOME-013 documentation and visual-lock verification and await founder direction.
 - **Security posture:** PASS WITH RISKS for this documentation-only checkpoint. No production data flow, provider or cost change. Existing production-security gaps remain open.
 - **Repository:** `https://github.com/Lyl6160/reaidea-v2.git`; branch `sprint006-build24-40-home-rebuild`.

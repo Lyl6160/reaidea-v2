@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="cobalt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0753b4"/><stop offset="0.42" stop-color="#0b91e7"/><stop offset="0.72" stop-color="#0872cf"/><stop offset="1" stop-color="#042d88"/>
+    </linearGradient>
+    <linearGradient id="whiteHot" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#76d9ff"/><stop offset="0.32" stop-color="#ffffff"/><stop offset="0.66" stop-color="#d8f9ff"/><stop offset="1" stop-color="#46bfff"/>
+    </linearGradient>
+    <radialGradient id="corona" cx="48%" cy="46%" r="54%">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.18" stop-color="#f2fdff" stop-opacity="0.98"/><stop offset="0.4" stop-color="#78dfff" stop-opacity="0.82"/><stop offset="0.72" stop-color="#087fe0" stop-opacity="0.27"/><stop offset="1" stop-color="#00539c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldCore" cx="42%" cy="38%" r="60%">
+      <stop offset="0" stop-color="#fffce5"/><stop offset="0.28" stop-color="#ffe79a"/><stop offset="0.64" stop-color="#d99a2e"/><stop offset="1" stop-color="#71400a"/>
+    </radialGradient>
+    <filter id="cyanBloom" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="1.8"/></filter>
+    <filter id="hotBloom" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="1.25" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="coronaBloom" x="-130%" y="-130%" width="360%" height="360%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="6.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="organicLightning" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.072" numOctaves="2" seed="37" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="B"/>
+    </filter>
+    <style>
+      #outerLayer use:not([href="#forks"]):not([href="#tendrils"]) { stroke-width: 3px !important; }
+      #outerLayer use[href="#forks"] { stroke-width: 1.6px !important; }
+      #outerLayer use[href="#tendrils"] { stroke-width: .82px !important; }
+      #bodyLayer use:not([href="#forks"]):not([href="#tendrils"]) { stroke-width: 1.6px !important; }
+      #bodyLayer use[href="#forks"] { stroke-width: .88px !important; }
+      #bodyLayer use[href="#tendrils"] { stroke-width: .48px !important; }
+      #hotLayer use:not([href="#forks"]):not([href="#tendrils"]) { stroke-width: .88px !important; }
+      #hotLayer use[href="#forks"] { stroke-width: .44px !important; }
+      #hotLayer use[href="#tendrils"] { stroke-width: .24px !important; }
+    </style>
+
+    <path id="m1" d="M239 248 L216 240 L204 246 L184 235 L166 240 L147 226 L127 231 L108 217 L89 222 L70 208 L52 211 L33 198"/>
+    <path id="m2" d="M240 243 L225 227 L229 214 L211 200 L216 185 L198 173 L202 157 L184 145 L188 128 L169 117 L171 100 L153 87 L146 72"/>
+    <path id="m3" d="M246 239 L241 220 L249 209 L241 190 L250 176 L242 158 L252 143 L247 124 L258 108 L254 90 L264 75"/>
+    <path id="m4" d="M255 240 L268 222 L265 207 L281 193 L279 176 L296 162 L294 145 L313 132 L312 115 L332 102 L338 86"/>
+    <path id="m5" d="M261 244 L280 234 L292 238 L309 225 L324 230 L340 215 L356 219 L371 203 L388 207 L402 191 L419 194 L433 177 L449 173"/>
+    <path id="m6" d="M264 250 L285 249 L296 258 L316 251 L329 261 L348 252 L362 264 L381 255 L395 268 L414 259 L430 270 L448 264 L468 270 L484 263"/>
+    <path id="m7" d="M262 257 L281 267 L286 281 L306 288 L311 303 L331 309 L335 326 L355 332 L359 349 L380 355 L386 373 L404 381 L418 398"/>
+    <path id="m8" d="M256 260 L263 280 L257 293 L268 311 L262 326 L274 344 L268 360 L281 377 L275 394 L287 411 L284 429"/>
+    <path id="m9" d="M248 259 L238 277 L241 291 L225 305 L228 321 L211 334 L214 351 L196 363 L198 381 L180 392 L177 408"/>
+    <path id="m10" d="M242 255 L224 263 L211 258 L195 272 L180 267 L165 282 L149 278 L134 294 L117 289 L103 306 L86 303 L73 321 L57 329"/>
+    <path id="m11" d="M238 251 L216 253 L205 265 L184 261 L171 274 L150 269 L137 283 L116 278 L102 291 L80 287 L64 299 L43 297 L27 306"/>
+    <path id="m12" d="M244 241 L230 222 L215 219 L205 199 L189 196 L179 176 L162 174 L152 153 L135 151 L124 130 L106 127 L96 108 L81 101"/>
+    <path id="m13" d="M259 246 L280 241 L290 228 L312 229 L323 215 L345 216 L356 201 L379 202 L390 186 L413 185 L428 169 L450 165 L469 151"/>
+    <path id="m14" d="M260 253 L281 258 L292 250 L313 260 L325 253 L346 264 L359 256 L380 268 L394 260 L415 272 L430 266 L451 279 L470 281"/>
+
+    <g id="forks" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M204 246 L192 257 L178 254 L165 266"/><path d="M166 240 L159 222 L146 214 L143 198"/><path d="M108 217 L99 201 L86 195 L80 183"/>
+      <path d="M225 227 L207 226 L196 216 L181 216"/><path d="M211 200 L197 187 L183 188 L171 176"/><path d="M184 145 L168 139 L157 127 L142 125"/>
+      <path d="M241 220 L228 210 L226 195 L215 186"/><path d="M242 158 L229 151 L224 137 L213 130"/><path d="M247 124 L234 112 L234 98 L225 87"/>
+      <path d="M268 222 L284 217 L292 204 L307 201"/><path d="M281 193 L268 180 L268 166 L256 156"/><path d="M313 132 L326 120 L328 106 L341 96"/>
+      <path d="M292 238 L298 252 L313 260 L317 276"/><path d="M340 215 L342 198 L354 188 L356 171"/><path d="M388 207 L392 221 L406 230 L410 245"/>
+      <path d="M296 258 L302 243 L315 237 L320 224"/><path d="M348 252 L356 269 L371 277 L375 293"/><path d="M414 259 L419 244 L433 235 L438 221"/>
+      <path d="M286 281 L276 295 L279 310 L268 322"/><path d="M331 309 L346 300 L359 303 L372 293"/><path d="M359 349 L346 362 L348 378 L338 390"/>
+      <path d="M263 280 L279 289 L285 304 L299 312"/><path d="M262 326 L247 338 L247 353 L236 364"/><path d="M275 394 L262 405 L260 420 L249 432"/>
+      <path d="M238 277 L222 283 L212 296 L196 301"/><path d="M211 334 L198 323 L183 324 L171 313"/><path d="M196 363 L181 358 L169 366 L155 363"/>
+      <path d="M211 258 L207 244 L193 236 L189 222"/><path d="M165 282 L167 297 L156 308 L158 322"/><path d="M117 289 L109 274 L96 268 L90 255"/>
+      <path d="M205 265 L192 278 L177 280 L166 293"/><path d="M150 269 L143 253 L130 247 L124 233"/><path d="M80 287 L73 272 L59 265 L54 252"/>
+      <path d="M215 219 L217 204 L209 190 L212 176"/><path d="M179 176 L183 160 L176 148 L180 134"/><path d="M124 130 L128 115 L121 102 L124 90"/>
+      <path d="M290 228 L288 212 L298 199 L296 184"/><path d="M345 216 L350 231 L365 239 L369 253"/><path d="M413 185 L416 201 L430 211 L432 226"/>
+      <path d="M292 250 L299 274 L314 283 L317 299"/><path d="M346 264 L345 281 L356 294 L353 310"/><path d="M415 272 L421 288 L436 296 L442 311"/>
+    </g>
+    <g id="tendrils" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M178 254 L165 248 L156 251 L145 245"/><path d="M143 198 L132 192 L125 181 L114 177"/><path d="M181 216 L168 209 L157 212 L147 205"/>
+      <path d="M142 125 L131 116 L119 116 L110 108"/><path d="M215 186 L204 177 L194 179 L185 171"/><path d="M213 130 L202 122 L191 123 L183 115"/>
+      <path d="M307 201 L319 194 L323 183 L335 177"/><path d="M341 96 L351 89 L355 78 L365 72"/><path d="M317 276 L330 279 L338 289 L350 290"/>
+      <path d="M356 171 L368 164 L372 153 L385 148"/><path d="M410 245 L422 252 L435 250 L446 257"/><path d="M438 221 L449 213 L453 201 L464 196"/>
+      <path d="M268 322 L255 317 L246 322 L235 318"/><path d="M372 293 L384 291 L393 300 L404 298"/><path d="M338 390 L350 396 L355 407 L367 412"/>
+      <path d="M196 301 L185 294 L173 297 L163 291"/><path d="M171 313 L158 309 L149 316 L137 312"/><path d="M155 363 L143 370 L130 369 L120 377"/>
+      <path d="M124 233 L113 225 L101 227 L92 218"/><path d="M54 252 L44 245 L34 247"/><path d="M180 134 L192 128 L197 117 L209 112"/>
+      <path d="M296 184 L307 175 L309 163 L320 155"/><path d="M369 253 L380 245 L392 247 L402 239"/><path d="M353 310 L366 315 L373 326 L385 329"/>
+    </g>
+  </defs>
+
+  <g id="outerLayer" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#cyanBloom)" opacity="0.27">
+    <use href="#m1" stroke="#20c7ff" stroke-width="6.8"/><use href="#m2" stroke="#14b8ff" stroke-width="5.2"/><use href="#m3" stroke="#22c9ff" stroke-width="4.7"/><use href="#m4" stroke="#16b9ff" stroke-width="6"/>
+    <use href="#m5" stroke="#23c7ff" stroke-width="5.4"/><use href="#m6" stroke="#14aff7" stroke-width="6.4"/><use href="#m7" stroke="#1bc1ff" stroke-width="5"/><use href="#m8" stroke="#18b9ff" stroke-width="4.5"/>
+    <use href="#m9" stroke="#20c4ff" stroke-width="5.8"/><use href="#m10" stroke="#14aff5" stroke-width="4.8"/><use href="#m11" stroke="#22c9ff" stroke-width="6.2"/><use href="#m12" stroke="#13aef6" stroke-width="4.6"/>
+    <use href="#m13" stroke="#1fc5ff" stroke-width="5.6"/><use href="#m14" stroke="#16b6fa" stroke-width="4.4"/><use href="#forks" stroke="#16b7fb" stroke-width="3.1"/><use href="#tendrils" stroke="#1abaff" stroke-width="1.7"/>
+  </g>
+  <g id="bodyLayer" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#organicLightning)">
+    <use href="#m1" stroke="url(#cobalt)" stroke-width="3.3"/><use href="#m2" stroke="url(#cobalt)" stroke-width="2.5" opacity=".88"/><use href="#m3" stroke="url(#cobalt)" stroke-width="2.2"/><use href="#m4" stroke="url(#cobalt)" stroke-width="2.9" opacity=".92"/>
+    <use href="#m5" stroke="url(#cobalt)" stroke-width="2.6"/><use href="#m6" stroke="url(#cobalt)" stroke-width="3.1"/><use href="#m7" stroke="url(#cobalt)" stroke-width="2.4" opacity=".9"/><use href="#m8" stroke="url(#cobalt)" stroke-width="2.1"/>
+    <use href="#m9" stroke="url(#cobalt)" stroke-width="2.8"/><use href="#m10" stroke="url(#cobalt)" stroke-width="2.3" opacity=".86"/><use href="#m11" stroke="url(#cobalt)" stroke-width="3"/><use href="#m12" stroke="url(#cobalt)" stroke-width="2.2"/>
+    <use href="#m13" stroke="url(#cobalt)" stroke-width="2.7"/><use href="#m14" stroke="url(#cobalt)" stroke-width="2" opacity=".84"/><use href="#forks" stroke="#087bd2" stroke-width="1.45"/><use href="#tendrils" stroke="#0b83d6" stroke-width=".76" opacity=".86"/>
+  </g>
+  <g id="hotLayer" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#organicLightning)">
+    <use href="#m1" stroke="url(#whiteHot)" stroke-width="1.05"/><use href="#m2" stroke="url(#whiteHot)" stroke-width=".72" opacity=".84"/><use href="#m3" stroke="url(#whiteHot)" stroke-width=".64"/><use href="#m4" stroke="url(#whiteHot)" stroke-width=".88"/>
+    <use href="#m5" stroke="url(#whiteHot)" stroke-width=".75"/><use href="#m6" stroke="url(#whiteHot)" stroke-width=".98"/><use href="#m7" stroke="url(#whiteHot)" stroke-width=".7"/><use href="#m8" stroke="url(#whiteHot)" stroke-width=".58"/>
+    <use href="#m9" stroke="url(#whiteHot)" stroke-width=".82"/><use href="#m10" stroke="url(#whiteHot)" stroke-width=".65" opacity=".82"/><use href="#m11" stroke="url(#whiteHot)" stroke-width=".92"/><use href="#m12" stroke="url(#whiteHot)" stroke-width=".62"/>
+    <use href="#m13" stroke="url(#whiteHot)" stroke-width=".78"/><use href="#m14" stroke="url(#whiteHot)" stroke-width=".56" opacity=".8"/><use href="#forks" stroke="#bdefff" stroke-width=".48"/><use href="#tendrils" stroke="#78d5ff" stroke-width=".3" opacity=".78"/>
+  </g>
+
+  <g fill="#d9f9ff" filter="url(#hotBloom)">
+    <circle cx="33" cy="198" r="1.3"/><circle cx="146" cy="72" r="1.2"/><circle cx="264" cy="75" r="1.1"/><circle cx="338" cy="86" r="1.25"/><circle cx="449" cy="173" r="1.2"/>
+    <circle cx="484" cy="263" r="1.4"/><circle cx="470" cy="281" r="1"/><circle cx="418" cy="398" r="1.2"/><circle cx="284" cy="429" r="1.1"/><circle cx="177" cy="408" r="1.2"/>
+    <circle cx="57" cy="329" r="1.15"/><circle cx="27" cy="306" r="1.1"/><circle cx="81" cy="101" r="1"/>
+  </g>
+
+  <circle cx="250" cy="250" r="38" fill="url(#corona)" opacity=".62" filter="url(#coronaBloom)"/>
+  <circle cx="250" cy="250" r="24" fill="url(#corona)" opacity="1"/>
+  <circle cx="250" cy="250" r="10" fill="#f3fdff" opacity=".8" filter="url(#hotBloom)"/>
+  <g fill="none" stroke="#e4a036" stroke-linecap="round" filter="url(#hotBloom)">
+    <path d="M246 250 L238 246 L232 248"/><path d="M249 246 L247 239 L250 234"/><path d="M254 250 L261 246 L266 248"/><path d="M251 254 L248 261 L250 266"/>
+  </g>
+  <circle cx="250" cy="250" r="3.8" fill="url(#goldCore)" filter="url(#hotBloom)"/>
+  <circle cx="249" cy="249" r="1.1" fill="#fffef5"/>
+</svg>

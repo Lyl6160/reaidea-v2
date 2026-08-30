@@ -1,16 +1,16 @@
 # reAIdea Flight Plan
 
 **Status:** FOUNDER APPROVED — current shared construction plan
-**Pushed Stage 1A–1B checkpoint baseline:** `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`
+**Pushed Stage 1C checkpoint baseline:** `cd56dcced53a43b1fe69b1778676733d15394537`
 **Branch:** `sprint006-build24-40-home-rebuild`
-**Current reference:** `REV-FIX-02.4 — Founder Visual Recovery Hold`
-**Current phase:** Governance and checkpoint control — Stage 1C brand-only boundary recorded
+**Current reference:** Stage 1D-A — `DESKTOP OPENING CONSOLE-ENTRY SHELL` — documentation boundary recorded; candidate preparation locked
+**Current phase:** Governance and checkpoint control — Stage 1D-A documentation boundary recorded
 **Current lane:** Lane 0 — recovery/control
-**Current status:** Stage 1A and Stage 1B founder approved, documented and remotely checkpointed; `FOUNDER REJECTED — REMAIN INSIDE REV-FIX-02.4`; Stage 1C remains locked
+**Current status:** Stage 1C-A, Stage 1C-B and Stage 1C-C are FOUNDER VISUALLY APPROVED, DOCUMENTED, BYTE-LOCKED AND REMOTELY CHECKPOINTED; Stage 1D-A candidate preparation remains locked
 **Active Build Contract:** NONE
-**Locked next work:** Stage 1C — `LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE`; Stage 1C-A candidate preparation; console composition as a separate future category; and `REV-FIX-02.5` Phase 2 Build all remain locked
+**Locked next work:** Stage 1D-A candidate preparation, console controls beyond the opening shell, production implementation and `REV-FIX-02.5` Phase 2 Build remain locked
 
-Stage 1C is brand-only and sequenced as Stage 1C-A — Desktop; Stage 1C-B — Compact; Stage 1C-C — Mobile and REV clearance. It controls the live reAIdea/REV brand lockup, supporting brand wording, responsive scale and clearance only. Console composition is not part of Stage 1C and remains locked for a separate future category. No production implementation or active Build Contract exists.
+Stage 1C is complete as a visual-authority checkpoint only. Stage 1D-A is the proposed `DESKTOP OPENING CONSOLE-ENTRY SHELL`, bounded by `STAGE_1D_A_DESKTOP_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md`. This record authorizes documentation only; no candidate, production implementation or active Build Contract exists.
 
 Earlier REV-FIX-02.4 iterations, lane markers and technical milestones below are preserved as dated construction history. They do not authorize a Build phase, visual progression or production correction.
 
@@ -154,8 +154,8 @@ The detailed current reference, phase, iteration, path boundary and founder gate
 
 | Area | Verified position | Next controlled gate |
 | --- | --- | --- |
-| Governance and safety | Lane 0 governance/checkpoint control is current; Stage 1A and Stage 1B are founder approved, documented and remotely checkpointed at `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`; no production Build Contract is active | Preserve the accepted checkpoint; Stage 1C-A candidate preparation requires separate founder authorization |
-| Inventor Entry | `VPB-HOME-008/008A/008B` protect the clean responsive environment and `VPB-HOME-009/009A/009B` protect independent REV placement; `VPB-HOME-006/007` remain composition references only; post-ASK remains rejected | Stage 1C is brand-only and locked through Desktop, Compact, then Mobile and REV clearance; console composition remains a separate future locked category; no production integration or automatic phase advance |
+| Governance and safety | Lane 0 governance/checkpoint control is current; Stage 1C is remotely checkpointed at `cd56dcced53a43b1fe69b1778676733d15394537`; no production Build Contract is active | Preserve the accepted checkpoint; Stage 1D-A candidate preparation requires separate founder authorization |
+| Inventor Entry | `VPB-HOME-008/009/010` protect separate desktop environment, REV and live-brand layers; `VPB-HOME-006/007` remain flattened composition references only; post-ASK remains rejected | Stage 1D-A documentation boundary only; candidate preparation, controls beyond the opening shell and production integration remain locked |
 | REV Intelligence | `REV-FIX-02.5` contract is preserved as a queued future boundary; existing answer persistence/source foundations remain evidence; Home-to-Workshop value routing defect remains unresolved | Locked until all remaining `.4` visual-recovery stages are completed/documented and the founder explicitly authorizes Phase 2; providers remain prohibited |
 | Core Creation | Concept persistence and bounded portable-signage geometry accepted; surf-goggle geometry remains unsupported | Define source-aware fidelity and supported geometry before claiming `READY TO CREATE 3D` |
 | Living Workshop | B2A, B2B-1 and B2B-2 functional checkpoints accepted | Preserve the viewer; later contract deliberate entry and same-stored-model arrival after `FAIL-NAV-001` diagnosis |
@@ -191,6 +191,6 @@ Only the reference named in `CURRENT WORK` may proceed. On 28 August 2026 the fo
 
 ## Immediate hold
 
-The dominant current position is `REV-FIX-02.4 — Founder Visual Recovery Hold` under Lane 0 governance/checkpoint control. Stage 1A and Stage 1B are founder approved, documented and remotely checkpointed at `501ccc71f6f7028b0f3fcae2f80e2032390f28dc`. Stage 1C is `LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE` only, sequenced as Stage 1C-A Desktop, Stage 1C-B Compact and Stage 1C-C Mobile and REV clearance. Stage 1C-A candidate preparation remains locked pending separate founder authorization. Console composition is excluded and locked for a separate future category. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
+The dominant current position is Lane 0 governance/checkpoint control at pushed Stage 1C baseline `cd56dcced53a43b1fe69b1778676733d15394537`. Stage 1C-A, Stage 1C-B and Stage 1C-C are founder visually approved, documented, byte-locked and remotely checkpointed. Stage 1D-A `DESKTOP OPENING CONSOLE-ENTRY SHELL` is defined only as a future candidate boundary; candidate preparation remains locked pending separate authorization. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
 
 The former statement naming Lane 1, Phase 2, Iteration 3 and the numbered current-image review as the immediate gate is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no current implementation or phase-advance authority.

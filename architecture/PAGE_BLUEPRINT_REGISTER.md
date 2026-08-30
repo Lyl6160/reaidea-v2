@@ -1,7 +1,7 @@
 # reAIdea Page Blueprint Register
 
 **Status:** FOUNDER APPROVED — current page authority register
-**Inventory date:** Updated 26 August 2026
+**Inventory date:** Updated 30 August 2026
 
 ## Status vocabulary
 
@@ -22,10 +22,12 @@ This register lists every current routable page and every named future page/surf
 - **Data read/written:** Session-only form/denial context; on CLEAR only, one canonical Project, accepted answers, approved source evidence, operational receipt, validated candidate and source-bound geometry.
 - **Security boundary:** Untrusted text/upload; bounded client preflight; provider-free server intent gate before Project creation; server validation; no secrets in browser code; explicit retry.
 - **Approved appearance:** `CURRENT-01 / VPB-HOME-006` controls blank-Home composition and `CURRENT-02 / VPB-HOME-007` controls selected-path/pre-ASK composition. `VPB-HOME-008/008A/008B` protect the founder-approved clean responsive environment, and `VPB-HOME-009/009A/009B` protect the founder-approved independent REV desktop, compact and mobile placement evidence. `CURRENT-03 / VPB-HOME-002` and `CURRENT-04 / VPB-HOME-003` remain later understanding/pulse authorities. See `VISUAL_AUTHORITY_REGISTER.md`.
-- **Current implementation:** Stage 1A and Stage 1B are founder approved, documented and remotely checkpointed at `501ccc71f6f7028b0f3fcae2f80e2032390f28dc` as protected references only; they are not production integration. The current live post-ASK presentation remains founder rejected and cannot substitute an archived or flattened image.
+- **Current implementation:** Stage 1C-A, Stage 1C-B and Stage 1C-C are founder visually approved, documented, byte-locked and remotely checkpointed at `cd56dcced53a43b1fe69b1778676733d15394537` as protected references only; they are not production integration. The current live post-ASK presentation remains founder rejected and cannot substitute an archived or flattened image.
 - **Current reset qualification:** `VPB-HOME-001/004/004A/005` are archived historical evidence and prohibited as runtime/fallback authority. The rejected moon panorama is prohibited. `VPB-HOME-006/007` are composition references only and cannot remain flattened runtime interfaces.
-- **Current construction control:** Lane 0 governance/checkpoint control; no active production Build Contract. Stage 1C is `LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE` only, divided into Stage 1C-A — Desktop, Stage 1C-B — Compact and Stage 1C-C — Mobile and REV clearance. Stage 1C-A candidate preparation, production implementation and `REV-FIX-02.5` are locked.
-- **Next acceptance test:** A separate exact founder authorization is required before Stage 1C-A candidate preparation. Stage 1C controls only the live reAIdea/REV brand lockup, supporting brand wording, responsive placement/scale and clearance from REV, navigation, viewport edges and future console space. Console composition and controls are excluded and locked for a separate future category. No implementation detail or phase advance is authorized here.
+- **Current construction control:** Lane 0 governance/checkpoint control; no active production Build Contract. Stage 1D-A Candidate V1 is `FOUNDER REJECTED — VISUAL DRIFT`, SHA-256 `755FB7CD7DF47394D4374D4C85E808C42CF5EE731E68E4153CA9E89BB7B86B59`. Source recovery found no compliant independent pre-flattening pathway-icon source. Develop an Invention SVG Iteration 3 is founder approved and byte-locked as `VPB-HOME-013`; V1/V2 remain rejected. Evaluate an Invention, Develop + Evaluate and console Iteration 2 remain locked.
+- **Corrected blank-state scope:** The live hero, trust row, unselected intent cards and opening console include a disabled live textarea, disabled `ADD PHOTO OR SKETCH` and disabled `ASK REV` as visual explanation only. No interaction or functional authority is granted. Generic lock placeholders, invented wording and generic icon substitutes are prohibited.
+- **Pathway-icon design boundary:** A separately authorized operation may deterministically author three new semantic-safe SVGs sharing a transparent `512×512` viewBox and one responsive desktop/compact/mobile family. Raster embedding, Canvas, remote resources, wording and interface surfaces are prohibited. `VPB-HOME-006` guides concept, silhouette direction, colour balance, restrained density, small-card legibility and family relationship only; the new work is not an exact reproduction and needs independent founder visual approval.
+- **Next acceptance test:** Obtain separate founder authorization, visual approval and documentation for each remaining pathway icon. Only after the complete SVG set is founder-approved and documented may a separately authorized Iteration 2 measure and reconstruct the `VPB-HOME-006` console with separate `VPB-HOME-008/009/010` and live interface layers, never a flattened runtime image, while keeping the lower station region clear.
 
 ### `/workshop` — Living Workshop — PARTIAL
 

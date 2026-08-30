@@ -14,7 +14,17 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is founder visually approved and documented as `VPB-HOME-012`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG is `VPB-HOME-013`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-013 — Develop an Invention Live SVG
+
+- **State:** Stage 1D-A-ICON-1, Iteration 3.
+- **Founder approval wording:** `FOUNDER APPROVES STAGE 1D-A-ICON-1 — DEVELOP AN INVENTION SVG ITERATION 3`.
+- **Approved source:** `home/VPB-HOME-013-approved-develop-invention-live-svg-2026-08-30.svg`; SHA-256 `B36F51AE45CB6CC0F617B5A98E15F18FBCBEBAB69E504257ED2D435B395C8AF8`.
+- **Evidence:** render PNG, responsive review HTML/CSS and approved review screenshot are registered in the manifest and detailed in `home/VPB-HOME-013-authority-2026-08-30.md`.
+- **Scope:** Transparent vector-only Develop an Invention icon and reviewed large, medium and `129 × 88` appearance only.
+- **Runtime rule:** Decorative SVG only; pathway title and description remain live semantic HTML and duplicate screen-reader announcements must be prevented.
+- **Exclusions:** The other two pathway icons, console composition and all production implementation remain locked.
 
 ### VPB-HOME-012 — Mobile Live Brand Lockup and REV Clearance
 

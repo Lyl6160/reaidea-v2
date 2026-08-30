@@ -3,28 +3,28 @@
 ```text
 CURRENT WORK
 
-Reference: REV-FIX-02.4 — Founder Visual Recovery Hold
-Phase: 5 — Stage 1C-C founder visual approval documentation checkpoint
-Iteration: Stage 1C-C — Mobile live brand lockup and REV clearance — Iteration 1
-Status: Stage 1A/1B remain protected; Stage 1C-A/1C-B remain protected as `VPB-HOME-010/011`; Stage 1C-C mobile live brand and REV clearance is FOUNDER VISUALLY APPROVED — DOCUMENTATION CHECKPOINT COMPLETE as `VPB-HOME-012`; compact grounding and Galaxy Fold 6 integration gates remain open
+Reference: Stage 1D-A-ICON-1 — Develop an Invention SVG Iteration 3 — VPB-HOME-013 visual-lock checkpoint
+Phase: 5 — Stage 1D-A visual-contract control
+Iteration: ICON-1 Iteration 3 founder approved, documented and byte-locked as VPB-HOME-013
+Status: Stage 1C remains protected; Develop an Invention SVG Iteration 3 is founder visually approved and byte-locked; V1/V2 remain rejected; remaining icons and console Iteration 2 locked
 Active lane: Lane 0 — recovery/control
 Active Build Contract: NONE
-Required starting state: `VPB-HOME-008/008A/008B` protect the environment; `VPB-HOME-009/009A/009B` protect REV placement/occlusion; `VPB-HOME-010/011/012` protect desktop, compact and mobile semantic brand evidence; runtime layers remain separate; compact grounding and real Galaxy Fold 6 walkthrough remain open; mask is not console design; post-ASK remains rejected
-Allowed files: NONE after completion of the Stage 1C-C authority and visual-lock checkpoint
+Required starting state: pushed baseline `cd56dcced53a43b1fe69b1778676733d15394537`; `VPB-HOME-008` environment, `VPB-HOME-009` REV and `VPB-HOME-010` semantic live brand remain separate; `VPB-HOME-006` must be measured and reconstructed with live layers and never used as a flattened runtime image; lower station region clear; independent rich pathway icons unresolved
+Allowed files: CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md; architecture/PAGE_BLUEPRINT_REGISTER.md; architecture/STAGE_1D_A_DESKTOP_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md
 Prohibited files: Every other repository path and all production/test/runtime actions, especially app/**, public/**, assets, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
-Founder authorization: `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`; document and lock mobile brand/clearance only; mask remains unapproved; no production implementation
-Founder gate: Stage 1C-C approval is documented; stop and await exact authorization for any next work
-Next reference: No next Stage 1C work is authorized; console composition, production implementation and REV-FIX-02.5 remain locked
+Founder authorization: `FOUNDER APPROVES STAGE 1D-A-ICON-1 — DEVELOP AN INVENTION SVG ITERATION 3`
+Founder gate: Separate authorization is required for each remaining pathway icon; console Iteration 2 remains locked until the full SVG set is founder-approved and documented
+Next reference: Evaluate an Invention, Develop + Evaluate, console Iteration 2, production implementation and REV-FIX-02.5 remain locked
 
 Branch: sprint006-build24-40-home-rebuild
 Accepted Homepage implementation checkpoint: eaf9e0e95a0150c8491ce3dc20935c640067cc45
-Current pushed Stage 1A–1B checkpoint baseline: 501ccc71f6f7028b0f3fcae2f80e2032390f28dc
+Current pushed Stage 1C checkpoint baseline: cd56dcced53a43b1fe69b1778676733d15394537
 Rollback baseline: b27f10e9bc651a9492d9b4872d59336f123af5b0
 Upstream: origin/sprint006-build24-40-home-rebuild
 Ahead/behind without fetching: 0/0
 Index: clean
-Tracked worktree: two pre-existing excluded production modifications and all unrelated existing documentation modifications remain untouched; only authorized Stage 1C-A/1C-B/1C-C authority/control records are changed; nothing is staged
-Untracked worktree: twelve pre-existing excluded paths remain untouched; `VPB-HOME-010/011/012` authority sets are added only by their checkpoints; nothing is staged
+Tracked worktree: two pre-existing excluded production modifications remain untouched; only the authorized VPB-HOME-013 authority/control records change in this checkpoint; nothing is staged
+Untracked worktree: twelve pre-existing excluded paths remain untouched; nothing is staged
 
 Byte-locked current Home visual authorities:
 VPB-HOME-002: 874EEEE36E6DD4C784898A3A026C90D8CFDD7B107C762551D13CA16898C5C29D
@@ -40,6 +40,7 @@ VPB-HOME-009B: D83EA79F5B9C027778FAAC77FA5114A3B336DB3138C122EFC615607E931E6370
 VPB-HOME-010: 0F1FBA33456071B4BB2FA92096D447CF3ECB9C533482A6A6BC11AF80B51E77E2
 VPB-HOME-011: 28DE60F6AA105636963A0D94AA2E5353E10D5FF131E7A3F3BCA5232DD99539AA
 VPB-HOME-012: C86BBBDE56BFF2CEBE778489B8844771FF4E6700DEE950372814D779BF7CC94E
+VPB-HOME-013: B36F51AE45CB6CC0F617B5A98E15F18FBCBEBAB69E504257ED2D435B395C8AF8
 VPB-JOURNEY-002: BF241741760BBCD4B98F610D99D72331E55D390630B42EFDEB51DB8F7C7495D3
 
 Founder Visual Lock:
@@ -49,10 +50,10 @@ One complete standalone image is shown for founder approval before production co
 Automated checks may prove hashes and unchanged pixels but cannot grant visual approval. Only the founder's personal walkthrough can approve.
 
 Current action:
-Stage 1C-C mobile live brand and REV clearance is founder visually approved and documented as `VPB-HOME-012` with exact wording `APPROVE STAGE 1C-C MOBILE LIVE BRAND LOCKUP AND REV CLEARANCE`. The mask is not console design. Compact grounding and real closed Galaxy Fold 6 integration walkthroughs remain mandatory. Stop after verification. No Build Contract or production work is active.
+Preserve `VPB-HOME-013` as the approved Develop an Invention decorative live SVG. Await separate founder authorization for either remaining icon. No console candidate or production Build Contract is active.
 
 Current reference:
-REV-FIX-02.4 — FOUNDER VISUAL RECOVERY HOLD; STAGE 1A–1B REMOTELY CHECKPOINTED; STAGE 1C-A/1C-B/1C-C BRAND AND MOBILE CLEARANCE FOUNDER VISUALLY APPROVED AND DOCUMENTED; INTEGRATION GATES REMAIN
+STAGE 1D-A — DESKTOP OPENING CONSOLE-ENTRY SHELL — DOCUMENTATION BOUNDARY RECORDED; CANDIDATE PREPARATION LOCKED; STAGE 1C-A/1C-B/1C-C FOUNDER VISUALLY APPROVED, DOCUMENTED, BYTE-LOCKED AND REMOTELY CHECKPOINTED; INTEGRATION GATES REMAIN
 
 Accepted earlier references:
 REV-FIX-02.1 — Blank Home truth — FOUNDER APPROVED / PROTECTED
@@ -64,7 +65,7 @@ Stage 1C — LIVE BRAND LOCKUP AND RESPONSIVE CLEARANCE — Stage 1C-A Desktop, 
 Stage 1C-A — Desktop — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-010`; no production implementation authorized
 Stage 1C-B — Compact live brand — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-011`; REV grounding/apparent-floating concern remains open for mandatory integrated walkthrough; no REV alteration authorized
 Stage 1C-C — Mobile live brand and REV clearance — FOUNDER VISUALLY APPROVED / DOCUMENTED as `VPB-HOME-012`; temporary mask unapproved; real Galaxy Fold 6 live-integration walkthrough mandatory
-Future console composition category — SEPARATE / LOCKED / NOT PART OF STAGE 1C
+Stage 1D-A — DESKTOP OPENING CONSOLE-ENTRY SHELL — ITERATION 1 FOUNDER REJECTED / CORRECTED BLANK-STATE BOUNDARY RECORDED / INDEPENDENT PATHWAY-ICON GATE REQUIRED / ITERATION 2 LOCKED
 REV-FIX-02.5 — Answer, knowledge and understanding — CONTRACT APPROVED / QUEUED / PHASE 2 BUILD LOCKED
 REV-FIX-02.6 — Ready state and Creation Theatre handoff — LOCKED
 REV-FIX-02.7 — Professional electrical system — LOCKED
@@ -73,7 +74,7 @@ REV-FIX-02.9 — Live formation, fidelity and securing — LOCKED
 REV-FIX-02.10 — Complete blank-to-Workshop journey — LOCKED
 
 Stop condition:
-After the Stage 1C-C documentation and visual-lock checkpoint verifies, stop. Console composition, production implementation, stations, electricity, providers, Project, question/answer, knowledge, Concept, geometry, Workshop and `.5` remain locked. The temporary mask remains unapproved. Compact grounding and real closed Galaxy Fold 6 live-integration walkthroughs remain mandatory. Approved composites are evidence only; runtime layers remain separate. Rejected evidence remains prohibited.
+After the VPB-HOME-013 documentation and 31-asset visual lock verify, stop. The other two SVG candidates are not authorized. Flattened extraction, cropping, tracing, repainting, pixel reuse, simplified `app/page.tsx` SVG substitution and rejected V1/V2 reuse are prohibited. Console Iteration 2 remains locked until the SVG set is founder-approved and documented. Selected path, navigation, stations, electricity, post-ASK states, providers, Project, persistence, Workshop, production implementation, tests and `.5` remain locked.
 ```
 
 ## Historical construction record — preserved, non-authoritative for next action
