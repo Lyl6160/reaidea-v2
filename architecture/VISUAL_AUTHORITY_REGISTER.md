@@ -90,6 +90,16 @@ Approval covers the hero and trust-row placement, shallow console geometry and a
 
 Future live integration must recheck the bottom instruction’s console-edge clearance, disabled right-panel legibility on real displays and the `7px` brand-to-hero clearance. These checks authorize no automatic change; material adjustment requires another founder walkthrough. Candidate Iteration 1 remains rejected, and the failed Python-server evidence remains excluded technical-failure evidence. Production, interaction, station, electricity, compact, mobile, post-`ASK REV` and `REV-FIX-02.5` work remain locked.
 
+## Stage 1D-B compact blank-state console composition — 14 September 2026
+
+`VPB-HOME-016` is the founder-approved Stage 1D-B Compact Iteration 2 blank-state composition. The exact approval wording is `FOUNDER APPROVES STAGE 1D-B COMPACT ITERATION 2`. Its protected package contains the clean `1100 × 800` DPR `1` candidate, supporting measurement guide, semantic HTML and external CSS. Exact paths, hashes, measurements and scope are recorded in `visual-authority/home/VPB-HOME-016-authority-2026-09-14.md`.
+
+Approval covers the connected compact brand/hero hierarchy, trust row, shallow `688 × 230` console, `426:262` panel relationship, three `129 × 156` unselected pathway controls, identical `92 × 62` `VPB-HOME-014` icon-contain boxes, genuine disabled textarea and action controls, protected REV placement/contact shadow/floor contact/hand relationship, `81px` console clearance and empty transition/station regions. The browser-verification screenshot is byte-identical to the clean candidate and is not duplicated.
+
+Icons remain unchanged decorative contain-rendered images hidden from accessibility. Interface wording and controls remain live semantic HTML/CSS. No flattened interface, Canvas, script, interaction, production implementation, mobile composition, stations, electricity, post-`ASK REV` state or `REV-FIX-02.5` work is approved. Candidate V1 remains founder-rejected at SHA-256 `EF803E49C46F1887AFF6BCC0213950C61881B74CB349ADDCAFD7CA3BB967D42D` outside authority.
+
+Live integration must confirm pathway-card description readability, disabled-panel contrast across displays and the hand-to-console relationship while preserving `81px` clearance. These checks authorize no automatic change.
+
 ## Temporary future visual hold — not authority
 
 `visual-authority/future-candidates/FUTURE_VISUAL_HOLD_REGISTER.md` holds `FUTURE-01–04` for later human scrutiny. These images are not current visual authority, cannot authorize implementation and cannot be used by runtime code as fallbacks. `FUTURE-02` and `FUTURE-04` byte-match existing scoped Workshop assets, so their existing canonical files are referenced without duplication. The next intake number is `FUTURE-05`.

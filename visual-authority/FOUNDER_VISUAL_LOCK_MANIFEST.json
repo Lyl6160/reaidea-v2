@@ -258,6 +258,30 @@
       "state": "desktop-blank-state-console-external-css",
       "path": "visual-authority/home/VPB-HOME-015-semantic-source-2026-09-14.css",
       "sha256": "FDEEA86EF607C04C680EDBECC6FEAB94A59CBCEE9F9FA6E0EA28D670E1BEE0A4"
+    },
+    {
+      "id": "VPB-HOME-016",
+      "state": "compact-blank-state-console-composition",
+      "path": "visual-authority/home/VPB-HOME-016-approved-compact-blank-state-console-2026-09-14.png",
+      "sha256": "67F6627179B91A41003A2EEA790AC93D0A491AA1ECFBCAD7A579052AFCD71556"
+    },
+    {
+      "id": "VPB-HOME-016-GUIDE",
+      "state": "compact-blank-state-console-measurement-guide",
+      "path": "visual-authority/home/VPB-HOME-016-supporting-measurement-guide-2026-09-14.png",
+      "sha256": "F2AC316F0D456E87642E8E6EFC1C9383967B9847BADBFF641BDE10C1736C15CC"
+    },
+    {
+      "id": "VPB-HOME-016-HTML",
+      "state": "compact-blank-state-console-semantic-html",
+      "path": "visual-authority/home/VPB-HOME-016-semantic-source-2026-09-14.html",
+      "sha256": "190A9E2EE7A9A3BFDBE0E72D948469C9FCA2395400FF394108FAE73659C80A7D"
+    },
+    {
+      "id": "VPB-HOME-016-CSS",
+      "state": "compact-blank-state-console-external-css",
+      "path": "visual-authority/home/VPB-HOME-016-semantic-source-2026-09-14.css",
+      "sha256": "0AC7D8FBD53CBA9DF92A468E3166184E6C0D4B94A4EE4081004ADAF7050B06CE"
     }
   ]
 }

@@ -3,24 +3,24 @@
 ```text
 CURRENT WORK
 
-Reference: Stage 1D-A Console Iteration 2 — VPB-HOME-015 documentation and visual-lock checkpoint
-Phase: 5 — Stage 1D-A visual-contract control
-Iteration: Console Iteration 2 desktop candidate founder visually approved and byte-locked as VPB-HOME-015
-Status: VPB-HOME-015 documents the approved desktop blank-state composition; production implementation, Stage 1D-B, Stage 1D-C and REV-FIX-02.5 remain locked
+Reference: Stage 1D-B — Compact Opening Console-Entry Shell Iteration 2 visual-lock checkpoint
+Phase: 5 — Stage 1D-B compact visual-contract control
+Iteration: Compact Iteration 2 founder visually approved and byte-locked as VPB-HOME-016
+Status: VPB-HOME-016 documents the approved compact blank-state composition; production, Stage 1D-C and REV-FIX-02.5 remain locked
 Active lane: Lane 0 — continuity/control
 Active Build Contract: NONE
-Allowed files: VPB-HOME-015 authority and four protected files; CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md; architecture/PAGE_BLUEPRINT_REGISTER.md; architecture/STAGE_1D_A_DESKTOP_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md; architecture/VISUAL_AUTHORITY_REGISTER.md; visual-authority/SCREEN_INDEX.md; visual-authority/FOUNDER_VISUAL_LOCK_MANIFEST.json
-Prohibited files: production, tests, public runtime assets, providers, Project/runtime data, Workshop source, existing protected assets including VPB-HOME-013, dependencies/configuration and unrelated user files
-Founder authorization: `FOUNDER AUTHORIZES STAGE 1D-A CONSOLE ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT`
-Founder gate: Separate founder authorization is required for any checkpoint commit or production Build Contract
-Next reference: Read-only checkpoint mapping may follow separately; production, interaction, stations, electricity, compact, mobile, post-ASK work and REV-FIX-02.5 remain locked
+Allowed files: CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md; architecture/PAGE_BLUEPRINT_REGISTER.md; architecture/STAGE_1D_B_COMPACT_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md
+Prohibited files: Every other repository path, including production, tests, manifest, authority records, protected assets, public runtime assets, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
+Founder authorization: `FOUNDER AUTHORIZES STAGE 1D-B COMPACT ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT ONLY`
+Founder gate: Separate founder authorization is required for checkpoint staging/commit or any next visual category
+Next reference: Read-only checkpoint mapping may follow separately; production, mobile, navigation, interaction, stations, electricity, post-ASK work and REV-FIX-02.5 remain locked
 
 Verified baseline:
 - Branch: `sprint006-build24-40-home-rebuild`.
-- Local HEAD and upstream: `da243ba043394789613fe690c528a4946c954110`.
+- Local HEAD and upstream: `58d334949cde77b8718e05ce1231db534f7cf866`.
 - Ahead/behind without fetching: `0/0`.
 - Index: empty.
-- Visual lock: PASS with exactly 41 protected assets.
+- Visual lock: PASS with exactly 45 protected assets after this checkpoint.
 
 Verified authority:
 - VPB-HOME-014 is founder approved, documented, byte-locked and remotely checkpointed. It protects the three isolated raster candidates, native in-room card-scale presentation and two supporting comparisons.
@@ -31,11 +31,23 @@ Verified authority:
 - Any material visual change requires a new founder candidate walkthrough.
 - VPB-HOME-015 is founder approved and protects the desktop `1920 × 900` blank-state composition, supporting guide, semantic HTML and external CSS. `VPB-HOME-006` remains the underlying composition authority, and `VPB-HOME-008/009/010/014` remain separately protected layers.
 - Future live integration must recheck the bottom instruction’s console-edge clearance, disabled right-panel legibility on real displays and the `7px` brand-to-hero clearance. These checks authorize no automatic change; material adjustment requires another founder walkthrough.
+- Stage 1D-B is bounded to exactly `1100 × 800`. `VPB-HOME-008A` controls the compact environment; `VPB-HOME-009A` controls REV placement, floor contact and contact shadow; `VPB-HOME-011` controls compact live-brand placement; `VPB-HOME-014` controls the raster pathway-icon family; `VPB-HOME-015` controls the approved semantic blank-state structure and desktop visual character; and `VPB-HOME-006` remains the underlying flattened composition reference only.
+- Candidate V1 is **FOUNDER REJECTED — RESPONSIVE VISUAL DRIFT** and remains unchanged temporary evidence with SHA-256 `EF803E49C46F1887AFF6BCC0213950C61881B74CB349ADDCAFD7CA3BB967D42D`. It is not authority, fallback or an Iteration 2 starting image.
+- `X=40–728`, `Y=390–700` (`688 × 310`) is the maximum available compact console envelope, not required filled geometry. Iteration 2 targets approximately `X=40–728`, `Y=390–620` (`688 × 230`) with an approximately `62:38` panel hierarchy: intent `426 × 230`, disabled entry `262 × 230`. Desktop `54:46` pixels do not control compact geometry.
+- The empty transition floor is `Y=620–700`; the protected station reserve remains `Y=700–800`. The `81px` console-to-REV clearance and `0px` future-station overlap remain fixed; no outer-width or REV-clearance amendment is authorized. Protected REV floor contact remains `X=965`, `Y=610`; the receiving-hand target remains `X=826`, `Y=283`.
+- The brand remains at its protected `VPB-HOME-011` placement. The hero remains visually connected beneath it on the left at approximately `X=40–690`, `Y=148–280`; the trust row targets approximately `X=40–520`, `Y=310–362`.
+- Three pathway cards remain in one row at approximately `129 × 150–158`, with identical approximately `92 × 62` icon-contain boxes. The bottom instruction receives its own live-text lane with at least `8–10px` border clearance.
+- Whole-panel opacity reduction that obscures content is prohibited. The disabled heading and description remain readable at approximately `55–65%` visual strength; the textarea and buttons are subdued individually while remaining recognizable genuine disabled controls.
+- Compact Iteration 2 is founder visually approved with exact wording `FOUNDER APPROVES STAGE 1D-B COMPACT ITERATION 2` and protected as `VPB-HOME-016`. Approved geometry is `1100 × 800` at DPR `1`; console `40,390 · 688 × 230`; panels `426:262` (approximately `62:38`); cards `129 × 156`; identical icon-contain boxes `92 × 62`; empty transition floor `Y=620–700`; and empty station reserve `Y=700–800`.
+- Three pathway controls remain unselected. The textarea and both action buttons are genuinely disabled. Raster icons remain byte-identical, proportionally contained, decorative and accessibility-hidden; interface wording and controls remain live semantic HTML/CSS with no flattened interface, Canvas, script, interaction or production authority.
+- Non-blocking live-integration checks: confirm card descriptions remain readable in the real compact runtime; confirm disabled-panel wording retains adequate contrast across displays; and recheck the visual hand-to-console relationship while preserving `81px` clearance. These checks authorize no automatic change.
+- Desktop and compact must share one semantic DOM. Only responsive CSS sizing, placement, spacing and typography may differ. Both panels remain visible and legible; stacking or structural reflow requires separate founder authorization.
+- A future compact walkthrough must show REV, the approved contact shadow, live console, visible reserved station region and environmental floor together to determine physical grounding. This check and the carried instruction-edge, disabled-panel-legibility and compact brand-to-hero checks authorize no automatic adjustment.
 
 Open locks:
 - Production implementation and interaction remain locked.
 - Stage 1D-A console implementation is locked.
-- Stage 1D-B and Stage 1D-C remain locked.
+- Stage 1D-B production integration and Stage 1D-C remain locked.
 - Compact REV grounding and real closed Galaxy Fold 6 walkthrough gates remain open.
 - REV-FIX-02.5 remains locked.
 ```

@@ -14,7 +14,18 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The founder-approved Stage 1D-A Console Iteration 2 desktop blank-state composition is `VPB-HOME-015`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The founder-approved Stage 1D-A desktop blank-state composition is `VPB-HOME-015`; the founder-approved Stage 1D-B compact blank-state composition is `VPB-HOME-016`. The temporary dark mask is not approved console design. Real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-016 — Compact Blank-State Console Composition
+
+- **State:** Stage 1D-B Compact Iteration 2 at `1100 × 800`, DPR `1`.
+- **Founder approval wording:** `FOUNDER APPROVES STAGE 1D-B COMPACT ITERATION 2`.
+- **Approved evidence:** `home/VPB-HOME-016-approved-compact-blank-state-console-2026-09-14.png`; SHA-256 `67F6627179B91A41003A2EEA790AC93D0A491AA1ECFBCAD7A579052AFCD71556`.
+- **Protected sources:** supporting guide, semantic HTML and external CSS are registered in the manifest and detailed in `home/VPB-HOME-016-authority-2026-09-14.md`.
+- **Scope:** Console `40,390 · 688 × 230`; panels `426:262`; cards `129 × 156`; identical icon boxes `92 × 62`; protected REV relationship and `81px` clearance; empty transition and station regions; unselected pathways; genuine disabled controls; separate live semantic layers.
+- **Verification equivalence:** Browser-verification screenshot is byte-identical to the clean candidate and is not stored redundantly.
+- **Deferred checks:** Confirm real-runtime card-description readability, disabled-panel contrast and the hand-to-console relationship while preserving `81px` clearance. No automatic adjustment is authorized.
+- **Exclusions:** Production, interaction, selected/enabled states, navigation, stations, electricity, mobile composition, post-`ASK REV` behaviour and `REV-FIX-02.5` remain locked.
 
 ### VPB-HOME-015 — Desktop Blank-State Console Composition
 
