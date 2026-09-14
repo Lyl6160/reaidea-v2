@@ -74,6 +74,14 @@ Approval covers only the independently and deterministically authored transparen
 
 Environment, independent REV and one responsive semantic brand remain separate production layers; the composite is evidence only. Production implementation and `REV-FIX-02.5` remain locked; there is no active Build Contract.
 
+## Stage 1D-A raster pathway icon family — 14 September 2026
+
+`VPB-HOME-014` is the founder-approved three-icon transparent raster family and in-room card-scale presentation. The exact approval wording is `FOUNDER APPROVES STAGE 1D-A RASTER PATHWAY ICON FAMILY AND IN-ROOM CARD-SCALE PRESENTATION`. Its protected package contains the three isolated PNG assets, native `VPB-HOME-006` in-room placement evidence, an adjacent before/after comparison and an enlarged three-card console comparison. Exact paths, dimensions, hashes and placement boxes are recorded in `visual-authority/home/VPB-HOME-014-authority-2026-09-14.md`.
+
+The PNGs are decorative assets only. Pathway cards, wording, borders, selection controls, states and accessibility naming remain live semantic HTML/CSS. Runtime images use proportional contain rendering, empty alternative text and `aria-hidden="true"`. The evidence composites cannot be runtime interface images.
+
+The SVG-only reconstruction method no longer controls Evaluate an Invention or Develop + Evaluate. Raster Develop an Invention is preferred for this family. `VPB-HOME-013` remains protected, unchanged and historically approved; it is not deleted or silently superseded. Live integration and any later scale, padding or brightness trial require separate founder authorization and walkthrough. No fine-tuning is automatically approved, and material visual change requires a new candidate authority decision.
+
 ## Temporary future visual hold — not authority
 
 `visual-authority/future-candidates/FUTURE_VISUAL_HOLD_REGISTER.md` holds `FUTURE-01–04` for later human scrutiny. These images are not current visual authority, cannot authorize implementation and cannot be used by runtime code as fallbacks. `FUTURE-02` and `FUTURE-04` byte-match existing scoped Workshop assets, so their existing canonical files are referenced without duplication. The next intake number is `FUTURE-05`.

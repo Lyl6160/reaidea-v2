@@ -198,6 +198,42 @@
       "state": "source-aware-concept-fidelity-target",
       "path": "visual-authority/fidelity/FVT-C2F-001-approved-surf-eyewear-concept-2026-08-26.png",
       "sha256": "D5C37DEB6ABE5CD8E746CF9D3C6A0A4E5B02108CAFB2E1C9482A3272C7D19384"
+    },
+    {
+      "id": "VPB-HOME-014-DEVELOP",
+      "state": "raster-pathway-icon-develop-invention",
+      "path": "visual-authority/home/VPB-HOME-014-approved-develop-invention-raster-2026-09-14.png",
+      "sha256": "BCE2ADE45D86C28B182F99EF34607872275A5053E93E3CE9F3F72F46829FE195"
+    },
+    {
+      "id": "VPB-HOME-014-EVALUATE",
+      "state": "raster-pathway-icon-evaluate-invention",
+      "path": "visual-authority/home/VPB-HOME-014-approved-evaluate-invention-raster-2026-09-14.png",
+      "sha256": "5C3CBBBE4974D37C3196C94E9A477386AE2DECE3BEC91D913AC50C76CC15451D"
+    },
+    {
+      "id": "VPB-HOME-014-DEVELOP-EVALUATE",
+      "state": "raster-pathway-icon-develop-plus-evaluate",
+      "path": "visual-authority/home/VPB-HOME-014-approved-develop-plus-evaluate-raster-2026-09-14.png",
+      "sha256": "CFB10C73C25CB048BE5FCE20CD6A8E367A2E43317D1B94C4A11EBC675944129E"
+    },
+    {
+      "id": "VPB-HOME-014",
+      "state": "raster-pathway-icon-family-in-room-card-scale",
+      "path": "visual-authority/home/VPB-HOME-014-approved-in-room-card-scale-presentation-2026-09-14.png",
+      "sha256": "538275EB1BAE896DD0A2B5A474858B73E345AD3EFE9F3F0D068286326858BED0"
+    },
+    {
+      "id": "VPB-HOME-014-COMPARISON",
+      "state": "raster-pathway-icon-family-before-after-comparison",
+      "path": "visual-authority/home/VPB-HOME-014-supporting-before-after-comparison-2026-09-14.png",
+      "sha256": "1749253646285702E209771FC4D06EB6857E8B4566E23B7EDE3049643792FE4D"
+    },
+    {
+      "id": "VPB-HOME-014-ENLARGED",
+      "state": "raster-pathway-icon-family-enlarged-console-comparison",
+      "path": "visual-authority/home/VPB-HOME-014-supporting-enlarged-console-comparison-2026-09-14.png",
+      "sha256": "3B9116A45B86AD6B9868ED3C91D3BD65F2B78328FCA637B8AB7FE8D6FA1043CC"
     }
   ]
 }

@@ -14,7 +14,17 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG is `VPB-HOME-013`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-014 — Raster Pathway Icon Family
+
+- **State:** Stage 1D-A raster pathway-icon family and in-room card-scale presentation.
+- **Founder approval wording:** `FOUNDER APPROVES STAGE 1D-A RASTER PATHWAY ICON FAMILY AND IN-ROOM CARD-SCALE PRESENTATION`.
+- **Approved assets:** three isolated transparent PNGs and native in-room placement evidence, with hashes registered in the manifest and detailed in `home/VPB-HOME-014-authority-2026-09-14.md`.
+- **Supporting evidence:** adjacent before/after and enlarged three-card console comparisons.
+- **Runtime rule:** Decorative raster images only; cards, wording, borders, controls and accessible naming remain live semantic HTML/CSS. Use proportional contain rendering and hide the images from the accessibility tree.
+- **Method decision:** SVG-only reconstruction no longer controls Icons 2 and 3. Raster Icon 1 is preferred for this family, while `VPB-HOME-013` remains protected and unchanged as historical approved authority.
+- **Deferred gate:** Live integration, trial fine-tuning, console work and production require separate founder authorization. Material visual change requires a new candidate walkthrough.
 
 ### VPB-HOME-013 — Develop an Invention Live SVG
 

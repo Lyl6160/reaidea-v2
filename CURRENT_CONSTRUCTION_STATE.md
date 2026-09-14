@@ -3,6 +3,127 @@
 ```text
 CURRENT WORK
 
+Reference: Stage 1D-A raster pathway icon family — VPB-HOME-014 visual-lock checkpoint preparation
+Phase: 5 — Stage 1D-A visual-contract control
+Iteration: Raster family founder visually approved; documentation and byte-lock checkpoint only
+Status: Three isolated raster icons and approved in-room card-scale placement are founder approved; VPB-HOME-013 remains protected historical approved authority; no production or console implementation authorized
+Active lane: Lane 0 — continuity/control
+Active Build Contract: NONE
+Allowed files: minimum Stage 1D-A authority/control records and new VPB-HOME-014 authority/evidence files under visual-authority/home/
+Prohibited files: production, tests, public runtime assets, providers, Project/runtime data, Workshop source, existing protected assets including VPB-HOME-013, dependencies/configuration and unrelated user files
+Founder authorization: `FOUNDER APPROVES STAGE 1D-A RASTER PATHWAY ICON FAMILY AND IN-ROOM CARD-SCALE PRESENTATION`
+Founder gate: Documentation and visual-lock verification only; staging, commit, push, tag, fetch, live integration and fine-tuning require separate authorization
+Next reference: A separately authorized Stage 1D-A console candidate may integrate the protected family as live decorative images; production and REV-FIX-02.5 remain locked
+
+Verified authority:
+- VPB-HOME-014 protects the three isolated raster candidates, native in-room card-scale presentation and two supporting comparisons.
+- Cards, wording, borders, controls and accessible naming remain live semantic HTML/CSS; raster images are accessibility-hidden decoration only.
+- The SVG-only reconstruction method no longer controls Icons 2 and 3.
+- Raster Icon 1 is preferred for this family, while VPB-HOME-013 remains protected, unchanged and historically approved.
+- Minor scale, padding or brightness refinement is deferred to separately authorized live-integration trials; no future fine-tuning is automatically approved.
+- Any material visual change requires a new founder candidate walkthrough.
+
+Open locks:
+- Live integration and production implementation are locked.
+- Stage 1D-A console implementation is locked.
+- Compact REV grounding and real closed Galaxy Fold 6 walkthrough gates remain open.
+- REV-FIX-02.5 remains locked.
+```
+
+```text
+SUPERSEDED PRE-VPB-HOME-014 WORK — EVIDENCE ONLY
+
+Reference: Stage 1D-A-ICON-2 — Evaluate an Invention — end-of-day handover
+Phase: 5 — Stage 1D-A visual-contract control
+Iteration: Icon 2 V1 founder rejected; confirmed V2 boundary; V2 preparation paused for the night
+Status: Stage 1A/1B/1C protected; VPB-HOME-013 remotely checkpointed; Icon 2 V1 rejected for material visual drift; no Icon 2 V2 accepted or visually approved
+Active lane: Lane 0 — continuity/control
+Active Build Contract: NONE
+Allowed files: CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md
+Prohibited files: Every other repository path; production, tests, assets, authority, manifest, providers and runtime work
+Founder authorization: `FOUNDER AUTHORIZES END-OF-DAY HANDOVER UPDATE ONLY`
+Founder gate: Fresh exact authorization is required tomorrow to prepare `STAGE 1D-A-ICON-2 — EVALUATE AN INVENTION SVG ITERATION 2 ONLY`
+Next reference: Icon 2 V2 preparation, Icon 3, integrated three-icon study, console Iteration 2, production implementation and REV-FIX-02.5 remain locked
+
+Verified baseline:
+Branch: sprint006-build24-40-home-rebuild
+Local HEAD: 5c412420fcda57aa2bf96d7b4a59f25c436b9c73
+Upstream HEAD: 5c412420fcda57aa2bf96d7b4a59f25c436b9c73
+Ahead/behind without fetching: 0/0
+Index: empty
+Visual lock: PASS with 31 protected assets
+
+Completed and protected:
+- Stage 1A remains founder approved and protected.
+- Stage 1B remains founder approved and protected.
+- Stage 1C remains founder approved, protected and remotely checkpointed.
+- Stage 1D-A-ICON-1 — DEVELOP AN INVENTION Iteration 3 is founder approved.
+- VPB-HOME-013 is documented, byte-locked and remotely checkpointed.
+- VPB-HOME-013 review links are repaired and verified through localhost.
+- The harmless automatic favicon request does not represent an authority-link defect.
+
+Stage 1D-A-ICON-2 target:
+EVALUATE AN INVENTION — founder-approved compact dimensional magnifying/scanning lens.
+
+Candidate V1 status: FOUNDER REJECTED — MATERIAL VISUAL DRIFT.
+V1 temporary evidence remains outside the repository:
+- SVG: E1CBC0C5C34671008C83D7090C182047159A59E8B7BB768E4D2FDD406D23EAA7
+- Walkthrough: EC5774770D0613A6683D8264D6797312BD8D88DA668E17280E51B033A4B028A3
+- Review HTML: 435CBF1B686063BB02AA13B71888449F861F3A635A3D8EA4DB485F22C707218F
+- Review CSS: BE817DF3DD7785FCE4BCED85DA4C5A4DF9CF08F4B3E3BE7CE3D224590AA73A6B
+- Review screenshot: 224149676907B2A7C2BC69EC1AFF22E64DB6D7175BA9D96EE55722CD31BBEFFA
+
+V1 rejection reasons:
+- Reads as an oversized radar/target disc.
+- Lens overfills the visual envelope.
+- Handle loses its complete silhouette.
+- Complete cyan rings and crosshairs dominate.
+- Centre is too large and reactor-like.
+- Lacks the founder target's compact glass, metal and optical depth.
+- Fails to preserve the approved lens-and-handle read at 129×88.
+
+The clean founder target remains visual reference only and was not copied into the repository.
+
+Confirmed V2 boundary:
+- Build from entirely new geometry.
+- Present one complete magnifying-lens and handle silhouette.
+- Use a lens approximately 250–280 viewBox units in diameter.
+- Retain a complete down-right handle at approximately 38–42° and preserve it clearly at 129×88.
+- Use unequal layered glass and metallic depth tiers.
+- Replace dominant complete rings with interrupted arcs.
+- Use dark recessed gaps and asymmetric highlights.
+- Use a small white-blue scan point rather than a large orb.
+- Use a restrained asymmetric horizontal flare.
+- Concentrate gold on selected rim and handle details.
+- Preserve transparent breathing room and unclipped glow.
+- Remain deterministic, transparent, vector-only and accessibility-hidden.
+- Use no traced, extracted, repainted or embedded target pixels.
+
+No Icon 2 V2 file has been accepted or visually approved. Tomorrow's first action requires fresh exact founder authorization to prepare `STAGE 1D-A-ICON-2 — EVALUATE AN INVENTION SVG ITERATION 2 ONLY`.
+
+Open locks:
+- Icon 2 V2 candidate preparation: paused for the night.
+- Icon 3: locked.
+- Integrated three-icon context study: locked until Icon 3 has a reviewed candidate.
+- Stage 1D-A console Iteration 2: locked.
+- Production implementation: locked.
+- REV-FIX-02.5: locked.
+
+Integrated-review principle:
+Final confidence depends on seeing all three icons at their actual pathway-card size inside the Home composition. Individual approval does not prevent later correction. A protected icon may receive a new founder-approved iteration if the integrated walkthrough exposes a cohesion, scale, lighting or realism defect. Visual locking prevents silent change; it does not prohibit controlled founder-authorized improvement.
+
+Preservation and stop condition:
+- Existing two production modifications remain untouched.
+- All 12 Category C paths remain untouched.
+- No production, test, asset, authority or manifest change is authorized.
+- Do not stage, commit, push, tag, fetch, merge or amend.
+- Do not create or render V2 during this handover.
+- Stop after the two-document verification and close safely.
+```
+
+```text
+SUPERSEDED PRE-HANDOVER WORK — EVIDENCE ONLY
+
 Reference: Stage 1D-A-ICON-1 — Develop an Invention SVG Iteration 3 — VPB-HOME-013 visual-lock checkpoint
 Phase: 5 — Stage 1D-A visual-contract control
 Iteration: ICON-1 Iteration 3 founder approved, documented and byte-locked as VPB-HOME-013

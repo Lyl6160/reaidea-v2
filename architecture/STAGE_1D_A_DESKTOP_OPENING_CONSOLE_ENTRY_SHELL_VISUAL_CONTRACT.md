@@ -83,11 +83,21 @@ Each design must be a separate semantic-safe SVG file with a shared `512×512` v
 
 `VPB-HOME-006` may guide only the three fundamental concepts, silhouette direction, cyan/blue-white/gold balance, restrained density, small-card legibility and family relationship. The new SVGs are not reproductions or exact matches of the flattened icons and must not be described as such. They require their own founder visual approval before becoming authority.
 
+This SVG-only reconstruction method is retained as historical design-gate evidence and no longer controls Icons 2 and 3. Repeated deterministic SVG interpretation reproduced concepts but not the cinematic optical-glass, metallic-depth, bloom and soft-lighting character required by the founder targets.
+
 ### Approved first icon — VPB-HOME-013
 
 Develop an Invention SVG Iteration 3 is founder visually approved and byte-locked as `VPB-HOME-013`. Approval is limited to its transparent vector-only architecture and reviewed large, medium and `129 × 88` responsive appearance. The SVG is decorative; pathway title and description remain live semantic HTML and runtime must prevent duplicate screen-reader announcements. V1 and V2 remain rejected, and the clean supplied screenshot remains reference-only.
 
 Evaluate an Invention and Develop + Evaluate remain locked. This approval grants no console-composition or production authority. Any change to the approved geometry, colour, glow, core, responsive scaling or appearance requires another founder walkthrough.
+
+### Approved raster family — VPB-HOME-014
+
+The founder approved the three independent transparent raster pathway icons as one cohesive family and approved their card-scale placement in the native `VPB-HOME-006` in-room composition. Raster Develop an Invention is preferred for this family. `VPB-HOME-013` remains protected, unchanged and historically approved; it is not deleted or silently superseded.
+
+The raster PNGs are decorative only. All pathway wording, cards, borders, controls, states and accessible naming remain live semantic HTML/CSS. Runtime uses one identical source asset per pathway with proportional contain rendering, empty alternative text and `aria-hidden="true"`. The approved in-room composite is evidence only and cannot become a runtime interface.
+
+Minor scale, padding or brightness refinement may be considered only during a separately authorized live-integration trial and founder walkthrough. No refinement is automatically approved; any material visual change requires a new candidate walkthrough.
 
 ## Security wording boundary
 
@@ -105,6 +115,6 @@ Evaluate an Invention and Develop + Evaluate remain locked. This approval grants
 
 ## Authorization and stop state
 
-Develop an Invention is complete as `VPB-HOME-013`. Candidate preparation for Evaluate an Invention and Develop + Evaluate remains locked pending separate founder authorization. Stage 1D-A Iteration 2 remains locked until the complete SVG set is founder-approved and documented and Iteration 2 receives its own exact authorization. No SVG candidate is authorized by this documentation operation. No active production Build Contract exists. Production implementation, tests, console controls beyond the opening shell and `REV-FIX-02.5` remain locked.
+The raster pathway family is complete as `VPB-HOME-014`; `VPB-HOME-013` remains protected historical approved authority. Stage 1D-A live integration and console Iteration 2 remain locked pending their own exact authorization. No active production Build Contract exists. Production implementation, tests, console controls beyond the opening shell and `REV-FIX-02.5` remain locked.
 
 Stop after documentation verification and await founder review.
