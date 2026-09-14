@@ -234,6 +234,30 @@
       "state": "raster-pathway-icon-family-enlarged-console-comparison",
       "path": "visual-authority/home/VPB-HOME-014-supporting-enlarged-console-comparison-2026-09-14.png",
       "sha256": "3B9116A45B86AD6B9868ED3C91D3BD65F2B78328FCA637B8AB7FE8D6FA1043CC"
+    },
+    {
+      "id": "VPB-HOME-015",
+      "state": "desktop-blank-state-console-composition",
+      "path": "visual-authority/home/VPB-HOME-015-approved-desktop-blank-state-console-2026-09-14.png",
+      "sha256": "6D2975F7F2EE3B91EB17754AE6E2A4046FEC019A5F0480D588C8E9CAFD0F36AC"
+    },
+    {
+      "id": "VPB-HOME-015-GUIDE",
+      "state": "desktop-blank-state-console-measurement-guide",
+      "path": "visual-authority/home/VPB-HOME-015-supporting-measurement-guide-2026-09-14.png",
+      "sha256": "63B3D0371330F1EB90AB1C7BDCE742FC883087B080F5F1B993B2F6C77DAC56D7"
+    },
+    {
+      "id": "VPB-HOME-015-HTML",
+      "state": "desktop-blank-state-console-semantic-html",
+      "path": "visual-authority/home/VPB-HOME-015-semantic-source-2026-09-14.html",
+      "sha256": "CABBE03994509B24FD646B508BBACA7C31C32B2BCBF94BC2456EB9D805AC3F5C"
+    },
+    {
+      "id": "VPB-HOME-015-CSS",
+      "state": "desktop-blank-state-console-external-css",
+      "path": "visual-authority/home/VPB-HOME-015-semantic-source-2026-09-14.css",
+      "sha256": "FDEEA86EF607C04C680EDBECC6FEAB94A59CBCEE9F9FA6E0EA28D670E1BEE0A4"
     }
   ]
 }

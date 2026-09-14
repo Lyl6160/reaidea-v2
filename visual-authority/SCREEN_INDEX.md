@@ -14,7 +14,18 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The founder-approved Stage 1D-A Console Iteration 2 desktop blank-state composition is `VPB-HOME-015`. The temporary dark mask is not approved console design. Compact REV grounding remains open for an integrated walkthrough, and real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-015 — Desktop Blank-State Console Composition
+
+- **State:** Stage 1D-A Console Iteration 2 at `1920 × 900`.
+- **Founder approval wording:** `FOUNDER APPROVES STAGE 1D-A CONSOLE ITERATION 2 DESKTOP CANDIDATE`.
+- **Approved evidence:** `home/VPB-HOME-015-approved-desktop-blank-state-console-2026-09-14.png`; SHA-256 `6D2975F7F2EE3B91EB17754AE6E2A4046FEC019A5F0480D588C8E9CAFD0F36AC`.
+- **Protected sources:** supporting measurement guide, semantic HTML and external CSS are registered in the manifest and detailed in `home/VPB-HOME-015-authority-2026-09-14.md`.
+- **Scope:** Desktop blank-state hero/trust placement; shallow approximately `54:46` console; three unselected semantic pathway controls; `VPB-HOME-014` icon presentation; disabled textarea and action controls; REV grounding; empty future-station reserve; separate live semantic layers.
+- **Underlying authorities:** `VPB-HOME-006` remains the composition authority; `VPB-HOME-008`, `VPB-HOME-009`, `VPB-HOME-010` and `VPB-HOME-014` remain separately protected.
+- **Deferred checks:** Recheck bottom-instruction clearance, disabled-panel real-display legibility and the `7px` brand-to-hero clearance during live integration. No automatic change is authorized; material adjustment requires another founder walkthrough.
+- **Exclusions:** Production, interaction, selected states, stations, electricity, compact/mobile composition, post-`ASK REV` behaviour and `REV-FIX-02.5` remain locked.
 
 ### VPB-HOME-014 — Raster Pathway Icon Family
 

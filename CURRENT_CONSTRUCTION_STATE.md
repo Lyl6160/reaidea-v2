@@ -3,29 +3,39 @@
 ```text
 CURRENT WORK
 
-Reference: Stage 1D-A raster pathway icon family — VPB-HOME-014 visual-lock checkpoint preparation
+Reference: Stage 1D-A Console Iteration 2 — VPB-HOME-015 documentation and visual-lock checkpoint
 Phase: 5 — Stage 1D-A visual-contract control
-Iteration: Raster family founder visually approved; documentation and byte-lock checkpoint only
-Status: Three isolated raster icons and approved in-room card-scale placement are founder approved; VPB-HOME-013 remains protected historical approved authority; no production or console implementation authorized
+Iteration: Console Iteration 2 desktop candidate founder visually approved and byte-locked as VPB-HOME-015
+Status: VPB-HOME-015 documents the approved desktop blank-state composition; production implementation, Stage 1D-B, Stage 1D-C and REV-FIX-02.5 remain locked
 Active lane: Lane 0 — continuity/control
 Active Build Contract: NONE
-Allowed files: minimum Stage 1D-A authority/control records and new VPB-HOME-014 authority/evidence files under visual-authority/home/
+Allowed files: VPB-HOME-015 authority and four protected files; CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md; architecture/PAGE_BLUEPRINT_REGISTER.md; architecture/STAGE_1D_A_DESKTOP_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md; architecture/VISUAL_AUTHORITY_REGISTER.md; visual-authority/SCREEN_INDEX.md; visual-authority/FOUNDER_VISUAL_LOCK_MANIFEST.json
 Prohibited files: production, tests, public runtime assets, providers, Project/runtime data, Workshop source, existing protected assets including VPB-HOME-013, dependencies/configuration and unrelated user files
-Founder authorization: `FOUNDER APPROVES STAGE 1D-A RASTER PATHWAY ICON FAMILY AND IN-ROOM CARD-SCALE PRESENTATION`
-Founder gate: Documentation and visual-lock verification only; staging, commit, push, tag, fetch, live integration and fine-tuning require separate authorization
-Next reference: A separately authorized Stage 1D-A console candidate may integrate the protected family as live decorative images; production and REV-FIX-02.5 remain locked
+Founder authorization: `FOUNDER AUTHORIZES STAGE 1D-A CONSOLE ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT`
+Founder gate: Separate founder authorization is required for any checkpoint commit or production Build Contract
+Next reference: Read-only checkpoint mapping may follow separately; production, interaction, stations, electricity, compact, mobile, post-ASK work and REV-FIX-02.5 remain locked
+
+Verified baseline:
+- Branch: `sprint006-build24-40-home-rebuild`.
+- Local HEAD and upstream: `da243ba043394789613fe690c528a4946c954110`.
+- Ahead/behind without fetching: `0/0`.
+- Index: empty.
+- Visual lock: PASS with exactly 41 protected assets.
 
 Verified authority:
-- VPB-HOME-014 protects the three isolated raster candidates, native in-room card-scale presentation and two supporting comparisons.
+- VPB-HOME-014 is founder approved, documented, byte-locked and remotely checkpointed. It protects the three isolated raster candidates, native in-room card-scale presentation and two supporting comparisons.
 - Cards, wording, borders, controls and accessible naming remain live semantic HTML/CSS; raster images are accessibility-hidden decoration only.
 - The SVG-only reconstruction method no longer controls Icons 2 and 3.
 - Raster Icon 1 is preferred for this family, while VPB-HOME-013 remains protected, unchanged and historically approved.
 - Minor scale, padding or brightness refinement is deferred to separately authorized live-integration trials; no future fine-tuning is automatically approved.
 - Any material visual change requires a new founder candidate walkthrough.
+- VPB-HOME-015 is founder approved and protects the desktop `1920 × 900` blank-state composition, supporting guide, semantic HTML and external CSS. `VPB-HOME-006` remains the underlying composition authority, and `VPB-HOME-008/009/010/014` remain separately protected layers.
+- Future live integration must recheck the bottom instruction’s console-edge clearance, disabled right-panel legibility on real displays and the `7px` brand-to-hero clearance. These checks authorize no automatic change; material adjustment requires another founder walkthrough.
 
 Open locks:
-- Live integration and production implementation are locked.
+- Production implementation and interaction remain locked.
 - Stage 1D-A console implementation is locked.
+- Stage 1D-B and Stage 1D-C remain locked.
 - Compact REV grounding and real closed Galaxy Fold 6 walkthrough gates remain open.
 - REV-FIX-02.5 remains locked.
 ```

@@ -82,6 +82,14 @@ The PNGs are decorative assets only. Pathway cards, wording, borders, selection 
 
 The SVG-only reconstruction method no longer controls Evaluate an Invention or Develop + Evaluate. Raster Develop an Invention is preferred for this family. `VPB-HOME-013` remains protected, unchanged and historically approved; it is not deleted or silently superseded. Live integration and any later scale, padding or brightness trial require separate founder authorization and walkthrough. No fine-tuning is automatically approved, and material visual change requires a new candidate authority decision.
 
+## Stage 1D-A desktop blank-state console composition — 14 September 2026
+
+`VPB-HOME-015` is the founder-approved Stage 1D-A Console Iteration 2 desktop blank-state composition. The exact approval wording is `FOUNDER APPROVES STAGE 1D-A CONSOLE ITERATION 2 DESKTOP CANDIDATE`. Its protected package contains the clean `1920 × 900` candidate, supporting measurement guide, semantic HTML and external CSS. Exact paths, hashes, measurements and scope are recorded in `visual-authority/home/VPB-HOME-015-authority-2026-09-14.md`.
+
+Approval covers the hero and trust-row placement, shallow console geometry and approximately `54:46` panel ratio, three unselected semantic pathway controls with `VPB-HOME-014` decorative raster icons, the disabled textarea and controls, REV relationship and grounding, and the empty reserved station region. `VPB-HOME-006` remains the underlying composition authority; `VPB-HOME-008`, `VPB-HOME-009`, `VPB-HOME-010` and `VPB-HOME-014` remain separately protected layers. The interface remains live semantic HTML/CSS and the approved PNG remains evidence only.
+
+Future live integration must recheck the bottom instruction’s console-edge clearance, disabled right-panel legibility on real displays and the `7px` brand-to-hero clearance. These checks authorize no automatic change; material adjustment requires another founder walkthrough. Candidate Iteration 1 remains rejected, and the failed Python-server evidence remains excluded technical-failure evidence. Production, interaction, station, electricity, compact, mobile, post-`ASK REV` and `REV-FIX-02.5` work remain locked.
+
 ## Temporary future visual hold — not authority
 
 `visual-authority/future-candidates/FUTURE_VISUAL_HOLD_REGISTER.md` holds `FUTURE-01–04` for later human scrutiny. These images are not current visual authority, cannot authorize implementation and cannot be used by runtime code as fallbacks. `FUTURE-02` and `FUTURE-04` byte-match existing scoped Workshop assets, so their existing canonical files are referenced without duplication. The next intake number is `FUTURE-05`.

@@ -1,8 +1,10 @@
 # Stage 1D-A — Desktop Opening Console-Entry Shell Visual Contract
 
-**Status:** ITERATION 1 FOUNDER REJECTED — VISUAL DRIFT; DEVELOP AN INVENTION ICON APPROVED AS `VPB-HOME-013`; REMAINING ICONS AND ITERATION 2 LOCKED
-**Founder authorization:** `FOUNDER APPROVES STAGE 1D-A-ICON-1 — DEVELOP AN INVENTION SVG ITERATION 3`
-**Current pushed baseline:** `cd56dcced53a43b1fe69b1778676733d15394537`
+**Status:** ITERATION 1 FOUNDER REJECTED — VISUAL DRIFT; ITERATION 2 DESKTOP BLANK-STATE COMPOSITION FOUNDER VISUALLY APPROVED AND BYTE-LOCKED AS `VPB-HOME-015`; PRODUCTION REMAINS LOCKED
+**Founder authorization:** `FOUNDER AUTHORIZES STAGE 1D-A CONSOLE ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT`
+**Current pushed baseline:** `da243ba043394789613fe690c528a4946c954110`
+**Local/remote parity:** `0/0`
+**Visual lock:** PASS with exactly `41` protected assets
 **Active lane:** Lane 0 — governance/checkpoint control
 **Active production Build Contract:** NONE
 
@@ -50,7 +52,7 @@ No interaction or functional authority is granted. In particular, the disabled c
 - `VPB-HOME-008` environment remains a separate runtime layer.
 - `VPB-HOME-009` REV remains a separate runtime layer.
 - `VPB-HOME-010` live brand remains a separate semantic runtime layer.
-- All wording, intent controls and console framing must be live semantic HTML/CSS. Trust icons remain semantic inline SVG. The rich pathway icons require their separate founder-approved independent asset gate before their permitted live-layer form is fixed.
+- All wording, intent controls and console framing must be live semantic HTML/CSS. Trust icons remain semantic inline SVG. `VPB-HOME-014` is the controlling pathway-icon family and supplies accessibility-hidden decorative raster images rendered proportionally with live semantic card wording and controls.
 - `VPB-HOME-006` and `VPB-HOME-007` are flattened composition references only and cannot be runtime interface images.
 - `VPB-HOME-006` must be measured and reconstructed using the separate approved environment, REV, brand and live interface layers. It cannot be copied into the candidate or production runtime as a flattened layer.
 - The lower future-station region must remain clear. Stage 1D-A does not authorize the eight station presentations.
@@ -99,6 +101,24 @@ The raster PNGs are decorative only. All pathway wording, cards, borders, contro
 
 Minor scale, padding or brightness refinement may be considered only during a separately authorized live-integration trial and founder walkthrough. No refinement is automatically approved; any material visual change requires a new candidate walkthrough.
 
+## Approved Console Iteration 2 — VPB-HOME-015
+
+The founder approved the Stage 1D-A Console Iteration 2 desktop candidate with the exact wording `FOUNDER APPROVES STAGE 1D-A CONSOLE ITERATION 2 DESKTOP CANDIDATE`. `VPB-HOME-015` protects the clean `1920 × 900` candidate, supporting measurement guide, semantic HTML and external CSS. The browser-verification screenshot is byte-identical to the clean candidate and is not stored as a redundant protected duplicate.
+
+Approval covers the desktop blank-state composition, hero and trust-row placement, shallow console geometry, approximately `54:46` panel ratio, three unselected semantic pathway controls, `VPB-HOME-014` raster-icon presentation, disabled textarea, disabled `ADD PHOTO OR SKETCH`, disabled `ASK REV`, REV relationship and grounding, and the empty reserved station region. The environment, REV, brand, hero, trust row, console, controls and icons remain separate layers. All interface wording, pathway controls, cards and borders remain live semantic HTML/CSS.
+
+`VPB-HOME-006` remains the underlying blank-state composition authority. `VPB-HOME-008`, `VPB-HOME-009`, `VPB-HOME-010` and `VPB-HOME-014` remain protected and separate. Candidate Iteration 1 remains founder-rejected. The failed Python-server output remains external technical-failure evidence and cannot enter authority.
+
+The following non-blocking future live-integration checks remain mandatory:
+
+1. Recheck the bottom instruction’s console-edge clearance.
+2. Recheck disabled right-panel legibility on real displays.
+3. Recheck the 7px brand-to-hero clearance during responsive integration.
+
+These checks authorize no automatic change. Material adjustment requires another founder walkthrough.
+
+No production implementation, active interaction, selected-path state, station presentation, electricity or plasma, compact composition, mobile composition, post-`ASK REV` behaviour, Project creation, persistence, provider work or `REV-FIX-02.5` authority is granted.
+
 ## Security wording boundary
 
 `PRIVATE TO YOUR PROJECT` may be reviewed as proposed visual wording. Visual approval does not certify production identity, authorization, encryption or server-storage security. Production use requires truthful security verification under a later founder-authorized Build Contract and the Security Engineering Standard.
@@ -115,6 +135,6 @@ Minor scale, padding or brightness refinement may be considered only during a se
 
 ## Authorization and stop state
 
-The raster pathway family is complete as `VPB-HOME-014`; `VPB-HOME-013` remains protected historical approved authority. Stage 1D-A live integration and console Iteration 2 remain locked pending their own exact authorization. No active production Build Contract exists. Production implementation, tests, console controls beyond the opening shell and `REV-FIX-02.5` remain locked.
+The raster pathway family remains founder approved, documented, byte-locked and remotely checkpointed as `VPB-HOME-014`; it is the controlling pathway-icon family for Stage 1D-A. `VPB-HOME-013` remains unchanged protected historical approved authority. Stage 1D-A Console Iteration 2 is founder visually approved and byte-locked as `VPB-HOME-015`. Stage 1D-B, Stage 1D-C, production implementation, tests, interaction, selected states, stations, electricity, post-`ASK REV` work, console controls beyond the opening shell and `REV-FIX-02.5` remain locked; no active production Build Contract exists.
 
 Stop after documentation verification and await founder review.
