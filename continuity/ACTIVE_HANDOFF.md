@@ -1,14 +1,14 @@
 # reAIdea Active Handoff
 
-**Updated:** 14 September 2026 — Stage 1D-B Compact Iteration 2 founder approval and VPB-HOME-016 visual lock
+**Updated:** 15 September 2026 — Stage 1D-C Mobile Iteration 2 approved and protected as VPB-HOME-017
 **Controlling source:** `CURRENT_CONSTRUCTION_STATE.md`
 
 REV HANDOFF
 
-- **Checkpoint:** Stage 1D-B Compact Iteration 2 is founder visually approved and byte-locked as `VPB-HOME-016`; staging, commit and push remain unauthorized.
+- **Checkpoint:** Stage 1D-C Mobile Candidate Iteration 2 is founder visually approved, documented and byte-locked as `VPB-HOME-017`. Checkpoint staging and production implementation are not authorized.
 - **Active lane:** Lane 0 — continuity/control. No active Build Contract.
-- **Founder authorization:** `FOUNDER AUTHORIZES STAGE 1D-B COMPACT ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT ONLY`.
-- **Baseline:** Branch `sprint006-build24-40-home-rebuild`; local HEAD and upstream `58d334949cde77b8718e05ce1231db534f7cf866`; ahead/behind `0/0`; index empty; visual lock `PASS` with exactly 45 protected assets after this checkpoint.
+- **Founder authorization:** `FOUNDER AUTHORIZES STAGE 1D-C MOBILE ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT ONLY`.
+- **Baseline:** Branch `sprint006-build24-40-home-rebuild`; local HEAD and upstream `6540fae31af7013962400881f16ba65adb9f5f34`; ahead/behind `0/0`; index empty; visual lock `PASS` with exactly 51 protected assets.
 - **Approved family:** Develop an Invention `BCE2ADE45D86C28B182F99EF34607872275A5053E93E3CE9F3F72F46829FE195`; Evaluate an Invention `5C3CBBBE4974D37C3196C94E9A477386AE2DECE3BEC91D913AC50C76CC15451D`; Develop + Evaluate `CFB10C73C25CB048BE5FCE20CD6A8E367A2E43317D1B94C4A11EBC675944129E`.
 - **Approved placement:** Native `VPB-HOME-006` in-room card-scale presentation `538275EB1BAE896DD0A2B5A474858B73E345AD3EFE9F3F0D068286326858BED0`; all pixels outside the three recorded icon boxes remain unchanged.
 - **Supporting evidence:** Before/after `1749253646285702E209771FC4D06EB6857E8B4566E23B7EDE3049643792FE4D`; enlarged console comparison `3B9116A45B86AD6B9868ED3C91D3BD65F2B78328FCA637B8AB7FE8D6FA1043CC`.
@@ -32,8 +32,22 @@ REV HANDOFF
 - **Future live-integration checks:** Recheck the bottom instruction’s console-edge clearance. Recheck disabled right-panel legibility on real displays. Recheck the 7px brand-to-hero clearance during responsive integration. These checks authorize no automatic change; material adjustment requires another founder walkthrough.
 - **Rejected evidence:** Candidate Iteration 1 remains rejected. The failed Python-server evidence remains external technical-failure evidence and does not enter authority.
 - **Fine-tuning gate:** Minor scale, padding or brightness refinement may be considered only after separately authorized live integration and trial walkthroughs. No refinement is automatically approved; any material visual change requires a new founder candidate walkthrough.
-- **Open gates:** Stage 1D-B production implementation, interaction, selected states, enabled controls, navigation, stations, electricity, Stage 1D-C, post-`ASK REV`, Project, persistence, providers, safety processing, Workshop, real closed Galaxy Fold 6 walkthrough and `REV-FIX-02.5` remain locked.
+- **Stage 1D-C study result:** Study A keeps three full-width stacked pathway rows simultaneously visible. Vertical page scrolling is founder accepted. Study B's horizontal rail is rejected because it weakens simultaneous discoverability.
+- **Readability decision:** Study A's tiny body-copy sizes are not approved and must not become locked mobile measurements. Any future candidate must improve small-text readability while preserving canonical wording and semantic order.
+- **Mobile flow:** All three full-width stacked pathway buttons must be visible together in the initial `390 × 844` viewport. The disabled entry section follows and may continue below the initial viewport. The empty future-station reserve follows all blank-state content and may begin below the initial viewport. Readable canonical wording takes priority over minimizing vertical scrolling.
+- **Rejected arrangements:** No horizontal pathway rail, cropped card or hidden pathway choice is permitted.
+- **Authority status:** Both studies remain temporary external review evidence only. Neither is a candidate, visual authority, production implementation or permission to modify protected assets.
+- **Mobile invariants:** Preserve the `390 × 844` evidence viewport, `VPB-HOME-008B` environment crop, `VPB-HOME-009B` REV placement and occlusion, `VPB-HOME-012` live mobile brand and `VPB-HOME-014` raster icons as separate layers. Preserve live semantic controls, genuine disabled textarea and buttons, zero brand/REV overlap and zero station overlap. The temporary dark mask remains unapproved console design.
+- **Approved mobile authority:** Exact wording `FOUNDER APPROVES STAGE 1D-C MOBILE CANDIDATE ITERATION 2`. `VPB-HOME-017` protects the initial `390 × 844` DPR `1` and full-page `390 × 1233` Study A compositions, requiring `389px` vertical scrolling.
+- **Mobile state:** All three stacked pathway choices are completely visible initially and unselected. The genuine disabled entry follows below. Candidate V1 is superseded because it displayed review-only reserve wording; V2 removes it without changing geometry. Study B remains rejected.
+- **Empty reserve:** The station reserve is `370 × 130` at `X=10–380`, `Y=1088.58–1218.58`, with no clean label, accessible name, pseudo-element content, marker or placeholder.
+- **Protected mobile relationships:** REV placement, occlusion, receiving-hand target, face, badge, book and brand clearance remain protected. Icons remain unchanged, proportional and accessibility-hidden. Environment, REV, brand, interface, controls and icons remain separate layers.
+- **Device review item:** Recheck REV's receiving-hand relationship to the trust statements on the real closed Galaxy Fold 6 without moving or rescaling REV by inference. This authorizes no automatic adjustment.
+- **Open gates:** Checkpoint staging, production implementation, interaction, selected states, enabled controls, navigation, stations, electricity, post-`ASK REV`, Project, persistence, providers, safety processing, Workshop, real closed Galaxy Fold 6 walkthrough, open-Fold work and `REV-FIX-02.5` remain locked.
 - **Preservation:** Existing production modifications and all Category C paths remain untouched. No public runtime asset, production, test, provider, Project or Workshop change is authorized.
 - **Git prohibition:** Nothing is staged. Commit, push, tag and fetch remain unauthorized.
-- **Next action:** Await separate founder authorization for read-only checkpoint mapping or another explicitly bounded action. Do not stage, commit or push.
+- **Next action:** Await separate exact founder authorization for a read-only VPB-HOME-017 checkpoint map or later staging. Do not stage, commit, push or begin production.
+- **Stop conditions:** Stop if documentation attempts to lock Study A's tiny type, treat either study as authority, infer desktop/compact mobile geometry, move or rescale REV, approve the temporary mask, introduce station overlap, or authorize production behavior.
+- **Rollback point:** `6540fae31af7013962400881f16ba65adb9f5f34`; preserve the two excluded production modifications and all 12 Category C paths.
+- **Security posture:** PASS for a provider-free visual study. No provider, storage, Project, persistence, safety-processing or runtime behavior changed.
 - **Repository:** `https://github.com/Lyl6160/reaidea-v2.git`; branch `sprint006-build24-40-home-rebuild`.

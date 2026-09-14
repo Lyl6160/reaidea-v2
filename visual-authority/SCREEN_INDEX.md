@@ -14,7 +14,19 @@ The Hard Founder Visual Lock is active under `architecture/FOUNDER_VISUAL_LOCK_S
 
 The founder rejected every current post-ASK Iteration 4 live presentation and generated/redesigned mock-up. `REV-FIX-02.4` remains on a recovery hold. None of the rejected outputs may be used as authority, inspiration, fallback or implementation source. Blue remains active communication; orange remains newly secured knowledge and cannot activate merely from typing.
 
-Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The founder-approved Stage 1D-A desktop blank-state composition is `VPB-HOME-015`; the founder-approved Stage 1D-B compact blank-state composition is `VPB-HOME-016`. The temporary dark mask is not approved console design. Real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+Stage 1A and Stage 1B remain founder approved and protected. Stage 1C-A Desktop is `VPB-HOME-010`; Stage 1C-B Compact live brand is `VPB-HOME-011`; Stage 1C-C Mobile live brand and REV clearance is `VPB-HOME-012`. The founder-approved Develop an Invention live SVG remains protected as historical authority `VPB-HOME-013`. The approved three-icon raster family and in-room card-scale presentation are `VPB-HOME-014`. The founder-approved desktop, compact and mobile blank-state compositions are `VPB-HOME-015`, `VPB-HOME-016` and `VPB-HOME-017`. The temporary dark mask is not approved console design. Real closed Galaxy Fold 6 review remains mandatory after live integration. Production implementation and `REV-FIX-02.5` remain locked, with no active Build Contract.
+
+### VPB-HOME-017 — Mobile Blank-State Console Composition
+
+- **State:** Stage 1D-C Mobile Candidate Iteration 2; initial `390 × 844` at DPR `1`; full page `390 × 1233`; scrolling `389px`.
+- **Founder approval wording:** `FOUNDER APPROVES STAGE 1D-C MOBILE CANDIDATE ITERATION 2`.
+- **Approved evidence:** `home/VPB-HOME-017-approved-mobile-blank-state-console-initial-2026-09-15.png` and `home/VPB-HOME-017-approved-mobile-blank-state-console-full-page-2026-09-15.png`.
+- **Protected sources:** two measurement guides, semantic HTML and external CSS are registered in the manifest and detailed in `home/VPB-HOME-017-authority-2026-09-15.md`.
+- **Scope:** Study A stacked pathway rows; all three choices visible initially and unselected; genuine disabled entry below; empty `370 × 130` station reserve at `X=10–380`, `Y=1088.58–1218.58`; separate protected and semantic layers.
+- **Supersession:** Candidate V1 is superseded because it displayed review-only reserve wording. V2 removes it without changing layout geometry. Study B remains rejected.
+- **Verification equivalence:** Browser-verification screenshot is byte-identical to the initial candidate and is not stored redundantly.
+- **Deferred gate:** Recheck REV's receiving-hand relationship to the trust statements on the real closed Galaxy Fold 6 without inferred REV movement or scaling. The device walkthrough remains mandatory after live integration.
+- **Exclusions:** Production, open-Fold work, automatic visual adjustment and `REV-FIX-02.5` remain locked.
 
 ### VPB-HOME-016 — Compact Blank-State Console Composition
 

@@ -3,24 +3,24 @@
 ```text
 CURRENT WORK
 
-Reference: Stage 1D-B — Compact Opening Console-Entry Shell Iteration 2 visual-lock checkpoint
-Phase: 5 — Stage 1D-B compact visual-contract control
-Iteration: Compact Iteration 2 founder visually approved and byte-locked as VPB-HOME-016
-Status: VPB-HOME-016 documents the approved compact blank-state composition; production, Stage 1D-C and REV-FIX-02.5 remain locked
+Reference: Stage 1D-C — Mobile Opening Console-Entry Shell visual authority
+Phase: 5 — Stage 1D-C mobile documentation and visual-lock checkpoint
+Iteration: Mobile Candidate Iteration 2 founder visually approved as VPB-HOME-017
+Status: Stage 1D-C mobile Iteration 2 is founder approved, documented and byte-locked; checkpoint staging and production implementation are not authorized
 Active lane: Lane 0 — continuity/control
 Active Build Contract: NONE
-Allowed files: CURRENT_CONSTRUCTION_STATE.md; continuity/ACTIVE_HANDOFF.md; architecture/PAGE_BLUEPRINT_REGISTER.md; architecture/STAGE_1D_B_COMPACT_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md
+Allowed files: The exact 16-path VPB-HOME-017 documentation and visual-lock boundary authorized by the founder
 Prohibited files: Every other repository path, including production, tests, manifest, authority records, protected assets, public runtime assets, providers, Project/runtime data, Workshop source, dependencies/configuration and unrelated user files
-Founder authorization: `FOUNDER AUTHORIZES STAGE 1D-B COMPACT ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT ONLY`
-Founder gate: Separate founder authorization is required for checkpoint staging/commit or any next visual category
-Next reference: Read-only checkpoint mapping may follow separately; production, mobile, navigation, interaction, stations, electricity, post-ASK work and REV-FIX-02.5 remain locked
+Founder authorization: `FOUNDER AUTHORIZES STAGE 1D-C MOBILE ITERATION 2 DOCUMENTATION AND VISUAL-LOCK CHECKPOINT ONLY`
+Founder gate: Separate exact founder authorization is required before staging or committing the VPB-HOME-017 checkpoint
+Next reference: VPB-HOME-017 checkpoint action, production and REV-FIX-02.5 remain locked
 
 Verified baseline:
 - Branch: `sprint006-build24-40-home-rebuild`.
-- Local HEAD and upstream: `58d334949cde77b8718e05ce1231db534f7cf866`.
+- Local HEAD and upstream: `6540fae31af7013962400881f16ba65adb9f5f34`.
 - Ahead/behind without fetching: `0/0`.
 - Index: empty.
-- Visual lock: PASS with exactly 45 protected assets after this checkpoint.
+- Visual lock: PASS with exactly 51 protected assets.
 
 Verified authority:
 - VPB-HOME-014 is founder approved, documented, byte-locked and remotely checkpointed. It protects the three isolated raster candidates, native in-room card-scale presentation and two supporting comparisons.
@@ -44,11 +44,32 @@ Verified authority:
 - Desktop and compact must share one semantic DOM. Only responsive CSS sizing, placement, spacing and typography may differ. Both panels remain visible and legible; stacking or structural reflow requires separate founder authorization.
 - A future compact walkthrough must show REV, the approved contact shadow, live console, visible reserved station region and environmental floor together to determine physical grounding. This check and the carried instruction-edge, disabled-panel-legibility and compact brand-to-hero checks authorize no automatic adjustment.
 
+Stage 1D-C study decision:
+- The founder selected **Study A — stacked pathway rows** as the documentation basis.
+- **Study B — horizontal pathway rail** is founder rejected and cannot become authority, fallback or a candidate source.
+- Vertical page scrolling is acceptable on mobile.
+- Study A's tiny body-copy sizes are not approved and must not be locked into the mobile contract or candidate.
+- A future candidate must materially improve small-text readability while preserving canonical wording and semantic ordering.
+- All three full-width stacked pathway choices must be visible together in the initial `390 × 844` viewport. The disabled entry section follows and may continue below the initial viewport; the empty future-station reserve follows the complete blank-state content and may also begin below it.
+- Readable canonical wording takes priority over reducing vertical scrolling. Horizontal pathway rails, cropped cards and hidden pathway choices are prohibited.
+- Study A remains temporary review evidence outside the repository. It is not a candidate, visual approval, authority asset or production implementation.
+- The future mobile contract must preserve `VPB-HOME-008B` environment crop, `VPB-HOME-009B` REV placement/occlusion, `VPB-HOME-012` mobile brand and `VPB-HOME-014` pathway icons as separate layers.
+- The real closed Galaxy Fold 6 walkthrough remains mandatory after live integration. No open-Fold layout is authorized.
+
+Stage 1D-C approved mobile authority:
+- Exact founder approval wording: `FOUNDER APPROVES STAGE 1D-C MOBILE CANDIDATE ITERATION 2`.
+- `VPB-HOME-017` protects the approved Study A mobile composition: initial `390 × 844` at DPR `1`, full page `390 × 1233` and `389px` required scrolling.
+- Candidate V1 is superseded because it displayed review-only reserve wording. Iteration 2 removes that wording without changing layout geometry.
+- All three pathway choices are completely visible initially and unselected. The genuine disabled entry section follows below in live semantic HTML.
+- The empty station reserve is `370 × 130` at `X=10–380`, `Y=1088.58–1218.58`; it has no clean label, accessible name, pseudo-element content, marker or placeholder.
+- REV placement, foreground occlusion, receiving-hand target, face, badge, book and approximately `10px` brand-to-hair clearance remain protected. Icons remain byte-identical, proportionally contained and accessibility-hidden.
+- Environment, REV, brand, interface, controls and icons remain separate layers. Vertical scrolling is approved; production and open-Fold work are not.
+- Non-blocking live-integration check: recheck the visual relationship between REV's receiving hand and the trust statements on the real closed Galaxy Fold 6 without moving or rescaling REV by inference. This authorizes no automatic change.
+
 Open locks:
-- Production implementation and interaction remain locked.
-- Stage 1D-A console implementation is locked.
-- Stage 1D-B production integration and Stage 1D-C remain locked.
-- Compact REV grounding and real closed Galaxy Fold 6 walkthrough gates remain open.
+- Stage 1D-C mobile Iteration 2 is visually approved and byte-locked as `VPB-HOME-017`; checkpoint staging and commit require separate exact founder authorization.
+- Production implementation and real-device integration remain locked.
+- Production implementation, navigation, interaction, selected states, stations, electricity and post-`ASK REV` work remain locked.
 - REV-FIX-02.5 remains locked.
 ```
 

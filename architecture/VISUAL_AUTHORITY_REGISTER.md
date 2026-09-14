@@ -100,6 +100,16 @@ Icons remain unchanged decorative contain-rendered images hidden from accessibil
 
 Live integration must confirm pathway-card description readability, disabled-panel contrast across displays and the hand-to-console relationship while preserving `81px` clearance. These checks authorize no automatic change.
 
+## Stage 1D-C mobile blank-state console composition — 15 September 2026
+
+`VPB-HOME-017` is the founder-approved Stage 1D-C Mobile Candidate Iteration 2 blank-state composition. The exact approval wording is `FOUNDER APPROVES STAGE 1D-C MOBILE CANDIDATE ITERATION 2`. Its protected package contains the clean initial `390 × 844` DPR `1` candidate, clean full-page `390 × 1233` candidate, two supporting measurement guides, semantic HTML and external CSS. Exact paths, hashes, measurements and scope are recorded in `visual-authority/home/VPB-HOME-017-authority-2026-09-15.md`.
+
+Study A's three stacked pathway rows control the mobile composition; Study B's horizontal rail remains founder rejected. All three pathway choices are visible initially and unselected. The genuine disabled entry follows below, vertical scrolling of `389px` is approved, and the empty `370 × 130` station reserve at `X=10–380`, `Y=1088.58–1218.58` contains no clean label, accessible name, pseudo-element content, marker or placeholder.
+
+Candidate V1 is superseded because it displayed review-only reserve wording; V2 removes that wording without geometry change. REV placement, occlusion, hand target, face, badge, book and brand clearance remain protected. The `VPB-HOME-014` icons remain unchanged, proportional and accessibility-hidden. Environment, REV, brand, interface, controls and icons remain separate layers. The browser-verification screenshot is byte-identical to the initial candidate and is not duplicated.
+
+Live integration must recheck the visual relationship between REV's receiving hand and the trust statements on the real closed Galaxy Fold 6 without moving or rescaling REV by inference. This authorizes no automatic change. The real closed Galaxy Fold 6 walkthrough remains mandatory after live integration. Production, open-Fold work and `REV-FIX-02.5` remain locked.
+
 ## Temporary future visual hold — not authority
 
 `visual-authority/future-candidates/FUTURE_VISUAL_HOLD_REGISTER.md` holds `FUTURE-01–04` for later human scrutiny. These images are not current visual authority, cannot authorize implementation and cannot be used by runtime code as fallbacks. `FUTURE-02` and `FUTURE-04` byte-match existing scoped Workshop assets, so their existing canonical files are referenced without duplication. The next intake number is `FUTURE-05`.

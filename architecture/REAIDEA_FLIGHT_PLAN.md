@@ -1,16 +1,16 @@
 # reAIdea Flight Plan
 
 **Status:** FOUNDER APPROVED — current shared construction plan
-**Pushed Stage 1C checkpoint baseline:** `cd56dcced53a43b1fe69b1778676733d15394537`
+**Current pushed checkpoint baseline:** `6540fae31af7013962400881f16ba65adb9f5f34`
 **Branch:** `sprint006-build24-40-home-rebuild`
-**Current reference:** Stage 1D-A — `DESKTOP OPENING CONSOLE-ENTRY SHELL` — documentation boundary recorded; candidate preparation locked
-**Current phase:** Governance and checkpoint control — Stage 1D-A documentation boundary recorded
+**Current reference:** Stage 1D-C — `MOBILE OPENING CONSOLE-ENTRY SHELL` — Iteration 2 founder approved as `VPB-HOME-017`
+**Current phase:** Governance and checkpoint control — Stage 1D-C documentation and visual-lock checkpoint complete
 **Current lane:** Lane 0 — recovery/control
-**Current status:** Stage 1C-A, Stage 1C-B and Stage 1C-C are FOUNDER VISUALLY APPROVED, DOCUMENTED, BYTE-LOCKED AND REMOTELY CHECKPOINTED; Stage 1D-A candidate preparation remains locked
+**Current status:** `VPB-HOME-015` controls desktop, `VPB-HOME-016` controls compact and `VPB-HOME-017` controls the founder-approved mobile blank-state composition. No production implementation is approved
 **Active Build Contract:** NONE
-**Locked next work:** Stage 1D-A candidate preparation, console controls beyond the opening shell, production implementation and `REV-FIX-02.5` Phase 2 Build remain locked
+**Locked next work:** VPB-HOME-017 checkpoint staging, production implementation, real-device integration, open-Fold work and `REV-FIX-02.5` remain locked
 
-Stage 1C is complete as a visual-authority checkpoint only. Stage 1D-A is the proposed `DESKTOP OPENING CONSOLE-ENTRY SHELL`, bounded by `STAGE_1D_A_DESKTOP_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md`. This record authorizes documentation only; no candidate, production implementation or active Build Contract exists.
+Stage 1D-C is bounded by `STAGE_1D_C_MOBILE_OPENING_CONSOLE_ENTRY_SHELL_VISUAL_CONTRACT.md`. Study A's stacked pathway rows control `VPB-HOME-017`; Study B is rejected. Vertical page scrolling is approved. The initial `390 × 844` and full-page `390 × 1233` compositions are protected, while the real closed Galaxy Fold 6 walkthrough remains mandatory after live integration. This record grants no production implementation or active Build Contract.
 
 Earlier REV-FIX-02.4 iterations, lane markers and technical milestones below are preserved as dated construction history. They do not authorize a Build phase, visual progression or production correction.
 
@@ -191,6 +191,6 @@ Only the reference named in `CURRENT WORK` may proceed. On 28 August 2026 the fo
 
 ## Immediate hold
 
-The dominant current position is Lane 0 governance/checkpoint control at pushed Stage 1C baseline `cd56dcced53a43b1fe69b1778676733d15394537`. Stage 1C-A, Stage 1C-B and Stage 1C-C are founder visually approved, documented, byte-locked and remotely checkpointed. Stage 1D-A `DESKTOP OPENING CONSOLE-ENTRY SHELL` is defined only as a future candidate boundary; candidate preparation remains locked pending separate authorization. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
+The dominant current position is Lane 0 governance/checkpoint control at pushed baseline `6540fae31af7013962400881f16ba65adb9f5f34`. `VPB-HOME-015`, `VPB-HOME-016` and `VPB-HOME-017` protect the founder-approved desktop, compact and mobile blank-state console compositions. The VPB-HOME-017 documentation and visual-lock checkpoint is complete, but staging, production implementation and real-device integration remain locked pending separate authorization. No production Build Contract is active, and `REV-FIX-02.5` Phase 2 remains locked.
 
 The former statement naming Lane 1, Phase 2, Iteration 3 and the numbered current-image review as the immediate gate is **SUPERSEDED — HISTORICAL EVIDENCE ONLY**. It grants no current implementation or phase-advance authority.
